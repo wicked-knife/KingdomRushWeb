@@ -1,14 +1,14 @@
 # Dove 素材使用说明
 
 资源基准是本机已安装的 Dove 版本：`D:\王国保卫战Dove版\KingdomRushDove`。
-`D:\projects\KingdomRushDove` 仅用于报告新版源码差异，不覆盖安装版本的资源定义。
+`D:\projects\KingdomRushDove` 提供同版本源码，用于后续玩法迁移与资源依赖核对。
 原安装目录始终只读；所有操作都是复制和生成新文件。
 
 当前资源快照为 **2.1.0.2**（2026-10-24 同步），安装版本与源码提交均为 `e4278f83d913f96a8d35a17f912e0c21945bfdac`。
 
 ## 后续复刻指导
 
-源码阅读索引、Godot 架构、数据迁移规则、Web 分包、阶段任务和验收清单见 [Godot Web 复刻指导文档](GODOT_WEB_REMAKE_GUIDE.md)。指南保留已确认的 `2.1.0.1` 玩法对照基线，并单列当前 `2.1.0.2` 资源同步情况与兼容核对规则。
+源码阅读索引、Godot 架构、数据迁移规则、Web 分包、阶段任务和验收清单见 [Godot Web 复刻指导文档](GODOT_WEB_REMAKE_GUIDE.md)。指南统一以 `2.1.0.2` 及上述提交为唯一基准，覆盖该版本的完整玩家玩法、配套资源与验收要求。
 
 ## 目录
 
@@ -18,7 +18,7 @@
 | `assets/kingdom_rush/` | Godot 使用的 PNG、OGG、TTF/OTF/TTC、JSON 和资源目录索引 |
 | `scripts/dove_asset_catalog.gd` | `DoveAssetCatalog`，按需读取元数据和纹理 |
 | `scenes/asset_preview.tscn` | 独立素材预览场景，用 F6 运行，无须修改项目主场景 |
-| `reports/` | 搬运清单、完整性校验、源码差异与 Godot 检查结果；不导入游戏 |
+| `reports/` | 搬运清单、完整性校验、来源核对与 Godot 检查结果；不导入游戏 |
 
 原始文件包括 582 张 DDS、3,899 段 OGG、8 份字体、490 份 KRAB 图集，以及 1,021 份 EXO3 组合动画。
 转换保留图集，不把十几万帧拆成独立 PNG。
@@ -50,8 +50,8 @@ python tools/import_dove_assets.py
 ```
 
 源码拉取不会更新本机安装包；导入时始终以已经更新完成的游戏安装目录为准。
-本次更新新增奥术幻铸师（`go_towers_forger`）、哨兵瞭望塔（`go_towers_sentry`）图集、39 段音频和 9 份组合动画；中英文文案各为 9,573 条。
-本次增量清单及版本信息见 `reports/assets_sync_summary.json`。
+当前资源包含奥术幻铸师（`go_towers_forger`）、哨兵瞭望塔（`go_towers_sentry`）的图集、音频及组合动画；中英文文案各为 9,573 条。
+当前资源总量与校验结果见 `reports/assets_manifest.json`、`reports/assets_verification.json` 和 `reports/verification_summary.json`。
 
 ```powershell
 python tools/import_dove_assets.py --verify-only --check-source
@@ -102,8 +102,8 @@ region.y / region.height 乘以 actual_texture_height / declared_texture_height
 - 每条组合记录依次为：`type, index_1_based, alpha, x, y, scale_x, scale_y, rotation, skew_x, skew_y`；type 1 为图像部件，type 8 为挂点。
 - 中英文文本中的 `%$...%$` 和 `%s` 等占位符保留，不计算伤害、等级或其他游戏数值。
 - 原版已有的图集舍入边界、缺失引用等问题记录在 `assets_verification.json`，不生成占位图掩盖缺失。最终统计以报告为准。
-- 本次新增 11 条源数据动画引用提示：新塔的部分单帧动画引用带 `_0001` 的帧名，图集中对应静态图名不带编号。原始图像、帧名和动画定义均已保留，未自动改名；明细见增量报告。
-- 当前安装包已包含参考源码索引中的全部素材，原先缺少的 2 张 DDS 和 39 段 OGG 已随游戏更新同步；后续版本的差异以报告为准。
+- 奥术幻铸师和哨兵瞭望塔共有 11 条源数据动画引用提示：部分单帧动画引用带 `_0001` 的帧名，图集中对应静态图名不带编号。原始图像、帧名和动画定义均已保留，未自动改名；迁移核对方式见复刻指南附录 B。
+- 当前安装包已包含 `2.1.0.2` 源码索引中的全部素材，安装索引中的 4,497 个外部素材全部存在；源定义引用告警仍按校验报告逐项核对。
 - 关卡中需要执行逻辑的 Lua、英雄房间动态文本脚本和 LÖVE 着色器保存在原始档案，后续移植对应功能时再改写。本阶段不提供玩法和组合动画渲染器。
 
 后续 Web 导出时，保持兼容渲染器；导出预设需包含通过 FileAccess 动态读取的 `assets/kingdom_rush/**/*.json`（也可在非资源包含过滤器中使用 `*.json`）。

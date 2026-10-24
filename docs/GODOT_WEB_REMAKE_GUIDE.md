@@ -1,6 +1,6 @@
 # Kingdom Rush Dove → Godot Web 复刻指导文档
 
-调研与编制日期：2026-10-24。目标工程：`D:/projects/KingdomRushWeb`。
+版本基准：**Dove 2.1.0.2**。调研与编制日期：2026-10-24。目标工程：`D:/projects/KingdomRushWeb`。
 
 本文是后续开发的实施依据，覆盖源码定位、技术设计、内容迁移、任务拆分和验收。**当前交付只有文档；文中的新场景、服务、数据结构和命令，除明确标为已有者外，均待实现。**
 
@@ -9,8 +9,8 @@
 - **【事实】**：已读取代码、Git 对象、现有资源或校验报告得到的结论。
 - **【设计】**：本项目建议采用的实现约定，不表示原版已经如此实现。
 - **【验证任务】**：必须在对应里程碑用真实数据或浏览器完成的验证，不视为已通过。
-- `WEB` 指本工程；`SNAPSHOT` 指 `WEB/source_assets/kingdom_rush_dove`；`SRC` 指 `D:/projects/KingdomRushDove`；`BASE` 指 SRC 中的冻结提交 `184308e3d0d193b4a0a63f123eb41f3ac4aee467`，不是会自动更新的安装目录。
-- 本文源码链接指向相邻源码工作目录，方便阅读；当前工作目录已更新到 e4278f83…，发生差异时必须读取 BASE 中同路径文件。第 3 章及附录 A 标明了差异边界。
+- `WEB` 指本工程；`SNAPSHOT` 指 `WEB/source_assets/kingdom_rush_dove`；`SRC` 指 `D:/projects/KingdomRushDove`；`BASE` 指 Dove `2.1.0.2` 的冻结提交 `e4278f83d913f96a8d35a17f912e0c21945bfdac`。
+- 本文源码链接指向相邻源码工作目录；已核对 SRC、安装目录和 SNAPSHOT 均对应上述版本与提交。实施时按 BASE 读取代码，并校验资源清单与来源哈希。
 - 同一功能的完成顺序是：确认原行为 → 整理依赖与样例 → 实现通用能力 → 对照验证 → 批量迁移内容。素材能显示不等于玩法已还原。
 
 ## 目录
@@ -31,8 +31,8 @@
 14. [Web 加载、导出和发布](#s14)
 15. [里程碑与首批任务](#s15)
 16. [验收体系与完成定义](#s16)
-17. [附录 A：版本差异](#appendix-a)
-18. [附录 B：素材告警](#appendix-b)
+17. [附录 A：2.1.0.2 基准与内容核对](#appendix-a)
+18. [附录 B：2.1.0.2 素材告警](#appendix-b)
 19. [附录 C：命令与官方资料](#appendix-c)
 
 <a id="s01"></a>
@@ -40,25 +40,24 @@
 
 ### 1.1 复刻范围
 
-【设计】最终覆盖冻结安装版向玩家提供的完整内容：实际开放的多代地图与关卡、战役/英雄/钢铁挑战、难度、基础及扩展塔、士兵、英雄、Boss、技能、科技、图鉴、成就、玩家设置、无尽和回溯。源码中的地图入口涉及代际 1、2、3、5、6；不能根据 `kr1` 目录名推断只有第一代，也不能自行承诺存在第四代完整地图。
+【设计】最终覆盖 Dove `2.1.0.2` 向玩家提供的完整内容：实际开放的多代地图与关卡、战役/英雄/钢铁挑战、难度、基础及扩展塔、士兵、英雄、Boss、技能、科技、图鉴、成就、玩家设置、无尽和回溯。源码中的地图入口涉及代际 1、2、3、5、6；不能根据 `kr1` 目录名推断只有第一代，也不能自行承诺存在第四代完整地图。
 
 首版验收桌面 Chrome、Edge、Firefox 的鼠标键盘流程。手机触控、移动 Safari、桌面 Safari 的正式适配放在后续兼容阶段。新建浏览器存档，并提供 JSON 备份与恢复。原 Lua 存档导入可另行实现。
 
 以下内容不作为本轮复刻目标：原开发用关卡/波次/图集编辑器、原桌面更新器、任意 Lua 插件二进制或源码兼容、云存档与账号服务。关卡专属的可点击机关属于玩家玩法，仍需迁移；不能因为它使用编辑器生成数据就排除。
 
-### 1.2 冻结基准，防止版本混用
+### 1.2 唯一版本基准：2.1.0.2
 
 | 来源 | 已验证标识 | 使用规则 |
 | --- | --- | --- |
-| 规划时原快照（历史） | `5.6.12` / `id=2.1.0.1`，提交记录 `184308e3…` | 本次已批准的玩法内容与对照基线 |
-| BASE Git 对象 | `184308e3d0d193b4a0a63f123eb41f3ac4aee467`，本机可读取 | 原始玩法代码的冻结依据；快照未包含全部运行时代码 |
-| 规划时参考提交 REF | `220f2c155013665fb03bde7db12ba7377a7d54a3` / `id=2.1.0.2` | “19 个 Lua 文件变化”对应的固定比较对象 |
-| 当前 SRC HEAD 与 SNAPSHOT | `e4278f83d913f96a8d35a17f912e0c21945bfdac` / `id=2.1.0.2` | 编写期间由素材同步工作更新；作为当前资源输入，新增玩法不自动加入范围 |
-| 编制时的本机安装目录 | `id=2.1.0.2`，提交记录 `e4278f83d913f96a8d35a17f912e0c21945bfdac` | 已发生版本漂移；不能当作原快照的同版本运行样本 |
+| SRC 源码 | `id=2.1.0.2`；HEAD 为 `e4278f83d913f96a8d35a17f912e0c21945bfdac`，工作区干净 | 完整玩法代码、数值和行为的冻结依据 |
+| 本机安装目录 | `D:/王国保卫战Dove版/KingdomRushDove`；`id=2.1.0.2`，提交记录与 BASE 一致 | 同版本运行对照与原始素材来源 |
+| SNAPSHOT | `id=2.1.0.2`，提交记录与 BASE 一致 | 保存原始素材及配套数据；完整运行时代码仍从 SRC 读取 |
+| Godot 运行素材 | 当前 manifest 与校验汇总对应 `2.1.0.2` | 所有资源包从这份配套资源生成，逐项保留来源哈希 |
 
-【事实】规划阶段安装目录和工程快照均为 `2.1.0.1`；编制期间安装目录、SRC 和工程资源又被同步到 `2.1.0.2`。本文保留批准的 BASE 玩法基线，同时如实记录当前资源。原先额外 2 张 DDS 和 39 段音频已补齐，当前报告的 `missing_from_installed` 为空。“19 个 Lua 文件变化”仅指 BASE→REF；BASE→当前 e4278f83 为 22 项，REF→当前为 6 项。源码目录内的提交记录文件可能落后于 HEAD，应同时记录 `git rev-parse HEAD`、工作区状态与快照哈希。
+【事实】源码、安装目录和工程素材快照的版本标识与提交一致。`tower_forger`（奥术幻铸师）、`tower_sentry`（哨兵瞭望塔）属于本版本的完整复刻范围，其模板、行为、技能、菜单、文案、图集、EXO 和声音均须纳入内容迁移清单。
 
-【设计】M0 在隔离目录建立 BASE 只读导出副本，所有玩法数据从 BASE 提取；当前 2.1.0.2 素材目录只按 BASE 的可达资源子集使用。尤其不能把已更新的 SNAPSHOT 关卡数据直接当作 BASE 配套数据。对变更过的共用图集重新核对旧帧名、逻辑尺寸、动画与挂点，缺失时阻止本批验收；记录当前资源输入版本和哈希，不宣称未经验证的逐像素一致。不得回滚或覆盖用户已经同步的素材；若升级玩法基准，应独立更新内容版本、数值、行为和验收样本。
+【设计】M0 在隔离目录建立 BASE 只读导出副本，玩法数据、资源依赖和原版对照样本统一使用 `2.1.0.2`。生成基准清单，记录提交、工作区状态、版本文件、资源 manifest 哈希及每个导出输入的哈希；发现不匹配则阻止该批导出。后续更新内容时同步更新该清单、玩法数据、行为和验收样本。
 
 ### 1.3 本工程已有能力
 
@@ -68,48 +67,33 @@
 | [DoveAssetCatalog](../scripts/dove_asset_catalog.gd) | 按需访问帧、图组、动画、EXO、声音和静态数据 | 不负责组合动画绘制、完整依赖分包和游戏对象生命周期 |
 | [素材预览](../scenes/asset_preview.tscn) | 背景、裁切帧、普通动画、字体与音效展示 | 独立预览场景，不是游戏主场景 |
 | [转换测试](../tests/test_asset_conversion.py)、[Godot 校验](../tests/verify_godot_assets.gd) | 二进制转换样例和部分引擎资源加载检查 | 不证明战斗、EXO 显示、Web 导出已通过 |
-| [汇总报告](../reports/verification_summary.json) | 记录已有导入及兼容渲染预览结果 | 历史报告，不是本次完整浏览器测试结果 |
+| [汇总报告](../reports/verification_summary.json) | 记录已有导入及兼容渲染预览结果 | 已有素材检查结果，不代表完整游戏或浏览器验收通过 |
 
 【事实】`project.godot` 当前采用 Compatibility 和 `canvas_items`，尚未设置 `run/main_scene`，未发现游戏导出预设。Godot 4.7.2 stable 与对应单线程 Web 模板已安装。3D 物理 Jolt 的配置存在，但本项目的 2D 战斗不依赖它。
 
 ### 1.4 资源与内容规模
 
-以下第一张表保留规划时 **2.1.0.1 历史快照**的已核对统计，不能当作当前目录统计。历史报告在编制时仍可从 Git 暂存区对象读取；附录 C 记录了对象 ID。单位 GiB 为 2³⁰ 字节。
+以下统计均对应 **2.1.0.2** 的当前 manifest、校验报告及素材目录，单位 GiB 为 2³⁰ 字节。
 
-| 项目 | 数值 | 解释 |
+| 项目 | 数值 | 口径与约束 |
 | --- | ---: | --- |
-| 原始资源及配套数据 | 6,964 个文件 / 4,107,113,161 字节 | 约 3.83 GiB，包含原始格式 |
-| Godot 运行资源 | 3,305,567,012 字节 | 约 3.08 GiB，不含 `.godot` 导入缓存 |
-| 原 DDS / 运行 PNG | 580 / 588 | PNG 另含光标等非 DDS 来源图片；导入报告的 589 张纹理还包括工程图标，口径不同 |
-| 图集 / 标准帧 / 别名 | 488 / 157,735 / 135,685 | 帧 ID 必须带图集组，不能假设全局唯一 |
-| 普通动画 / 动画帧引用 | 12,106 / 249,337 | 保留重复、倒序和零帧号 |
-| EXO3 文件 / 组合动作 | 1,012 / 2,995 | 已转换数据不等于已有播放器 |
-| OGG / 字体 | 3,860 / 8 | 声音定义带变体、分组和播放约束 |
-| 中文 / 英文文案 | 9,516 / 9,512 | 含未求值的动态占位符 |
+| 原始资源及配套数据 | 7,016 个文件 / 4,131,494,843 字节 | 约 3.85 GiB，包含原始格式 |
+| Godot 运行资源 | 3,318,960,209 字节 | 约 3.09 GiB，不含 `.godot` 导入缓存 |
+| 原 DDS / 运行 PNG | 582 / 590 | PNG 另含光标等非 DDS 来源图片；Godot 导入的 591 张纹理还包括工程图标 |
+| 图集 / 标准帧 / 别名 | 490 / 158,627 / 136,501 | 帧 ID 必须带图集组，不能假设全局唯一 |
+| 普通动画 / 动画帧引用 | 12,178 / 250,791 | 保留重复、倒序和零帧号 |
+| EXO3 文件 / 组合动作 | 1,021 / 3,052 | 已转换数据不等于已有播放器 |
+| OGG / 字体 | 3,899 / 8 | 声音定义带变体、分组和播放约束 |
+| 中文 / 英文文案 | 9,573 / 9,573 | 含未求值的动态占位符 |
+| 资产 JSON 文件 | 1,519 | 不含后续待生成的玩法 JSON |
 | 布局 / 路径 / 网格文件 | 129 / 129 / 131 | 不能据此宣称 129 个完整可玩关卡 |
 | Lua 波次：战役 / 英雄 / 钢铁 | 97 / 96 / 95 | 还需考虑 TSV、特殊关卡和专属生成逻辑 |
-| TSV 波次文件 | 97 | 同一关卡模式下原加载器优先尝试 TSV |
+| TSV 波次文件 | 97 | 同一搜索来源下原加载器优先尝试 TSV |
+| 当前源码索引缺失素材 | 0 | 索引完整不等于所有动画和 EXO 引用均无告警，见附录 B |
 
-【事实】历史 588 张 PNG 的 `宽×高×4` 累计为 **14,665,647,328 字节，约 13.66 GiB**。这只是基础 RGBA 数据估算，不包含 mipmap、驱动开销、双份解码和导入压缩差异，不是实测 GPU 占用。最大图片 `go_enemies_T3-1.png` 为 7732×7728，单张基础 RGBA 约 228 MiB；22 张图片至少一边超过 4096。
+【事实】590 张 PNG 的 `宽×高×4` 累计为 **14,733,551,072 字节，约 13.72 GiB**。这只是基础 RGBA 数据估算，不包含 mipmap、驱动开销、双份解码和导入压缩差异，不是实测 GPU 占用。最大图片 `go_enemies_T3-1.png` 为 7732×7728，单张基础 RGBA 约 228 MiB；22 张图片至少一边超过 4096。
 
-当前 **2.1.0.2** 同步后的盘点如下；与上表分列以保留原计划依据：
-
-| 项目 | 当前值 |
-| --- | ---: |
-| 原始文件 / 原始字节 | 7,016 / 4,131,494,843（约 3.85 GiB） |
-| 运行资源字节 | 3,318,960,209（约 3.09 GiB，不含导入缓存） |
-| DDS / PNG / 图集 | 582 / 590 / 490 |
-| 图集帧 / 别名 | 158,627 / 136,501 |
-| 普通动画 / 帧引用 | 12,178 / 250,791 |
-| EXO3 / 组合动作 | 1,021 / 3,052 |
-| OGG / 字体 | 3,899 / 8 |
-| 中文 / 英文条目 | 9,573 / 9,573 |
-| 玩法以外的资产 JSON 文件 | 1,519 |
-| 基础 RGBA 估算 | 14,733,551,072 字节，约 13.72 GiB |
-| 超过 4096 的图片 / 最大尺寸 | 22 / 7732×7728 |
-| 当前源码索引缺失素材 | 0 |
-
-当前 manifest 的 SHA-256 为 `dbaf8b6a0e3bbbb9e5708842193b26bac396a248f6c5a3d1f9f1cdde6c39c8f6`；后续资源更新时重新记录。`verification_summary.json` 可能仍保留旧统计，应以报告自身版本/口径核对，不把新的目录数与旧的 passed 标志拼成新的测试结论。
+当前 [assets_manifest.json](../reports/assets_manifest.json) 的 SHA-256 为 `dbaf8b6a0e3bbbb9e5708842193b26bac396a248f6c5a3d1f9f1cdde6c39c8f6`。[verification_summary.json](../reports/verification_summary.json) 记录的安装版本为 `2.1.0.2`、提交为 BASE；文件哈希核对无错误，素材格式测试、Godot 导入与资源校验、Compatibility 素材预览已有通过记录。它们证明素材处理链路，不证明游戏玩法、Web 分包或浏览器性能已通过。
 
 【结论】开发库可以全量保存；浏览器发布包必须裁剪依赖、分批下载并控制驻留资源。禁止先把全素材打进一个 PCK，再把运行崩溃当作后期优化。
 
@@ -153,7 +137,7 @@ flowchart TD
 
 ### 2.3 实际系统顺序
 
-【事实】BASE 的 `all/game.lua:game.simulation_systems` 顺序如下。`all/systems.lua` 负责可用模块注册，不是此运行顺序；旧项目说明里的系统清单不能直接作为实现依据。
+【事实】BASE 的 `all/game.lua:game.simulation_systems` 顺序如下。`all/systems.lua` 负责可用模块注册，不是此运行顺序；项目说明中的系统清单需与此代码核对。
 
 ~~~text
 level → wave_spawn → wave_spawn_tsv → mod_lifecycle → main_script
@@ -169,12 +153,12 @@ Lua 与 TSV 波次系统按实际格式选择启用；`lights` 在该清单中�
 <a id="s03"></a>
 ## 3. 源码阅读与迁移索引
 
-以下链接用于导航 SRC；带 **Δ** 的文件在 BASE 与当前 e4278f83 间发生变化，按附录 A 使用 Git 读取冻结版本。相关目录中的其他文件也要按导出清单校验哈希，而不是仅凭此表判断版本。
+以下链接均用于定位 `2.1.0.2` 的 SRC 文件。导出时锁定 BASE，并按导出清单校验来源哈希；原项目的说明文档可辅助阅读，系统顺序和实际行为以本版本代码为准。
 
 | 子系统 | 原实现入口 | Godot 对应工作 / 依赖 / 首要验收 |
 | --- | --- | --- |
 | 入口与场景 | [main.lua](../../KingdomRushDove/main.lua)、[director.lua](../../KingdomRushDove/all/director.lua) | AppRoot 与 ScreenRouter；依赖存档/资源；地图与关卡往返无残留 |
-| 时间与主循环 | [game.lua Δ](../../KingdomRushDove/all/game.lua)、[adaptive_fps.lua](../../KingdomRushDove/dove_modules/perf/adaptive_fps.lua) | SimulationClock、独立 UI 时钟；暂停倍速与后台恢复 |
+| 时间与主循环 | [game.lua](../../KingdomRushDove/all/game.lua)、[adaptive_fps.lua](../../KingdomRushDove/dove_modules/perf/adaptive_fps.lua) | SimulationClock、独立 UI 时钟；暂停倍速与后台恢复 |
 | 调度与生命周期 | [simulation.lua](../../KingdomRushDove/all/simulation.lua)、[systems.lua](../../KingdomRushDove/all/systems.lua)、[last_hook.lua](../../KingdomRushDove/all/systems/last_hook.lua) | SimulationWorld、队列及索引；插入取消/死亡移除时序 |
 | 模板与组件 | [entity_db.lua](../../KingdomRushDove/all/entity_db.lua)、[components.lua](../../KingdomRushDove/all/components.lua)、[templates.lua](../../KingdomRushDove/all/templates.lua) | 数据导出与 EntityFactory；继承、克隆隔离和默认值 |
 | 关卡生命周期 | [level.lua](../../KingdomRushDove/all/systems/level.lua)、[level_utils.lua](../../KingdomRushDove/all/level_utils.lua) | LevelRunner、布局加载、结算；依赖波次/单位 |
@@ -182,20 +166,20 @@ Lua 与 TSV 波次系统按实际格式选择启用；`lights` 在该清单中�
 | Lua 波次 | [wave_db.lua](../../KingdomRushDove/all/wave_db.lua)、[wave_spawn.lua](../../KingdomRushDove/all/systems/wave_spawn.lua)、[wave_utils.lua](../../KingdomRushDove/all/wave_utils.lua) | Lua 波次适配、提前开波奖励；出生顺序与时点 |
 | TSV 波次 | [wave_spawn_tsv.lua](../../KingdomRushDove/all/systems/wave_spawn_tsv.lua) | 指令调度、信号/事件/手动波次；代表 TSV 关卡 |
 | 路径、地形 | [path_db.lua](../../KingdomRushDove/all/path_db.lua)、[grid_db.lua](../../KingdomRushDove/all/grid_db.lua)、[grid_a_star.lua](../../KingdomRushDove/all/grid_a_star.lua) | PathService、TerrainGrid；连接、反向、集结和地形限制 |
-| 索敌与空间索引 | [seek.lua Δ](../../KingdomRushDove/all/seek.lua)、[spatial_index.lua](../../KingdomRushDove/all/spatial_index.lua) | TargetQuery、空间哈希；椭圆范围和 flags/bans |
-| 通用脚本工具 | [utils.lua Δ](../../KingdomRushDove/all/utils.lua)、[script_utils.lua](../../KingdomRushDove/all/script_utils.lua)、[scripts.lua Δ](../../KingdomRushDove/all/scripts.lua) | 伤害、移动、攻击与状态能力库；是大部分行为的依赖 |
+| 索敌与空间索引 | [seek.lua](../../KingdomRushDove/all/seek.lua)、[spatial_index.lua](../../KingdomRushDove/all/spatial_index.lua) | TargetQuery、空间哈希；椭圆范围和 flags/bans |
+| 通用脚本工具 | [utils.lua](../../KingdomRushDove/all/utils.lua)、[script_utils.lua](../../KingdomRushDove/all/script_utils.lua)、[scripts.lua](../../KingdomRushDove/all/scripts.lua) | 伤害、移动、攻击与状态能力库；是大部分行为的依赖 |
 | 动画与渲染 | [animation_db.lua](../../KingdomRushDove/all/animation_db.lua)、[render.lua](../../KingdomRushDove/all/systems/render.lua)、[render_utils.lua](../../KingdomRushDove/all/render_utils.lua) | Sprite/EXO 播放器、RenderFrame；逻辑尺寸、排序及挂点 |
-| EXO 与图集 | [exoskeleton.lua Δ](../../KingdomRushDove/all/exoskeleton.lua)、[image_db.lua](../../KingdomRushDove/lib/klove/image_db.lua)、[atlas_binary.lua](../../KingdomRushDove/lib/klove/atlas_binary.lua) | 元数据契约；依赖现有转换器；用有翻转/斜切的动作验收 |
+| EXO 与图集 | [exoskeleton.lua](../../KingdomRushDove/all/exoskeleton.lua)、[image_db.lua](../../KingdomRushDove/lib/klove/image_db.lua)、[atlas_binary.lua](../../KingdomRushDove/lib/klove/atlas_binary.lua) | 元数据契约；依赖现有转换器；用有翻转/斜切的动作验收 |
 | 伤害结算 | [health.lua](../../KingdomRushDove/all/systems/health.lua)、[constants.lua](../../KingdomRushDove/all/constants.lua) | DamageResolver、伤害类型位标志；反伤、免疫、击杀唯一性 |
 | 状态、光环、补间 | [mod_lifecycle.lua](../../KingdomRushDove/all/systems/mod_lifecycle.lua)、[tween.lua](../../KingdomRushDove/all/systems/tween.lua)、[game_scripts.lua](../../KingdomRushDove/kr1/game_scripts.lua) | 状态生命周期及通用能力；检查暂停、刷新、源单位消失 |
 | 游戏模板、敌人 | [game_templates.lua](../../KingdomRushDove/kr1/game_templates.lua)、[enemies.lua](../../KingdomRushDove/kr1/enemies.lua) | 单位定义与行为绑定；基础敌人到特性敌人的分批迁移 |
-| 四类塔定义 | [archer_towers.lua Δ](../../KingdomRushDove/kr1/archer_towers.lua)、[mage_towers.lua Δ](../../KingdomRushDove/kr1/mage_towers.lua)、[engineer_towers.lua Δ](../../KingdomRushDove/kr1/engineer_towers.lua)、[barrack_towers.lua Δ](../../KingdomRushDove/kr1/barrack_towers.lua) | 塔定义、分支、技能、士兵；依赖通用战斗与资产 |
-| 塔行为与操作 | [tower_scripts.lua Δ](../../KingdomRushDove/kr1/tower_scripts.lua)、[tower_utils.lua](../../KingdomRushDove/all/tower_utils.lua)、[rally_utils.lua](../../KingdomRushDove/all/rally_utils.lua) | 塔状态机、建造/升级/卖塔/集结命令；原子扣款与取消 |
+| 四类塔定义 | [archer_towers.lua](../../KingdomRushDove/kr1/archer_towers.lua)、[mage_towers.lua](../../KingdomRushDove/kr1/mage_towers.lua)、[engineer_towers.lua](../../KingdomRushDove/kr1/engineer_towers.lua)、[barrack_towers.lua](../../KingdomRushDove/kr1/barrack_towers.lua) | 塔定义、分支、技能、士兵；依赖通用战斗与资产 |
+| 塔行为与操作 | [tower_scripts.lua](../../KingdomRushDove/kr1/tower_scripts.lua)、[tower_utils.lua](../../KingdomRushDove/all/tower_utils.lua)、[rally_utils.lua](../../KingdomRushDove/all/rally_utils.lua) | 塔状态机、建造/升级/卖塔/集结命令；原子扣款与取消 |
 | 英雄 | [heroes.lua](../../KingdomRushDove/kr1/heroes.lua)、[hero_scripts.lua](../../KingdomRushDove/kr1/hero_scripts.lua) | 升级、技能、移动、复活及多英雄选择；不能写死单英雄 |
 | Boss | [boss.lua](../../KingdomRushDove/kr1/boss.lua)、[boss_scripts.lua](../../KingdomRushDove/kr1/boss_scripts.lua) | 阶段控制器、召唤、环境交互；结合专属关卡脚本 |
-| 难度与科技 | [difficulty.lua](../../KingdomRushDove/all/difficulty.lua)、[upgrades.lua Δ](../../KingdomRushDove/kr1/upgrades.lua)、[game_settings.lua Δ](../../KingdomRushDove/kr1/game_settings.lua) | 本局数值补丁管线；验证多次重开不重复叠乘 |
-| 战斗 HUD | [game_gui.lua Δ](../../KingdomRushDove/all-desktop/game_gui.lua)、[game_gui_data.lua Δ](../../KingdomRushDove/kr1-desktop/data/game_gui_data.lua) | Control 场景与输入状态；依赖命令和只读状态 |
-| 地图与英雄选择 | [screen_map.lua Δ](../../KingdomRushDove/all-desktop/screen_map.lua)、[map_data.lua Δ](../../KingdomRushDove/kr1-desktop/data/map_data.lua) | 多代地图入口、解锁、配装；依赖持久化和动态文案 |
+| 难度与科技 | [difficulty.lua](../../KingdomRushDove/all/difficulty.lua)、[upgrades.lua](../../KingdomRushDove/kr1/upgrades.lua)、[game_settings.lua](../../KingdomRushDove/kr1/game_settings.lua) | 本局数值补丁管线；验证多次重开不重复叠乘 |
+| 战斗 HUD | [game_gui.lua](../../KingdomRushDove/all-desktop/game_gui.lua)、[game_gui_data.lua](../../KingdomRushDove/kr1-desktop/data/game_gui_data.lua) | Control 场景与输入状态；依赖命令和只读状态 |
+| 地图与英雄选择 | [screen_map.lua](../../KingdomRushDove/all-desktop/screen_map.lua)、[map_data.lua](../../KingdomRushDove/kr1-desktop/data/map_data.lua) | 多代地图入口、解锁、配装；依赖持久化和动态文案 |
 | 第三法术 | [spell_system.lua](../../KingdomRushDove/kr1/spell_system.lua)、[spells](../../KingdomRushDove/kr1/spells/) | 法术注册、资源依赖、施放、等级和附加生命倍率 |
 | 无尽与塔技能 | [endless_utils.lua](../../KingdomRushDove/kr1/endless_utils.lua)、[tech_registry.lua](../../KingdomRushDove/kr1/endless/tech_registry.lua)、[tower_skill_protocol.lua](../../KingdomRushDove/kr1/tower_skill_protocol.lua) | 模板/运行时科技分流、波次成长、技能和保存恢复 |
 | 回溯 | [time_rewind.lua](../../KingdomRushDove/dove_modules/time_rewind.lua)、[time_rewind_kinds.lua](../../KingdomRushDove/dove_modules/time_rewind_kinds.lua) | 玩家操作日志、重建重演、时间线、无效命令和副作用抑制 |
@@ -274,7 +258,7 @@ AppRoot
 {
   "schema_version": 1,
   "id": "level01",
-  "source": {"commit": "184308e3d0d193b4a0a63f123eb41f3ac4aee467"},
+  "source": {"version": "2.1.0.2", "commit": "e4278f83d913f96a8d35a17f912e0c21945bfdac"},
   "mode_ids": [1, 2, 3],
   "layout_ref": "levels/level01.layout.json",
   "paths_ref": "levels/level01.paths.json",
@@ -319,7 +303,7 @@ AppRoot
 
 【设计】保存未应用本局难度和科技的基础值，运行时按第 2 章顺序实例化补丁；另导出若干已求值参考快照供对照测试。禁止在基础 JSON 先乘难度，Godot 入局时再乘一次。所有等级数组、条件分支及取整位置要有来源。
 
-【事实】BASE 的四类塔列表分别含 24、28、25、30 个模板 ID（包含基础级别及特殊条目，不能直接称为 107 座独立高级塔）。难度除了生命还影响速度、掉金、造塔价格、护甲与敌人技能间隔。科技、法术、配置和无尽会继续改变模板或实例。
+【事实】BASE 的弓箭、法师、工程、兵营四类塔列表分别含 25、29、25、30 个模板 ID，合计 109 项（包含基础级别及特殊条目，不能直接称为 109 座独立高级塔）。难度除了生命还影响速度、掉金、造塔价格、护甲与敌人技能间隔。科技、法术、配置和无尽会继续改变模板或实例。
 
 ### 5.3 波次统一模型
 
@@ -466,7 +450,7 @@ Web 派生图集优先以最大 4096 为切分目标，对超大图按帧重新�
 
 ### 7.3 实体与队列
 
-【事实】`simulation:do_tick` 先增加 tick_ts，再处理本步开始时的 pending_inserts、pending_removals，然后依次更新系统。插入采用本批长度快照和正向处理；处理期间新加入的实体不会无限递归入场。旧说明中“倒序插入”与本次代码不符。
+【事实】`simulation:do_tick` 先增加 tick_ts，再处理本步开始时的 pending_inserts、pending_removals，然后依次更新系统。插入采用本批长度快照和正向处理；处理期间新加入的实体不会无限递归入场。插入方向以本版本的正向处理代码为准。
 
 【设计】在每个 tick 明确批次边界；成功入场后更新对应分类、索敌及渲染索引，取消插入不留下半个实体。死亡状态、移除、死亡生成、奖励和表现销毁分开处理。生成于本批处理期间的下一批对象按原可见性推进。
 
@@ -739,7 +723,7 @@ Lua 存档不直接 `loadstring` 执行。将来的原存档迁移在离线工�
 ~~~json
 {
   "schema_version": 1,
-  "content_version": "dove-2.1.0.1-web.1",
+  "content_version": "dove-2.1.0.2-web.1",
   "godot_version": "4.7.2",
   "packs": [{
     "id": "level01",
@@ -768,7 +752,7 @@ Lua 存档不直接 `loadstring` 执行。将来的原存档迁移在离线工�
 
 ### 14.4 导出与托管
 
-【设计】建立明确命名的 `Web Bootstrap`、`Web Content …` 导出预设；导出选择由构建工具生成依赖文件列表。动态 `FileAccess` JSON 不会自动被所有场景依赖发现，必须包含在对应包的非资源过滤器/清单中。现有 ASSETS 中 `*.json` 是全量开发导出提示，正式分包不能因此把全部 JSON（历史 1,508 份，当前 1,519 份）又塞回每一个包。
+【设计】建立明确命名的 `Web Bootstrap`、`Web Content …` 导出预设；导出选择由构建工具生成依赖文件列表。动态 `FileAccess` JSON 不会自动被所有场景依赖发现，必须包含在对应包的非资源过滤器/清单中。现有 ASSETS 中 `*.json` 是全量开发导出提示，正式分包不能因此把全部 1,519 份资产 JSON 又塞回每一个包。
 
 排除 `source_assets`、reports、tools、tests、docs、原 DLL/SO 和不需要的字体/文案。保留原 `.gdignore` 约定并检查实际导出清单；不把 `.godot` 原始缓存目录整体发布。游戏入口场景、InputMap、视口和音量总线在 M0/M1 显式配置。
 
@@ -782,7 +766,7 @@ Web 产物通过本地 HTTP 服务或正式 HTTPS 提供，不能双击 `file://
 
 【设计目标，尚未实测】1080p 普通关卡目标 60 FPS，压力场景至少 30 FPS；逻辑固定 30 Hz。分别记录渲染帧 P50/P95/P99、模拟步耗时、长任务、活动实体/部件/音源数、下载字节与首次可交互时间。
 
-M0 产出参考设备记录（CPU、GPU、内存、系统、浏览器完整版本、DPR），并据真实包测量冻结 bootstrap、单关依赖、Wasm 和纹理预算。不得把 3.08 GiB 开发目录当作允许的首包，也不把未测过的“512 MiB 一定够”写成引擎保证。检查内存要区分浏览器进程、Wasm、CPU 资源和估算 GPU；无法测量的项标明方法与局限。
+M0 产出参考设备记录（CPU、GPU、内存、系统、浏览器完整版本、DPR），并据真实包测量冻结 bootstrap、单关依赖、Wasm 和纹理预算。不得把 3.09 GiB 开发目录当作允许的首包，也不把未测过的“512 MiB 一定够”写成引擎保证。检查内存要区分浏览器进程、Wasm、CPU 资源和估算 GPU；无法测量的项标明方法与局限。
 
 压力场景由固定输入/随机流生成，包含密集敌人、多个高级塔、英雄召唤、EXO 和持续区域；持续至少 10 分钟，并做 10 次切关。优化顺序为依赖裁剪/大图 → 缓存与分配 → 索敌和脚本 → 绘制与特效；不得为性能删除实际伤害或改变波次。
 
@@ -809,7 +793,7 @@ Web 导出在 M0 开始，持续纳入各阶段；不等全游戏完成才第一
 
 | ID / 优先级 | 任务与产物 | 依赖 | 验收 |
 | --- | --- | --- | --- |
-| M0-01 / P0 | 导出 BASE 隔离副本，生成版本/文件哈希与差异清单，登记实际设备 | 无 | 原目录不变；相同 BASE 导出可复现；明确与现安装版不同 |
+| M0-01 / P0 | 导出 2.1.0.2 BASE 隔离副本，生成源码与配套资源的版本/哈希清单，登记实际设备 | 无 | 源码、安装目录和快照标识与 BASE 一致；相同输入导出可复现 |
 | M0-02 / P0 | 建数据 schema、受限数据适配器与模板导出探针，导出第一关和四基础塔 | M0-01 | JSON 可解析；模板继承/脚本绑定不丢失；未支持语法明确失败 |
 | M0-03 / P0 | 建坐标投影和普通动画验证场，使用现有 catalog | 无 | 4:3/16:9，背景/塔位/脚点/输入逆变换对齐；高清 UV 不重复放大 |
 | M0-04 / P0 | EXO3 姿态采样器和最小播放器，返回挂点变换 | M0-03 | 动作、翻转、alpha/斜切、挂点与源版对照；无绘制时同样可采样 |
@@ -861,7 +845,7 @@ M0-03 可与 M0-01/02 按任务依赖独立推进；这是任务图，不要求�
 | 浏览器验收 | 实际 Web 导出，三浏览器、刷新/网络/存储/后台流程 | 控制台无未处理错误，实际操作可完成 |
 | 长时与切关 | 固定压力场、反复切关及实例重启、重复无尽/回溯 | 无逻辑挂起和无限增长；达到目标或有明确阻塞问题 |
 
-原版参考必须运行冻结版本的隔离副本，使用独立存档并关闭更新和插件。编制时安装目录已升级，不直接运行它生成“BASE 金样”。现有 autoplay 可作为接口参考，使用前确认默认配置和日志副作用；本文未启动原游戏或修改其存档。
+原版参考使用 Dove `2.1.0.2` 的隔离运行副本，核对提交与 BASE 一致，使用独立存档并关闭更新和插件。现有 autoplay 可作为接口参考，使用前确认默认配置和日志副作用；本文未启动原游戏或修改其存档。
 
 跨引擎对比先固定伤害和路径/子路径，再比较确定事件。带随机结果的场景记录决策或比较受控分布；不得仅使用相同 seed 就要求两个引擎生成相同世界。时间戳允许一个 1/30 秒模拟步以内的采样偏差；分支触发次数、价格、奖励、伤害和单位数必须按源规则一致。
 
@@ -873,7 +857,7 @@ M0-03 可与 M0-01/02 按任务依赖独立推进；这是任务图，不要求�
 | --- | --- | --- |
 | DATA-01 | 第一关导出 | 8 塔位、初始 20/270、7 组、48/8 敌人；模式覆盖不丢 |
 | DATA-02 | 同名帧/别名、索引 | 组+帧唯一定位；Lua nil 孔位、1 基/0 基转换不移位 |
-| DATA-03 | 基线漂移、未知行为或缺资源 | 明确拒绝/报告，不从新安装目录静默补值 |
+| DATA-03 | 基准哈希不符、未知行为或缺资源 | 明确拒绝/报告，不从未登记来源静默补值 |
 | SIM-01 | 暂停 10 秒后继续 | tick/冷却/波次不前进，UI 可响应；继续无积压出生 |
 | SIM-02 | 同输入 1×/倍速 | 按模拟时间的事件与数值一致；UI 不加速 |
 | SIM-03 | 入场时再召唤、移除时再插入 | 生命周期批次可解释，无遍历跳过和无限递归 |
@@ -932,116 +916,84 @@ M0-03 可与 M0-01/02 按任务依赖独立推进；这是任务图，不要求�
 
 ### 16.5 文档交付时的实际验证范围
 
-【已完成调研】读取 SRC 和 BASE 核心系统、模板与数据入口；确认版本 Git 对象、19 项 Lua 差异、现有报告统计、首关波次、PNG 头尺寸、Godot 版本和模板安装情况；通过 Context7/官方文档核对 Web 约束。本次文档编制没有启动原游戏，也没有修改其源码、素材或存档；编制期间外部素材同步造成的版本变化已单列。
+【已完成调研】核对 Dove `2.1.0.2` 的 SRC、安装目录及 SNAPSHOT 版本标识与 BASE 提交；读取核心系统、模板和数据入口；核对当前报告统计、首关布局与波次、塔列表、PNG 头尺寸、Godot 版本和模板安装情况；通过 Context7/官方文档核对 Web 约束。
 
-【已有历史证据】转换报告记录全体 DDS 转 PNG 像素一致，Godot 资源校验 failures 为空，兼容渲染器素材预览通过。这些报告与现有文件链接在第 1 章和附录中。
+【已有素材验证记录】当前转换报告记录全体 DDS 转 PNG 像素一致；汇总报告记录 13,032 个产物文件哈希及 7,016 个来源文件核对无错误、7 项格式测试通过、Godot 导入与资源校验通过、Compatibility 素材预览通过。来源与具体口径见第 1 章和附录 B。这些是已有报告记录，本次文档修订未重新运行全量转换或引擎测试。
 
-【本次文档检查】检查本地链接、目录锚点、JSON 示例、任务/用例引用、BASE 路径与关键统计，检查本次编辑仅涉及本指南及素材说明入口，保留同时存在的外部素材/源码同步改动。文中的所有新游戏系统、Web 分包探针、浏览器与性能用例均尚待实现；历史素材预览不代替它们。
+【本次文档检查】核对本地链接、目录锚点、JSON 示例、任务/用例引用、BASE 源码路径和关键统计。本次修订仅涉及本指南及素材说明；未启动原游戏，未修改游戏源码、素材或存档。所有新游戏系统、Web 分包探针、浏览器与性能用例均为后续实现及验收任务。
 
 <a id="appendix-a"></a>
-## 附录 A：版本差异
+## 附录 A：2.1.0.2 基准与内容核对
 
-### A.1 BASE 与参考 HEAD 的 19 个 Lua 变化
+### A.1 基准登记入口
 
-比较对象为 `184308e3…` 与 `220f2c15…`，范围为 all、all-desktop、kr1、kr1-desktop；只计 `.lua`。该比较可从 Git 重现，已更新的安装目录不参与此表。
+本指南只使用 Dove `2.1.0.2`，冻结提交为 `e4278f83d913f96a8d35a17f912e0c21945bfdac`。实施任务及验收报告均引用该标识。
 
-| 分组 | 变化文件 |
-| --- | --- |
-| 核心（5） | `all/exoskeleton.lua`、`all/game.lua`、`all/scripts.lua`、`all/seek.lua`、`all/utils.lua` |
-| 游戏行为/设置（7） | `kr1/archer_towers.lua`、`kr1/engineer_towers.lua`、`kr1/game_settings.lua`、`kr1/mage_towers.lua`、`kr1/tower_scripts.lua`、`kr1/upgrades.lua`、`kr1/data/tower_menus_data.lua` |
-| 关卡与存档（5） | `kr1/data/slot_template.lua`、`kr1/data/levels/level207.lua`、`kr1/data/levels/level207_data.lua`、`kr1/data/levels/level218.lua`、`kr1/data/levels/level218_data.lua` |
-| 桌面数据（2） | `kr1-desktop/data/game_gui_data.lua`、`kr1-desktop/data/map_data.lua` |
+| 核对项 | 文件 / 入口 | 预期 |
+| --- | --- | --- |
+| 源码版本与提交 | [SRC version.lua](../../KingdomRushDove/version.lua)、`git rev-parse HEAD` | `id=2.1.0.2`，HEAD 与 BASE 一致 |
+| 素材快照版本与提交 | [SNAPSHOT version.lua](../source_assets/kingdom_rush_dove/version.lua)、[提交记录](../source_assets/kingdom_rush_dove/current_version_commit_hash.txt) | `id=2.1.0.2`，提交记录与 BASE 一致 |
+| 当前资源来源与文件哈希 | [assets_manifest.json](../reports/assets_manifest.json) | 来源版本与上表一致；manifest 哈希见 1.4 |
+| 当前素材校验结论 | [verification_summary.json](../reports/verification_summary.json)、[assets_verification.json](../reports/assets_verification.json) | 版本、文件数及检查范围与第 1 章一致；告警按附录 B 处理 |
 
-`all-desktop` 在这两个 Git 版本之间没有 Lua 差异；编制时实时安装目录的该目录已包含后续变化，二者不能混算。Git 差异还包含组合动画和 game_animations.bin 等非 Lua 产物，不在“19”之内。
+### A.2 完整范围中的塔依赖示例
 
-### A.2 编制期间同步到 e4278f83 的后续变化
+以下两塔均按 M4 批量内容迁移执行，涉及的 Dove 塔技能机制接入 M5；不得因素材已转换而跳过行为迁移或验收。
 
-SRC 当前 HEAD 为 `e4278f83d913f96a8d35a17f912e0c21945bfdac`。REF→当前另外变化的 6 个 Lua 文件为 `all-desktop/game_gui.lua`、`all-desktop/screen_map.lua`、`kr1/archer_towers.lua`、`kr1/barrack_towers.lua`、`kr1/mage_towers.lua`、`kr1/tower_scripts.lua`。其中 3 个与上表重叠，因此 BASE→当前合计 22 个 Lua 文件，不是 25 个。
+| 内容 ID | 定义与行为入口 | 配套资源与核对重点 |
+| --- | --- | --- |
+| `tower_forger` | [mage_towers.lua](../../KingdomRushDove/kr1/mage_towers.lua)、[tower_scripts.lua](../../KingdomRushDove/kr1/tower_scripts.lua) 中的 `scripts.tower_forger` 及其引用行为 | `go_towers_forger` 图集；攻击/技能衍生实体、升级价格、命中与移除清理；菜单、文案与声音 |
+| `tower_sentry` | [archer_towers.lua](../../KingdomRushDove/kr1/archer_towers.lua)、[tower_scripts.lua](../../KingdomRushDove/kr1/tower_scripts.lua) 中的 `scripts.tower_sentry` 及其引用行为 | `go_towers_sentry` 图集与 `sentry*Def` 组合定义；模式切换、技能数值、索敌预留伤害与清理；菜单、文案与声音 |
 
-### A.3 新增内容边界
+两塔同时核对 [game_settings.lua](../../KingdomRushDove/kr1/game_settings.lua) 的列表注册、[tower_menus_data.lua](../../KingdomRushDove/kr1/data/tower_menus_data.lua) 的操作及 [map_data.lua](../../KingdomRushDove/kr1-desktop/data/map_data.lua) 的玩家入口。所有技能等级、价格和行为以 BASE 为准，不能按文案或图像推算。
 
-REF 相对 BASE 增加了 `tower_forger`、`tower_sentry` 的列表/资源依赖及相关脚本变化。历史快照缺少的两张 DDS 和 39 段音频已随当前 2.1.0.2 同步补齐，详见附录 B；素材存在不表示玩法已经迁移。这些新增塔仍不自动列入批准的 BASE 内容范围。若后续升级范围，应同时迁移模板、行为、菜单/文案、动画/EXO 和声音定义。
+### A.3 本批内容验收入口
+
+- [ ] 为本版本所有实际地图入口生成关卡/模式清单，关联原内容 ID、模板、行为、文案和资源依赖。
+- [ ] 四类塔按 25 / 29 / 25 / 30 个列表条目登记，并区分基础级别、进阶塔和特殊条目。
+- [ ] `tower_forger` 与 `tower_sentry` 的选择、建造、升级、技能、卖塔及清理流程列入对应回归场景；受关卡限制的操作在独立测试关卡执行。
+- [ ] 仅将依赖闭合并通过第 16 章用例的内容开放给玩家。
 
 <a id="appendix-b"></a>
-## 附录 B：素材告警与缺失引用
+## 附录 B：2.1.0.2 素材告警
 
-### B.1 冻结快照中的已知告警
+### B.1 当前源定义告警
 
-来源：[assets_verification.json](../reports/assets_verification.json)、[ASSET_REPORT.md](../reports/ASSET_REPORT.md)。以下列出历史基线及当前同步的变化；报告会随导入更新。状态是 `passed_with_source_warnings`，不是“所有引用都完整”。
+来源：[assets_verification.json](../reports/assets_verification.json)、[ASSET_REPORT.md](../reports/ASSET_REPORT.md)。当前状态是 `passed_with_source_warnings`，素材检查已通过，仍须逐项处理实际使用到的源定义告警。
 
 | 项目 | 数量 / 口径 | 处理方式 |
 | --- | --- | --- |
 | 图集边界提示 | 35 组图集、379 条记录 | 常见为声明边界舍入 1 像素；保留来源，针对实际可达帧核对采样与 padding |
 | EXO 缺部件 | 86 份组合定义 | 按可达动作核对所需图集与别名；不能删除部件消除告警 |
-| 普通动画缺帧 | 历史 1,004 个；当前 1,015 个动画定义 | 包括可能未使用的定义；对本批用到的动画逐帧验证 |
+| 普通动画缺帧 | 1,015 个动画定义 | 包括可能未使用的定义；对本批用到的动画逐帧验证 |
 | 字体映射缺文件 | 8 个映射名称 | 不等于现有 8 份字体全部损坏；建立显式字体替代并验中文显示 |
 
-原安装索引的 4,456 个外部素材当时全部存在；上述告警来自源定义/引用关系，不是复制漏文件。修复规则必须记录来源与视觉结果，不能一律夹取 region 或添加空白图片。
+当前安装索引的 **4,497 个外部素材全部存在**，当前源码索引的缺失素材列表也为空。上述告警来自源定义/引用关系，不是复制漏文件。修复规则必须记录来源与视觉结果，不能一律夹取 region 或添加空白图片。Web 部署使用大小写敏感路径，并保持源资源 ID。
 
-### B.2 历史差异中的 41 个外部文件（当前已补齐）
+### B.2 两塔的单帧动画引用核对
 
-以下列表来自历史 2.1.0.1 差异报告；当前 2.1.0.2 对应条目已补齐，不再是待下载清单。大小写按历史报告保留，Web 部署使用大小写敏感路径。
+上述普通动画告警中，奥术幻铸师有 9 条、哨兵瞭望塔有 2 条属于“动画引用带 `_0001` 的帧名，而对应静态帧不带编号”的情况。例如 `arcane_forger_lvl4_tower_base_0001`、`sentry_tower4_0001`、`sentry_tower4mask_0001`。
 
-~~~text
-kr1-desktop/images/fullhd/go_towers_forger.dds
-kr1-desktop/images/fullhd/go_towers_sentry.dds
-kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_arcaneMaw_cast_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_cast_var1_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_cast_var2_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_cast_var3_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_charge_var1_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_charge_var2_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_charge_var3_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_impact_var1_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_impact_var2_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_impact_var3_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_hardlightPrison_cast_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_prismaticSentries_cast_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_prismaticSentries_ray_LOOP_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_prismaticSentries_ray_loopEND_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_prismaticSentries_ray_oneShot_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_sliveringDiscs_cast_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_sliveringDiscs_spin_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_basicAttack_cast_var1_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_basicAttack_cast_var2_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_basicAttack_cast_var3_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_battleMomentum_cast_op1_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_guardianHound_attack_oneShot_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_guardianHound_cast_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_mortalWound_cast_v1.ogg
-kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_tripleTap_cast_v1.ogg
-kr1-desktop/sounds/files/kr_arcaneforger_skill-a_c.ogg
-kr1-desktop/sounds/files/kr_arcaneforger_skill-b_a.ogg
-kr1-desktop/sounds/files/kr_arcaneforger_skill-c_a.ogg
-kr1-desktop/sounds/files/kr_arcaneforger_taunt01_b.ogg
-kr1-desktop/sounds/files/kr_arcaneforger_taunt02_c.ogg
-kr1-desktop/sounds/files/kr_arcaneforger_taunt03_c.ogg
-kr1-desktop/sounds/files/kr_arcaneforger_taunt04_a.ogg
-kr1-desktop/sounds/files/kr_sentrywatchtower_skill-a_b.ogg
-kr1-desktop/sounds/files/kr_sentrywatchtower_skill-b_c.ogg
-kr1-desktop/sounds/files/kr_sentrywatchtower_skill-c_b.ogg
-kr1-desktop/sounds/files/kr_sentrywatchtower_taunt01_c.ogg
-kr1-desktop/sounds/files/kr_sentrywatchtower_taunt02_b.ogg
-kr1-desktop/sounds/files/kr_sentrywatchtower_taunt03_c.ogg
-kr1-desktop/sounds/files/kr_sentrywatchtower_taunt04_c.ogg
-~~~
+当前图像、帧名和动画定义均保留。迁移时先核对对应静态图及原版实际显示，再在有来源记录的适配层建立映射；不能全局删除编号或自动替换所有缺帧。该核对纳入两塔的 RENDER-01/02 验收。
 
 <a id="appendix-c"></a>
 ## 附录 C：命令、现有验证与官方资料
 
-### C.1 读取冻结源码（只读）
+### C.1 读取 2.1.0.2 冻结源码（只读）
 
-在 PowerShell 中执行；第一条只显示内容，不修改源码工作区：
+在 PowerShell 中执行；以下命令只读取源码及其版本：
 
 ~~~powershell
-git -C 'D:/projects/KingdomRushDove' show '184308e3d0d193b4a0a63f123eb41f3ac4aee467:all/game.lua'
-git -C 'D:/projects/KingdomRushDove' diff --name-only 184308e3d0d193b4a0a63f123eb41f3ac4aee467 220f2c155013665fb03bde7db12ba7377a7d54a3 -- all all-desktop kr1 kr1-desktop
+git -C 'D:/projects/KingdomRushDove' rev-parse HEAD
+git -C 'D:/projects/KingdomRushDove' show 'e4278f83d913f96a8d35a17f912e0c21945bfdac:version.lua'
+git -C 'D:/projects/KingdomRushDove' show 'e4278f83d913f96a8d35a17f912e0c21945bfdac:all/game.lua'
 git -C 'D:/projects/KingdomRushDove' status --short
+Get-Content 'source_assets/kingdom_rush_dove/version.lua'
+Get-Content 'source_assets/kingdom_rush_dove/current_version_commit_hash.txt'
+Get-FileHash 'reports/assets_manifest.json' -Algorithm SHA256
 ~~~
 
-M0 如需导出隔离副本，可使用 `git archive` 对 BASE 导出至新工具工作目录，再按清单验证；不得 checkout/reset 用户正在使用的 SRC 工作区。导出副本的玩法数据以 BASE 为准，资源使用当前 catalog 时按第 1 章逐项核对兼容性，不从当前安装版默默补入新玩法。
-
-编制时已验证的历史资源报告 Git blob：`assets_verification.json` 为 `894196700a372a2b273dd993d6b504e77a3a3cf5`，`assets_manifest.json` 为 `5b3f90ec0422cf5a987c986db1319929e1db1b2f`。可用 `git cat-file -p <blob>` 只读核查。它们目前由暂存区引用，不把暂存区当永久档案；M0 应将所需基线信息正式归档。不要为本指南提交、重置或替换用户暂存区。
+后面三条在 WEB 根目录执行。M0 使用 `git archive` 对 BASE 导出至新的工具工作目录，再按清单验证；玩法数据与资源均锁定 `2.1.0.2`。将版本、提交、来源与 manifest 哈希写入基准清单，后续导出和验收复用该清单。
 
 ### C.2 已有素材检查命令
 
@@ -1054,7 +1006,7 @@ python -m unittest discover -s tests -p 'test_*.py' -v
 & 'D:/godot/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script tests/verify_godot_assets.gd
 ~~~
 
-注意 Godot 检查脚本会写 `reports/godot_assets_verification.json`。`--check-source` 还会核对 manifest 中记录的原来源；当前 2.1.0.2 同步后，它只能证明当前来源与当前 manifest 一致，不能证明仍是 BASE 资源。来源再次漂移时应报告不一致，不通过自动更新覆盖来消除版本差异。`--verify-only` 只校验已有目标文件不代表游戏玩法完整。
+注意 Godot 检查脚本会写 `reports/godot_assets_verification.json`。`--verify-only` 校验已有目标文件；追加 `--check-source` 可核对 manifest 中记录的来源文件。仍需同时检查安装目录、源码和快照的 `2.1.0.2` 版本标识与 BASE 提交；文件哈希通过不代表游戏玩法完整。
 
 ### C.3 后续构建接口
 
