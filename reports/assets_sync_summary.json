@@ -1,0 +1,295 @@
+{
+  "schema_version": 1,
+  "synchronized_at": "2026-10-24T20:32:19+08:00",
+  "source_root": "D:\\王国保卫战Dove版\\KingdomRushDove",
+  "reference_repository": "https://github.com/CrazySpottedDove/KingdomRushDove.git",
+  "reference_revision": "e4278f83d913f96a8d35a17f912e0c21945bfdac",
+  "previous_version": "2.1.0.1",
+  "previous_revision": "184308e3d0d193b4a0a63f123eb41f3ac4aee467",
+  "installed_version": "2.1.0.2",
+  "installed_revision": "e4278f83d913f96a8d35a17f912e0c21945bfdac",
+  "statistics_before": {
+    "original_files": 6964,
+    "dds_textures": 580,
+    "dds_formats": {
+      "DXT5": 526,
+      "BC7": 22,
+      "DXT1": 32
+    },
+    "atlases": 488,
+    "frames": 157735,
+    "aliases": 135685,
+    "animations": 12106,
+    "animation_frames": 249337,
+    "exoskeletons": 1012,
+    "composition_animations": 2995,
+    "locales": {
+      "locale_en": 9512,
+      "locale_zh-Hans": 9516
+    },
+    "ogg_files": 3860,
+    "font_files": 8,
+    "original_bytes": 4107113161,
+    "runtime_bytes": 3305567012
+  },
+  "statistics_after": {
+    "original_files": 7016,
+    "dds_textures": 582,
+    "dds_formats": {
+      "DXT5": 528,
+      "BC7": 22,
+      "DXT1": 32
+    },
+    "atlases": 490,
+    "frames": 158627,
+    "aliases": 136501,
+    "animations": 12178,
+    "animation_frames": 250791,
+    "exoskeletons": 1021,
+    "composition_animations": 3052,
+    "locales": {
+      "locale_en": 9573,
+      "locale_zh-Hans": 9573
+    },
+    "ogg_files": 3899,
+    "font_files": 8,
+    "original_bytes": 4131494843,
+    "runtime_bytes": 3318960209
+  },
+  "original_files": {
+    "added": [
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/images/fullhd/go_towers_forger.bin",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/images/fullhd/go_towers_forger.dds",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/images/fullhd/go_towers_sentry.bin",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/images/fullhd/go_towers_sentry.dds",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_arcaneMaw_cast_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_cast_var1_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_cast_var2_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_cast_var3_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_charge_var1_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_charge_var2_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_charge_var3_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_impact_var1_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_impact_var2_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_impact_var3_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_hardlightPrison_cast_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_prismaticSentries_cast_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_prismaticSentries_ray_LOOP_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_prismaticSentries_ray_loopEND_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_prismaticSentries_ray_oneShot_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_sliveringDiscs_cast_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_sliveringDiscs_spin_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_basicAttack_cast_var1_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_basicAttack_cast_var2_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_basicAttack_cast_var3_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_battleMomentum_cast_op1_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_guardianHound_attack_oneShot_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_guardianHound_cast_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_mortalWound_cast_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_tripleTap_cast_v1.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr_arcaneforger_skill-a_c.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr_arcaneforger_skill-b_a.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr_arcaneforger_skill-c_a.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr_arcaneforger_taunt01_b.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr_arcaneforger_taunt02_c.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr_arcaneforger_taunt03_c.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr_arcaneforger_taunt04_a.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr_sentrywatchtower_skill-a_b.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr_sentrywatchtower_skill-b_c.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr_sentrywatchtower_skill-c_b.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr_sentrywatchtower_taunt01_c.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr_sentrywatchtower_taunt02_b.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr_sentrywatchtower_taunt03_c.ogg",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/files/kr_sentrywatchtower_taunt04_c.ogg",
+      "source_assets/kingdom_rush_dove/kr1/data/exoskeletons/sentry4bottomDef.exo3",
+      "source_assets/kingdom_rush_dove/kr1/data/exoskeletons/sentry4topDef.exo3",
+      "source_assets/kingdom_rush_dove/kr1/data/exoskeletons/sentrycasingDef.exo3",
+      "source_assets/kingdom_rush_dove/kr1/data/exoskeletons/sentrydogDef.exo3",
+      "source_assets/kingdom_rush_dove/kr1/data/exoskeletons/sentryreloadDef.exo3",
+      "source_assets/kingdom_rush_dove/kr1/data/exoskeletons/sentrysignDef.exo3",
+      "source_assets/kingdom_rush_dove/kr1/data/exoskeletons/sentrysmokeDef.exo3",
+      "source_assets/kingdom_rush_dove/kr1/data/exoskeletons/sentryultDef.exo3",
+      "source_assets/kingdom_rush_dove/kr1/data/exoskeletons/sentryultmiraDef.exo3"
+    ],
+    "modified": [
+      "source_assets/kingdom_rush_dove/_assets/assets_index.lua",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/images/fullhd/gui_common.bin",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/groups.lua",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/sounds/sounds.lua",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/strings/en.lua",
+      "source_assets/kingdom_rush_dove/_assets/kr1-desktop/strings/zh-Hans.lua",
+      "source_assets/kingdom_rush_dove/current_version_commit_hash.txt",
+      "source_assets/kingdom_rush_dove/kr1-desktop/data/game_gui_data.lua",
+      "source_assets/kingdom_rush_dove/kr1-desktop/data/map_data.lua",
+      "source_assets/kingdom_rush_dove/kr1/data/game_animations.bin",
+      "source_assets/kingdom_rush_dove/kr1/data/levels/level207.lua",
+      "source_assets/kingdom_rush_dove/kr1/data/levels/level207_data.lua",
+      "source_assets/kingdom_rush_dove/kr1/data/levels/level218.lua",
+      "source_assets/kingdom_rush_dove/kr1/data/levels/level218_data.lua",
+      "source_assets/kingdom_rush_dove/kr1/data/slot_template.lua",
+      "source_assets/kingdom_rush_dove/kr1/data/tower_menus_data.lua",
+      "source_assets/kingdom_rush_dove/version.lua"
+    ],
+    "removed": []
+  },
+  "runtime_files": {
+    "added": [
+      "assets/kingdom_rush/data/atlases/go_towers_forger.json",
+      "assets/kingdom_rush/data/atlases/go_towers_sentry.json",
+      "assets/kingdom_rush/data/exoskeletons/sentry4bottomDef.json",
+      "assets/kingdom_rush/data/exoskeletons/sentry4topDef.json",
+      "assets/kingdom_rush/data/exoskeletons/sentrycasingDef.json",
+      "assets/kingdom_rush/data/exoskeletons/sentrydogDef.json",
+      "assets/kingdom_rush/data/exoskeletons/sentryreloadDef.json",
+      "assets/kingdom_rush/data/exoskeletons/sentrysignDef.json",
+      "assets/kingdom_rush/data/exoskeletons/sentrysmokeDef.json",
+      "assets/kingdom_rush/data/exoskeletons/sentryultDef.json",
+      "assets/kingdom_rush/data/exoskeletons/sentryultmiraDef.json",
+      "assets/kingdom_rush/kr1-desktop/images/fullhd/go_towers_forger.png",
+      "assets/kingdom_rush/kr1-desktop/images/fullhd/go_towers_sentry.png",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_arcaneMaw_cast_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_cast_var1_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_cast_var2_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_cast_var3_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_charge_var1_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_charge_var2_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_charge_var3_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_impact_var1_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_impact_var2_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_basicAttack_impact_var3_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_hardlightPrison_cast_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_prismaticSentries_cast_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_prismaticSentries_ray_LOOP_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_prismaticSentries_ray_loopEND_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_prismaticSentries_ray_oneShot_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_sliveringDiscs_cast_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_arcaneForger_sliveringDiscs_spin_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_basicAttack_cast_var1_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_basicAttack_cast_var2_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_basicAttack_cast_var3_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_battleMomentum_cast_op1_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_guardianHound_attack_oneShot_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_guardianHound_cast_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_mortalWound_cast_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr6_sfx_towers_sentryWatchtower_tripleTap_cast_v1.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr_arcaneforger_skill-a_c.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr_arcaneforger_skill-b_a.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr_arcaneforger_skill-c_a.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr_arcaneforger_taunt01_b.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr_arcaneforger_taunt02_c.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr_arcaneforger_taunt03_c.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr_arcaneforger_taunt04_a.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr_sentrywatchtower_skill-a_b.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr_sentrywatchtower_skill-b_c.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr_sentrywatchtower_skill-c_b.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr_sentrywatchtower_taunt01_c.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr_sentrywatchtower_taunt02_b.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr_sentrywatchtower_taunt03_c.ogg",
+      "assets/kingdom_rush/kr1-desktop/sounds/files/kr_sentrywatchtower_taunt04_c.ogg"
+    ],
+    "modified": [
+      "assets/kingdom_rush/catalog.json",
+      "assets/kingdom_rush/data/animations.json",
+      "assets/kingdom_rush/data/atlases/gui_common.json",
+      "assets/kingdom_rush/data/locale_en.json",
+      "assets/kingdom_rush/data/locale_zh-Hans.json",
+      "assets/kingdom_rush/data/sound_groups.json",
+      "assets/kingdom_rush/data/sounds.json"
+    ],
+    "removed": []
+  },
+  "source_warning_counts_before": {
+    "atlas": 35,
+    "exo_missing_parts": 86,
+    "animation_missing_frames": 1004,
+    "missing_font_mappings": 8
+  },
+  "source_warning_counts_after": {
+    "atlas": 35,
+    "exo_missing_parts": 86,
+    "animation_missing_frames": 1015,
+    "missing_font_mappings": 8
+  },
+  "missing_from_installed": [],
+  "validation_report": "reports/verification_summary.json",
+  "new_source_animation_warnings": [
+    {
+      "animation": "arcane_forger_lvl4_tower_base",
+      "missing_numbered_frames": [
+        "arcane_forger_lvl4_tower_base_0001"
+      ],
+      "unindexed_static_frame_exists": true
+    },
+    {
+      "animation": "arcane_forger_lvl4_tower_mid",
+      "missing_numbered_frames": [
+        "arcane_forger_lvl4_tower_mid_0001"
+      ],
+      "unindexed_static_frame_exists": true
+    },
+    {
+      "animation": "arcane_forger_lvl4_tower_top",
+      "missing_numbered_frames": [
+        "arcane_forger_lvl4_tower_top_0001"
+      ],
+      "unindexed_static_frame_exists": true
+    },
+    {
+      "animation": "arcane_forger_weapon_a_projectile",
+      "missing_numbered_frames": [
+        "arcane_forger_weapon_a_projectile_0001"
+      ],
+      "unindexed_static_frame_exists": true
+    },
+    {
+      "animation": "arcane_forger_weapon_b_projectile",
+      "missing_numbered_frames": [
+        "arcane_forger_weapon_b_projectile_0001"
+      ],
+      "unindexed_static_frame_exists": true
+    },
+    {
+      "animation": "arcane_forger_weapon_c_projectile",
+      "missing_numbered_frames": [
+        "arcane_forger_weapon_c_projectile_0001"
+      ],
+      "unindexed_static_frame_exists": true
+    },
+    {
+      "animation": "arcane_forger_weapon_d_projectile",
+      "missing_numbered_frames": [
+        "arcane_forger_weapon_d_projectile_0001"
+      ],
+      "unindexed_static_frame_exists": true
+    },
+    {
+      "animation": "arcane_forger_weapon_e_projectile",
+      "missing_numbered_frames": [
+        "arcane_forger_weapon_e_projectile_0001"
+      ],
+      "unindexed_static_frame_exists": true
+    },
+    {
+      "animation": "arcane_forger_weapon_f_projectile",
+      "missing_numbered_frames": [
+        "arcane_forger_weapon_f_projectile_0001"
+      ],
+      "unindexed_static_frame_exists": true
+    },
+    {
+      "animation": "sentry_tower4",
+      "missing_numbered_frames": [
+        "sentry_tower4_0001"
+      ],
+      "unindexed_static_frame_exists": true
+    },
+    {
+      "animation": "sentry_tower4mask",
+      "missing_numbered_frames": [
+        "sentry_tower4mask_0001"
+      ],
+      "unindexed_static_frame_exists": true
+    }
+  ],
+  "resolved_source_animation_warnings": []
+}

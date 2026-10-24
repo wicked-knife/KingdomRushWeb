@@ -17,8 +17,17 @@ func check(condition: bool, message: String) -> void:
 
 func _verify() -> void:
 	var assets := Catalog.new()
+	var report: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://reports/assets_verification.json"))
+	var statistics: Dictionary = report.get("statistics", {})
+	check(not statistics.is_empty(), "asset verification statistics unavailable")
 	check(assets.is_available(), "catalog unavailable")
-	check(assets.list_groups().size() == 488, "expected 488 atlas groups")
+	check(assets.list_groups().size() == statistics.get("atlases", -1), "atlas group count differs from verified source")
+	for group_name: String in ["go_towers_forger", "go_towers_sentry"]:
+		var tower: Dictionary = assets.load_group(group_name)
+		check(not tower.get("frames", {}).is_empty(), "updated tower atlas unavailable: " + group_name)
+		if not tower.get("frames", {}).is_empty():
+			var tower_frame: Dictionary = assets.get_frame(group_name, str(tower["frames"].keys()[0]))
+			check(tower_frame.get("texture") is AtlasTexture, "updated tower texture failed: " + group_name)
 	var sample: Dictionary = assets.get_frame("go_towers_group4", "soldier_lvl4_barbarian_0003")
 	check(not sample.is_empty(), "soldier crop failed")
 	if not sample.is_empty():
@@ -48,7 +57,9 @@ func _verify() -> void:
 	if font != null:
 		check(font.has_char("国".unicode_at(0)), "Chinese font glyph missing")
 	var chinese: Dictionary = assets.get_static("locale_zh-Hans")
-	check(chinese.size() == 9516, "Chinese locale entries were lost")
+	var locales: Dictionary = statistics.get("locales", {})
+	check(chinese.size() == locales.get("locale_zh-Hans", -1), "Chinese locale entries were lost")
+	check(assets.get_static("locale_en").size() == locales.get("locale_en", -1), "English locale entries were lost")
 	var has_placeholder: bool = false
 	for value in chinese.values():
 		if value is String and "%$" in value:

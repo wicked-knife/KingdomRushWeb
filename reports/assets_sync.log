@@ -1,0 +1,91 @@
+[    0.6s] Copying 7016 original and supporting files
+[   11.0s] Originals 500/7016
+[   21.3s] Originals 1000/7016
+[   29.7s] Originals 1500/7016
+[   37.5s] Originals 2000/7016
+[   46.0s] Originals 2500/7016
+[   55.4s] Originals 3000/7016
+[   67.9s] Originals 3500/7016
+[   82.5s] Originals 4000/7016
+[   94.5s] Originals 4500/7016
+[  106.2s] Originals 5000/7016
+[  118.0s] Originals 5500/7016
+[  128.6s] Originals 6000/7016
+[  136.4s] Originals 6500/7016
+[  146.4s] Originals 7000/7016
+[  147.2s] DDS -> PNG 10/582
+[  147.3s] DDS -> PNG 20/582
+[  147.4s] DDS -> PNG 30/582
+[  147.5s] DDS -> PNG 40/582
+[  147.7s] DDS -> PNG 50/582
+[  147.9s] DDS -> PNG 60/582
+[  148.0s] DDS -> PNG 70/582
+[  148.2s] DDS -> PNG 80/582
+[  148.4s] DDS -> PNG 90/582
+[  148.6s] DDS -> PNG 100/582
+[  148.7s] DDS -> PNG 110/582
+[  148.9s] DDS -> PNG 120/582
+[  149.0s] DDS -> PNG 130/582
+[  149.1s] DDS -> PNG 140/582
+[  149.2s] DDS -> PNG 150/582
+[  149.3s] DDS -> PNG 160/582
+[  149.3s] DDS -> PNG 170/582
+[  149.4s] DDS -> PNG 180/582
+[  149.5s] DDS -> PNG 190/582
+[  149.6s] DDS -> PNG 200/582
+[  149.7s] DDS -> PNG 210/582
+[  149.8s] DDS -> PNG 220/582
+[  149.9s] DDS -> PNG 230/582
+[  150.0s] DDS -> PNG 240/582
+[  150.1s] DDS -> PNG 250/582
+[  150.3s] DDS -> PNG 260/582
+[  150.6s] DDS -> PNG 270/582
+[  150.7s] DDS -> PNG 280/582
+[  150.8s] DDS -> PNG 290/582
+[  150.9s] DDS -> PNG 300/582
+[  150.9s] DDS -> PNG 310/582
+[  151.0s] DDS -> PNG 320/582
+[  151.1s] DDS -> PNG 330/582
+[  151.2s] DDS -> PNG 340/582
+[  151.4s] DDS -> PNG 350/582
+[  151.4s] DDS -> PNG 360/582
+[  151.5s] DDS -> PNG 370/582
+[  151.6s] DDS -> PNG 380/582
+[  151.6s] DDS -> PNG 390/582
+[  151.7s] DDS -> PNG 400/582
+[  151.8s] DDS -> PNG 410/582
+[  151.8s] DDS -> PNG 420/582
+[  151.9s] DDS -> PNG 430/582
+[  151.9s] DDS -> PNG 440/582
+[  152.0s] DDS -> PNG 450/582
+[  152.0s] DDS -> PNG 460/582
+[  152.1s] DDS -> PNG 470/582
+[  152.2s] DDS -> PNG 480/582
+[  154.9s] DDS -> PNG 490/582
+[  155.1s] DDS -> PNG 500/582
+[  155.3s] DDS -> PNG 510/582
+[  155.7s] DDS -> PNG 520/582
+[  155.8s] DDS -> PNG 530/582
+[  155.8s] DDS -> PNG 540/582
+[  155.9s] DDS -> PNG 550/582
+[  156.0s] DDS -> PNG 560/582
+[  156.1s] DDS -> PNG 570/582
+[  156.1s] DDS -> PNG 580/582
+[  156.2s] DDS -> PNG 582/582
+[  163.3s] Audio/fonts/cursors 1000/3915
+[  168.0s] Audio/fonts/cursors 2000/3915
+[  171.7s] Audio/fonts/cursors 3000/3915
+[  187.8s] Decoded 490 atlases, 158627 frames, 136501 aliases
+[  193.0s] EXO3 -> JSON 200
+[  197.5s] EXO3 -> JSON 400
+[  202.5s] EXO3 -> JSON 600
+[  206.5s] EXO3 -> JSON 800
+[  211.1s] EXO3 -> JSON 1000
+[  212.0s] Decoded 12178 regular and 3052 composition animations
+[  212.0s] Converting static Lua: sounds
+[  212.8s] Converting static Lua: sound_groups
+[  213.5s] Converting static Lua: sound_settings
+[  213.5s] Converting static Lua: fonts
+[  213.5s] Converting static Lua: locale_en
+[  213.7s] Converting static Lua: locale_zh-Hans
+[  215.6s] COMPLETE: {"original_files": 7016, "dds_textures": 582, "dds_formats": {"DXT5": 528, "BC7": 22, "DXT1": 32}, "atlases": 490, "frames": 158627, "aliases": 136501, "animations": 12178, "animation_frames": 250791, "exoskeletons": 1021, "composition_animations": 3052, "locales": {"locale_en": 9573, "locale_zh-Hans": 9573}, "ogg_files": 3899, "font_files": 8, "original_bytes": 4131494843, "runtime_bytes": 3318960209}; new=128, reused=12904

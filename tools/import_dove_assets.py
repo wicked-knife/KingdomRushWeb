@@ -564,7 +564,7 @@ def write_summary(project: Path):
              f"| Godot 资源（不含导入缓存） | {stats['runtime_bytes'] / 1024**3:.2f} GiB |", "",
              "## 完整性", "",
              f"- {len(manifest['files']):,} 个搬运/转换文件记录了来源、大小、SHA-256 和验证结果。",
-             "- 全部 580 张 DDS 与 PNG 的解码 RGBA 像素逐张一致。",
+             f"- 全部 {stats['dds_textures']:,} 张 DDS 与 PNG 的解码 RGBA 像素逐张一致。",
              f"- 安装包索引中的 {report['installed_index_entries']:,} 项外部素材均存在。",
              "- 图集、动画和 EXO3 的结构、边界及内部索引经过校验。",
              "- `assets_hash_check.log` 为独立目标哈希及原安装目录哈希复核结果。", "",
@@ -578,7 +578,7 @@ def write_summary(project: Path):
              f"新版源码额外引用 {difference.get('missing_extensions', {}).get('.dds', 0)} 张 DDS 和 {difference.get('missing_extensions', {}).get('.ogg', 0)} 段 OGG，未混入安装版本。", ""]
     for name in difference.get("missing_from_installed", []):
         if name.endswith(".dds"): lines.append("- `" + name + "`")
-    lines += ["", "## 使用与 Godot 验证", "", "打开 `scenes/asset_preview.tscn` 后按 F6；完整命令及接口示例见项目根目录 `ASSETS.md`。",
+    lines += ["", "## 使用与 Godot 验证", "", "打开 `scenes/asset_preview.tscn` 后按 F6；完整命令及接口示例见 `docs/ASSETS.md`。",
               "Godot 实际加载检查见 `godot_assets_verification.json`，预览截图见 `asset_preview_background.png` 和 `asset_preview.png`。",
               "本阶段准备全量本地开发素材，未实现游戏玩法、组合动画渲染器或 Web 分包发布。", ""]
     atomic_bytes(project / "reports/ASSET_REPORT.md", "\n".join(lines).encode("utf-8"))
