@@ -1,0 +1,1 @@
+{"schema_version":1,"fps":30,"parts":[{"name":"GoregrindFlying_asst_goregrind_flying","offset":[-1.25,-1.7999999523162842]}],"attach_points":[],"animations":{"idle":[0]},"frames":[[[1.0,1.0,1.0,-4.0,-27.0,1.0,1.0,0.0,0.0,0.0]]],"entry_fields":["type","index_1_based","alpha","x","y","scale_x","scale_y","rotation","skew_x","skew_y"],"name":"GoregrindFlyingDef"}

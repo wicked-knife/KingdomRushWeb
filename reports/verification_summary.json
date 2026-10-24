@@ -1,0 +1,17 @@
+{
+  "manifest_files": 12928,
+  "source_files": 6964,
+  "installed_index_missing": [],
+  "godot": {
+    "failures": [],
+    "godot": "4.7.2-stable (official)",
+    "passed": true
+  },
+  "godot_imported_texture_count": 589,
+  "godot_imported_audio_count": 3860,
+  "godot_imported_font_count": 8,
+  "compatibility_preview_passed": true,
+  "preview_stderr_empty": true,
+  "temporary_asset_ignore_removed": true,
+  "raw_snapshot_ignored": true
+}

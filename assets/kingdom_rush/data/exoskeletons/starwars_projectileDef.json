@@ -1,0 +1,1 @@
+{"schema_version":1,"fps":30,"parts":[{"name":"starwars_projectile_asst_projectile","offset":[-0.10000000149011612,-0.15000000596046448]}],"attach_points":[],"animations":{"run":[0]},"frames":[[[1.0,1.0,1.0,0.0,0.0,1.0,1.0,0.0,0.0,0.0]]],"entry_fields":["type","index_1_based","alpha","x","y","scale_x","scale_y","rotation","skew_x","skew_y"],"name":"starwars_projectileDef"}

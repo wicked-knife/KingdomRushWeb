@@ -1,0 +1,1 @@
+{"schema_version":1,"fps":30,"parts":[{"name":"column_decal_stg9_asst_decal_column","offset":[0.0,0.0]}],"attach_points":[],"animations":{"idle":[0]},"frames":[[[1.0,1.0,1.0,0.0,0.0,1.0,1.0,0.0,0.0,0.0]]],"entry_fields":["type","index_1_based","alpha","x","y","scale_x","scale_y","rotation","skew_x","skew_y"],"name":"column_decal_stg9Def"}

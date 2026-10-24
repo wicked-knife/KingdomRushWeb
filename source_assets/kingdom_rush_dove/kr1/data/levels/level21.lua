@@ -1,0 +1,31 @@
+local signal=require("lib.hump.signal")
+local E=require("entity_db")
+local S=require("sound_db")
+local U=require("utils")
+local LU=require("level_utils")
+local V=require("lib.klua.vector")
+local P=require("path_db")
+require("all.constants")
+local function fts(v)
+return v/FPS
+end
+local level={}
+function level:update(store)
+if store.level_mode==GAME_MODE_CAMPAIGN then
+local boss=E:create_entity("eb_moloch")
+boss.pos=V.vclone(boss.pos_sitting)
+LU.queue_insert(store,boss)
+self.boss=boss
+coroutine.yield()
+U.y_wait_unconditional(store,1)
+while store.wave_group_number<boss.wave_active do
+coroutine.yield()
+end
+boss.phase_signal="battle"
+while self.boss.phase~="death-complete" do
+coroutine.yield()
+end
+U.y_wait_unconditional(store,1)
+end
+end
+return level

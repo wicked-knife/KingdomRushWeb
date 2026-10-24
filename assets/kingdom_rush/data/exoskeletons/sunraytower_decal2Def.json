@@ -1,0 +1,1 @@
+{"schema_version":1,"fps":30,"parts":[{"name":"sunraytower_decal2_Asst_sunraytower_decal2","offset":[0.0,-20.450000762939453]}],"attach_points":[],"animations":{"decal":[0]},"frames":[[[1.0,1.0,1.0,0.0,12.449999809265137,1.0,1.0,0.0,0.0,0.0]]],"entry_fields":["type","index_1_based","alpha","x","y","scale_x","scale_y","rotation","skew_x","skew_y"],"name":"sunraytower_decal2Def"}

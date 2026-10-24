@@ -1,0 +1,163 @@
+local log=require("lib.klua.log"):new("level15")
+local signal=require("lib.hump.signal")
+local km=require("lib.klua.macros")
+local bit=require("bit")
+local A=require("achievements")
+local E=require("entity_db")
+local P=require("path_db")
+local S=require("sound_db")
+local U=require("utils")
+local LU=require("level_utils")
+local V=require("lib.klua.vector")
+require("all.constants")
+local function fts(v)
+return v/FPS
+end
+local v=V.v
+local level={}
+function level:init(store)
+store.level_terrain_style=TERRAIN_STYLE_UNDERGROUND
+self.locations=LU.load_locations(store,self)
+self.locked_hero=false
+self.locked_powers={}
+self.max_upgrade_level=6
+self.locked_towers={}
+if store.level_mode==GAME_MODE_IRON then
+self.locked_towers={"tower_build_mage"}
+end
+end
+function level:load(store)
+local bg_prefix="Stage15_"
+local bg_offset=0
+local bg1=LU.insert_background(store,bg_prefix.."0001",Z_BACKGROUND)
+local bg2=LU.insert_background(store,bg_prefix.."0002",Z_OBJECTS,580)
+local bg3=LU.insert_background(store,bg_prefix.."0003",Z_OBJECTS,615)
+bg1.pos.y=bg1.pos.y+bg_offset
+bg2.pos.y=bg2.pos.y+bg_offset
+bg3.pos.y=bg3.pos.y+bg_offset
+LU.insert_defend_points(store,self.locations.exits,store.level_terrain_style)
+if store.level_mode==GAME_MODE_CAMPAIGN or store.level_mode==GAME_MODE_HEROIC then
+for _,h in pairs(self.locations.holders) do
+if table.contains({"6","3","14","11","10"},h.id) then
+LU.insert_tower(store,"tower_holder_blocked_underground",h.style,h.pos,h.rally_pos,nil,h.id,nil,h.id)
+else
+LU.insert_tower(store,"tower_holder",h.style,h.pos,h.rally_pos,nil,h.id,nil,h.id)
+end
+end
+else
+for _,h in pairs(self.locations.holders) do
+LU.insert_tower(store,"tower_holder",h.style,h.pos,h.rally_pos,nil,h.id,nil,h.id)
+end
+end
+local x
+self.nav_mesh={{10,x,x,2},{5,1,17,5},{4,x,5,8},{11,10,3,13},{3,2,2,6},{8,5,17,16},{9,8,16,x},{13,3,6,7},{15,13,7,x},{11,x,1,4},{12,10,4,12},{x,11,13,15},{12,4,8,14},{12,13,9,15},{12,14,9,x},{7,6,17,x},{6,2,x,16},{x,x,x,x},{x,x,x,x},{x,x,x,x},{x,x,x,x},{x,x,x,x}}
+P:add_invalid_range(1,1,15)
+P:add_invalid_range(2,1,15)
+P:add_invalid_range(3,1,18)
+P:add_invalid_range(4,1,18)
+for i=5,9 do
+local home_enter_node=P:get_end_node(i)-30
+P:add_invalid_range(i,home_enter_node,nil)
+P:add_invalid_range(i,nil,nil,NF_NO_EXIT)
+end
+local e
+local home_pi=9
+local home_node={spi=1,dir=1,pi=home_pi,ni=P:get_end_node(home_pi)-1}
+local home_pos=P:node_pos(home_node.pi,home_node.spi,home_node.ni)
+self.home_node=home_node
+self.home_pos=home_pos
+local CRYSTAL_OFF_Y=45
+if store.level_mode~=GAME_MODE_CAMPAIGN then
+e=E:create_entity("decal")
+e.render.sprites[1].name="boss_corps_thing_0001"
+e.render.sprites[1].animated=false
+e.pos.x,e.pos.y=306,581
+LU.queue_insert(store,e)
+e=E:create_entity("decal")
+e.render.sprites[1].name="boss_corps_thing_0002"
+e.render.sprites[1].animated=false
+e.pos.x,e.pos.y=873,497
+LU.queue_insert(store,e)
+e=E:create_entity("umbra_crystals_broken")
+e.pos.x,e.pos.y=self.home_pos.x,self.home_pos.y+CRYSTAL_OFF_Y
+LU.queue_insert(store,e)
+else
+self.crystals=E:create_entity("umbra_crystals")
+self.crystals.pos=table.deepclone(home_pos)
+self.crystals.pos.y=self.crystals.pos.y+CRYSTAL_OFF_Y
+LU.queue_insert(store,self.crystals)
+local OFF_GUY=v(-3,-75)
+local OFF_FF=v(-2,-47)
+e=E:create_entity("umbra_guy_force_field")
+e.pos.x,e.pos.y=home_pos.x+OFF_FF.x,home_pos.y+OFF_FF.y
+LU.queue_insert(store,e)
+self.guy_force_field=e
+e=E:create_entity("umbra_guy")
+e.pos.x,e.pos.y=home_pos.x+OFF_GUY.x,home_pos.y+OFF_GUY.y
+LU.queue_insert(store,e)
+self.guy=e
+end
+e=E:create_entity("background_sounds_underground")
+LU.queue_insert(store,e)
+end
+function level:update(store)
+LU.insert_hero(store)
+if store.level_mode==GAME_MODE_CAMPAIGN then
+U.y_wait_unconditional(store,2)
+self.guy.phase="intro"
+while store.wave_group_number<1 do
+coroutine.yield()
+end
+while self.guy.phase~="intro-finished" do
+coroutine.yield()
+end
+while not store.waves_finished or LU.has_alive_enemies(store) do
+coroutine.yield()
+end
+U.y_wait_unconditional(store,3)
+signal.emit("show-curtains")
+signal.emit("pan-zoom-camera",2.5,v(560,600),1.5)
+signal.emit("hide-gui")
+S:queue("MusicBossPreFight")
+self.guy.phase="death"
+while self.guy.phase~="death-started" do
+coroutine.yield()
+end
+self.crystals.phase="crack"
+U.y_wait_unconditional(store,4.1)
+LU.queue_remove(store,self.guy_force_field)
+U.y_wait_unconditional(store,0.3)
+self.boss=E:create_entity("eb_umbra")
+self.boss.home_node=table.deepclone(self.home_node)
+LU.queue_insert(store,self.boss)
+while self.boss.phase~="loop" do
+coroutine.yield()
+end
+signal.emit("hide-curtains")
+signal.emit("pan-zoom-camera",2,v(512,384),1)
+signal.emit("show-gui")
+S:queue("MusicBossFight")
+while self.boss.phase~="death-animation" do
+coroutine.yield()
+end
+signal.emit("hide-gui",true)
+for _,e in pairs(store.entities) do
+if e and e.tower then
+e.tower.blocked=true
+end
+end
+while self.boss.phase~="dead" do
+coroutine.yield()
+end
+store.custom_game_outcome={next_item_name="kr2_end"}
+else
+while store.wave_group_number<1 do
+coroutine.yield()
+end
+while not store.waves_finished or LU.has_alive_enemies(store) do
+coroutine.yield()
+end
+end
+log.debug("-- WON")
+end
+return level

@@ -1,0 +1,1 @@
+{"schema_version":1,"fps":30,"parts":[{"name":"StunWhite_asst_stunfx_white","offset":[0.0,0.0]}],"attach_points":[],"animations":{"Idle":[0]},"frames":[[[1.0,1.0,1.0,0.0,0.0,1.0,1.0,0.0,0.0,0.0]]],"entry_fields":["type","index_1_based","alpha","x","y","scale_x","scale_y","rotation","skew_x","skew_y"],"name":"StunWhiteDef"}

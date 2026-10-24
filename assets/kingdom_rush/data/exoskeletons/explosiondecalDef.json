@@ -1,0 +1,1 @@
+{"schema_version":1,"fps":30,"parts":[{"name":"explosiondecal_asst_heart_decal","offset":[58.849998474121094,21.799999237060547]}],"attach_points":[],"animations":{"idle":[0]},"frames":[[[1.0,1.0,1.0,-64.75,-20.450000762939453,1.0,1.0,0.0,0.0,0.0]]],"entry_fields":["type","index_1_based","alpha","x","y","scale_x","scale_y","rotation","skew_x","skew_y"],"name":"explosiondecalDef"}

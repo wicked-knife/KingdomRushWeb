@@ -1,0 +1,4857 @@
+local tpl = require("data.tower_menus_data_templates")
+local scripts = require("kr1.data.tower_menus_data_scripts")
+local M = scripts.merge
+local i18n = require("i18n")
+return {
+	holder = {{M(tpl.upgrade, {
+		action_arg = "tower_build_archer",
+		image = "main_icons_0001",
+		place = 1,
+		preview = "archer",
+		tt_title = _("TOWER_ARCHER_1_NAME"),
+		tt_desc = _("TOWER_ARCHER_1_DESCRIPTION")
+	}), M(tpl.upgrade, {
+		action_arg = "tower_build_barrack",
+		image = "main_icons_0002",
+		place = 2,
+		preview = "barrack",
+		tt_title = _("TOWER_BARRACK_1_NAME"),
+		tt_desc = _("TOWER_BARRACK_1_DESCRIPTION")
+	}), M(tpl.upgrade, {
+		action_arg = "tower_build_mage",
+		image = "main_icons_0003",
+		place = 3,
+		preview = "mage",
+		tt_title = _("TOWER_MAGE_1_NAME"),
+		tt_desc = _("TOWER_MAGE_1_DESCRIPTION")
+	}), M(tpl.upgrade, {
+		action_arg = "tower_build_engineer",
+		image = "main_icons_0004",
+		place = 4,
+		preview = "engineer",
+		tt_title = _("TOWER_ENGINEER_1_NAME"),
+		tt_desc = _("TOWER_ENGINEER_1_DESCRIPTION")
+	})}},
+	random_foundamental = {{M(tpl.upgrade, {
+		action_arg = "tower_random_foundamental",
+		image = "main_icons_0015",
+		place = 5,
+		tt_title = _("TOWER_RANDOM_FOUNDAMENTAL_NAME"),
+		tt_desc = _("TOWER_RANDOM_FOUNDAMENTAL_DESCRIPTION")
+	})}},
+	random_advanced_archer = {{M(tpl.upgrade, {
+		action_arg = "tower_random_advanced_archer",
+		image = "main_icons_0015",
+		place = 5,
+		tt_title = _("TOWER_RANDOM_ADVANCED_ARCHER_NAME"),
+		tt_desc = _("TOWER_RANDOM_ADVANCED_ARCHER_DESCRIPTION")
+	}), tpl.sell}},
+	random_advanced_mage = {{M(tpl.upgrade, {
+		action_arg = "tower_random_advanced_mage",
+		image = "main_icons_0015",
+		place = 5,
+		tt_title = _("TOWER_RANDOM_ADVANCED_MAGE_NAME"),
+		tt_desc = _("TOWER_RANDOM_ADVANCED_MAGE_DESCRIPTION")
+	}), tpl.sell}},
+	random_advanced_engineer = {{M(tpl.upgrade, {
+		action_arg = "tower_random_advanced_engineer",
+		image = "main_icons_0015",
+		place = 5,
+		tt_title = _("TOWER_RANDOM_ADVANCED_ENGINEER_NAME"),
+		tt_desc = _("TOWER_RANDOM_ADVANCED_ENGINEER_DESCRIPTION")
+	}), tpl.sell}},
+	random_advanced_barrack = {{M(tpl.upgrade, {
+		action_arg = "tower_random_advanced_barrack",
+		image = "main_icons_0015",
+		place = 5,
+		tt_title = _("TOWER_RANDOM_ADVANCED_BARRACK_NAME"),
+		tt_desc = _("TOWER_RANDOM_ADVANCED_BARRACK_DESCRIPTION")
+	}), tpl.rally, tpl.sell}},
+	blocked_holder = {{M(tpl.unblock, {
+		image = "main_icons_0037",
+		tt_title = _("SPECIAL_REPAIR_HOLDER_UNDERGROUND_NAME"),
+		tt_desc = _("SPECIAL_REPAIR_HOLDER_UNDERGROUND_DESCRIPTION")
+	})}},
+	stage_204_crane = {{M(tpl.buy_attack, {
+		check = "main_icons_0019",
+		action = "tw_repair",
+		action_arg = "",
+		halo = "glow_ico_main",
+		image = "main_icons_0037",
+		place = 5,
+		tt_title = _("TOWER_STAGE_204_CRANE_BUY_NAME"),
+		tt_desc = _("TOWER_STAGE_204_CRANE_BUY_DESC")
+	})}},
+	stage_207_barn = {{M(tpl.buy_attack, {
+		action = "tw_custom_no_close",
+		action_arg = "",
+		halo = "glow_ico_main",
+		image = "kr6_quickmenu_main_icon_s7barrack",
+		place = 5,
+		tt_title = _("TOWER_STAGE_207_BARN_BUY_NAME"),
+		tt_desc = _("TOWER_STAGE_207_BARN_BUY_DESC")
+	})}},
+	stage_208_catapult = {{M(tpl.buy_attack, {
+		check = "main_icons_0019",
+		action_arg = 1,
+		image = "kr6_quickmenu_main_icon_s8catapult",
+		place = 5,
+		tt_title = _("TOWER_STAGE_208_CATAPULT_BUY_NAME"),
+		tt_desc = _("TOWER_STAGE_208_CATAPULT_BUY_DESC")
+	})}},
+	stage_217_joust = {{M(tpl.buy_attack, {
+		action = "tw_custom_no_close",
+		action_arg = "red",
+		halo = "glow_ico_main",
+		image = "kr6_quickmenu_main_icon_joust_red",
+		place = 1,
+		tt_title = _("TOWER_STAGE_217_JOUST_BET_RED_NAME"),
+		tt_desc = _("TOWER_STAGE_217_JOUST_BET_RED_DESC")
+	}), M(tpl.buy_attack, {
+		action = "tw_custom_no_close",
+		action_arg = "blue",
+		halo = "glow_ico_main",
+		image = "kr6_quickmenu_main_icon_joust_blue",
+		place = 2,
+		tt_title = _("TOWER_STAGE_217_JOUST_BET_BLUE_NAME"),
+		tt_desc = _("TOWER_STAGE_217_JOUST_BET_BLUE_DESC")
+	})}},
+	stage_11_camp = {},
+	stage_11_spider_eggs_nest = {{M(tpl.buy_attack, {
+		action = "tw_custom_no_close",
+		action_arg = "",
+		halo = "glow_ico_main",
+		image = "kr6_quickmenu_main_icon_s11_archers",
+		place = 5,
+		tt_title = _("TOWER_STAGE_211_CAMP_3_ATTACK_NAME"),
+		tt_desc = _("TOWER_STAGE_211_CAMP_3_ATTACK_DESCRIPTION")
+	})}},
+	mage = {{M(tpl.common_upgrade, {
+		action_arg = "tower_mage_2",
+		tt_title = _("TOWER_MAGE_2_NAME"),
+		tt_desc = _("TOWER_MAGE_2_DESCRIPTION")
+	}), tpl.sell}, {M(tpl.common_upgrade, {
+		action_arg = "tower_mage_3",
+		tt_title = _("TOWER_MAGE_3_NAME"),
+		tt_desc = _("TOWER_MAGE_3_DESCRIPTION")
+	}), tpl.sell}, {
+		M(tpl.upgrade, {
+			action_arg = "tower_arcane_wizard",
+			image = "main_icons_0006",
+			place = 5,
+			tt_title = _("TOWER_ARCANE_WIZARD_LVL4_NAME"),
+			tt_desc = _("TOWER_ARCANE_WIZARD_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_sorcerer",
+			image = "main_icons_0007",
+			place = 6,
+			tt_title = _("TOWER_SORCERER_NAME"),
+			tt_desc = _("TOWER_SORCERER_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_sunray",
+			image = "main_icons_0018",
+			place = 7,
+			tt_title = _("TOWER_SUNRAY_NAME"),
+			tt_desc = _("TOWER_SUNRAY_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_necromancer",
+			image = "main_icons_0021",
+			tt_title = _("TOWER_NECROMANCER_LVL4_NAME"),
+			tt_desc = _("TOWER_NECROMANCER_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_archmage",
+			image = "main_icons_0022",
+			tt_title = _("TOWER_ARCHMAGE_NAME"),
+			tt_desc = _("TOWER_ARCHMAGE_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_wild_magus",
+			image = "kr3_main_icons_0003",
+			tt_title = _("TOWER_WILD_MAGUS_NAME"),
+			tt_desc = _("TOWER_WILD_MAGUS_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_high_elven",
+			image = "kr3_main_icons_0004",
+			tt_title = _("TOWER_HIGH_ELVEN_NAME"),
+			tt_desc = _("TOWER_HIGH_ELVEN_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_faerie_dragon",
+			image = "kr3_main_icons_0013",
+			tt_title = _("TOWER_FAERIE_DRAGON_NAME"),
+			tt_desc = _("TOWER_FAERIE_DRAGON_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_pixie",
+			image = "kr3_main_icons_0012",
+			tt_title = _("TOWER_PIXIE_NAME"),
+			tt_desc = _("TOWER_PIXIE_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_necromancer_lvl4",
+			image = "kr5_main_icons_0011",
+			tt_title = _("TOWER_NECROMANCER_LVL4_NAME"),
+			tt_desc = _("TOWER_NECROMANCER_LVL4_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_ray_lvl4",
+			image = "kr5_main_icons_0018",
+			tt_title = _("TOWER_RAY_LVL4_NAME"),
+			tt_desc = _("TOWER_RAY_LVL4_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_elven_stargazers_lvl4",
+			image = "kr5_main_icons_0008",
+			tt_title = _("TOWER_ELVEN_STARGAZERS_LVL4_NAME"),
+			tt_desc = _("TOWER_ELVEN_STARGAZERS_LVL4_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_arcane_wizard_lvl4",
+			image = "kr5_main_icons_0003",
+			tt_title = _("TOWER_ARCANE_WIZARD_LVL4_NAME"),
+			tt_desc = _("TOWER_ARCANE_WIZARD_LVL4_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_hermit_toad_lvl4",
+			image = "kr5_main_icons_0034",
+			tt_title = _("TOWER_HERMIT_TOAD_LVL4_NAME"),
+			tt_desc = _("TOWER_HERMIT_TOAD_LVL4_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_arborean_emissary_lvl4",
+			image = "kr5_main_icons_0006",
+			tt_title = _("TOWER_ARBOREAN_EMISSARY_LVL4_NAME"),
+			tt_desc = _("TOWER_ARBOREAN_EMISSARY_LVL4_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_dragons_lvl4",
+			image = "kr5_main_icons_0051",
+			type = "dragons",
+			tt_title = _("TOWER_DRAGONS_LVL4_NAME"),
+			tt_desc = _("TOWER_DRAGONS_LVL4_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_infernal_mage",
+			image = "kr4_main_icons_0003",
+			type = "infernal_mage",
+			tt_title = _("TOWER_INFERNAL_MAGE_NAME"),
+			tt_desc = _("TOWER_INFERNAL_MAGE_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_orc_shaman",
+			image = "kr4_main_icons_0014",
+			type = "orc_shaman",
+			tt_title = _("TOWER_ORC_SHAMAN_NAME"),
+			tt_desc = _("TOWER_ORC_SHAMAN_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_spirit_mausoleum",
+			image = "kr4_main_icons_0007",
+			type = "spirit_mausoleum",
+			tt_title = _("TOWER_SPIRIT_MAUSOLEUM_NAME"),
+			tt_desc = _("TOWER_SPIRIT_MAUSOLEUM_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_deep_devils",
+			image = "kr4_main_icons_0017",
+			type = "deep_devils",
+			tt_title = _("TOWER_DEEP_DEVILS_NAME"),
+			tt_desc = _("TOWER_DEEP_DEVILS_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_blazing_watcher",
+			image = "kr4_main_icons_0016",
+			type = "blazing_watcher",
+			tt_title = _("TOWER_BLAZING_WATCHER_NAME"),
+			tt_desc = _("TOWER_BLAZING_WATCHER_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_wicked_sisters",
+			image = "kr4_main_icons_0013",
+			type = "wicked_sisters",
+			tt_title = _("TOWER_WICKED_SISTERS_NAME"),
+			tt_desc = _("TOWER_WICKED_SISTERS_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_wizard",
+			image = "kr6_quickmenu_main_icon_wizard",
+			type = "wizard",
+			tt_title = _("TOWER_WIZARD_NAME"),
+			tt_desc = _("TOWER_WIZARD_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_sunray_master",
+			image = "kr6_quickmenu_main_icon_sunray_master",
+			type = "sunray_master",
+			tt_title = _("TOWER_SUNRAY_MASTER_NAME"),
+			tt_desc = _("TOWER_SUNRAY_MASTER_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_light_priestess",
+			image = "kr6_quickmenu_main_icon_light_priestess",
+			type = "light_priestess",
+			tt_title = _("TOWER_LIGHT_PRIESTESS_NAME"),
+			tt_desc = _("TOWER_LIGHT_PRIESTESS_DESCRIPTION")
+		}),
+		tpl.sell
+	}},
+	engineer = {{M(tpl.common_upgrade, {
+		action_arg = "tower_engineer_2",
+		tt_title = _("TOWER_ENGINEER_2_NAME"),
+		tt_desc = _("TOWER_ENGINEER_2_DESCRIPTION")
+	}), tpl.sell}, {M(tpl.common_upgrade, {
+		action_arg = "tower_engineer_3",
+		tt_title = _("TOWER_ENGINEER_3_NAME"),
+		tt_desc = _("TOWER_ENGINEER_3_DESCRIPTION")
+	}), tpl.sell}, {
+		M(tpl.upgrade, {
+			action_arg = "tower_bfg",
+			image = "main_icons_0013",
+			place = 5,
+			tt_title = _("TOWER_BFG_NAME"),
+			tt_desc = _("TOWER_BFG_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_tesla",
+			image = "main_icons_0012",
+			place = 6,
+			tt_title = _("TOWER_TESLA_NAME"),
+			tt_desc = _("TOWER_TESLA_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_dwaarp",
+			image = "main_icons_0027",
+			place = 7,
+			tt_title = _("TOWER_DWAARP_NAME"),
+			tt_desc = _("TOWER_DWAARP_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_mech",
+			image = "main_icons_0028",
+			tt_title = _("TOWER_MECH_NAME"),
+			tt_desc = _("TOWER_MECH_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_frankenstein",
+			image = "main_icons_0039",
+			tt_title = _("TOWER_FRANKENSTEIN_NAME"),
+			tt_desc = _("TOWER_FRANKENSTEIN_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_druid",
+			image = "kr3_main_icons_0008",
+			tt_title = _("TOWER_DRUID_NAME"),
+			tt_desc = _("TOWER_DRUID_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_entwood",
+			image = "kr3_main_icons_0007",
+			tt_title = _("TOWER_ENTWOOD_NAME"),
+			tt_desc = _("TOWER_ENTWOOD_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_tricannon_lvl4",
+			image = "kr5_main_icons_0004",
+			tt_title = _("TOWER_TRICANNON_LVL4_NAME"),
+			tt_desc = _("TOWER_TRICANNON_LVL4_DESCRIPTION"),
+			place = 14
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_demon_pit_lvl4",
+			image = "kr5_main_icons_0007",
+			tt_title = _("TOWER_DEMON_PIT_LVL4_NAME"),
+			tt_desc = _("TOWER_DEMON_PIT_LVL4_DESCRIPTION"),
+			place = 15
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_flamespitter_lvl4",
+			image = "kr5_main_icons_0012",
+			tt_title = _("TOWER_FLAMESPITTER_LVL4_NAME"),
+			tt_desc = _("TOWER_FLAMESPITTER_LVL4_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_barrel_lvl4",
+			image = "kr5_main_icons_0017",
+			tt_title = _("TOWER_BARREL_LVL4_NAME"),
+			tt_desc = _("TOWER_BARREL_LVL4_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_sparking_geode_lvl4",
+			image = "kr5_main_icons_0042",
+			type = "sparking_geode",
+			tt_title = _("TOWER_SPARKING_GEODE_LVL4_NAME"),
+			tt_desc = _("TOWER_SPARKING_GEODE_LVL4_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_rotten_forest",
+			image = "kr4_main_icons_0012",
+			type = "rotten_forest",
+			tt_title = _("TOWER_ROTTEN_FOREST_NAME"),
+			tt_desc = _("TOWER_ROTTEN_FOREST_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_rocket_riders",
+			image = "kr4_main_icons_0004",
+			type = "rocket_riders",
+			tt_title = _("TOWER_ROCKET_RIDERS_NAME"),
+			tt_desc = _("TOWER_ROCKET_RIDERS_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_balloon",
+			image = "kr4_main_icons_0015",
+			type = "balloon",
+			tt_title = _("TOWER_BALLOON_NAME"),
+			tt_desc = _("TOWER_BALLOON_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_ignis_altar",
+			image = "kr4_main_icons_0020",
+			type = "ignis_altar",
+			tt_title = _("TOWER_IGNIS_ALTAR_NAME"),
+			tt_desc = _("TOWER_IGNIS_ALTAR_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_melting_furnace",
+			image = "kr4_main_icons_0006",
+			type = "melting_furnace",
+			tt_title = _("TOWER_MELTING_FURNACE_NAME"),
+			tt_desc = _("TOWER_MELTING_FURNACE_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_sandworm",
+			image = "kr4_main_icons_0021",
+			type = "sandworm",
+			tt_title = _("TOWER_SANDWORM_NAME"),
+			tt_desc = _("TOWER_SANDWORM_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_catapult",
+			image = "kr6_quickmenu_main_icon_catapult",
+			type = "catapult",
+			tt_title = _("TOWER_CATAPULT_NAME"),
+			tt_desc = _("TOWER_CATAPULT_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_culverine",
+			image = "kr6_quickmenu_main_icon_culverine",
+			type = "culverine",
+			tt_title = _("TOWER_CULVERINE_NAME"),
+			tt_desc = _("TOWER_CULVERINE_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_alchemist",
+			image = "kr6_quickmenu_main_icon_alchemist",
+			type = "alchemist",
+			tt_title = _("TOWER_ALCHEMIST_NAME"),
+			tt_desc = _("TOWER_ALCHEMIST_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_tree",
+			image = "kr6_quickmenu_main_icon_tree",
+			type = "tree",
+			tt_title = _("TOWER_TREE_NAME"),
+			tt_desc = _("TOWER_TREE_DESCRIPTION")
+		}),
+		tpl.sell
+	}},
+	archer = {{M(tpl.common_upgrade, {
+		action_arg = "tower_archer_2",
+		tt_title = _("TOWER_ARCHER_2_NAME"),
+		tt_desc = _("TOWER_ARCHER_2_DESCRIPTION")
+	}), tpl.sell}, {M(tpl.common_upgrade, {
+		action_arg = "tower_archer_3",
+		tt_title = _("TOWER_ARCHER_3_NAME"),
+		tt_desc = _("TOWER_ARCHER_3_DESCRIPTION")
+	}), tpl.sell}, {
+		M(tpl.upgrade, {
+			action_arg = "tower_ranger",
+			image = "main_icons_0011",
+			place = 5,
+			tt_title = _("TOWER_RANGER_NAME"),
+			tt_desc = _("TOWER_RANGER_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_musketeer",
+			image = "main_icons_0010",
+			place = 6,
+			tt_title = _("TOWER_MUSKETEER_NAME"),
+			tt_desc = _("TOWER_MUSKETEER_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_crossbow",
+			image = "main_icons_0025",
+			place = 7,
+			tt_title = _("TOWER_CROSSBOW_NAME"),
+			tt_desc = _("TOWER_CROSSBOW_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_totem",
+			image = "main_icons_0026",
+			tt_title = _("TOWER_TOTEM_NAME"),
+			tt_desc = _("TOWER_TOTEM_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_archer_dwarf",
+			image = "main_icons_0034",
+			tt_title = _("TOWER_ARCHER_DWARF_NAME"),
+			tt_desc = _("TOWER_ARCHER_DWARF_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_pirate_watchtower",
+			image = "main_icons_0032",
+			tt_title = _("TOWER_PIRATE_WATCHTOWER_NAME"),
+			tt_desc = _("TOWER_PIRATE_WATCHTOWER_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_arcane",
+			image = "kr3_main_icons_0005",
+			tt_title = _("TOWER_ARCANE_NAME"),
+			tt_desc = _("TOWER_ARCANE_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_silver",
+			image = "kr3_main_icons_0006",
+			tt_title = _("TOWER_SILVER_NAME"),
+			tt_desc = _("TOWER_SILVER_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_dark_elf_lvl4",
+			image = "kr5_main_icons_0032",
+			tt_title = _("TOWER_DARK_ELF_LVL4_NAME"),
+			tt_desc = _("TOWER_DARK_ELF_LVL4_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_sand_lvl4",
+			image = "kr5_main_icons_0013",
+			tt_title = _("TOWER_SAND_LVL4_NAME"),
+			tt_desc = _("TOWER_SAND_LVL4_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_royal_archers_lvl4",
+			image = "kr5_main_icons_0002",
+			tt_title = _("TOWER_ROYAL_ARCHERS_LVL4_NAME"),
+			tt_desc = _("TOWER_ROYAL_ARCHERS_LVL4_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_ballista_lvl4",
+			image = "kr5_main_icons_0010",
+			tt_title = _("TOWER_BALLISTA_LVL4_NAME"),
+			tt_desc = _("TOWER_BALLISTA_LVL4_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_shadow_archer",
+			image = "kr4_main_icons_0001",
+			tt_title = _("TOWER_SHADOW_ARCHER_NAME"),
+			tt_desc = _("TOWER_SHADOW_ARCHER_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_bone_flingers",
+			image = "kr4_main_icons_0009",
+			tt_title = _("TOWER_BONE_FLINGERS_NAME"),
+			tt_desc = _("TOWER_BONE_FLINGERS_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_ogre_shipwreck",
+			image = "kr4_main_icons_0022",
+			tt_title = _("TOWER_OGRE_SHIPWRECK_NAME"),
+			tt_desc = _("TOWER_OGRE_SHIPWRECK_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_goblirang",
+			image = "kr4_main_icons_0008",
+			tt_title = _("TOWER_GOBLIRANG_NAME"),
+			tt_desc = _("TOWER_GOBLIRANG_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_shaolin",
+			image = "kr4_main_icons_0018",
+			tt_title = _("TOWER_SHAOLIN_NAME"),
+			tt_desc = _("TOWER_SHAOLIN_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_swamp_monster",
+			type = "swamp_monster",
+			image = "kr4_main_icons_0019",
+			tt_title = _("TOWER_SWAMP_MONSTER_NAME"),
+			tt_desc = _("TOWER_SWAMP_MONSTER_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_archers",
+			type = "archers",
+			image = "kr6_quickmenu_main_icon_archers",
+			tt_title = _("TOWER_ARCHERS_NAME"),
+			tt_desc = _("TOWER_ARCHERS_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_elf_ranger",
+			type = "elf_ranger",
+			image = "kr6_quickmenu_main_icon_rangers",
+			tt_title = _("TOWER_ELF_RANGER_NAME"),
+			tt_desc = _("TOWER_ELF_RANGER_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_crossbows",
+			type = "crossbows",
+			image = "kr6_quickmenu_main_icon_crossbows",
+			tt_title = _("TOWER_CROSSBOWS_NAME"),
+			tt_desc = _("TOWER_CROSSBOWS_DESCRIPTION")
+		}),
+		tpl.sell
+	}},
+	-- 技能按钮从左到右固定为 skill_a(place 6，左) / skill_b(place 5，中) / skill_c(place 7，右)，
+	-- 与 balloon/paladin/barbarian 等既有塔一致；place 5 是中上、6 是左、7 是右，切勿写反。
+	archers = {{M(tpl.upgrade_power, {
+		action_arg = "skill_a",
+		image = "kr6_quickmenu_special_icons_archers_0001",
+		sounds = {"TowerArcherGarrisonSkillATaunt"},
+		place = 6,
+		tt_phrase = _("TOWER_ARCHERS_SKILL_A_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ARCHERS_SKILL_A_NAME_1"),
+			tt_desc = _("TOWER_ARCHERS_SKILL_A_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ARCHERS_SKILL_A_NAME_2"),
+			tt_desc = _("TOWER_ARCHERS_SKILL_A_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ARCHERS_SKILL_A_NAME_3"),
+			tt_desc = _("TOWER_ARCHERS_SKILL_A_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_b",
+		image = "kr6_quickmenu_special_icons_archers_0002",
+		sounds = {"TowerArcherGarrisonSkillBTaunt"},
+		place = 5,
+		tt_phrase = _("TOWER_ARCHERS_SKILL_B_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ARCHERS_SKILL_B_NAME_1"),
+			tt_desc = _("TOWER_ARCHERS_SKILL_B_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ARCHERS_SKILL_B_NAME_2"),
+			tt_desc = _("TOWER_ARCHERS_SKILL_B_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ARCHERS_SKILL_B_NAME_3"),
+			tt_desc = _("TOWER_ARCHERS_SKILL_B_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_c",
+		image = "kr6_quickmenu_special_icons_archers_0003",
+		sounds = {"TowerArcherGarrisonSkillCTaunt"},
+		place = 7,
+		tt_phrase = _("TOWER_ARCHERS_SKILL_C_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ARCHERS_SKILL_C_NAME_1"),
+			tt_desc = _("TOWER_ARCHERS_SKILL_C_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ARCHERS_SKILL_C_NAME_2"),
+			tt_desc = _("TOWER_ARCHERS_SKILL_C_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ARCHERS_SKILL_C_NAME_3"),
+			tt_desc = _("TOWER_ARCHERS_SKILL_C_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	elf_ranger = {{M(tpl.upgrade_power, {
+		action_arg = "skill_a",
+		image = "kr6_quickmenu_special_icons_rangers_0001",
+		sounds = {"TowerElvenRangerSkillATaunt"},
+		place = 6,
+		tt_phrase = _("TOWER_ELF_RANGER_SKILL_A_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ELF_RANGER_SKILL_A_NAME_1"),
+			tt_desc = _("TOWER_ELF_RANGER_SKILL_A_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ELF_RANGER_SKILL_A_NAME_2"),
+			tt_desc = _("TOWER_ELF_RANGER_SKILL_A_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ELF_RANGER_SKILL_A_NAME_3"),
+			tt_desc = _("TOWER_ELF_RANGER_SKILL_A_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_b",
+		image = "kr6_quickmenu_special_icons_rangers_0002",
+		sounds = {"TowerElvenRangerSkillBTaunt"},
+		place = 5,
+		tt_phrase = _("TOWER_ELF_RANGER_SKILL_B_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ELF_RANGER_SKILL_B_NAME_1"),
+			tt_desc = _("TOWER_ELF_RANGER_SKILL_B_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ELF_RANGER_SKILL_B_NAME_2"),
+			tt_desc = _("TOWER_ELF_RANGER_SKILL_B_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ELF_RANGER_SKILL_B_NAME_3"),
+			tt_desc = _("TOWER_ELF_RANGER_SKILL_B_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_c",
+		image = "kr6_quickmenu_special_icons_rangers_0003",
+		sounds = {"TowerElvenRangerSkillCTaunt"},
+		place = 7,
+		tt_phrase = _("TOWER_ELF_RANGER_SKILL_C_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ELF_RANGER_SKILL_C_NAME_1"),
+			tt_desc = _("TOWER_ELF_RANGER_SKILL_C_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ELF_RANGER_SKILL_C_NAME_2"),
+			tt_desc = _("TOWER_ELF_RANGER_SKILL_C_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ELF_RANGER_SKILL_C_NAME_3"),
+			tt_desc = _("TOWER_ELF_RANGER_SKILL_C_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	crossbows = {{M(tpl.upgrade_power, {
+		action_arg = "skill_a",
+		image = "kr6_quickmenu_special_icons_crossbows_0001",
+		sounds = {"TowerCursedCrossbowsSkillATaunt"},
+		place = 6,
+		tt_phrase = _("TOWER_CROSSBOWS_SKILL_A_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_CROSSBOWS_SKILL_A_NAME_1"),
+			tt_desc = _("TOWER_CROSSBOWS_SKILL_A_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_CROSSBOWS_SKILL_A_NAME_2"),
+			tt_desc = _("TOWER_CROSSBOWS_SKILL_A_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_CROSSBOWS_SKILL_A_NAME_3"),
+			tt_desc = _("TOWER_CROSSBOWS_SKILL_A_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_b",
+		image = "kr6_quickmenu_special_icons_crossbows_0002",
+		sounds = {"TowerCursedCrossbowsSkillBTaunt"},
+		place = 5,
+		tt_phrase = _("TOWER_CROSSBOWS_SKILL_B_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_CROSSBOWS_SKILL_B_NAME_1"),
+			tt_desc = _("TOWER_CROSSBOWS_SKILL_B_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_CROSSBOWS_SKILL_B_NAME_2"),
+			tt_desc = _("TOWER_CROSSBOWS_SKILL_B_DESCRIPTION_2")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_c",
+		image = "kr6_quickmenu_special_icons_crossbows_0003",
+		sounds = {"TowerCursedCrossbowsSkillCTaunt"},
+		place = 7,
+		tt_phrase = _("TOWER_CROSSBOWS_SKILL_C_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_CROSSBOWS_SKILL_C_NAME_1"),
+			tt_desc = _("TOWER_CROSSBOWS_SKILL_C_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_CROSSBOWS_SKILL_C_NAME_2"),
+			tt_desc = _("TOWER_CROSSBOWS_SKILL_C_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_CROSSBOWS_SKILL_C_NAME_3"),
+			tt_desc = _("TOWER_CROSSBOWS_SKILL_C_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	barrack = {{M(tpl.common_upgrade, {
+		action_arg = "tower_barrack_2",
+		tt_title = _("TOWER_BARRACK_2_NAME"),
+		tt_desc = _("TOWER_BARRACK_2_DESCRIPTION")
+	}), tpl.rally, tpl.sell}, {M(tpl.common_upgrade, {
+		action_arg = "tower_barrack_3",
+		tt_title = _("TOWER_BARRACK_3_NAME"),
+		tt_desc = _("TOWER_BARRACK_3_DESCRIPTION")
+	}), tpl.rally, tpl.sell}, {
+		M(tpl.upgrade, {
+			action_arg = "tower_paladin",
+			image = "main_icons_0008",
+			place = 5,
+			tt_title = _("TOWER_PALADIN_NAME"),
+			tt_desc = _("TOWER_PALADIN_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_barbarian",
+			image = "main_icons_0009",
+			place = 6,
+			tt_title = _("TOWER_BARBARIAN_NAME"),
+			tt_desc = _("TOWER_BARBARIAN_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_elf",
+			image = "main_icons_0011",
+			place = 7,
+			tt_title = _("TOWER_ELF_NAME"),
+			tt_desc = _("TOWER_ELF_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_templar",
+			image = "main_icons_0023",
+			tt_title = _("TOWER_TEMPLAR_NAME"),
+			tt_desc = _("TOWER_TEMPLAR_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_assassin",
+			image = "main_icons_0024",
+			tt_title = _("TOWER_ASSASSIN_NAME"),
+			tt_desc = _("TOWER_ASSASSIN_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_barrack_dwarf",
+			image = "main_icons_0015",
+			tt_title = _("TOWER_BARRACK_DWARF_NAME"),
+			tt_desc = _("TOWER_BARRACK_DWARF_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_barrack_amazonas",
+			image = "main_icons_0033",
+			tt_title = _("TOWER_BARRACK_AMAZONAS_NAME"),
+			tt_desc = _("TOWER_BARRACK_AMAZONAS_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_barrack_mercenaries",
+			image = "main_icons_0030",
+			tt_title = _("TOWER_BARRACK_MERCENARIES_NAME"),
+			tt_desc = _("TOWER_BARRACK_MERCENARIES_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_barrack_pirates",
+			image = "main_icons_0032",
+			tt_title = _("TOWER_BARRACK_PIRATES_NAME"),
+			tt_desc = _("TOWER_BARRACK_PIRATES_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_blade",
+			image = "kr3_main_icons_0001",
+			tt_title = _("TOWER_BLADE_NAME"),
+			tt_desc = _("TOWER_BLADE_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_forest",
+			image = "kr3_main_icons_0002",
+			tt_title = _("TOWER_FOREST_NAME"),
+			tt_desc = _("TOWER_FOREST_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_drow",
+			image = "kr3_main_icons_0014",
+			tt_title = _("TOWER_DROW_NAME"),
+			tt_desc = _("TOWER_DROW_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_ewok",
+			image = "kr3_main_icons_0009",
+			tt_title = _("TOWER_EWOK_NAME"),
+			tt_desc = _("TOWER_EWOK_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_baby_ashbite",
+			image = "kr3_main_icons_0010",
+			tt_title = _("TOWER_BABY_ASHBITE_BROKEN_NAME"),
+			tt_desc = _("TOWER_BABY_ASHBITE_BROKEN_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_pandas_lvl4",
+			image = "kr5_main_icons_0049",
+			tt_title = _("TOWER_PANDAS_LVL4_NAME"),
+			tt_desc = _("TOWER_PANDAS_LVL4_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_rocket_gunners_lvl4",
+			type = "rocket_gunners",
+			image = "kr5_main_icons_0009",
+			tt_title = _("TOWER_ROCKET_GUNNERS_LVL4_NAME"),
+			tt_desc = _("TOWER_ROCKET_GUNNERS_LVL4_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_dwarf_lvl4",
+			type = "dwarf",
+			image = "kr5_main_icons_0039",
+			tt_title = _("TOWER_DWARF_LVL4_NAME"),
+			tt_desc = _("TOWER_DWARF_LVL4_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_ghost_lvl4",
+			type = "ghost",
+			image = "kr5_main_icons_0016",
+			tt_title = _("TOWER_GHOST_LVL4_NAME"),
+			tt_desc = _("TOWER_GHOST_LVL4_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_paladin_covenant_lvl4",
+			type = "paladin_covenant",
+			image = "kr5_main_icons_0001",
+			tt_title = _("TOWER_PALADIN_COVENANT_LVL4_NAME"),
+			tt_desc = _("TOWER_PALADIN_COVENANT_LVL4_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_orc_warriors",
+			type = "orc_warriors",
+			image = "kr4_main_icons_0002",
+			tt_title = _("TOWER_ORC_WARRIORS_NAME"),
+			tt_desc = _("TOWER_ORC_WARRIORS_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_dark_knights",
+			type = "dark_knights",
+			image = "kr4_main_icons_0005",
+			tt_title = _("TOWER_DARK_KNIGHTS_NAME"),
+			tt_desc = _("TOWER_DARK_KNIGHTS_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_grim_cemetery",
+			type = "grim_cemetery",
+			image = "kr4_main_icons_0010",
+			tt_title = _("TOWER_GRIM_CEMETERY_NAME"),
+			tt_desc = _("TOWER_GRIM_CEMETERY_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_twilight_elves_barrack",
+			type = "twilight_elves_barrack",
+			image = "kr4_main_icons_0011",
+			tt_title = _("TOWER_TWILIGHT_ELVES_BARRACK_NAME"),
+			tt_desc = _("TOWER_TWILIGHT_ELVES_BARRACK_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_stage_28_priests_barrack",
+			type = "tower_priests_barrack",
+			image = "kr5_main_icons_0041",
+			tt_title = _("TOWER_STAGE_28_PRIESTS_BARRACK_NAME"),
+			tt_desc = _("TOWER_STAGE_28_PRIESTS_BARRACK_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_knights",
+			type = "knights",
+			image = "kr6_quickmenu_main_icon_knights",
+			tt_title = _("TOWER_KNIGHTS_NAME"),
+			tt_desc = _("TOWER_KNIGHTS_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_wildcat",
+			type = "wildcat",
+			image = "kr6_quickmenu_main_icon_wildcat",
+			tt_title = _("TOWER_WILDCAT_NAME"),
+			tt_desc = _("TOWER_WILDCAT_DESCRIPTION")
+		}),
+		M(tpl.upgrade, {
+			action_arg = "tower_miners",
+			type = "miners",
+			image = "kr6_quickmenu_main_icon_dwarven_miners",
+			tt_title = _("TOWER_MINERS_NAME"),
+			tt_desc = _("TOWER_MINERS_DESCRIPTION")
+		}),
+		tpl.rally,
+		tpl.sell
+	}},
+	ranger = {{M(tpl.upgrade_power, {
+		action_arg = "poison",
+		image = "special_icons_0008",
+		place = 1,
+		sounds = {"ArcherRangerPoisonTaunt"},
+		tt_phrase = _("TOWER_RANGER_POISON_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_RANGER_POISON_NAME_1"),
+			tt_desc = _("TOWER_RANGER_POISON_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_RANGER_POISON_NAME_2"),
+			tt_desc = _("TOWER_RANGER_POISON_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_RANGER_POISON_NAME_3"),
+			tt_desc = _("TOWER_RANGER_POISON_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "thorn",
+		image = "special_icons_0002",
+		place = 2,
+		sounds = {"ArcherRangerThornTaunt"},
+		tt_phrase = _("TOWER_RANGER_THORN_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_RANGER_THORN_NAME_1"),
+			tt_desc = _("TOWER_RANGER_THORN_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_RANGER_THORN_NAME_2"),
+			tt_desc = _("TOWER_RANGER_THORN_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_RANGER_THORN_NAME_3"),
+			tt_desc = _("TOWER_RANGER_THORN_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	musketeer = {{M(tpl.upgrade_power, {
+		action_arg = "sniper",
+		image = "special_icons_0003",
+		place = 1,
+		sounds = {"ArcherMusketeerSniperTaunt"},
+		tt_phrase = _("TOWER_MUSKETEER_SNIPER_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_MUSKETEER_SNIPER_NAME_1"),
+			tt_desc = _("TOWER_MUSKETEER_SNIPER_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_MUSKETEER_SNIPER_NAME_2"),
+			tt_desc = _("TOWER_MUSKETEER_SNIPER_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_MUSKETEER_SNIPER_NAME_3"),
+			tt_desc = _("TOWER_MUSKETEER_SNIPER_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "shrapnel",
+		image = "special_icons_0005",
+		place = 2,
+		sounds = {"ArcherMusketeerShrapnelTaunt"},
+		tt_phrase = _("TOWER_MUSKETEER_SHRAPNEL_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_MUSKETEER_SHRAPNEL_NAME_1"),
+			tt_desc = _("TOWER_MUSKETEER_SHRAPNEL_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_MUSKETEER_SHRAPNEL_NAME_2"),
+			tt_desc = _("TOWER_MUSKETEER_SHRAPNEL_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_MUSKETEER_SHRAPNEL_NAME_3"),
+			tt_desc = _("TOWER_MUSKETEER_SHRAPNEL_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	crossbow = {{M(tpl.upgrade_power, {
+		action_arg = "multishot",
+		image = "special_icons_0028",
+		place = 1,
+		sounds = {"CrossbowTauntMultishoot"},
+		tt_phrase = _("TOWER_CROSSBOW_MULTISHOT_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_CROSSBOW_MULTISHOT_NAME_1"),
+			tt_desc = _("TOWER_CROSSBOW_MULTISHOT_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_CROSSBOW_MULTISHOT_NAME_2"),
+			tt_desc = _("TOWER_CROSSBOW_MULTISHOT_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_CROSSBOW_MULTISHOT_NAME_3"),
+			tt_desc = _("TOWER_CROSSBOW_MULTISHOT_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "eagle",
+		image = "special_icons_0029",
+		place = 2,
+		sounds = {"CrossbowTauntEagle"},
+		tt_phrase = _("TOWER_CROSSBOW_EAGLE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_CROSSBOW_EAGLE_NAME_1"),
+			tt_desc = _("TOWER_CROSSBOW_EAGLE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_CROSSBOW_EAGLE_NAME_2"),
+			tt_desc = _("TOWER_CROSSBOW_EAGLE_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_CROSSBOW_EAGLE_NAME_3"),
+			tt_desc = _("TOWER_CROSSBOW_EAGLE_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	totem = {{M(tpl.upgrade_power, {
+		action_arg = "weakness",
+		image = "special_icons_0030",
+		place = 1,
+		sounds = {"TotemTauntTotemOne"},
+		tt_phrase = _("TOWER_TOTEM_WEAKNESS_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_TOTEM_WEAKNESS_NAME_1"),
+			tt_desc = _("TOWER_TOTEM_WEAKNESS_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_TOTEM_WEAKNESS_NAME_2"),
+			tt_desc = _("TOWER_TOTEM_WEAKNESS_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_TOTEM_WEAKNESS_NAME_3"),
+			tt_desc = _("TOWER_TOTEM_WEAKNESS_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "silence",
+		image = "special_icons_0031",
+		place = 2,
+		sounds = {"TotemTauntTotemTwo"},
+		tt_phrase = _("TOWER_TOTEM_SILENCE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_TOTEM_SILENCE_NAME_1"),
+			tt_desc = _("TOWER_TOTEM_SILENCE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_TOTEM_SILENCE_NAME_2"),
+			tt_desc = _("TOWER_TOTEM_SILENCE_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_TOTEM_SILENCE_NAME_3"),
+			tt_desc = _("TOWER_TOTEM_SILENCE_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	archer_dwarf = {{M(tpl.upgrade_power, {
+		action_arg = "barrel",
+		image = "special_icons_0044",
+		place = 1,
+		sounds = {"DwarfArcherTaunt1"},
+		tt_phrase = _("TOWER_ARCHER_DWARF_BARREL_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ARCHER_DWARF_BARREL_NAME_1"),
+			tt_desc = _("TOWER_ARCHER_DWARF_BARREL_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ARCHER_DWARF_BARREL_NAME_2"),
+			tt_desc = _("TOWER_ARCHER_DWARF_BARREL_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ARCHER_DWARF_BARREL_NAME_3"),
+			tt_desc = _("TOWER_ARCHER_DWARF_BARREL_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "extra_damage",
+		image = "special_icons_0043",
+		place = 2,
+		sounds = {"DwarfArcherTaunt2"},
+		tt_phrase = _("TOWER_ARCHER_DWARF_EXTRA_DAMAGE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ARCHER_DWARF_EXTRA_DAMAGE_NAME_1"),
+			tt_desc = _("TOWER_ARCHER_DWARF_EXTRA_DAMAGE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ARCHER_DWARF_EXTRA_DAMAGE_NAME_2"),
+			tt_desc = _("TOWER_ARCHER_DWARF_EXTRA_DAMAGE_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ARCHER_DWARF_EXTRA_DAMAGE_NAME_3"),
+			tt_desc = _("TOWER_ARCHER_DWARF_EXTRA_DAMAGE_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	arcane_wizard = {{M(tpl.upgrade_power, {
+		action_arg = "disintegrate",
+		image = "special_icons_0015",
+		place = 1,
+		sounds = {"MageArcaneDesintegrateTaunt"},
+		tt_phrase = _("TOWER_ARCANE_WIZARD_DISINTEGRATE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ARCANE_WIZARD_DISINTEGRATE_NAME_1"),
+			tt_desc = _("TOWER_ARCANE_WIZARD_DISINTEGRATE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ARCANE_WIZARD_DISINTEGRATE_NAME_2"),
+			tt_desc = _("TOWER_ARCANE_WIZARD_DISINTEGRATE_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ARCANE_WIZARD_DISINTEGRATE_NAME_3"),
+			tt_desc = _("TOWER_ARCANE_WIZARD_DISINTEGRATE_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "teleport",
+		image = "special_icons_0016",
+		place = 2,
+		sounds = {"MageArcaneTeleporthTaunt"},
+		tt_phrase = _("TOWER_ARCANE_WIZARD_TELEPORT_NOTE_1"),
+		tt_list = {{
+			tt_title = _("TOWER_ARCANE_WIZARD_TELEPORT_NAME_1"),
+			tt_desc = _("TOWER_ARCANE_WIZARD_TELEPORT_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ARCANE_WIZARD_TELEPORT_NAME_2"),
+			tt_desc = _("TOWER_ARCANE_WIZARD_TELEPORT_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ARCANE_WIZARD_TELEPORT_NAME_3"),
+			tt_desc = _("TOWER_ARCANE_WIZARD_TELEPORT_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	sorcerer = {{M(tpl.upgrade_power, {
+		action_arg = "polymorph",
+		image = "special_icons_0001",
+		place = 1,
+		sounds = {"Sheep"},
+		tt_phrase = _("TOWER_SORCERER_POLYMORPH_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SORCERER_POLYMORPH_NAME_1"),
+			tt_desc = _("TOWER_SORCERER_POLYMORPH_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_SORCERER_POLYMORPH_NAME_2"),
+			tt_desc = _("TOWER_SORCERER_POLYMORPH_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_SORCERER_POLYMORPH_NAME_3"),
+			tt_desc = _("TOWER_SORCERER_POLYMORPH_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "elemental",
+		image = "special_icons_0004",
+		place = 2,
+		tt_phrase = _("TOWER_SORCERER_ELEMENTAL_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SORCERER_ELEMENTAL_NAME_1"),
+			tt_desc = _("TOWER_SORCERER_ELEMENTAL_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_SORCERER_ELEMENTAL_NAME_2"),
+			tt_desc = _("TOWER_SORCERER_ELEMENTAL_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_SORCERER_ELEMENTAL_NAME_3"),
+			tt_desc = _("TOWER_SORCERER_ELEMENTAL_DESCRIPTION_3")
+		}}
+	}), tpl.rally, tpl.sell}},
+	archmage = {{M(tpl.upgrade_power, {
+		action_arg = "twister",
+		image = "special_icons_0032",
+		place = 1,
+		sounds = {"ArchmageTauntTwister"},
+		tt_phrase = _("TOWER_ARCHMAGE_TWISTER_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ARCHMAGE_TWISTER_NAME_1"),
+			tt_desc = _("TOWER_ARCHMAGE_TWISTER_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ARCHMAGE_TWISTER_NAME_2"),
+			tt_desc = _("TOWER_ARCHMAGE_TWISTER_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ARCHMAGE_TWISTER_NAME_3"),
+			tt_desc = _("TOWER_ARCHMAGE_TWISTER_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "blast",
+		image = "special_icons_0033",
+		place = 2,
+		sounds = {"ArchmageTauntExplosion"},
+		tt_phrase = _("TOWER_ARCHMAGE_BLAST_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ARCHMAGE_BLAST_NAME_1"),
+			tt_desc = _("TOWER_ARCHMAGE_BLAST_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ARCHMAGE_BLAST_NAME_2"),
+			tt_desc = _("TOWER_ARCHMAGE_BLAST_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ARCHMAGE_BLAST_NAME_3"),
+			tt_desc = _("TOWER_ARCHMAGE_BLAST_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	necromancer = {{M(tpl.upgrade_power, {
+		action_arg = "pestilence",
+		image = "special_icons_0035",
+		place = 1,
+		sounds = {"NecromancerTauntPestilence"},
+		tt_phrase = _("TOWER_NECROMANCER_PESTILENCE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_NECROMANCER_PESTILENCE_NAME_1"),
+			tt_desc = _("TOWER_NECROMANCER_PESTILENCE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_NECROMANCER_PESTILENCE_NAME_2"),
+			tt_desc = _("TOWER_NECROMANCER_PESTILENCE_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_NECROMANCER_PESTILENCE_NAME_3"),
+			tt_desc = _("TOWER_NECROMANCER_PESTILENCE_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "rider",
+		image = "special_icons_0034",
+		place = 2,
+		sounds = {"NecromancerTauntDeath_Knight"},
+		tt_phrase = _("TOWER_NECROMANCER_RIDER_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_NECROMANCER_RIDER_NAME_1"),
+			tt_desc = _("TOWER_NECROMANCER_RIDER_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_NECROMANCER_RIDER_NAME_2"),
+			tt_desc = _("TOWER_NECROMANCER_RIDER_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_NECROMANCER_RIDER_NAME_3"),
+			tt_desc = _("TOWER_NECROMANCER_RIDER_DESCRIPTION_3")
+		}}
+	}), tpl.rally, tpl.sell}},
+	bfg = {{M(tpl.upgrade_power, {
+		action_arg = "missile",
+		image = "special_icons_0017",
+		place = 1,
+		sounds = {"EngineerBfgMissileTaunt"},
+		tt_phrase = _("TOWER_BFG_MISSILE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BFG_MISSILE_NAME_1"),
+			tt_desc = _("TOWER_BFG_MISSILE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_BFG_MISSILE_NAME_2"),
+			tt_desc = _("TOWER_BFG_MISSILE_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_BFG_MISSILE_NAME_3"),
+			tt_desc = _("TOWER_BFG_MISSILE_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "cluster",
+		image = "special_icons_0018",
+		place = 2,
+		sounds = {"EngineerBfgClusterTaunt"},
+		tt_phrase = _("TOWER_BFG_CLUSTER_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BFG_CLUSTER_NAME_1"),
+			tt_desc = _("TOWER_BFG_CLUSTER_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_BFG_CLUSTER_NAME_2"),
+			tt_desc = _("TOWER_BFG_CLUSTER_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_BFG_CLUSTER_NAME_3"),
+			tt_desc = _("TOWER_BFG_CLUSTER_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	tesla = {{M(tpl.upgrade_power, {
+		action_arg = "bolt",
+		image = "special_icons_0011",
+		place = 1,
+		sounds = {"EngineerTeslaChargedBoltTaunt"},
+		tt_phrase = _("TOWER_TESLA_BOLT_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_TESLA_BOLT_NAME_1"),
+			tt_desc = _("TOWER_TESLA_BOLT_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_TESLA_BOLT_NAME_2"),
+			tt_desc = _("TOWER_TESLA_BOLT_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_TESLA_BOLT_NAME_3"),
+			tt_desc = _("TOWER_TESLA_BOLT_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "overcharge",
+		image = "special_icons_0010",
+		place = 2,
+		sounds = {"EngineerTeslaOverchargeTaunt"},
+		tt_phrase = _("TOWER_TESLA_OVERCHARGE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_TESLA_OVERCHARGE_NAME_1"),
+			tt_desc = _("TOWER_TESLA_OVERCHARGE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_TESLA_OVERCHARGE_NAME_2"),
+			tt_desc = _("TOWER_TESLA_OVERCHARGE_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_TESLA_OVERCHARGE_NAME_3"),
+			tt_desc = _("TOWER_TESLA_OVERCHARGE_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	dwaarp = {{M(tpl.upgrade_power, {
+		action_arg = "drill",
+		image = "special_icons_0036",
+		place = 1,
+		sounds = {"EarthquakeTauntDrill"},
+		tt_phrase = _("TOWER_DWAARP_DRILL_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_DWAARP_DRILL_NAME_1"),
+			tt_desc = _("TOWER_DWAARP_DRILL_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_DWAARP_DRILL_NAME_2"),
+			tt_desc = _("TOWER_DWAARP_DRILL_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_DWAARP_DRILL_NAME_3"),
+			tt_desc = _("TOWER_DWAARP_DRILL_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "lava",
+		image = "special_icons_0037",
+		place = 2,
+		sounds = {"EarthquakeTauntScorched"},
+		tt_phrase = _("TOWER_DWAARP_LAVA_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_DWAARP_LAVA_NAME_1"),
+			tt_desc = _("TOWER_DWAARP_LAVA_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_DWAARP_LAVA_NAME_2"),
+			tt_desc = _("TOWER_DWAARP_LAVA_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_DWAARP_LAVA_NAME_3"),
+			tt_desc = _("TOWER_DWAARP_LAVA_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	mecha = {{M(tpl.upgrade_power, {
+		action_arg = "missile",
+		image = "special_icons_0038",
+		place = 1,
+		sounds = {"MechTauntMissile"},
+		tt_phrase = _("TOWER_MECH_MISSILE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_MECH_MISSILE_NAME_1"),
+			tt_desc = _("TOWER_MECH_MISSILE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_MECH_MISSILE_NAME_2"),
+			tt_desc = _("TOWER_MECH_MISSILE_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_MECH_MISSILE_NAME_3"),
+			tt_desc = _("TOWER_MECH_MISSILE_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "oil",
+		image = "special_icons_0039",
+		place = 2,
+		sounds = {"MechTauntSlow"},
+		tt_phrase = _("TOWER_MECH_OIL_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_MECH_OIL_NAME_1"),
+			tt_desc = _("TOWER_MECH_OIL_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_MECH_OIL_NAME_2"),
+			tt_desc = _("TOWER_MECH_OIL_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_MECH_OIL_NAME_3"),
+			tt_desc = _("TOWER_MECH_OIL_DESCRIPTION_3")
+		}}
+	}), tpl.rally, tpl.sell}},
+	paladin = {{M(tpl.upgrade_power, {
+		action_arg = "healing",
+		image = "special_icons_0007",
+		place = 6,
+		sounds = {"BarrackPaladinHealingTaunt"},
+		tt_phrase = _("TOWER_PALADIN_HEALING_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_PALADIN_HEALING_NAME_1"),
+			tt_desc = _("TOWER_PALADIN_HEALING_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_PALADIN_HEALING_NAME_2"),
+			tt_desc = _("TOWER_PALADIN_HEALING_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_PALADIN_HEALING_NAME_3"),
+			tt_desc = _("TOWER_PALADIN_HEALING_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "shield",
+		image = "special_icons_0009",
+		place = 5,
+		sounds = {"BarrackPaladinShieldTaunt"},
+		tt_phrase = _("TOWER_PALADIN_SHIELD_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_PALADIN_SHIELD_NAME_1"),
+			tt_desc = _("TOWER_PALADIN_SHIELD_DESCRIPTION_1")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "holystrike",
+		image = "special_icons_0006",
+		place = 7,
+		sounds = {"BarrackPaladinHolyStrikeTaunt"},
+		tt_phrase = _("TOWER_PALADIN_HOLYSTRIKE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_PALADIN_HOLYSTRIKE_NAME_1"),
+			tt_desc = _("TOWER_PALADIN_HOLYSTRIKE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_PALADIN_HOLYSTRIKE_NAME_2"),
+			tt_desc = _("TOWER_PALADIN_HOLYSTRIKE_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_PALADIN_HOLYSTRIKE_NAME_3"),
+			tt_desc = _("TOWER_PALADIN_HOLYSTRIKE_DESCRIPTION_3")
+		}}
+	}), tpl.rally, tpl.sell}},
+	barbarian = {{M(tpl.upgrade_power, {
+		action_arg = "dual",
+		image = "special_icons_0012",
+		place = 6,
+		sounds = {"BarrackBarbarianDoubleAxesTaunt"},
+		tt_phrase = _("TOWER_BARBARIAN_DUAL_NOTE_1"),
+		tt_list = {{
+			tt_title = _("TOWER_BARBARIAN_DUAL_NAME_1"),
+			tt_desc = _("TOWER_BARBARIAN_DUAL_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_BARBARIAN_DUAL_NAME_2"),
+			tt_desc = _("TOWER_BARBARIAN_DUAL_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_BARBARIAN_DUAL_NAME_3"),
+			tt_desc = _("TOWER_BARBARIAN_DUAL_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "twister",
+		image = "special_icons_0013",
+		place = 5,
+		sounds = {"BarrackBarbarianTwisterTaunt"},
+		tt_phrase = _("TOWER_BARBARIAN_TWISTER_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BARBARIAN_TWISTER_NAME_1"),
+			tt_desc = _("TOWER_BARBARIAN_TWISTER_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_BARBARIAN_TWISTER_NAME_2"),
+			tt_desc = _("TOWER_BARBARIAN_TWISTER_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_BARBARIAN_TWISTER_NAME_3"),
+			tt_desc = _("TOWER_BARBARIAN_TWISTER_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "throwing",
+		image = "special_icons_0019",
+		place = 7,
+		sounds = {"BarrackBarbarianThrowingAxesTaunt"},
+		tt_phrase = _("TOWER_BARBARIAN_THROWING_NOTE_1"),
+		tt_list = {{
+			tt_title = _("TOWER_BARBARIAN_THROWING_NAME_1"),
+			tt_desc = _("TOWER_BARBARIAN_THROWING_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_BARBARIAN_THROWING_NAME_2"),
+			tt_desc = _("TOWER_BARBARIAN_THROWING_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_BARBARIAN_THROWING_NAME_3"),
+			tt_desc = _("TOWER_BARBARIAN_THROWING_DESCRIPTION_3")
+		}}
+	}), tpl.rally, tpl.sell}},
+	orc_warriors = {{M(tpl.upgrade_power, {
+		action_arg = "bloodlust",
+		image = "kr4_special_icons_0004",
+		place = 5,
+		sounds = {"TowerOrcWarriorsDenBattlewits"},
+		tt_phrase = _("TOWER_ORC_WARRIORS_BLOODLUST_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ORC_WARRIORS_BLOODLUST_NAME_1"),
+			tt_desc = _("TOWER_ORC_WARRIORS_BLOODLUST_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ORC_WARRIORS_BLOODLUST_NAME_2"),
+			tt_desc = _("TOWER_ORC_WARRIORS_BLOODLUST_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ORC_WARRIORS_BLOODLUST_NAME_3"),
+			tt_desc = _("TOWER_ORC_WARRIORS_BLOODLUST_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "promotion",
+		image = "kr4_special_icons_0005",
+		place = 6,
+		sounds = {"GUIBuyUpgrade", "TowerOrcWarriorsDenPromotion"},
+		tt_phrase = _("TOWER_ORC_WARRIORS_PROMOTION_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ORC_WARRIORS_PROMOTION_NAME_1"),
+			tt_desc = _("TOWER_ORC_WARRIORS_PROMOTION_DESCRIPTION_1")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "seal",
+		image = "kr4_special_icons_0006",
+		place = 7,
+		sounds = {"GUIBuyUpgrade", "TowerOrcWarriorsDenSealOfBlood"},
+		tt_phrase = _("TOWER_ORC_WARRIORS_SEAL_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ORC_WARRIORS_SEAL_NAME_1"),
+			tt_desc = _("TOWER_ORC_WARRIORS_SEAL_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ORC_WARRIORS_SEAL_NAME_2"),
+			tt_desc = _("TOWER_ORC_WARRIORS_SEAL_DESCRIPTION_2")
+		}}
+	}), tpl.rally, tpl.sell}},
+	holder_elf = {{M(tpl.upgrade, {
+		action_arg = "tower_elf",
+		image = "main_icons_0015",
+		place = 5,
+		tt_title = _("TOWER_ELF_REPAIR_NAME"),
+		tt_desc = _("TOWER_ELF_REPAIR_DESCRIPTION")
+	}), tpl.sell}},
+	elf = {{M(tpl.upgrade_power, {
+		action_arg = "bleed",
+		image = "special_icons_0014",
+		place = 7,
+		sounds = {"ElfBleed"},
+		tt_phrase = _("TOWER_ELF_BLEED_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ELF_BLEED_NAME_1"),
+			tt_desc = _("TOWER_ELF_BLEED_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ELF_BLEED_NAME_2"),
+			tt_desc = _("TOWER_ELF_BLEED_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ELF_BLEED_NAME_3"),
+			tt_desc = _("TOWER_ELF_BLEED_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "cripple",
+		image = "special_icons_0024",
+		place = 6,
+		sounds = {"ElfCripple"},
+		tt_phrase = _("TOWER_ELF_CRIPPLE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ELF_CRIPPLE_NAME_1"),
+			tt_desc = _("TOWER_ELF_CRIPPLE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ELF_CRIPPLE_NAME_2"),
+			tt_desc = _("TOWER_ELF_CRIPPLE_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ELF_CRIPPLE_NAME_3"),
+			tt_desc = _("TOWER_ELF_CRIPPLE_DESCRIPTION_3")
+		}}
+	}), M(tpl.buy_soldier, {
+		action_arg = "soldier_elf",
+		image = "main_icons_0016",
+		tt_title = _("TOWER_ELF_NAME"),
+		tt_desc = _("TOWER_ELF_DESCRIPTION")
+	}), tpl.rally, tpl.sell}},
+	templar = {{M(tpl.upgrade_power, {
+		action_arg = "holygrail",
+		image = "special_icons_0025",
+		place = 7,
+		sounds = {"TemplarTauntTauntOne"},
+		tt_phrase = _("TOWER_TEMPLAR_HOLYGRAIL_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_TEMPLAR_HOLYGRAIL_NAME_1"),
+			tt_desc = _("TOWER_TEMPLAR_HOLYGRAIL_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_TEMPLAR_HOLYGRAIL_NAME_2"),
+			tt_desc = _("TOWER_TEMPLAR_HOLYGRAIL_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_TEMPLAR_HOLYGRAIL_NAME_3"),
+			tt_desc = _("TOWER_TEMPLAR_HOLYGRAIL_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "extralife",
+		image = "special_icons_0027",
+		place = 6,
+		sounds = {"TemplarTauntTauntTwo"},
+		tt_phrase = _("TOWER_TEMPLAR_EXTRALIFE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_TEMPLAR_EXTRALIFE_NAME_1"),
+			tt_desc = _("TOWER_TEMPLAR_EXTRALIFE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_TEMPLAR_EXTRALIFE_NAME_2"),
+			tt_desc = _("TOWER_TEMPLAR_EXTRALIFE_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_TEMPLAR_EXTRALIFE_NAME_3"),
+			tt_desc = _("TOWER_TEMPLAR_EXTRALIFE_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "blood",
+		image = "special_icons_0026",
+		place = 5,
+		sounds = {"TemplarTauntThree"},
+		tt_phrase = _("TOWER_TEMPLAR_BLOOD_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_TEMPLAR_BLOOD_NAME_1"),
+			tt_desc = _("TOWER_TEMPLAR_BLOOD_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_TEMPLAR_BLOOD_NAME_2"),
+			tt_desc = _("TOWER_TEMPLAR_BLOOD_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_TEMPLAR_BLOOD_NAME_3"),
+			tt_desc = _("TOWER_TEMPLAR_BLOOD_DESCRIPTION_3")
+		}}
+	}), tpl.rally, tpl.sell}},
+	assassin = {{M(tpl.upgrade_power, {
+		action_arg = "sneak",
+		image = "special_icons_0024",
+		place = 6,
+		sounds = {"AssassinTauntSneak"},
+		tt_phrase = _("TOWER_ASSASSIN_SNEAK_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ASSASSIN_SNEAK_NAME_1"),
+			tt_desc = _("TOWER_ASSASSIN_SNEAK_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ASSASSIN_SNEAK_NAME_2"),
+			tt_desc = _("TOWER_ASSASSIN_SNEAK_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ASSASSIN_SNEAK_NAME_3"),
+			tt_desc = _("TOWER_ASSASSIN_SNEAK_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "pickpocket",
+		image = "special_icons_0022",
+		place = 7,
+		sounds = {"AssassinTauntGold"},
+		tt_phrase = _("TOWER_ASSASSIN_PICKPOCKET_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ASSASSIN_PICKPOCKET_NAME_1"),
+			tt_desc = _("TOWER_ASSASSIN_PICKPOCKET_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ASSASSIN_PICKPOCKET_NAME_2"),
+			tt_desc = _("TOWER_ASSASSIN_PICKPOCKET_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ASSASSIN_PICKPOCKET_NAME_3"),
+			tt_desc = _("TOWER_ASSASSIN_PICKPOCKET_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "counter",
+		image = "special_icons_0023",
+		place = 5,
+		sounds = {"AssassinTauntCounter"},
+		tt_phrase = _("TOWER_ASSASSIN_COUNTER_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ASSASSIN_COUNTER_NAME_1"),
+			tt_desc = _("TOWER_ASSASSIN_COUNTER_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ASSASSIN_COUNTER_NAME_2"),
+			tt_desc = _("TOWER_ASSASSIN_COUNTER_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ASSASSIN_COUNTER_NAME_3"),
+			tt_desc = _("TOWER_ASSASSIN_COUNTER_DESCRIPTION_3")
+		}}
+	}), tpl.rally, tpl.sell}},
+	barrack_dwarf = {{M(tpl.upgrade_power, {
+		action_arg = "hammer",
+		image = "special_icons_0040",
+		place = 5,
+		sounds = {"DwarfTaunt"},
+		tt_phrase = _("TOWER_BARRACK_DWARF_HAMMER_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BARRACK_DWARF_HAMMER_NAME_1"),
+			tt_desc = _("TOWER_BARRACK_DWARF_HAMMER_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_BARRACK_DWARF_HAMMER_NAME_2"),
+			tt_desc = _("TOWER_BARRACK_DWARF_HAMMER_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_BARRACK_DWARF_HAMMER_NAME_3"),
+			tt_desc = _("TOWER_BARRACK_DWARF_HAMMER_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "armor",
+		image = "special_icons_0041",
+		place = 6,
+		sounds = {"DwarfTaunt"},
+		tt_phrase = _("TOWER_BARRACK_DWARF_ARMOR_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BARRACK_DWARF_ARMOR_NAME_1"),
+			tt_desc = _("TOWER_BARRACK_DWARF_ARMOR_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_BARRACK_DWARF_ARMOR_NAME_2"),
+			tt_desc = _("TOWER_BARRACK_DWARF_ARMOR_DESCRIPTION_2")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "beer",
+		image = "special_icons_0042",
+		place = 7,
+		sounds = {"DwarfTaunt"},
+		tt_phrase = _("TOWER_BARRACK_DWARF_BEER_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BARRACK_DWARF_BEER_NAME_1"),
+			tt_desc = _("TOWER_BARRACK_DWARF_BEER_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_BARRACK_DWARF_BEER_NAME_2"),
+			tt_desc = _("TOWER_BARRACK_DWARF_BEER_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_BARRACK_DWARF_BEER_NAME_3"),
+			tt_desc = _("TOWER_BARRACK_DWARF_BEER_DESCRIPTION_3")
+		}}
+	}), tpl.rally, tpl.sell}},
+	mercenaries_amazonas = {{M(tpl.upgrade_power, {
+		action_arg = "valkyrie",
+		image = "special_icons_0014",
+		place = 7,
+		sounds = {"AmazonTaunt"},
+		tt_phrase = _("TOWER_BARRACK_AMAZONAS_VALKYRIE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BARRACK_AMAZONAS_VALKYRIE_NAME_1"),
+			tt_desc = _("TOWER_BARRACK_AMAZONAS_VALKYRIE_DESCRIPTION_1")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "whirlwind",
+		image = "special_icons_0013",
+		place = 6,
+		sounds = {"AmazonTaunt"},
+		tt_phrase = _("TOWER_BARRACK_AMAZONAS_WHIRLWIND_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BARRACK_AMAZONAS_WHIRLWIND_NAME_1"),
+			tt_desc = _("TOWER_BARRACK_AMAZONAS_WHIRLWIND_DESCRIPTION_1")
+		}}
+	}), M(tpl.buy_soldier, {
+		action_arg = "soldier_amazona",
+		image = "main_icons_0033",
+		tt_title = _("TOWER_BARRACK_AMAZONAS_WARRIOR_NAME"),
+		tt_desc = _("TOWER_BARRACK_AMAZONAS_WARRIOR_DESCRIPTION")
+	}), tpl.rally, tpl.sell}},
+	holder_sasquash = {{{
+		halo = "glow_ico_main",
+		action = "tw_none",
+		image = "main_icons_0017",
+		place = 5,
+		tt_title = _("TOWER_ELF_REPAIR_NAME"),
+		tt_desc = _("TOWER_ELF_REPAIR_DESCRIPTION")
+	}}},
+	sasquash = {{M(tpl.buy_soldier, {
+		action_arg = "soldier_sasquash",
+		image = "main_icons_0017",
+		place = 5,
+		tt_title = _("TOWER_SASQUASH_NAME"),
+		tt_desc = _("TOWER_SASQUASH_DESCRIPTION")
+	}), tpl.rally}},
+	sunray = {{M(tpl.upgrade_power, {
+		no_upgrade_lights = true,
+		image = "main_icons_0018",
+		action_arg = "ray",
+		place = 5,
+		sounds = {"MageSorcererAshesToAshesTaunt"},
+		tt_phrase = _("TOWER_SUNRAY_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SUNRAY_RAY_NAME_1"),
+			tt_desc = _("TOWER_SUNRAY_RAY_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_SUNRAY_RAY_NAME_2"),
+			tt_desc = _("TOWER_SUNRAY_RAY_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_SUNRAY_RAY_NAME_3"),
+			tt_desc = _("TOWER_SUNRAY_RAY_DESCRIPTION_3")
+		}, {
+			tt_title = _("TOWER_SUNRAY_RAY_NAME_4"),
+			tt_desc = _("TOWER_SUNRAY_RAY_DESCRIPTION_4")
+		}}
+	}), M(tpl.upgrade_power, {
+		image = "special_icons_0022",
+		action_arg = "gold",
+		place = 6,
+		sounds = {"MageSorcererAshesToAshesTaunt"},
+		tt_phrase = _("TOWER_SUNRAY_GOLD_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SUNRAY_GOLD_NAME_1"),
+			tt_desc = _("TOWER_SUNRAY_GOLD_DESCRIPTION_1")
+		}}
+	}), M(tpl.upgrade_power, {
+		image = "special_icons_0015",
+		action_arg = "charge",
+		place = 7,
+		sounds = {"MageSorcererAshesToAshesTaunt"},
+		tt_phrase = _("TOWER_SUNRAY_CHARGE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SUNRAY_CHARGE_NAME_1"),
+			tt_desc = _("TOWER_SUNRAY_CHARGE_DESCRIPTION_1")
+		}}
+	}), tpl.sell}},
+	sunray_master = {{M(tpl.upgrade_power, {
+		action_arg = "skill_a",
+		image = "kr6_quickmenu_special_icons_sunray_master_0001",
+		place = 6,
+		sounds = {"TowerSunrayMasterSkillATaunt"},
+		tt_phrase = _("TOWER_SUNRAY_MASTER_SKILL_A_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SUNRAY_MASTER_SKILL_A_NAME_1"),
+			tt_desc = _("TOWER_SUNRAY_MASTER_SKILL_A_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_SUNRAY_MASTER_SKILL_A_NAME_2"),
+			tt_desc = _("TOWER_SUNRAY_MASTER_SKILL_A_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_SUNRAY_MASTER_SKILL_A_NAME_3"),
+			tt_desc = _("TOWER_SUNRAY_MASTER_SKILL_A_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_b",
+		image = "kr6_quickmenu_special_icons_sunray_master_0002",
+		place = 5,
+		sounds = {"TowerSunrayMasterSkillBTaunt"},
+		tt_phrase = _("TOWER_SUNRAY_MASTER_SKILL_B_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SUNRAY_MASTER_SKILL_B_NAME_1"),
+			tt_desc = _("TOWER_SUNRAY_MASTER_SKILL_B_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_SUNRAY_MASTER_SKILL_B_NAME_2"),
+			tt_desc = _("TOWER_SUNRAY_MASTER_SKILL_B_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_SUNRAY_MASTER_SKILL_B_NAME_3"),
+			tt_desc = _("TOWER_SUNRAY_MASTER_SKILL_B_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_c",
+		image = "kr6_quickmenu_special_icons_sunray_master_0003",
+		place = 7,
+		sounds = {"TowerSunrayMasterSkillCTaunt"},
+		tt_phrase = _("TOWER_SUNRAY_MASTER_SKILL_C_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SUNRAY_MASTER_SKILL_C_NAME_1"),
+			tt_desc = _("TOWER_SUNRAY_MASTER_SKILL_C_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_SUNRAY_MASTER_SKILL_C_NAME_2"),
+			tt_desc = _("TOWER_SUNRAY_MASTER_SKILL_C_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_SUNRAY_MASTER_SKILL_C_NAME_3"),
+			tt_desc = _("TOWER_SUNRAY_MASTER_SKILL_C_DESCRIPTION_3")
+		}}
+	}), tpl.rally, tpl.sell}},
+	light_priestess = {{M(tpl.upgrade_power, {
+		action_arg = "skill_a",
+		image = "kr6_quickmenu_special_icons_light_priestess_0001",
+		place = 6,
+		sounds = {"TowerLightPriestessSkillATaunt"},
+		tt_phrase = _("TOWER_LIGHT_PRIESTESS_SKILL_A_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_LIGHT_PRIESTESS_SKILL_A_NAME_1"),
+			tt_desc = _("TOWER_LIGHT_PRIESTESS_SKILL_A_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_LIGHT_PRIESTESS_SKILL_A_NAME_2"),
+			tt_desc = _("TOWER_LIGHT_PRIESTESS_SKILL_A_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_LIGHT_PRIESTESS_SKILL_A_NAME_3"),
+			tt_desc = _("TOWER_LIGHT_PRIESTESS_SKILL_A_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_b",
+		image = "kr6_quickmenu_special_icons_light_priestess_0002",
+		place = 5,
+		sounds = {"TowerLightPriestessSkillBTaunt"},
+		tt_phrase = _("TOWER_LIGHT_PRIESTESS_SKILL_B_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_LIGHT_PRIESTESS_SKILL_B_NAME_1"),
+			tt_desc = _("TOWER_LIGHT_PRIESTESS_SKILL_B_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_LIGHT_PRIESTESS_SKILL_B_NAME_2"),
+			tt_desc = _("TOWER_LIGHT_PRIESTESS_SKILL_B_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_LIGHT_PRIESTESS_SKILL_B_NAME_3"),
+			tt_desc = _("TOWER_LIGHT_PRIESTESS_SKILL_B_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_c",
+		image = "kr6_quickmenu_special_icons_light_priestess_0003",
+		place = 7,
+		sounds = {"TowerLightPriestessSkillCTaunt"},
+		tt_phrase = _("TOWER_LIGHT_PRIESTESS_SKILL_C_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_LIGHT_PRIESTESS_SKILL_C_NAME_1"),
+			tt_desc = _("TOWER_LIGHT_PRIESTESS_SKILL_C_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_LIGHT_PRIESTESS_SKILL_C_NAME_2"),
+			tt_desc = _("TOWER_LIGHT_PRIESTESS_SKILL_C_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_LIGHT_PRIESTESS_SKILL_C_NAME_3"),
+			tt_desc = _("TOWER_LIGHT_PRIESTESS_SKILL_C_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	mercenaries_desert = {{M(tpl.buy_soldier, {
+		action_arg = "soldier_djinn",
+		image = "main_icons_0030",
+		place = 5,
+		tt_title = _("SPECIAL_DJINN_NAME"),
+		tt_desc = _("SPECIAL_DJINN_DESCRIPTION")
+	}), M(tpl.upgrade_power, {
+		action_arg = "djspell",
+		image = "special_icons_0025",
+		place = 7,
+		sounds = {"GenieTaunt"},
+		tt_phrase = _("TOWER_BARRACK_MERCENARIES_DJSPELL_NOTE_1"),
+		tt_list = {{
+			tt_title = _("TOWER_BARRACK_MERCENARIES_DJSPELL_NAME_1"),
+			tt_desc = _("TOWER_BARRACK_MERCENARIES_DJSPELL_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_BARRACK_MERCENARIES_DJSPELL_NAME_2"),
+			tt_desc = _("TOWER_BARRACK_MERCENARIES_DJSPELL_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_BARRACK_MERCENARIES_DJSPELL_NAME_3"),
+			tt_desc = _("TOWER_BARRACK_MERCENARIES_DJSPELL_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "djshock",
+		image = "special_icons_0016",
+		place = 6,
+		sounds = {"GenieTaunt"},
+		tt_phrase = _("TOWER_BARRACK_MERCENARIES_DJSHOCK_NOTE_1"),
+		tt_list = {{
+			tt_title = _("TOWER_BARRACK_MERCENARIES_DJSHOCK_NAME_1"),
+			tt_desc = _("TOWER_BARRACK_MERCENARIES_DJSHOCK_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_BARRACK_MERCENARIES_DJSHOCK_NAME_2"),
+			tt_desc = _("TOWER_BARRACK_MERCENARIES_DJSHOCK_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_BARRACK_MERCENARIES_DJSHOCK_NAME_3"),
+			tt_desc = _("TOWER_BARRACK_MERCENARIES_DJSHOCK_DESCRIPTION_3")
+		}}
+	}), tpl.rally, tpl.sell}},
+	mercenaries_pirates = {{M(tpl.upgrade_power, {
+		action_arg = "bigbomb",
+		image = "special_icons_0018",
+		place = 6,
+		sounds = {"PiratesTaunt"},
+		tt_phrase = _("TOWER_BARRACK_PIRATES_BIGBOMB_NOTE_1"),
+		tt_list = {{
+			tt_title = _("TOWER_BARRACK_PIRATES_BIGBOMB_NAME_1"),
+			tt_desc = _("TOWER_BARRACK_PIRATES_BIGBOMB_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_BARRACK_PIRATES_BIGBOMB_NAME_2"),
+			tt_desc = _("TOWER_BARRACK_PIRATES_BIGBOMB_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_BARRACK_PIRATES_BIGBOMB_NAME_3"),
+			tt_desc = _("TOWER_BARRACK_PIRATES_BIGBOMB_DESCRIPTION_3")
+		}}
+	}), M(tpl.buy_soldier, {
+		action_arg = "soldier_pirate_flamer",
+		image = "main_icons_0032",
+		place = 5,
+		tt_title = _("SPECIAL_PIRATE_FLAMER_NAME"),
+		tt_desc = _("SPECIAL_PIRATE_FLAMER_DESCRIPTION")
+	}), M(tpl.upgrade_power, {
+		action_arg = "quickup",
+		image = "special_icons_0025",
+		place = 7,
+		sounds = {"PiratesTaunt"},
+		tt_phrase = _("TOWER_BARRACK_PIRATES_QUICKUP_NOTE_1"),
+		tt_list = {{
+			tt_title = _("TOWER_BARRACK_PIRATES_QUICKUP_NAME_1"),
+			tt_desc = _("TOWER_BARRACK_PIRATES_QUICKUP_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_BARRACK_PIRATES_QUICKUP_NAME_2"),
+			tt_desc = _("TOWER_BARRACK_PIRATES_QUICKUP_DESCRIPTION_2")
+		}}
+	}), tpl.rally, tpl.sell}},
+	pirate_watchtower = {{M(tpl.upgrade_power, {
+		action_arg = "reduce_cooldown",
+		image = "special_icons_0045",
+		place = 5,
+		sounds = {"PirateTowerTaunt1"},
+		tt_phrase = _("TOWER_PIRATE_WATCHTOWER_REDUCE_COOLDOWN_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_PIRATE_WATCHTOWER_REDUCE_COOLDOWN_NAME_1"),
+			tt_desc = _("TOWER_PIRATE_WATCHTOWER_REDUCE_COOLDOWN_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_PIRATE_WATCHTOWER_REDUCE_COOLDOWN_NAME_2"),
+			tt_desc = _("TOWER_PIRATE_WATCHTOWER_REDUCE_COOLDOWN_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_PIRATE_WATCHTOWER_REDUCE_COOLDOWN_NAME_3"),
+			tt_desc = _("TOWER_PIRATE_WATCHTOWER_REDUCE_COOLDOWN_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "parrot",
+		image = "special_icons_0046",
+		place = 6,
+		sounds = {"PirateTowerTaunt2"},
+		tt_phrase = _("TOWER_PIRATE_WATCHTOWER_PARROT_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_PIRATE_WATCHTOWER_PARROT_NAME_1"),
+			tt_desc = _("TOWER_PIRATE_WATCHTOWER_PARROT_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_PIRATE_WATCHTOWER_PARROT_NAME_2"),
+			tt_desc = _("TOWER_PIRATE_WATCHTOWER_PARROT_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_PIRATE_WATCHTOWER_PARROT_NAME_3"),
+			tt_desc = _("TOWER_PIRATE_WATCHTOWER_PARROT_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "watcher",
+		image = "kr5_special_icons_0004",
+		place = 7,
+		sounds = {"PirateTowerTaunt2"},
+		tt_phrase = _("TOWER_PIRATE_WATCHTOWER_WATCHER_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_PIRATE_WATCHTOWER_WATCHER_NAME_1"),
+			tt_desc = _("TOWER_PIRATE_WATCHTOWER_WATCHER_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_PIRATE_WATCHTOWER_WATCHER_NAME_2"),
+			tt_desc = _("TOWER_PIRATE_WATCHTOWER_WATCHER_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_PIRATE_WATCHTOWER_WATCHER_NAME_3"),
+			tt_desc = _("TOWER_PIRATE_WATCHTOWER_WATCHER_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	holder_neptune = {{M(tpl.upgrade, {
+		action_arg = "tower_neptune",
+		image = "main_icons_0015",
+		place = 5,
+		tt_title = _("SPECIAL_NEPTUNE_BROKEN_TOWER_FIX_NAME"),
+		tt_desc = _("SPECIAL_NEPTUNE_BROKEN_TOWER_FIX_DESCRIPTION")
+	}), tpl.sell}},
+	neptune = {{M(tpl.upgrade_power, {
+		action_arg = "ray",
+		image = "special_icons_0047",
+		place = 5,
+		tt_list = {{
+			tt_title = _("SPECIAL_NEPTUNE_TOWER_UPGRADE_NAME"),
+			tt_desc = _("SPECIAL_NEPTUNE_TOWER_UPGRADE_DESCRIPTION_1")
+		}, {
+			tt_title = _("SPECIAL_NEPTUNE_TOWER_UPGRADE_NAME"),
+			tt_desc = _("SPECIAL_NEPTUNE_TOWER_UPGRADE_DESCRIPTION_1")
+		}, {
+			tt_title = _("SPECIAL_NEPTUNE_TOWER_UPGRADE_NAME"),
+			tt_desc = _("SPECIAL_NEPTUNE_TOWER_UPGRADE_DESCRIPTION_1")
+		}}
+	}), tpl.point, tpl.sell}},
+	frankenstein = {{M(tpl.upgrade_power, {
+		action_arg = "lightning",
+		image = "special_icons_0048",
+		place = 1,
+		sounds = {"HWFrankensteinUpgradeLightning"},
+		tt_phrase = _("TOWER_FRANKENSTEIN_LIGHTNING_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_FRANKENSTEIN_LIGHTNING_NAME_1"),
+			tt_desc = _("TOWER_FRANKENSTEIN_LIGHTNING_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_FRANKENSTEIN_LIGHTNING_NAME_2"),
+			tt_desc = _("TOWER_FRANKENSTEIN_LIGHTNING_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_FRANKENSTEIN_LIGHTNING_NAME_3"),
+			tt_desc = _("TOWER_FRANKENSTEIN_LIGHTNING_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "frankie",
+		image = "special_icons_0049",
+		place = 2,
+		sounds = {"HWFrankensteinUpgradeFrankenstein"},
+		tt_phrase = _("TOWER_FRANKENSTEIN_FRANKIE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_FRANKENSTEIN_FRANKIE_NAME_1"),
+			tt_desc = _("TOWER_FRANKENSTEIN_FRANKIE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_FRANKENSTEIN_FRANKIE_NAME_2"),
+			tt_desc = _("TOWER_FRANKENSTEIN_FRANKIE_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_FRANKENSTEIN_FRANKIE_NAME_3"),
+			tt_desc = _("TOWER_FRANKENSTEIN_FRANKIE_DESCRIPTION_3")
+		}}
+	}), tpl.rally, tpl.sell}},
+	blade = {{M(tpl.upgrade_power, {
+		action_arg = "perfect_parry",
+		image = "kr3_special_icons_0006",
+		place = 6,
+		sounds = {"ElvesBarrackBladesingerPerfectParryTaunt"},
+		tt_phrase = _("TOWER_BLADE_PERFECT_PARRY_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BLADE_PERFECT_PARRY_NAME_1"),
+			tt_desc = _("TOWER_BLADE_PERFECT_PARRY_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_BLADE_PERFECT_PARRY_NAME_2"),
+			tt_desc = _("TOWER_BLADE_PERFECT_PARRY_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_BLADE_PERFECT_PARRY_NAME_3"),
+			tt_desc = _("TOWER_BLADE_PERFECT_PARRY_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "blade_dance",
+		image = "kr3_special_icons_0005",
+		place = 7,
+		sounds = {"ElvesBarrackBladesingerBladeDanceTaunt"},
+		tt_phrase = _("TOWER_BLADE_BLADE_DANCE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BLADE_BLADE_DANCE_NAME_1"),
+			tt_desc = _("TOWER_BLADE_BLADE_DANCE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_BLADE_BLADE_DANCE_NAME_2"),
+			tt_desc = _("TOWER_BLADE_BLADE_DANCE_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_BLADE_BLADE_DANCE_NAME_3"),
+			tt_desc = _("TOWER_BLADE_BLADE_DANCE_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "swirling",
+		image = "kr3_special_icons_0007",
+		place = 5,
+		sounds = {"ElvesBarrackBladesingerSwirlingEdge"},
+		tt_phrase = _("TOWER_BLADE_SWIRLING_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BLADE_SWIRLING_NAME_1"),
+			tt_desc = _("TOWER_BLADE_SWIRLING_DESCRIPTION_1")
+		}}
+	}), tpl.rally, tpl.sell}},
+	forest = {{M(tpl.upgrade_power, {
+		action_arg = "circle",
+		image = "kr3_special_icons_0008",
+		place = 6,
+		sounds = {"ElvesBarrackForestKeeperCircleOfLifeTaunt"},
+		tt_phrase = _("TOWER_FOREST_CIRCLE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_FOREST_CIRCLE_NAME_1"),
+			tt_desc = _("TOWER_FOREST_CIRCLE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_FOREST_CIRCLE_NAME_2"),
+			tt_desc = _("TOWER_FOREST_CIRCLE_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_FOREST_CIRCLE_NAME_3"),
+			tt_desc = _("TOWER_FOREST_CIRCLE_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "eerie",
+		image = "kr3_special_icons_0009",
+		place = 5,
+		sounds = {"ElvesBarrackForestKeeperEerieTaunt"},
+		tt_phrase = _("TOWER_FOREST_EERIE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_FOREST_EERIE_NAME_1"),
+			tt_desc = _("TOWER_FOREST_EERIE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_FOREST_EERIE_NAME_2"),
+			tt_desc = _("TOWER_FOREST_EERIE_DESCRIPTION_2")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "oak",
+		image = "kr3_special_icons_0010",
+		place = 7,
+		sounds = {"ElvesBarrackForestKeeperOakSpearTaunt"},
+		tt_phrase = _("TOWER_FOREST_OAK_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_FOREST_OAK_NAME_1"),
+			tt_desc = _("TOWER_FOREST_OAK_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_FOREST_OAK_NAME_2"),
+			tt_desc = _("TOWER_FOREST_OAK_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_FOREST_OAK_NAME_3"),
+			tt_desc = _("TOWER_FOREST_OAK_DESCRIPTION_3")
+		}}
+	}), tpl.rally, tpl.sell}},
+	druid = {{M(tpl.upgrade_power, {
+		action_arg = "sylvan",
+		image = "kr3_special_icons_0012",
+		place = 1,
+		sounds = {"ElvesRockHengeSylvanCurseTaunt"},
+		tt_phrase = _("TOWER_DRUID_SYLVAN_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_DRUID_SYLVAN_NAME_1"),
+			tt_desc = _("TOWER_DRUID_SYLVAN_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_DRUID_SYLVAN_NAME_2"),
+			tt_desc = _("TOWER_DRUID_SYLVAN_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_DRUID_SYLVAN_NAME_3"),
+			tt_desc = _("TOWER_DRUID_SYLVAN_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "nature",
+		image = "kr3_special_icons_0011",
+		place = 2,
+		sounds = {"SoldierDruidBearRallyChange"},
+		tt_phrase = _("TOWER_DRUID_NATURE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_DRUID_NATURE_NAME_1"),
+			tt_desc = _("TOWER_DRUID_NATURE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_DRUID_NATURE_NAME_2"),
+			tt_desc = _("TOWER_DRUID_NATURE_DESCRIPTION_2")
+		}}
+	}), tpl.rally, tpl.sell}},
+	entwood = {{M(tpl.upgrade_power, {
+		action_arg = "clobber",
+		image = "kr3_special_icons_0013",
+		place = 2,
+		sounds = {"ElvesRockEntwoodClobberingTaunt"},
+		tt_phrase = _("TOWER_ENTWOOD_CLOBBER_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ENTWOOD_CLOBBER_NAME_1"),
+			tt_desc = _("TOWER_ENTWOOD_CLOBBER_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ENTWOOD_CLOBBER_NAME_2"),
+			tt_desc = _("TOWER_ENTWOOD_CLOBBER_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ENTWOOD_CLOBBER_NAME_3"),
+			tt_desc = _("TOWER_ENTWOOD_CLOBBER_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "fiery_nuts",
+		image = "kr3_special_icons_0014",
+		place = 1,
+		sounds = {"ElvesRockEntwoodFieryNutsTaunt"},
+		tt_phrase = _("TOWER_ENTWOOD_FIERY_NUTS_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ENTWOOD_FIERY_NUTS_NAME_1"),
+			tt_desc = _("TOWER_ENTWOOD_FIERY_NUTS_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ENTWOOD_FIERY_NUTS_NAME_2"),
+			tt_desc = _("TOWER_ENTWOOD_FIERY_NUTS_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ENTWOOD_FIERY_NUTS_NAME_3"),
+			tt_desc = _("TOWER_ENTWOOD_FIERY_NUTS_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	arcane = {{M(tpl.upgrade_power, {
+		action_arg = "burst",
+		image = "kr3_special_icons_0002",
+		place = 1,
+		sounds = {"ElvesArcherArcaneBurstTaunt"},
+		tt_phrase = _("TOWER_ARCANE_BURST_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ARCANE_BURST_NAME_1"),
+			tt_desc = _("TOWER_ARCANE_BURST_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ARCANE_BURST_NAME_2"),
+			tt_desc = _("TOWER_ARCANE_BURST_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ARCANE_BURST_NAME_3"),
+			tt_desc = _("TOWER_ARCANE_BURST_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "slumber",
+		image = "kr3_special_icons_0001",
+		place = 2,
+		sounds = {"ElvesArcherArcaneSleepTaunt"},
+		tt_phrase = _("TOWER_ARCANE_SLUMBER_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ARCANE_SLUMBER_NAME_1"),
+			tt_desc = _("TOWER_ARCANE_SLUMBER_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ARCANE_SLUMBER_NAME_2"),
+			tt_desc = _("TOWER_ARCANE_SLUMBER_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ARCANE_SLUMBER_NAME_3"),
+			tt_desc = _("TOWER_ARCANE_SLUMBER_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	silver = {{M(tpl.upgrade_power, {
+		action_arg = "sentence",
+		image = "kr3_special_icons_0003",
+		place = 1,
+		sounds = {"ElvesArcherGoldenBowCrimsonTaunt"},
+		tt_phrase = _("TOWER_SILVER_SENTENCE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SILVER_SENTENCE_NAME_1"),
+			tt_desc = _("TOWER_SILVER_SENTENCE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_SILVER_SENTENCE_NAME_2"),
+			tt_desc = _("TOWER_SILVER_SENTENCE_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_SILVER_SENTENCE_NAME_3"),
+			tt_desc = _("TOWER_SILVER_SENTENCE_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "mark",
+		image = "kr3_special_icons_0004",
+		place = 2,
+		sounds = {"ElvesArcherGoldenBowMarkTaunt"},
+		tt_phrase = _("TOWER_SILVER_MARK_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SILVER_MARK_NAME_1"),
+			tt_desc = _("TOWER_SILVER_MARK_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_SILVER_MARK_NAME_2"),
+			tt_desc = _("TOWER_SILVER_MARK_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_SILVER_MARK_NAME_3"),
+			tt_desc = _("TOWER_SILVER_MARK_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	wild_magus = {{M(tpl.upgrade_power, {
+		action_arg = "eldritch",
+		image = "kr3_special_icons_0015",
+		place = 1,
+		sounds = {"ElvesMageWildMagusDoomTaunt"},
+		tt_phrase = _("TOWER_WILD_MAGUS_ELDRITCH_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_WILD_MAGUS_ELDRITCH_NAME_1"),
+			tt_desc = _("TOWER_WILD_MAGUS_ELDRITCH_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_WILD_MAGUS_ELDRITCH_NAME_2"),
+			tt_desc = _("TOWER_WILD_MAGUS_ELDRITCH_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_WILD_MAGUS_ELDRITCH_NAME_3"),
+			tt_desc = _("TOWER_WILD_MAGUS_ELDRITCH_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "ward",
+		image = "kr3_special_icons_0016",
+		place = 2,
+		sounds = {"ElvesMageWildMagusSilenceTaunt"},
+		tt_phrase = _("TOWER_WILD_MAGUS_WARD_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_WILD_MAGUS_WARD_NAME_1"),
+			tt_desc = _("TOWER_WILD_MAGUS_WARD_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_WILD_MAGUS_WARD_NAME_2"),
+			tt_desc = _("TOWER_WILD_MAGUS_WARD_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_WILD_MAGUS_WARD_NAME_3"),
+			tt_desc = _("TOWER_WILD_MAGUS_WARD_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	high_elven = {{M(tpl.upgrade_power, {
+		action_arg = "timelapse",
+		image = "kr3_special_icons_0017",
+		place = 1,
+		sounds = {"ElvesMageHighElvenTimelapseTaunt"},
+		tt_phrase = _("TOWER_HIGH_ELVEN_TIMELAPSE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_HIGH_ELVEN_TIMELAPSE_NAME_1"),
+			tt_desc = _("TOWER_HIGH_ELVEN_TIMELAPSE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_HIGH_ELVEN_TIMELAPSE_NAME_2"),
+			tt_desc = _("TOWER_HIGH_ELVEN_TIMELAPSE_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_HIGH_ELVEN_TIMELAPSE_NAME_3"),
+			tt_desc = _("TOWER_HIGH_ELVEN_TIMELAPSE_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "sentinel",
+		image = "kr3_special_icons_0018",
+		place = 2,
+		sounds = {"ElvesMageHighElvenSentinelTaunt"},
+		tt_phrase = _("TOWER_HIGH_ELVEN_SENTINEL_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_HIGH_ELVEN_SENTINEL_NAME_1"),
+			tt_desc = _("TOWER_HIGH_ELVEN_SENTINEL_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_HIGH_ELVEN_SENTINEL_NAME_2"),
+			tt_desc = _("TOWER_HIGH_ELVEN_SENTINEL_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_HIGH_ELVEN_SENTINEL_NAME_3"),
+			tt_desc = _("TOWER_HIGH_ELVEN_SENTINEL_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	holder_ewok = {{M(tpl.upgrade, {
+		action_arg = "tower_ewok",
+		image = "main_icons_0015",
+		place = 5,
+		tt_title = _("TOWER_EWOK_HOLDER_NAME"),
+		tt_desc = _("TOWER_EWOK_HOLDER_DESCRIPTION")
+	})}},
+	ewok = {{M(tpl.upgrade_power, {
+		action_arg = "armor",
+		image = "special_icons_0041",
+		place = 6,
+		sounds = {"ElvesEwokTaunt"},
+		tt_phrase = _("TOWER_EWOK_ARMOR_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_EWOK_ARMOR_NAME_1"),
+			tt_desc = _("TOWER_EWOK_ARMOR_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_EWOK_ARMOR_NAME_2"),
+			tt_desc = _("TOWER_EWOK_ARMOR_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_EWOK_ARMOR_NAME_3"),
+			tt_desc = _("TOWER_EWOK_ARMOR_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "shield",
+		image = "special_icons_0009",
+		place = 5,
+		sounds = {"ElvesEwokTaunt"},
+		tt_phrase = _("TOWER_EWOK_SHIELD_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_EWOK_SHIELD_NAME_1"),
+			tt_desc = _("TOWER_EWOK_SHIELD_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_EWOK_SHIELD_NAME_2"),
+			tt_desc = _("TOWER_EWOK_SHIELD_DESCRIPTION_2")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "tear",
+		image = "kr3_special_icons_0010",
+		place = 7,
+		sounds = {"ElvesEwokTaunt"},
+		tt_phrase = _("TOWER_EWOK_TEAR_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_EWOK_TEAR_NAME_1"),
+			tt_desc = _("TOWER_EWOK_TEAR_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_EWOK_TEAR_NAME_2"),
+			tt_desc = _("TOWER_EWOK_TEAR_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_EWOK_TEAR_NAME_3"),
+			tt_desc = _("TOWER_EWOK_TEAR_DESCRIPTION_3")
+		}}
+	}), tpl.rally, tpl.sell}},
+	faerie_dragon = {{M(tpl.upgrade_power, {
+		action_arg = "more_dragons",
+		image = "kr3_special_icons_0024",
+		place = 1,
+		sounds = {"ElvesFaeryDragonDragonBuy"},
+		tt_phrase = _("TOWER_FAERIE_DRAGON_MORE_DRAGONS_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_FAERIE_DRAGON_MORE_DRAGONS_NAME_1"),
+			tt_desc = _("TOWER_FAERIE_DRAGON_MORE_DRAGONS_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_FAERIE_DRAGON_MORE_DRAGONS_NAME_2"),
+			tt_desc = _("TOWER_FAERIE_DRAGON_MORE_DRAGONS_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_FAERIE_DRAGON_MORE_DRAGONS_NAME_3"),
+			tt_desc = _("TOWER_FAERIE_DRAGON_MORE_DRAGONS_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "improve_shot",
+		image = "kr3_special_icons_0025",
+		place = 2,
+		sounds = {"ElvesFaeryDragonExtraAbility"},
+		tt_phrase = _("TOWER_FAERIE_DRAGON_IMPROVE_SHOT_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_FAERIE_DRAGON_IMPROVE_SHOT_NAME_1"),
+			tt_desc = _("TOWER_FAERIE_DRAGON_IMPROVE_SHOT_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_FAERIE_DRAGON_IMPROVE_SHOT_NAME_2"),
+			tt_desc = _("TOWER_FAERIE_DRAGON_IMPROVE_SHOT_DESCRIPTION_2")
+		}}
+	}), tpl.sell}},
+	pixie = {{M(tpl.upgrade_power, {
+		action_arg = "cream",
+		image = "kr3_special_icons_0022",
+		place = 1,
+		sounds = {"ElvesGnomeNew"},
+		tt_phrase = _("TOWER_PIXIE_CREAM_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_PIXIE_CREAM_NAME_1"),
+			tt_desc = _("TOWER_PIXIE_CREAM_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_PIXIE_CREAM_NAME_2"),
+			tt_desc = _("TOWER_PIXIE_CREAM_DESCRIPTION_2")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "total",
+		image = "kr3_special_icons_0023",
+		place = 2,
+		sounds = {"ElvesGnomePower"},
+		tt_phrase = _("TOWER_PIXIE_TOTAL_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_PIXIE_TOTAL_NAME_1"),
+			tt_desc = _("TOWER_PIXIE_TOTAL_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_PIXIE_TOTAL_NAME_2"),
+			tt_desc = _("TOWER_PIXIE_TOTAL_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_PIXIE_TOTAL_NAME_3"),
+			tt_desc = _("TOWER_PIXIE_TOTAL_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	baby_black_dragon = {{M(tpl.buy_attack, {
+		action_arg = 1,
+		image = "kr3_main_icons_0011",
+		tt_title = _("TOWER_BLACK_BABY_DRAGON_NAME"),
+		tt_desc = _("TOWER_BLACK_BABY_DRAGON_DESCRIPTION")
+	})}},
+	holder_baby_ashbite = {{M(tpl.upgrade, {
+		action_arg = "tower_baby_ashbite",
+		image = "kr3_main_icons_0010",
+		place = 5,
+		tt_title = _("TOWER_BABY_ASHBITE_BROKEN_NAME"),
+		tt_desc = _("TOWER_BABY_ASHBITE_BROKEN_DESCRIPTION")
+	})}},
+	baby_ashbite = {{M(tpl.upgrade_power, {
+		action_arg = "blazing_breath",
+		image = "kr3_special_icons_0026",
+		place = 1,
+		sounds = {"ElvesAshbiteConfirm"},
+		tt_phrase = _("TOWER_BABY_ASHBITE_BLAZING_BREATH_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BABY_ASHBITE_BLAZING_BREATH_NAME_1"),
+			tt_desc = _("TOWER_BABY_ASHBITE_BLAZING_BREATH_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_BABY_ASHBITE_BLAZING_BREATH_NAME_2"),
+			tt_desc = _("TOWER_BABY_ASHBITE_BLAZING_BREATH_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_BABY_ASHBITE_BLAZING_BREATH_NAME_3"),
+			tt_desc = _("TOWER_BABY_ASHBITE_BLAZING_BREATH_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "fiery_mist",
+		image = "kr3_special_icons_0027",
+		place = 2,
+		sounds = {"ElvesAshbiteConfirm"},
+		tt_phrase = _("TOWER_BABY_ASHBITE_FIERY_MIST_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BABY_ASHBITE_FIERY_MIST_NAME_1"),
+			tt_desc = _("TOWER_BABY_ASHBITE_FIERY_MIST_DESCRIPTION_1")
+		}}
+	}), tpl.rally, tpl.sell}},
+	drow = {{M(tpl.upgrade_power, {
+		action_arg = "life_drain",
+		image = "kr3_special_icons_0020",
+		place = 6,
+		sounds = {"ElvesSpecialDrowLifeDrain"},
+		tt_phrase = _("TOWER_DROW_LIFE_DRAIN_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_DROW_LIFE_DRAIN_NAME_1"),
+			tt_desc = _("TOWER_DROW_LIFE_DRAIN_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_DROW_LIFE_DRAIN_NAME_2"),
+			tt_desc = _("TOWER_DROW_LIFE_DRAIN_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_DROW_LIFE_DRAIN_NAME_3"),
+			tt_desc = _("TOWER_DROW_LIFE_DRAIN_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "blade_mail",
+		image = "kr3_special_icons_0019",
+		place = 7,
+		sounds = {"ElvesSpecialDrowBlademail"},
+		tt_phrase = _("TOWER_DROW_BLADE_MAIL_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_DROW_BLADE_MAIL_NAME_1"),
+			tt_desc = _("TOWER_DROW_BLADE_MAIL_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_DROW_BLADE_MAIL_NAME_2"),
+			tt_desc = _("TOWER_DROW_BLADE_MAIL_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_DROW_BLADE_MAIL_NAME_3"),
+			tt_desc = _("TOWER_DROW_BLADE_MAIL_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "double_dagger",
+		image = "kr3_special_icons_0021",
+		place = 5,
+		sounds = {"ElvesSpecialDrowDaggers"},
+		tt_phrase = _("TOWER_DROW_DOUBLE_DAGGER_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_DROW_DOUBLE_DAGGER_NAME_1"),
+			tt_desc = _("TOWER_DROW_DOUBLE_DAGGER_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_DROW_DOUBLE_DAGGER_NAME_2"),
+			tt_desc = _("TOWER_DROW_DOUBLE_DAGGER_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_DROW_DOUBLE_DAGGER_NAME_3"),
+			tt_desc = _("TOWER_DROW_DOUBLE_DAGGER_DESCRIPTION_3")
+		}}
+	}), tpl.rally, tpl.sell}},
+	holder_bastion = {{M(tpl.upgrade, {
+		action_arg = "tower_bastion",
+		image = "main_icons_0015",
+		place = 5,
+		tt_title = _("ELVES_TOWER_BASTION_BROKEN_NAME"),
+		tt_desc = _("ELVES_TOWER_BASTION_BROKEN_DESCRIPTION")
+	})}},
+	bastion = {{M(tpl.upgrade_power, {
+		action_arg = "razor_edge",
+		image = "kr3_special_icons_0028",
+		place = 5,
+		sounds = {"ElvesTowerBastionRazorEdge"},
+		tt_phrase = _("ELVES_TOWER_BASTION_RAZOR_EDGE_NOTE"),
+		tt_list = {{
+			tt_title = _("ELVES_TOWER_BASTION_RAZOR_EDGE_NAME_1"),
+			tt_desc = _("ELVES_TOWER_BASTION_RAZOR_EDGE_DESCRIPTION_1")
+		}, {
+			tt_title = _("ELVES_TOWER_BASTION_RAZOR_EDGE_NAME_2"),
+			tt_desc = _("ELVES_TOWER_BASTION_RAZOR_EDGE_DESCRIPTION_2")
+		}}
+	})}},
+	tricannon = {{M(tpl.upgrade_power, {
+		action_arg = "bombardment",
+		image = "kr5_special_icons_0007",
+		place = 6,
+		sounds = {"TowerTricannonSkillATaunt"},
+		tt_phrase = _("TOWER_TRICANNON_LVL4_BOMBARDMENT_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_TRICANNON_LVL4_BOMBARDMENT_1_NAME"),
+			tt_desc = _("TOWER_TRICANNON_LVL4_BOMBARDMENT_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_TRICANNON_LVL4_BOMBARDMENT_2_NAME"),
+			tt_desc = _("TOWER_TRICANNON_LVL4_BOMBARDMENT_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_TRICANNON_LVL4_BOMBARDMENT_3_NAME"),
+			tt_desc = _("TOWER_TRICANNON_LVL4_BOMBARDMENT_3_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "overheat",
+		image = "kr5_special_icons_0008",
+		place = 7,
+		sounds = {"TowerTricannonSkillBTaunt"},
+		tt_phrase = _("TOWER_TRICANNON_LVL4_OVERHEAT_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_TRICANNON_LVL4_OVERHEAT_1_NAME"),
+			tt_desc = _("TOWER_TRICANNON_LVL4_OVERHEAT_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_TRICANNON_LVL4_OVERHEAT_2_NAME"),
+			tt_desc = _("TOWER_TRICANNON_LVL4_OVERHEAT_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_TRICANNON_LVL4_OVERHEAT_3_NAME"),
+			tt_desc = _("TOWER_TRICANNON_LVL4_OVERHEAT_3_DESCRIPTION")
+		}}
+	}), tpl.sell}},
+	dark_elf = {{M(tpl.change_mode, {
+		image = "kr5_quickmenu_action_icons_0005",
+		image_mode0 = "kr5_quickmenu_action_icons_0005",
+		image_mode1 = "kr5_quickmenu_action_icons_0004",
+		tt_title_mode0 = _("TOWER_DARK_ELF_CHANGE_MODE_FOREMOST_NAME"),
+		tt_desc_mode0 = _("TOWER_DARK_ELF_CHANGE_MODE_FOREMOST_DESCRIPTION"),
+		tt_phrase_mode0 = _("TOWER_DARK_ELF_CHANGE_MODE_FOREMOST_NOTE"),
+		tt_title_mode1 = _("TOWER_DARK_ELF_CHANGE_MODE_MAXHP_NAME"),
+		tt_desc_mode1 = _("TOWER_DARK_ELF_CHANGE_MODE_MAXHP_DESCRIPTION"),
+		tt_phrase_mode1 = _("TOWER_DARK_ELF_CHANGE_MODE_MAXHP_NOTE")
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_soldiers",
+		image = "kr5_special_icons_0032",
+		place = 6,
+		sounds = {"TowerDarkElfSkillATaunt"},
+		tt_phrase = _("TOWER_DARK_ELF_LVL4_SKILL_SOLDIERS_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_DARK_ELF_LVL4_SKILL_SOLDIERS_1_NAME"),
+			tt_desc = _("TOWER_DARK_ELF_LVL4_SKILL_SOLDIERS_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_DARK_ELF_LVL4_SKILL_SOLDIERS_2_NAME"),
+			tt_desc = _("TOWER_DARK_ELF_LVL4_SKILL_SOLDIERS_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_DARK_ELF_LVL4_SKILL_SOLDIERS_3_NAME"),
+			tt_desc = _("TOWER_DARK_ELF_LVL4_SKILL_SOLDIERS_3_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_buff",
+		image = "kr5_special_icons_0033",
+		place = 7,
+		sounds = {"TowerDarkElfSkillBTaunt"},
+		tt_phrase = _("TOWER_DARK_ELF_LVL4_SKILL_BUFF_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_DARK_ELF_LVL4_SKILL_BUFF_1_NAME"),
+			tt_desc = _("TOWER_DARK_ELF_LVL4_SKILL_BUFF_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_DARK_ELF_LVL4_SKILL_BUFF_2_NAME"),
+			tt_desc = _("TOWER_DARK_ELF_LVL4_SKILL_BUFF_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_DARK_ELF_LVL4_SKILL_BUFF_3_NAME"),
+			tt_desc = _("TOWER_DARK_ELF_LVL4_SKILL_BUFF_3_DESCRIPTION")
+		}}
+	}), tpl.rally, tpl.sell}},
+	demon_pit = {{M(tpl.upgrade_power, {
+		action_arg = "master_exploders",
+		image = "kr5_special_icons_0011",
+		place = 6,
+		sounds = {"TowerDemonPitSkillATaunt"},
+		tt_phrase = _("TOWER_DEMON_PIT_LVL4_MASTER_EXPLODERS_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_DEMON_PIT_LVL4_MASTER_EXPLODERS_1_NAME"),
+			tt_desc = _("TOWER_DEMON_PIT_LVL4_MASTER_EXPLODERS_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_DEMON_PIT_LVL4_MASTER_EXPLODERS_2_NAME"),
+			tt_desc = _("TOWER_DEMON_PIT_LVL4_MASTER_EXPLODERS_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_DEMON_PIT_LVL4_MASTER_EXPLODERS_3_NAME"),
+			tt_desc = _("TOWER_DEMON_PIT_LVL4_MASTER_EXPLODERS_3_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "big_guy",
+		image = "kr5_special_icons_0012",
+		place = 7,
+		sounds = {"TowerDemonPitSkillBTaunt"},
+		tt_phrase = _("TOWER_DEMON_PIT_LVL4_BIG_GUY_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_DEMON_PIT_LVL4_BIG_GUY_1_NAME"),
+			tt_desc = _("TOWER_DEMON_PIT_LVL4_BIG_GUY_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_DEMON_PIT_LVL4_BIG_GUY_2_NAME"),
+			tt_desc = _("TOWER_DEMON_PIT_LVL4_BIG_GUY_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_DEMON_PIT_LVL4_BIG_GUY_3_NAME"),
+			tt_desc = _("TOWER_DEMON_PIT_LVL4_BIG_GUY_3_DESCRIPTION")
+		}}
+	}), tpl.sell}},
+	necromancer_lvl4 = {{M(tpl.upgrade_power, {
+		action_arg = "skill_debuff",
+		image = "kr5_special_icons_0017",
+		place = 6,
+		sounds = {"TowerNecromancerSkillATaunt"},
+		tt_phrase = _("TOWER_NECROMANCER_LVL4_SKILL_DEBUFF_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_NECROMANCER_LVL4_SKILL_DEBUFF_1_NAME"),
+			tt_desc = _("TOWER_NECROMANCER_LVL4_SKILL_DEBUFF_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_NECROMANCER_LVL4_SKILL_DEBUFF_2_NAME"),
+			tt_desc = _("TOWER_NECROMANCER_LVL4_SKILL_DEBUFF_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_NECROMANCER_LVL4_SKILL_DEBUFF_3_NAME"),
+			tt_desc = _("TOWER_NECROMANCER_LVL4_SKILL_DEBUFF_3_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_rider",
+		image = "kr5_special_icons_0018",
+		place = 7,
+		sounds = {"TowerNecromancerSkillBTaunt"},
+		tt_phrase = _("TOWER_NECROMANCER_LVL4_SKILL_RIDER_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_NECROMANCER_LVL4_SKILL_RIDER_1_NAME"),
+			tt_desc = _("TOWER_NECROMANCER_LVL4_SKILL_RIDER_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_NECROMANCER_LVL4_SKILL_RIDER_2_NAME"),
+			tt_desc = _("TOWER_NECROMANCER_LVL4_SKILL_RIDER_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_NECROMANCER_LVL4_SKILL_RIDER_3_NAME"),
+			tt_desc = _("TOWER_NECROMANCER_LVL4_SKILL_RIDER_3_DESCRIPTION")
+		}}
+	}), tpl.sell}},
+	pandas = {{M(tpl.upgrade_power, {
+		action_arg = "thunder",
+		image = "kr5_special_icons_0041",
+		place = 6,
+		sounds = {i18n:cjk("TowerPandasSkillATaunt", "TowerPandasSkillATauntZH", nil, nil)},
+		tt_phrase = _("TOWER_PANDAS_LVL4_THUNDER"),
+		tt_list = {{
+			tt_title = _("TOWER_PANDAS_LVL4_THUNDER_1_NAME"),
+			tt_desc = _("TOWER_PANDAS_LVL4_THUNDER_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_PANDAS_LVL4_THUNDER_2_NAME"),
+			tt_desc = _("TOWER_PANDAS_LVL4_THUNDER_2_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "hat",
+		image = "kr5_special_icons_0040",
+		place = 5,
+		sounds = {i18n:cjk("TowerPandasSkillBTaunt", "TowerPandasSkillBTauntZH", nil, nil)},
+		tt_phrase = _("TOWER_PANDAS_LVL4_HAT"),
+		tt_list = {{
+			tt_title = _("TOWER_PANDAS_LVL4_HAT_1_NAME"),
+			tt_desc = _("TOWER_PANDAS_LVL4_HAT_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_PANDAS_LVL4_HAT_2_NAME"),
+			tt_desc = _("TOWER_PANDAS_LVL4_HAT_2_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "teleport",
+		image = "kr5_special_icons_0042",
+		place = 7,
+		sounds = {i18n:cjk("TowerPandasSkillCTaunt", "TowerPandasSkillCTauntZH", nil, nil)},
+		tt_phrase = _("TOWER_PANDAS_LVL4_TELEPORT"),
+		tt_list = {{
+			tt_title = _("TOWER_PANDAS_LVL4_TELEPORT_1_NAME"),
+			tt_desc = _("TOWER_PANDAS_LVL4_TELEPORT_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_PANDAS_LVL4_TELEPORT_2_NAME"),
+			tt_desc = _("TOWER_PANDAS_LVL4_TELEPORT_2_DESCRIPTION")
+		}}
+	}), M(tpl.change_mode, {
+		check = "kr5_special_icons_0020",
+		action_arg = "pandas_retreat",
+		image = "kr5_quickmenu_action_icons_0006",
+		tt_title = _("TOWER_PANDAS_RETREAT_NAME"),
+		tt_desc = _("TOWER_PANDAS_RETREAT_DESCRIPTION")
+	}), tpl.rally, tpl.sell}},
+	ray = {{M(tpl.upgrade_power, {
+		action_arg = "chain",
+		image = "kr5_special_icons_0030",
+		place = 6,
+		sounds = {"TowerRaySkillATaunt"},
+		tt_phrase = _("TOWER_RAY_LVL4_CHAIN_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_RAY_LVL4_CHAIN_1_NAME"),
+			tt_desc = _("TOWER_RAY_LVL4_CHAIN_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_RAY_LVL4_CHAIN_2_NAME"),
+			tt_desc = _("TOWER_RAY_LVL4_CHAIN_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_RAY_LVL4_CHAIN_3_NAME"),
+			tt_desc = _("TOWER_RAY_LVL4_CHAIN_3_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "sheep",
+		image = "kr5_special_icons_0031",
+		place = 7,
+		sounds = {"TowerRaySkillBTaunt"},
+		tt_phrase = _("TOWER_RAY_LVL4_SHEEP_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_RAY_LVL4_SHEEP_1_NAME"),
+			tt_desc = _("TOWER_RAY_LVL4_SHEEP_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_RAY_LVL4_SHEEP_2_NAME"),
+			tt_desc = _("TOWER_RAY_LVL4_SHEEP_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_RAY_LVL4_SHEEP_3_NAME"),
+			tt_desc = _("TOWER_RAY_LVL4_SHEEP_3_DESCRIPTION")
+		}}
+	}), tpl.sell}},
+	elven_stargazers = {{M(tpl.upgrade_power, {
+		action_arg = "teleport",
+		image = "kr5_special_icons_0013",
+		place = 6,
+		sounds = {"TowerElvenStargazersSkillATaunt"},
+		tt_phrase = _("TOWER_ELVEN_STARGAZERS_LVL4_TELEPORT_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ELVEN_STARGAZERS_LVL4_TELEPORT_1_NAME"),
+			tt_desc = _("TOWER_ELVEN_STARGAZERS_LVL4_TELEPORT_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_ELVEN_STARGAZERS_LVL4_TELEPORT_2_NAME"),
+			tt_desc = _("TOWER_ELVEN_STARGAZERS_LVL4_TELEPORT_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_ELVEN_STARGAZERS_LVL4_TELEPORT_3_NAME"),
+			tt_desc = _("TOWER_ELVEN_STARGAZERS_LVL4_TELEPORT_3_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "stars_death",
+		image = "kr5_special_icons_0014",
+		place = 7,
+		sounds = {"TowerElvenStargazersSkillBTaunt"},
+		tt_phrase = _("TOWER_ELVEN_STARGAZERS_LVL4_STARS_DEATH_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ELVEN_STARGAZERS_LVL4_STARS_DEATH_1_NAME"),
+			tt_desc = _("TOWER_ELVEN_STARGAZERS_LVL4_STARS_DEATH_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_ELVEN_STARGAZERS_LVL4_STARS_DEATH_2_NAME"),
+			tt_desc = _("TOWER_ELVEN_STARGAZERS_LVL4_STARS_DEATH_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_ELVEN_STARGAZERS_LVL4_STARS_DEATH_3_NAME"),
+			tt_desc = _("TOWER_ELVEN_STARGAZERS_LVL4_STARS_DEATH_3_DESCRIPTION")
+		}}
+	}), tpl.sell}},
+	sand = {{M(tpl.upgrade_power, {
+		action_arg = "skill_gold",
+		image = "kr5_special_icons_0028",
+		place = 6,
+		sounds = {"TowerSandSkillATaunt"},
+		tt_phrase = _("TOWER_SAND_LVL4_SKILL_GOLD_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SAND_LVL4_SKILL_GOLD_1_NAME"),
+			tt_desc = _("TOWER_SAND_LVL4_SKILL_GOLD_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_SAND_LVL4_SKILL_GOLD_2_NAME"),
+			tt_desc = _("TOWER_SAND_LVL4_SKILL_GOLD_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_SAND_LVL4_SKILL_GOLD_3_NAME"),
+			tt_desc = _("TOWER_SAND_LVL4_SKILL_GOLD_3_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_big_blade",
+		image = "kr5_special_icons_0029",
+		place = 7,
+		sounds = {"TowerSandSkillBTaunt"},
+		tt_phrase = _("TOWER_SAND_LVL4_SKILL_BIG_BLADE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SAND_LVL4_SKILL_BIG_BLADE_1_NAME"),
+			tt_desc = _("TOWER_SAND_LVL4_SKILL_BIG_BLADE_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_SAND_LVL4_SKILL_BIG_BLADE_2_NAME"),
+			tt_desc = _("TOWER_SAND_LVL4_SKILL_BIG_BLADE_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_SAND_LVL4_SKILL_BIG_BLADE_3_NAME"),
+			tt_desc = _("TOWER_SAND_LVL4_SKILL_BIG_BLADE_3_DESCRIPTION")
+		}}
+	}), tpl.sell}},
+	royal_archers = {{M(tpl.upgrade_power, {
+		action_arg = "armor_piercer",
+		image = "kr5_special_icons_0003",
+		place = 6,
+		sounds = {"TowerRoyalArchersSkillATaunt"},
+		tt_phrase = _("TOWER_ROYAL_ARCHERS_LVL4_ARMOR_PIERCER_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ROYAL_ARCHERS_LVL4_ARMOR_PIERCER_1_NAME"),
+			tt_desc = _("TOWER_ROYAL_ARCHERS_LVL4_ARMOR_PIERCER_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_ROYAL_ARCHERS_LVL4_ARMOR_PIERCER_2_NAME"),
+			tt_desc = _("TOWER_ROYAL_ARCHERS_LVL4_ARMOR_PIERCER_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_ROYAL_ARCHERS_LVL4_ARMOR_PIERCER_3_NAME"),
+			tt_desc = _("TOWER_ROYAL_ARCHERS_LVL4_ARMOR_PIERCER_3_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "rapacious_hunter",
+		image = "kr5_special_icons_0004",
+		place = 7,
+		sounds = {"TowerRoyalArchersSkillBTaunt"},
+		tt_phrase = _("TOWER_ROYAL_ARCHERS_LVL4_RAPACIOUS_HUNTER_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ROYAL_ARCHERS_LVL4_RAPACIOUS_HUNTER_1_NAME"),
+			tt_desc = _("TOWER_ROYAL_ARCHERS_LVL4_RAPACIOUS_HUNTER_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_ROYAL_ARCHERS_LVL4_RAPACIOUS_HUNTER_2_NAME"),
+			tt_desc = _("TOWER_ROYAL_ARCHERS_LVL4_RAPACIOUS_HUNTER_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_ROYAL_ARCHERS_LVL4_RAPACIOUS_HUNTER_3_NAME"),
+			tt_desc = _("TOWER_ROYAL_ARCHERS_LVL4_RAPACIOUS_HUNTER_3_DESCRIPTION")
+		}}
+	}), tpl.sell}},
+	arcane_wizard_five = {{M(tpl.upgrade_power, {
+		action_arg = "disintegrate",
+		image = "kr5_special_icons_0005",
+		place = 6,
+		sounds = {"TowerArcaneWizardSkillATaunt"},
+		tt_phrase = _("TOWER_ARCANE_WIZARD_LVL4_DISINTEGRATE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ARCANE_WIZARD_LVL4_DISINTEGRATE_1_NAME"),
+			tt_desc = _("TOWER_ARCANE_WIZARD_LVL4_DISINTEGRATE_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_ARCANE_WIZARD_LVL4_DISINTEGRATE_2_NAME"),
+			tt_desc = _("TOWER_ARCANE_WIZARD_LVL4_DISINTEGRATE_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_ARCANE_WIZARD_LVL4_DISINTEGRATE_3_NAME"),
+			tt_desc = _("TOWER_ARCANE_WIZARD_LVL4_DISINTEGRATE_3_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "empowerment",
+		image = "kr5_special_icons_0006",
+		place = 7,
+		sounds = {"TowerArcaneWizardSkillBTaunt"},
+		tt_phrase = _("TOWER_ARCANE_WIZARD_LVL4_EMPOWERMENT_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ARCANE_WIZARD_LVL4_EMPOWERMENT_1_NAME"),
+			tt_desc = _("TOWER_ARCANE_WIZARD_LVL4_EMPOWERMENT_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_ARCANE_WIZARD_LVL4_EMPOWERMENT_2_NAME"),
+			tt_desc = _("TOWER_ARCANE_WIZARD_LVL4_EMPOWERMENT_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_ARCANE_WIZARD_LVL4_EMPOWERMENT_3_NAME"),
+			tt_desc = _("TOWER_ARCANE_WIZARD_LVL4_EMPOWERMENT_3_DESCRIPTION")
+		}}
+	}), tpl.sell}},
+	rocket_gunners = {{M(tpl.upgrade_power, {
+		action_arg = "sting_missiles",
+		image = "kr5_special_icons_0015",
+		place = 6,
+		sounds = {"TowerRocketGunnersSkillATaunt"},
+		tt_phrase = _("TOWER_ROCKET_GUNNERS_LVL4_STING_MISSILES_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ROCKET_GUNNERS_LVL4_STING_MISSILES_1_NAME"),
+			tt_desc = _("TOWER_ROCKET_GUNNERS_LVL4_STING_MISSILES_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_ROCKET_GUNNERS_LVL4_STING_MISSILES_2_NAME"),
+			tt_desc = _("TOWER_ROCKET_GUNNERS_LVL4_STING_MISSILES_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_ROCKET_GUNNERS_LVL4_STING_MISSILES_3_NAME"),
+			tt_desc = _("TOWER_ROCKET_GUNNERS_LVL4_STING_MISSILES_3_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "phosphoric",
+		image = "kr5_special_icons_0016",
+		place = 7,
+		sounds = {"TowerRocketGunnersSkillBTaunt"},
+		tt_phrase = _("TOWER_ROCKET_GUNNERS_LVL4_PHOSPHORIC_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ROCKET_GUNNERS_LVL4_PHOSPHORIC_1_NAME"),
+			tt_desc = _("TOWER_ROCKET_GUNNERS_LVL4_PHOSPHORIC_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_ROCKET_GUNNERS_LVL4_PHOSPHORIC_2_NAME"),
+			tt_desc = _("TOWER_ROCKET_GUNNERS_LVL4_PHOSPHORIC_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_ROCKET_GUNNERS_LVL4_PHOSPHORIC_3_NAME"),
+			tt_desc = _("TOWER_ROCKET_GUNNERS_LVL4_PHOSPHORIC_3_DESCRIPTION")
+		}}
+	}), tpl.rally, tpl.sell, M(tpl.change_mode, {
+		image = "kr5_quickmenu_action_icons_0002",
+		image_mode0 = "kr5_quickmenu_action_icons_0002",
+		image_mode1 = "kr5_quickmenu_action_icons_0001",
+		tt_title_mode0 = _("TOWER_ROCKET_GUNNERS_CHANGE_MODE_GROUND_NAME"),
+		tt_desc_mode0 = _("TOWER_ROCKET_GUNNERS_CHANGE_MODE_GROUND_DESCRIPTION"),
+		tt_phrase_mode0 = _("TOWER_ROCKET_GUNNERS_CHANGE_MODE_GROUND_NOTE"),
+		tt_title_mode1 = _("TOWER_ROCKET_GUNNERS_CHANGE_MODE_FLY_NAME"),
+		tt_desc_mode1 = _("TOWER_ROCKET_GUNNERS_CHANGE_MODE_FLY_DESCRIPTION"),
+		tt_phrase_mode1 = _("TOWER_ROCKET_GUNNERS_CHANGE_MODE_FLY_NOTE"),
+		sounds = {"TowerRocketGunnersLiftoffTaunt", "TowerRocketGunnersTouchdownTaunt"}
+	})}},
+	flamespitter = {{M(tpl.upgrade_power, {
+		action_arg = "skill_bomb",
+		image = "kr5_special_icons_0022",
+		place = 7,
+		sounds = {"TowerFlamespitterSkillATaunt"},
+		tt_phrase = _("TOWER_FLAMESPITTER_LVL4_SKILL_BOMB_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_FLAMESPITTER_LVL4_SKILL_BOMB_1_NAME"),
+			tt_desc = _("TOWER_FLAMESPITTER_LVL4_SKILL_BOMB_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_FLAMESPITTER_LVL4_SKILL_BOMB_2_NAME"),
+			tt_desc = _("TOWER_FLAMESPITTER_LVL4_SKILL_BOMB_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_FLAMESPITTER_LVL4_SKILL_BOMB_3_NAME"),
+			tt_desc = _("TOWER_FLAMESPITTER_LVL4_SKILL_BOMB_3_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_columns",
+		image = "kr5_special_icons_0023",
+		place = 6,
+		sounds = {"TowerFlamespitterSkillBTaunt"},
+		tt_phrase = _("TOWER_FLAMESPITTER_LVL4_SKILL_COLUMNS_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_FLAMESPITTER_LVL4_SKILL_COLUMNS_1_NAME"),
+			tt_desc = _("TOWER_FLAMESPITTER_LVL4_SKILL_COLUMNS_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_FLAMESPITTER_LVL4_SKILL_COLUMNS_2_NAME"),
+			tt_desc = _("TOWER_FLAMESPITTER_LVL4_SKILL_COLUMNS_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_FLAMESPITTER_LVL4_SKILL_COLUMNS_3_NAME"),
+			tt_desc = _("TOWER_FLAMESPITTER_LVL4_SKILL_COLUMNS_3_DESCRIPTION")
+		}}
+	}), tpl.sell}},
+	ballista = {{M(tpl.upgrade_power, {
+		action_arg = "skill_final_shot",
+		image = "kr5_special_icons_0019",
+		place = 6,
+		sounds = {"TowerBallistaSkillATaunt"},
+		tt_phrase = _("TOWER_BALLISTA_LVL4_SKILL_FINAL_SHOT_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BALLISTA_LVL4_SKILL_FINAL_SHOT_1_NAME"),
+			tt_desc = _("TOWER_BALLISTA_LVL4_SKILL_FINAL_SHOT_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_BALLISTA_LVL4_SKILL_FINAL_SHOT_2_NAME"),
+			tt_desc = _("TOWER_BALLISTA_LVL4_SKILL_FINAL_SHOT_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_BALLISTA_LVL4_SKILL_FINAL_SHOT_3_NAME"),
+			tt_desc = _("TOWER_BALLISTA_LVL4_SKILL_FINAL_SHOT_3_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_bomb",
+		image = "kr5_special_icons_0021",
+		place = 7,
+		sounds = {"TowerBallistaSkillBTaunt"},
+		tt_phrase = _("TOWER_BALLISTA_LVL4_SKILL_BOMB_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BALLISTA_LVL4_SKILL_BOMB_1_NAME"),
+			tt_desc = _("TOWER_BALLISTA_LVL4_SKILL_BOMB_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_BALLISTA_LVL4_SKILL_BOMB_2_NAME"),
+			tt_desc = _("TOWER_BALLISTA_LVL4_SKILL_BOMB_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_BALLISTA_LVL4_SKILL_BOMB_3_NAME"),
+			tt_desc = _("TOWER_BALLISTA_LVL4_SKILL_BOMB_3_DESCRIPTION")
+		}}
+	}), tpl.sell}},
+	barrel = {{M(tpl.upgrade_power, {
+		action_arg = "skill_warrior",
+		image = "kr5_special_icons_0026",
+		place = 6,
+		sounds = {"TowerBarrelSkillATaunt"},
+		tt_phrase = _("TOWER_BARREL_LVL4_SKILL_WARRIOR_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BARREL_LVL4_SKILL_WARRIOR_1_NAME"),
+			tt_desc = _("TOWER_BARREL_LVL4_SKILL_WARRIOR_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_BARREL_LVL4_SKILL_WARRIOR_2_NAME"),
+			tt_desc = _("TOWER_BARREL_LVL4_SKILL_WARRIOR_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_BARREL_LVL4_SKILL_WARRIOR_3_NAME"),
+			tt_desc = _("TOWER_BARREL_LVL4_SKILL_WARRIOR_3_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_barrel",
+		image = "kr5_special_icons_0027",
+		place = 7,
+		sounds = {"TowerBarrelSkillBTaunt"},
+		tt_phrase = _("TOWER_BARREL_LVL4_SKILL_BARREL_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BARREL_LVL4_SKILL_BARREL_1_NAME"),
+			tt_desc = _("TOWER_BARREL_LVL4_SKILL_BARREL_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_BARREL_LVL4_SKILL_BARREL_2_NAME"),
+			tt_desc = _("TOWER_BARREL_LVL4_SKILL_BARREL_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_BARREL_LVL4_SKILL_BARREL_3_NAME"),
+			tt_desc = _("TOWER_BARREL_LVL4_SKILL_BARREL_3_DESCRIPTION")
+		}}
+	}), tpl.rally, tpl.sell}},
+	hermit_toad = {{M(tpl.upgrade_power, {
+		action_arg = "jump",
+		image = "kr5_special_icons_0035",
+		place = 6,
+		sounds = {"TowerHermitToadSkillATaunt"},
+		tt_phrase = _("TOWER_HERMIT_TOAD_LVL4_JUMP_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_HERMIT_TOAD_LVL4_JUMP_1_NAME"),
+			tt_desc = _("TOWER_HERMIT_TOAD_LVL4_JUMP_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_HERMIT_TOAD_LVL4_JUMP_2_NAME"),
+			tt_desc = _("TOWER_HERMIT_TOAD_LVL4_JUMP_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_HERMIT_TOAD_LVL4_JUMP_3_NAME"),
+			tt_desc = _("TOWER_HERMIT_TOAD_LVL4_JUMP_3_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "instakill",
+		place = 7,
+		image = "kr5_special_icons_0034",
+		sounds = {"TowerHermitToadSkillBTaunt"},
+		tt_phrase = _("TOWER_HERMIT_TOAD_LVL4_INSTAKILL_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_HERMIT_TOAD_LVL4_INSTAKILL_1_NAME"),
+			tt_desc = _("TOWER_HERMIT_TOAD_LVL4_INSTAKILL_1_DESCRIPTION")
+		}}
+	}), M(tpl.change_mode, {
+		image = "kr5_quickmenu_action_icons_0008",
+		image_mode0 = "kr5_quickmenu_action_icons_0008",
+		image_mode1 = "kr5_quickmenu_action_icons_0007",
+		tt_title_mode0 = _("TOWER_HERMIT_TOAD_CHANGE_MODE_ENGINEER_NAME"),
+		tt_desc_mode0 = _("TOWER_HERMIT_TOAD_CHANGE_MODE_ENGINEER_DESCRIPTION"),
+		tt_phrase_mode0 = _("TOWER_HERMIT_TOAD_CHANGE_MODE_ENGINEER_NOTE"),
+		tt_title_mode1 = _("TOWER_HERMIT_TOAD_CHANGE_MODE_MAGE_NAME"),
+		tt_desc_mode1 = _("TOWER_HERMIT_TOAD_CHANGE_MODE_MAGE_DESCRIPTION"),
+		tt_phrase_mode1 = _("TOWER_HERMIT_TOAD_CHANGE_MODE_MAGE_NOTE"),
+		sounds = {"TowerHermitToadSwitchToArtillery", "TowerHermitToadSwitchToMage"}
+	}), tpl.sell}},
+	sparking_geode = {{M(tpl.upgrade_power, {
+		check = "special_icons_0020",
+		action_arg = "crystalize",
+		image = "kr5_special_icons_0038",
+		place = 6,
+		sounds = {"TowerSparkingGeodeSkillATaunt"},
+		tt_phrase = _("TOWER_SPARKING_GEODE_LVL4_CRYSTALIZE"),
+		tt_list = {{
+			tt_title = _("TOWER_SPARKING_GEODE_LVL4_CRYSTALIZE_1_NAME"),
+			tt_desc = _("TOWER_SPARKING_GEODE_LVL4_CRYSTALIZE_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_SPARKING_GEODE_LVL4_CRYSTALIZE_2_NAME"),
+			tt_desc = _("TOWER_SPARKING_GEODE_LVL4_CRYSTALIZE_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_SPARKING_GEODE_LVL4_CRYSTALIZE_3_NAME"),
+			tt_desc = _("TOWER_SPARKING_GEODE_LVL4_CRYSTALIZE_3_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		check = "special_icons_0020",
+		action_arg = "spike_burst",
+		image = "kr5_special_icons_0039",
+		place = 7,
+		sounds = {"TowerSparkingGeodeSkillBTaunt"},
+		tt_phrase = _("TOWER_SPARKING_GEODE_LVL4_SPIKE_BURST"),
+		tt_list = {{
+			tt_title = _("TOWER_SPARKING_GEODE_LVL4_SPIKE_BURST_1_NAME"),
+			tt_desc = _("TOWER_SPARKING_GEODE_LVL4_SPIKE_BURST_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_SPARKING_GEODE_LVL4_SPIKE_BURST_2_NAME"),
+			tt_desc = _("TOWER_SPARKING_GEODE_LVL4_SPIKE_BURST_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_SPARKING_GEODE_LVL4_SPIKE_BURST_3_NAME"),
+			tt_desc = _("TOWER_SPARKING_GEODE_LVL4_SPIKE_BURST_3_DESCRIPTION")
+		}}
+	}), tpl.sell}},
+	dwarf = {{M(tpl.upgrade_power, {
+		check = "special_icons_0020",
+		action_arg = "formation",
+		image = "kr5_special_icons_0036",
+		place = 6,
+		sounds = {"TowerDwarfSkillATaunt"},
+		tt_phrase = _("TOWER_DWARF_LVL4_FORMATION_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_DWARF_LVL4_FORMATION_1_NAME"),
+			tt_desc = _("TOWER_DWARF_LVL4_FORMATION_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_DWARF_LVL4_FORMATION_2_NAME"),
+			tt_desc = _("TOWER_DWARF_LVL4_FORMATION_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_DWARF_LVL4_FORMATION_3_NAME"),
+			tt_desc = _("TOWER_DWARF_LVL4_FORMATION_3_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		check = "special_icons_0020",
+		action_arg = "incendiary_ammo",
+		image = "kr5_special_icons_0037",
+		place = 7,
+		sounds = {"TowerDwarfSkillBTaunt"},
+		tt_phrase = _("TOWER_DWARF_LVL4_INCENDIARY_AMMO_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_DWARF_LVL4_INCENDIARY_AMMO_1_NAME"),
+			tt_desc = _("TOWER_DWARF_LVL4_INCENDIARY_AMMO_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_DWARF_LVL4_INCENDIARY_AMMO_2_NAME"),
+			tt_desc = _("TOWER_DWARF_LVL4_INCENDIARY_AMMO_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_DWARF_LVL4_INCENDIARY_AMMO_3_NAME"),
+			tt_desc = _("TOWER_DWARF_LVL4_INCENDIARY_AMMO_3_DESCRIPTION")
+		}}
+	}), tpl.rally, tpl.sell}},
+	ghost = {{M(tpl.upgrade_power, {
+		action_arg = "extra_damage",
+		image = "kr5_special_icons_0024",
+		place = 6,
+		sounds = {"TowerGhostSkillATaunt"},
+		tt_phrase = _("TOWER_GHOST_LVL4_EXTRA_DAMAGE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_GHOST_LVL4_EXTRA_DAMAGE_1_NAME"),
+			tt_desc = _("TOWER_GHOST_LVL4_EXTRA_DAMAGE_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_GHOST_LVL4_EXTRA_DAMAGE_2_NAME"),
+			tt_desc = _("TOWER_GHOST_LVL4_EXTRA_DAMAGE_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_GHOST_LVL4_EXTRA_DAMAGE_3_NAME"),
+			tt_desc = _("TOWER_GHOST_LVL4_EXTRA_DAMAGE_3_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "soul_attack",
+		image = "kr5_special_icons_0025",
+		place = 7,
+		sounds = {"TowerGhostSkillBTaunt"},
+		tt_phrase = _("TOWER_GHOST_LVL4_SOUL_ATTACK_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_GHOST_LVL4_SOUL_ATTACK_1_NAME"),
+			tt_desc = _("TOWER_GHOST_LVL4_SOUL_ATTACK_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_GHOST_LVL4_SOUL_ATTACK_2_NAME"),
+			tt_desc = _("TOWER_GHOST_LVL4_SOUL_ATTACK_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_GHOST_LVL4_SOUL_ATTACK_3_NAME"),
+			tt_desc = _("TOWER_GHOST_LVL4_SOUL_ATTACK_3_DESCRIPTION")
+		}}
+	}), tpl.rally, tpl.sell, M(tpl.change_mode, {
+		image = "kr5_quickmenu_action_icons_0003",
+		tt_title = _("TOWER_GHOST_SWAP_MODE_NAME"),
+		tt_desc = _("TOWER_GHOST_SWAP_MODE_DESCRIPTION"),
+		tt_phrase = _("TOWER_GHOST_SWAP_MODE_NODE")
+	})}},
+	paladin_covenant = {{M(tpl.upgrade_power, {
+		action_arg = "lead",
+		image = "kr5_special_icons_0002",
+		place = 6,
+		sounds = {"TowerPaladinCovenantSkillATaunt"},
+		tt_phrase = _("TOWER_PALADIN_COVENANT_LVL4_LEAD_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_PALADIN_COVENANT_LVL4_LEAD_1_NAME"),
+			tt_desc = _("TOWER_PALADIN_COVENANT_LVL4_LEAD_1_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "healing_prayer",
+		image = "kr5_special_icons_0001",
+		place = 7,
+		sounds = {"TowerPaladinCovenantSkillBTaunt"},
+		tt_phrase = _("TOWER_PALADIN_COVENANT_LVL4_HEALING_PRAYER_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_PALADIN_COVENANT_LVL4_HEALING_PRAYER_1_NAME"),
+			tt_desc = _("TOWER_PALADIN_COVENANT_LVL4_HEALING_PRAYER_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_PALADIN_COVENANT_LVL4_HEALING_PRAYER_2_NAME"),
+			tt_desc = _("TOWER_PALADIN_COVENANT_LVL4_HEALING_PRAYER_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_PALADIN_COVENANT_LVL4_HEALING_PRAYER_3_NAME"),
+			tt_desc = _("TOWER_PALADIN_COVENANT_LVL4_HEALING_PRAYER_3_DESCRIPTION")
+		}}
+	}), tpl.rally, tpl.sell}},
+	arborean_emissary = {{M(tpl.upgrade_power, {
+		action_arg = "gift_of_nature",
+		image = "kr5_special_icons_0010",
+		place = 6,
+		sounds = {"TowerArboreanEmissarySkillATaunt"},
+		tt_phrase = _("TOWER_ARBOREAN_EMISSARY_LVL4_GIFT_OF_NATURE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ARBOREAN_EMISSARY_LVL4_GIFT_OF_NATURE_1_NAME"),
+			tt_desc = _("TOWER_ARBOREAN_EMISSARY_LVL4_GIFT_OF_NATURE_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_ARBOREAN_EMISSARY_LVL4_GIFT_OF_NATURE_2_NAME"),
+			tt_desc = _("TOWER_ARBOREAN_EMISSARY_LVL4_GIFT_OF_NATURE_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_ARBOREAN_EMISSARY_LVL4_GIFT_OF_NATURE_3_NAME"),
+			tt_desc = _("TOWER_ARBOREAN_EMISSARY_LVL4_GIFT_OF_NATURE_3_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "wave_of_roots",
+		image = "kr5_special_icons_0009",
+		place = 7,
+		sounds = {"TowerArboreanEmissarySkillBTaunt"},
+		tt_phrase = _("TOWER_ARBOREAN_EMISSARY_LVL4_WAVE_OF_ROOTS_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ARBOREAN_EMISSARY_LVL4_WAVE_OF_ROOTS_1_NAME"),
+			tt_desc = _("TOWER_ARBOREAN_EMISSARY_LVL4_WAVE_OF_ROOTS_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_ARBOREAN_EMISSARY_LVL4_WAVE_OF_ROOTS_2_NAME"),
+			tt_desc = _("TOWER_ARBOREAN_EMISSARY_LVL4_WAVE_OF_ROOTS_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_ARBOREAN_EMISSARY_LVL4_WAVE_OF_ROOTS_3_NAME"),
+			tt_desc = _("TOWER_ARBOREAN_EMISSARY_LVL4_WAVE_OF_ROOTS_3_DESCRIPTION")
+		}}
+	}), tpl.sell}},
+	holder_blocked_elemental_wood = {{M(tpl.unblock, {
+		action_arg = "tower_holder_elemental_wood",
+		image = "kr5_main_icons_0045",
+		tt_title = _("TOWER_HOLDER_BLOCKED_ELEMENTAL_WOOD_NAME"),
+		tt_desc = _("TOWER_HOLDER_BLOCKED_ELEMENTAL_WOOD_DESCRIPTION")
+	})}},
+	holder_blocked_elemental_fire = {{M(tpl.unblock, {
+		action_arg = "tower_holder_elemental_fire",
+		image = "kr5_main_icons_0044",
+		tt_title = _("TOWER_HOLDER_BLOCKED_ELEMENTAL_FIRE_NAME"),
+		tt_desc = _("TOWER_HOLDER_BLOCKED_ELEMENTAL_FIRE_DESCRIPTION")
+	})}},
+	holder_blocked_elemental_water = {{M(tpl.unblock, {
+		action_arg = "tower_holder_elemental_water",
+		image = "kr5_main_icons_0046",
+		tt_title = _("TOWER_HOLDER_BLOCKED_ELEMENTAL_WATER_NAME"),
+		tt_desc = _("TOWER_HOLDER_BLOCKED_ELEMENTAL_WATER_DESCRIPTION")
+	})}},
+	holder_blocked_elemental_earth = {{M(tpl.unblock, {
+		action_arg = "tower_holder_elemental_earth",
+		image = "kr5_main_icons_0050",
+		tt_title = _("TOWER_HOLDER_BLOCKED_ELEMENTAL_EARTH_NAME"),
+		tt_desc = _("TOWER_HOLDER_BLOCKED_ELEMENTAL_EARTH_DESCRIPTION")
+	})}},
+	holder_blocked_elemental_metal = {{M(tpl.unblock, {
+		action_arg = "tower_holder_elemental_metal",
+		image = "kr5_main_icons_0047",
+		tt_title = _("TOWER_HOLDER_BLOCKED_ELEMENTAL_METAL_NAME"),
+		tt_desc = _("TOWER_HOLDER_BLOCKED_ELEMENTAL_METAL_DESCRIPTION")
+	})}},
+	tower_arborean_sentinels = {{M(tpl.buy_soldier, {
+		action_arg = "soldier_arborean_sentinels_spearmen",
+		image = "kr5_main_icons_0105",
+		tt_title = _("SPECIAL_ARBOREAN_SENTINELS_SPEARMEN_NAME"),
+		tt_desc = _("SPECIAL_ARBOREAN_SENTINELS_SPEARMEN_DESCRIPTION")
+	}), tpl.rally, tpl.sell}},
+	stage_11_veznan = {{{
+		action_arg = 1,
+		action = "tw_free_action",
+		halo = "glow_ico_main",
+		image = "veznan_skill_icons_ingame_skill_veznan_icon_01",
+		place = 6,
+		tt_title = _("SPECIAL_STAGE_11_VEZNAN_ABILITY_NAME_1"),
+		tt_desc = _("SPECIAL_STAGE_11_VEZNAN_ABILITY_DESCRIPTION_1")
+	}, {
+		action_arg = 2,
+		action = "tw_free_action",
+		halo = "glow_ico_main",
+		image = "veznan_skill_icons_ingame_skill_veznan_icon_02",
+		place = 5,
+		tt_title = _("SPECIAL_STAGE_11_VEZNAN_ABILITY_NAME_2"),
+		tt_desc = _("SPECIAL_STAGE_11_VEZNAN_ABILITY_DESCRIPTION_2")
+	}, {
+		action_arg = 3,
+		action = "tw_free_action",
+		halo = "glow_ico_main",
+		image = "veznan_skill_icons_ingame_skill_veznan_icon_03",
+		place = 7,
+		tt_title = _("SPECIAL_STAGE_11_VEZNAN_ABILITY_NAME_3"),
+		tt_desc = _("SPECIAL_STAGE_11_VEZNAN_ABILITY_DESCRIPTION_3")
+	}}},
+	tower_stage_13_sunray = {{{
+		action_arg = "",
+		action = "tw_repair",
+		halo = "glow_ico_main",
+		image = "kr5_main_icons_0030",
+		place = 5,
+		tt_title = _("TOWER_STAGE_13_SUNRAY_REPAIR_NAME"),
+		tt_desc = _("TOWER_STAGE_13_SUNRAY_REPAIR_DESCRIPTION")
+	}, tpl.sell}},
+	stage_213_sunray_tower = {},
+	stage_213_broken_sunray_obelisk = {{M(tpl.upgrade, {
+		action_arg = "tower_stage_213_sunray_obelisk",
+		image = "main_icons_0005",
+		place = 5,
+		tt_title = _("TOWER_STAGE_213_SUNRAY_OBELISK_UPGRADE_NAME"),
+		tt_desc = _("TOWER_STAGE_213_SUNRAY_OBELISK_UPGRADE_DESCRIPTION")
+	})}},
+	stage_213_sunray_obelisk = {},
+	stage_214_blacksmith = {{M(tpl.upgrade_power, {
+		action_arg = "skill_a",
+		image = "kr6_quickmenu_special_icons_st14_0003",
+		place = 5,
+		sounds = {"Stage14BlacksmithUpgradeTaunt"},
+		tt_phrase = _("TOWER_STAGE_214_BLACKSMITH_SKILL_A_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_STAGE_214_BLACKSMITH_SKILL_A_NAME"),
+			tt_desc = _("TOWER_STAGE_214_BLACKSMITH_SKILL_A_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_STAGE_214_BLACKSMITH_SKILL_A_NAME"),
+			tt_desc = _("TOWER_STAGE_214_BLACKSMITH_SKILL_A_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_STAGE_214_BLACKSMITH_SKILL_A_NAME"),
+			tt_desc = _("TOWER_STAGE_214_BLACKSMITH_SKILL_A_3_DESCRIPTION")
+		}}
+	})}},
+	stage_214_armory = {{M(tpl.buy_attack, {
+		check = "main_icons_0019",
+		action = "tw_repair",
+		action_arg = "",
+		halo = "glow_ico_main",
+		image = "main_icons_0005",
+		place = 5,
+		tt_title = _("TOWER_STAGE_214_BROKEN_ARMORY_UPGRADE_NAME"),
+		tt_desc = _("TOWER_STAGE_214_BROKEN_ARMORY_UPGRADE_DESCRIPTION")
+	})}},
+	stage_214_armory_fixed = {{M(tpl.upgrade_power, {
+		action_arg = "skill_a",
+		image = "kr6_quickmenu_special_icons_st14_0001",
+		place = 1,
+		sounds = {"Stage14ArmoryUpgradeTaunt"},
+		tt_phrase = _("TOWER_STAGE_214_ARMORY_SKILL_A_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_STAGE_214_ARMORY_SKILL_A_NAME"),
+			tt_desc = _("TOWER_STAGE_214_ARMORY_SKILL_A_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_b",
+		image = "kr6_quickmenu_special_icons_st14_0002",
+		place = 2,
+		sounds = {"Stage14ArmoryUpgradeTaunt"},
+		tt_phrase = _("TOWER_STAGE_214_ARMORY_SKILL_B_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_STAGE_214_ARMORY_SKILL_B_NAME"),
+			tt_desc = _("TOWER_STAGE_214_ARMORY_SKILL_B_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_STAGE_214_ARMORY_SKILL_B_NAME"),
+			tt_desc = _("TOWER_STAGE_214_ARMORY_SKILL_B_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_STAGE_214_ARMORY_SKILL_B_NAME"),
+			tt_desc = _("TOWER_STAGE_214_ARMORY_SKILL_B_3_DESCRIPTION")
+		}}
+	}), tpl.rally}},
+	tower_stage_18_elven_barrack = {{{
+		check = "main_icons_0019",
+		action_arg = "soldier_tower_stage_18_elven_barrack",
+		action = "tw_buy_soldier",
+		halo = "glow_ico_main",
+		image = "kr5_main_icons_0033",
+		place = 5,
+		tt_title = _("SPECIAL_SOLDIER_TOWER_ELVEN_BARRACK_NAME"),
+		tt_desc = _("SPECIAL_SOLDIER_TOWER_ELVEN_BARRACK_DESCRIPTION")
+	}, tpl.rally}},
+	arborean_oldtree = {{{
+		check = "main_icons_0019",
+		action_arg = 1,
+		action = "tw_buy_attack",
+		halo = "glow_ico_main",
+		image = "kr5_main_icons_0038",
+		place = 5,
+		tt_title = _("SPECIAL_ARBOREAN_OLDTREE_NAME"),
+		tt_desc = _("SPECIAL_ARBOREAN_OLDTREE_DESCRIPTION")
+	}}},
+	arborean_barrack = {{{
+		check = "main_icons_0019",
+		action_arg = 1,
+		action = "tw_buy_attack",
+		halo = "glow_ico_main",
+		image = "kr5_main_icons_0036",
+		place = 5,
+		tt_title = _("SPECIAL_ARBOREAN_BARRACK_NAME"),
+		tt_desc = _("SPECIAL_ARBOREAN_BARRACK_DESCRIPTION")
+	}}},
+	arborean_honey = {{{
+		check = "main_icons_0019",
+		action_arg = "",
+		action = "tw_repair",
+		halo = "glow_ico_main",
+		image = "kr5_main_icons_0037",
+		place = 5,
+		tt_title = _("SPECIAL_ARBOREAN_HONEY_NAME"),
+		tt_desc = _("SPECIAL_ARBOREAN_HONEY_DESCRIPTION")
+	}}},
+	tower_broken_stage_22 = {{{
+		check = "main_icons_0019",
+		action_arg = "",
+		action = "tw_repair",
+		halo = "glow_ico_main",
+		image = "kr5_main_icons_0015",
+		place = 5,
+		tt_title = _("TOWER_CROCS_EATEN_NAME"),
+		tt_desc = _("TOWER_CROCS_EATEN_DESCRIPTION")
+	}}},
+	tower_broken_stage_208 = {{{
+		check = "main_icons_0019",
+		action_arg = "",
+		action = "tw_repair",
+		halo = "glow_ico_main",
+		image = "kr6_quickmenu_main_icon_water",
+		place = 5,
+		tt_title = _("TOWER_BROKEN_NAME"),
+		tt_desc = _("TOWER_BROKEN_DESCRIPTION")
+	}}},
+	tower_priests_barrack = {{M(tpl.buy_soldier, {
+		image = "kr5_main_icons_0041",
+		action_arg = "soldier_priests_barrack",
+		tt_title = _("SPECIAL_PRIESTS_SOLDIERS_NAME"),
+		tt_desc = _("SPECIAL_PRIESTS_SOLDIERS_DESCRIPTION")
+	}), M(tpl.upgrade_power, {
+		action_arg = "abomination",
+		image = "kr5_info_portraits_soldiers_0028",
+		place = 6,
+		sounds = {},
+		tt_phrase = _("TOWER_STAGE_28_PRIESTS_BARRACK_ABOMINATION_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_STAGE_28_PRIESTS_BARRACK_ABOMINATION_1_NAME"),
+			tt_desc = _("TOWER_STAGE_28_PRIESTS_BARRACK_ABOMINATION_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_STAGE_28_PRIESTS_BARRACK_ABOMINATION_2_NAME"),
+			tt_desc = _("TOWER_STAGE_28_PRIESTS_BARRACK_ABOMINATION_2_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "explosion",
+		image = "kr5_special_icons_0030",
+		place = 7,
+		sounds = {},
+		tt_phrase = _("TOWER_STAGE_28_PRIESTS_BARRACK_EXPLOSION_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_STAGE_28_PRIESTS_BARRACK_EXPLOSION_1_NAME"),
+			tt_desc = _("TOWER_STAGE_28_PRIESTS_BARRACK_EXPLOSION_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_STAGE_28_PRIESTS_BARRACK_EXPLOSION_2_NAME"),
+			tt_desc = _("TOWER_STAGE_28_PRIESTS_BARRACK_EXPLOSION_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_STAGE_28_PRIESTS_BARRACK_EXPLOSION_3_NAME"),
+			tt_desc = _("TOWER_STAGE_28_PRIESTS_BARRACK_EXPLOSION_3_DESCRIPTION")
+		}}
+	}), tpl.rally, tpl.sell}},
+	holder_blocked_spiders = {{M(tpl.unblock, {
+		action_arg = "tower_holder",
+		image = "main_icons_0037",
+		tt_title = _("SPECIAL_REPAIR_HOLDER_SPIDERS_NAME"),
+		tt_desc = _("SPECIAL_REPAIR_HOLDER_SPIDERS_DESCRIPTION")
+	})}},
+	tower_broken_stage_32 = {{{
+		check = "main_icons_0019",
+		action_arg = "",
+		action = "tw_repair",
+		halo = "glow_ico_main",
+		image = "kr5_main_icons_0035",
+		place = 5,
+		tt_title = _("SPECIAL_REPAIR_HOLDER_DRAGON_NAME"),
+		tt_desc = _("SPECIAL_REPAIR_HOLDER_DRAGON_DESCRIPTION")
+	}}},
+	dragons = {{M(tpl.upgrade_power, {
+		action_arg = "dragon_split",
+		image = "kr5_special_icons_0046",
+		place = 6,
+		sounds = {"TowerDragonsSpitUnlockTaunt"},
+		tt_phrase = _("TOWER_DRAGONS_LVL4_DRAGON_SPLIT"),
+		tt_list = {{
+			tt_title = _("TOWER_DRAGONS_LVL4_DRAGON_SPLIT_1_NAME"),
+			tt_desc = _("TOWER_DRAGONS_LVL4_DRAGON_SPLIT_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_DRAGONS_LVL4_DRAGON_SPLIT_2_NAME"),
+			tt_desc = _("TOWER_DRAGONS_LVL4_DRAGON_SPLIT_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_DRAGONS_LVL4_DRAGON_SPLIT_3_NAME"),
+			tt_desc = _("TOWER_DRAGONS_LVL4_DRAGON_SPLIT_3_DESCRIPTION")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "massive_fear",
+		image = "kr5_special_icons_0045",
+		place = 7,
+		sounds = {"TowerDragonsScreechUnlockTaunt"},
+		tt_phrase = _("TOWER_DRAGONS_LVL4_MASSIVE_FEAR"),
+		tt_list = {{
+			tt_title = _("TOWER_DRAGONS_LVL4_MASSIVE_FEAR_1_NAME"),
+			tt_desc = _("TOWER_DRAGONS_LVL4_MASSIVE_FEAR_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_DRAGONS_LVL4_MASSIVE_FEAR_2_NAME"),
+			tt_desc = _("TOWER_DRAGONS_LVL4_MASSIVE_FEAR_2_DESCRIPTION")
+		}}
+	}), tpl.sell}},
+	stage_37_barrack_dragon_wardens = {{}},
+	stage_37_tower_dragons_warden = {{{
+		action_arg = "increase_damage",
+		action = "upgrade_power",
+		image = "kr5_special_icons_0044",
+		place = 6,
+		halo = "glow_ico_special",
+		sounds = {"TowerPandasSkillBTaunt"},
+		tt_phrase = _("TOWER_DRAGONS_WARDEN_INCREASE_DAMAGE"),
+		tt_list = {{
+			tt_title = _("TOWER_DRAGONS_WARDEN_INCREASE_DAMAGE_1_NAME"),
+			tt_desc = _("TOWER_DRAGONS_WARDEN_INCREASE_DAMAGE_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_DRAGONS_WARDEN_INCREASE_DAMAGE_2_NAME"),
+			tt_desc = _("TOWER_DRAGONS_WARDEN_INCREASE_DAMAGE_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_DRAGONS_WARDEN_INCREASE_DAMAGE_3_NAME"),
+			tt_desc = _("TOWER_DRAGONS_WARDEN_INCREASE_DAMAGE_3_DESCRIPTION")
+		}}
+	}, {
+		action_arg = "increase_rate",
+		action = "upgrade_power",
+		image = "kr5_special_icons_0043",
+		place = 7,
+		halo = "glow_ico_special",
+		sounds = {"TowerPandasSkillCTaunt"},
+		tt_phrase = _("TOWER_DRAGONS_WARDEN_INCREASE_RATE"),
+		tt_list = {{
+			tt_title = _("TOWER_DRAGONS_WARDEN_INCREASE_RATE_1_NAME"),
+			tt_desc = _("TOWER_DRAGONS_WARDEN_INCREASE_RATE_1_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_DRAGONS_WARDEN_INCREASE_RATE_2_NAME"),
+			tt_desc = _("TOWER_DRAGONS_WARDEN_INCREASE_RATE_2_DESCRIPTION")
+		}, {
+			tt_title = _("TOWER_DRAGONS_WARDEN_INCREASE_RATE_3_NAME"),
+			tt_desc = _("TOWER_DRAGONS_WARDEN_INCREASE_RATE_3_DESCRIPTION")
+		}}
+	}, tpl.sell}},
+	stage_38_tower_dragons_warden_barrack = {{}},
+	tower_broken_stage_37 = {{}},
+	tower_broken_stage_40 = {{{
+		check = "kr5_main_icons_0019",
+		action_arg = "",
+		action = "tw_repair",
+		halo = "glow_ico_main",
+		image = "kr5_main_icons_0052",
+		place = 5,
+		tt_title = _("SPECIAL_REPAIR_STAGE_40_NAME"),
+		tt_desc = _("SPECIAL_REPAIR_STAGE_40_DESCRIPTION")
+	}}},
+	shadow_archer = {{M(tpl.upgrade_power, {
+		action_arg = "mark",
+		image = "kr4_special_icons_0019",
+		place = 6,
+		sounds = {"ShadowArcherMarkTaunt"},
+		tt_phrase = _("TOWER_SHADOW_ARCHER_MARK_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SHADOW_ARCHER_MARK_NAME_1"),
+			tt_desc = _("TOWER_SHADOW_ARCHER_MARK_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_SHADOW_ARCHER_MARK_NAME_2"),
+			tt_desc = _("TOWER_SHADOW_ARCHER_MARK_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_SHADOW_ARCHER_MARK_NAME_3"),
+			tt_desc = _("TOWER_SHADOW_ARCHER_MARK_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "blade",
+		image = "kr4_special_icons_0018",
+		place = 5,
+		sounds = {"ShadowArcherBladeTaunt"},
+		tt_phrase = _("TOWER_SHADOW_ARCHER_BLADE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SHADOW_ARCHER_BLADE_NAME_1"),
+			tt_desc = _("TOWER_SHADOW_ARCHER_BLADE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_SHADOW_ARCHER_BLADE_NAME_2"),
+			tt_desc = _("TOWER_SHADOW_ARCHER_BLADE_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_SHADOW_ARCHER_BLADE_NAME_3"),
+			tt_desc = _("TOWER_SHADOW_ARCHER_BLADE_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "crow",
+		place = 7,
+		image = "kr4_special_icons_0020",
+		sounds = {"ShadowArcherCrowTaunt"},
+		tt_phrase = _("TOWER_SHADOW_ARCHER_CROW_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SHADOW_ARCHER_CROW_NAME_1"),
+			tt_desc = _("TOWER_SHADOW_ARCHER_CROW_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_SHADOW_ARCHER_CROW_NAME_2"),
+			tt_desc = _("TOWER_SHADOW_ARCHER_CROW_DESCRIPTION_2")
+		}}
+	}), tpl.sell}},
+	bone_flingers = {{M(tpl.upgrade_power, {
+		action_arg = "skeleton",
+		image = "kr4_special_icons_0037",
+		place = 6,
+		sounds = {"BoneFlingersSkeletonTaunt"},
+		tt_phrase = _("TOWER_BONE_FLINGERS_SKELETON_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BONE_FLINGERS_SKELETON_NAME_1"),
+			tt_desc = _("TOWER_BONE_FLINGERS_SKELETON_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_BONE_FLINGERS_SKELETON_NAME_2"),
+			tt_desc = _("TOWER_BONE_FLINGERS_SKELETON_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_BONE_FLINGERS_SKELETON_NAME_3"),
+			tt_desc = _("TOWER_BONE_FLINGERS_SKELETON_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "milk",
+		image = "kr4_special_icons_0038",
+		place = 5,
+		sounds = {"BoneFlingersMilkTaunt"},
+		tt_phrase = _("TOWER_BONE_FLINGERS_MILK_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BONE_FLINGERS_MILK_NAME_1"),
+			tt_desc = _("TOWER_BONE_FLINGERS_MILK_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_BONE_FLINGERS_MILK_NAME_2"),
+			tt_desc = _("TOWER_BONE_FLINGERS_MILK_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_BONE_FLINGERS_MILK_NAME_3"),
+			tt_desc = _("TOWER_BONE_FLINGERS_MILK_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "golem",
+		image = "kr4_special_icons_0036",
+		place = 7,
+		sounds = {"BoneFlingersGolemTaunt"},
+		tt_phrase = _("TOWER_BONE_FLINGERS_GOLEM_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BONE_FLINGERS_GOLEM_NAME_1"),
+			tt_desc = _("TOWER_BONE_FLINGERS_GOLEM_DESCRIPTION_1")
+		}}
+	}), tpl.rally, tpl.sell}},
+	ogre_shipwreck = {{M(tpl.upgrade_power, {
+		action_arg = "armor",
+		image = "kr4_special_icons_0076",
+		place = 6,
+		sounds = {"OgreShipwreckPower01"},
+		tt_phrase = _("TOWER_OGRE_SHIPWRECK_ARMOR_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_OGRE_SHIPWRECK_ARMOR_NAME_1"),
+			tt_desc = _("TOWER_OGRE_SHIPWRECK_ARMOR_DESCRIPTION_1")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "multishoot",
+		image = "kr4_special_icons_0077",
+		place = 5,
+		sounds = {"OgreShipwreckPower02"},
+		tt_phrase = _("TOWER_OGRE_SHIPWRECK_MULTISHOOT_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_OGRE_SHIPWRECK_MULTISHOOT_NAME_1"),
+			tt_desc = _("TOWER_OGRE_SHIPWRECK_MULTISHOOT_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_OGRE_SHIPWRECK_MULTISHOOT_NAME_2"),
+			tt_desc = _("TOWER_OGRE_SHIPWRECK_MULTISHOOT_DESCRIPTION_2")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "goblin_launcher",
+		image = "kr4_special_icons_0078",
+		place = 7,
+		sounds = {"OgreShipwreckPower03"},
+		tt_phrase = _("TOWER_OGRE_SHIPWRECK_GOBLIN_LAUNCHER_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_OGRE_SHIPWRECK_GOBLIN_LAUNCHER_NAME_1"),
+			tt_desc = _("TOWER_OGRE_SHIPWRECK_GOBLIN_LAUNCHER_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_OGRE_SHIPWRECK_GOBLIN_LAUNCHER_NAME_2"),
+			tt_desc = _("TOWER_OGRE_SHIPWRECK_GOBLIN_LAUNCHER_DESCRIPTION_2")
+		}}
+	}), tpl.rally, tpl.sell}},
+	rotten_forest = {{M(tpl.upgrade_power, {
+		action_arg = "tree",
+		sounds = {"RottenForestSkillATaunt"},
+		place = 6,
+		image = "kr4_special_icons_0049",
+		tt_phrase = _("TOWER_ROTTEN_FOREST_TREE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ROTTEN_FOREST_TREE_NAME_1"),
+			tt_desc = _("TOWER_ROTTEN_FOREST_TREE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ROTTEN_FOREST_TREE_NAME_2"),
+			tt_desc = _("TOWER_ROTTEN_FOREST_TREE_DESCRIPTION_2")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "warp",
+		sounds = {"RottenForestSkillBTaunt"},
+		place = 5,
+		image = "kr4_special_icons_0047",
+		tt_phrase = _("TOWER_ROTTEN_FOREST_WARP_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ROTTEN_FOREST_WARP_NAME_1"),
+			tt_desc = _("TOWER_ROTTEN_FOREST_WARP_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ROTTEN_FOREST_WARP_NAME_2"),
+			tt_desc = _("TOWER_ROTTEN_FOREST_WARP_DESCRIPTION_2")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "fog",
+		sounds = {"RottenForestSkillCTaunt"},
+		place = 7,
+		image = "kr4_special_icons_0048",
+		tt_phrase = _("TOWER_ROTTEN_FOREST_FOG_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ROTTEN_FOREST_FOG_NAME_1"),
+			tt_desc = _("TOWER_ROTTEN_FOREST_FOG_DESCRIPTION_1")
+		}}
+	}), tpl.sell}},
+	infernal_mage = {{M(tpl.upgrade_power, {
+		action_arg = "curse",
+		image = "kr4_special_icons_0022",
+		place = 6,
+		sounds = {"InfernalMageCurseTaunt"},
+		tt_phrase = _("TOWER_INFERNAL_MAGE_CURSE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_INFERNAL_MAGE_CURSE_NAME_1"),
+			tt_desc = _("TOWER_INFERNAL_MAGE_CURSE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_INFERNAL_MAGE_CURSE_NAME_2"),
+			tt_desc = _("TOWER_INFERNAL_MAGE_CURSE_DESCRIPTION_2")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "fissure",
+		image = "kr4_special_icons_0021",
+		place = 5,
+		sounds = {"InfernalMageFissureTaunt"},
+		tt_phrase = _("TOWER_INFERNAL_MAGE_FISSURE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_INFERNAL_MAGE_FISSURE_NAME_1"),
+			tt_desc = _("TOWER_INFERNAL_MAGE_FISSURE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_INFERNAL_MAGE_FISSURE_NAME_2"),
+			tt_desc = _("TOWER_INFERNAL_MAGE_FISSURE_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_INFERNAL_MAGE_FISSURE_NAME_3"),
+			tt_desc = _("TOWER_INFERNAL_MAGE_FISSURE_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "teleport",
+		image = "kr4_special_icons_0023",
+		place = 7,
+		sounds = {"InfernalMageTeleportTaunt"},
+		tt_phrase = _("TOWER_INFERNAL_MAGE_TELEPORT_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_INFERNAL_MAGE_TELEPORT_NAME_1"),
+			tt_desc = _("TOWER_INFERNAL_MAGE_TELEPORT_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_INFERNAL_MAGE_TELEPORT_NAME_2"),
+			tt_desc = _("TOWER_INFERNAL_MAGE_TELEPORT_DESCRIPTION_2")
+		}}
+	}), tpl.sell}},
+	spirit_mausoleum = {{M(tpl.upgrade_power, {
+		action_arg = "gargoyles",
+		image = "kr4_special_icons_0025",
+		place = 6,
+		sounds = {"fallen_ones_spirit_mausoleum_gargoyles_upgrade"},
+		tt_phrase = _("TOWER_SPIRIT_MAUSOLEUM_GARGOYLES_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SPIRIT_MAUSOLEUM_GARGOYLES_NAME_1"),
+			tt_desc = _("TOWER_SPIRIT_MAUSOLEUM_GARGOYLES_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_SPIRIT_MAUSOLEUM_GARGOYLES_NAME_2"),
+			tt_desc = _("TOWER_SPIRIT_MAUSOLEUM_GARGOYLES_DESCRIPTION_2")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "spectral_communion",
+		image = "kr4_special_icons_0026",
+		place = 5,
+		sounds = {"fallen_ones_spirit_mausoleum_communion_upgrade"},
+		tt_phrase = _("TOWER_SPIRIT_MAUSOLEUM_SPECTRAL_COMMUNION_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SPIRIT_MAUSOLEUM_SPECTRAL_COMMUNION_NAME_1"),
+			tt_desc = _("TOWER_SPIRIT_MAUSOLEUM_SPECTRAL_COMMUNION_DESCRIPTION_1")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "possession",
+		image = "kr4_special_icons_0024",
+		place = 7,
+		sounds = {"fallen_ones_spirit_mausoleum_possesion_upgrade"},
+		tt_phrase = _("TOWER_SPIRIT_MAUSOLEUM_POSSESSION_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SPIRIT_MAUSOLEUM_POSSESSION_NAME_1"),
+			tt_desc = _("TOWER_SPIRIT_MAUSOLEUM_POSSESSION_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_SPIRIT_MAUSOLEUM_POSSESSION_NAME_2"),
+			tt_desc = _("TOWER_SPIRIT_MAUSOLEUM_POSSESSION_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_SPIRIT_MAUSOLEUM_POSSESSION_NAME_3"),
+			tt_desc = _("TOWER_SPIRIT_MAUSOLEUM_POSSESSION_DESCRIPTION_3")
+		}}
+	}), tpl.rally, tpl.sell}},
+	deep_devils = {{M(tpl.upgrade_power, {
+		action_arg = "amph",
+		image = "kr4_special_icons_0059",
+		place = 6,
+		sounds = {"DeepDevilAmphTaunt"},
+		tt_phrase = _("TOWER_DEEP_DEVILS_AMPH_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_DEEP_DEVILS_AMPH_NAME_1"),
+			tt_desc = _("TOWER_DEEP_DEVILS_AMPH_DESCRIPTION_1")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "net",
+		image = "kr4_special_icons_0058",
+		place = 5,
+		sounds = {"DeepDevilNetTaunt"},
+		tt_phrase = _("TOWER_DEEP_DEVILS_NET_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_DEEP_DEVILS_NET_NAME_1"),
+			tt_desc = _("TOWER_DEEP_DEVILS_NET_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_DEEP_DEVILS_NET_NAME_2"),
+			tt_desc = _("TOWER_DEEP_DEVILS_NET_DESCRIPTION_2")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "storm",
+		image = "kr4_special_icons_0057",
+		place = 7,
+		sounds = {"DeepDevilStormTaunt"},
+		tt_phrase = _("TOWER_DEEP_DEVILS_STORM_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_DEEP_DEVILS_STORM_NAME_1"),
+			tt_desc = _("TOWER_DEEP_DEVILS_STORM_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_DEEP_DEVILS_STORM_NAME_2"),
+			tt_desc = _("TOWER_DEEP_DEVILS_STORM_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_DEEP_DEVILS_STORM_NAME_3"),
+			tt_desc = _("TOWER_DEEP_DEVILS_STORM_DESCRIPTION_3")
+		}}
+	}), tpl.rally, tpl.sell}},
+	blazing_watcher = {{M(tpl.upgrade_power, {
+		action_arg = "charging",
+		image = "kr4_special_icons_0039",
+		place = 6,
+		halo = "glow_ico_special",
+		sounds = {"blazing_watcher_charging_upgrade"},
+		tt_phrase = _("TOWER_BLAZING_WATCHER_CHARGING_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BLAZING_WATCHER_CHARGING_NAME_1"),
+			tt_desc = _("TOWER_BLAZING_WATCHER_CHARGING_DESCRIPTION_1")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "disintegrate",
+		image = "kr4_special_icons_0041",
+		place = 5,
+		halo = "glow_ico_special",
+		sounds = {"blazing_watcher_disintegrate_upgrade"},
+		tt_phrase = _("TOWER_BLAZING_WATCHER_DISINTEGRATE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BLAZING_WATCHER_DISINTEGRATE_NAME_1"),
+			tt_desc = _("TOWER_BLAZING_WATCHER_DISINTEGRATE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_BLAZING_WATCHER_DISINTEGRATE_NAME_2"),
+			tt_desc = _("TOWER_BLAZING_WATCHER_DISINTEGRATE_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_BLAZING_WATCHER_DISINTEGRATE_NAME_3"),
+			tt_desc = _("TOWER_BLAZING_WATCHER_DISINTEGRATE_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "explosion",
+		image = "kr4_special_icons_0040",
+		place = 7,
+		halo = "glow_ico_special",
+		sounds = {"blazing_watcher_explosive_upgrade"},
+		tt_phrase = _("TOWER_BLAZING_WATCHER_EXPLOSION_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BLAZING_WATCHER_EXPLOSION_NAME_1"),
+			tt_desc = _("TOWER_BLAZING_WATCHER_EXPLOSION_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_BLAZING_WATCHER_EXPLOSION_NAME_2"),
+			tt_desc = _("TOWER_BLAZING_WATCHER_EXPLOSION_DESCRIPTION_2")
+		}}
+	}), tpl.sell}},
+	orc_shaman = {{M(tpl.upgrade_power, {
+		action_arg = "vines",
+		image = "kr4_special_icons_0001",
+		place = 6,
+		sounds = {"OrcShamanHealingRoots"},
+		tt_phrase = _("TOWER_ORC_SHAMAN_VINES_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ORC_SHAMAN_VINES_NAME_1"),
+			tt_desc = _("TOWER_ORC_SHAMAN_VINES_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ORC_SHAMAN_VINES_NAME_2"),
+			tt_desc = _("TOWER_ORC_SHAMAN_VINES_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ORC_SHAMAN_VINES_NAME_3"),
+			tt_desc = _("TOWER_ORC_SHAMAN_VINES_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "meteor",
+		image = "kr4_special_icons_0002",
+		place = 5,
+		sounds = {"OrcShamanMeteoritesUpgrade"},
+		tt_phrase = _("TOWER_ORC_SHAMAN_METEOR_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ORC_SHAMAN_METEOR_NAME_1"),
+			tt_desc = _("TOWER_ORC_SHAMAN_METEOR_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ORC_SHAMAN_METEOR_NAME_2"),
+			tt_desc = _("TOWER_ORC_SHAMAN_METEOR_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ORC_SHAMAN_METEOR_NAME_3"),
+			tt_desc = _("TOWER_ORC_SHAMAN_METEOR_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "shock",
+		image = "kr4_special_icons_0003",
+		place = 7,
+		sounds = {"OrcShamanElectroshockUpgrade"},
+		tt_phrase = _("TOWER_ORC_SHAMAN_SHOCK_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ORC_SHAMAN_SHOCK_NAME_1"),
+			tt_desc = _("TOWER_ORC_SHAMAN_SHOCK_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ORC_SHAMAN_SHOCK_NAME_2"),
+			tt_desc = _("TOWER_ORC_SHAMAN_SHOCK_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ORC_SHAMAN_SHOCK_NAME_3"),
+			tt_desc = _("TOWER_ORC_SHAMAN_SHOCK_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	dark_knights = {{M(tpl.upgrade_power, {
+		action_arg = "instakill",
+		image = "kr4_special_icons_0028",
+		place = 6,
+		sounds = {"TowerDarkKnightsInstakillTaunt"},
+		tt_phrase = _("TOWER_DARK_KNIGHTS_INSTAKILL_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_DARK_KNIGHTS_INSTAKILL_NAME_1"),
+			tt_desc = _("TOWER_DARK_KNIGHTS_INSTAKILL_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_DARK_KNIGHTS_INSTAKILL_NAME_2"),
+			tt_desc = _("TOWER_DARK_KNIGHTS_INSTAKILL_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_DARK_KNIGHTS_INSTAKILL_NAME_3"),
+			tt_desc = _("TOWER_DARK_KNIGHTS_INSTAKILL_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "spike",
+		image = "kr4_special_icons_0029",
+		place = 5,
+		sounds = {"TowerDarkKnightsSpikeTaunt"},
+		tt_phrase = _("TOWER_DARK_KNIGHTS_SPIKE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_DARK_KNIGHTS_SPIKE_NAME_1"),
+			tt_desc = _("TOWER_DARK_KNIGHTS_SPIKE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_DARK_KNIGHTS_SPIKE_NAME_2"),
+			tt_desc = _("TOWER_DARK_KNIGHTS_SPIKE_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_DARK_KNIGHTS_SPIKE_NAME_3"),
+			tt_desc = _("TOWER_DARK_KNIGHTS_SPIKE_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "shield",
+		image = "kr4_special_icons_0027",
+		place = 7,
+		sounds = {"TowerDarkKnightsShieldTaunt"},
+		tt_phrase = _("TOWER_DARK_KNIGHTS_SHIELD_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_DARK_KNIGHTS_SHIELD_NAME_1"),
+			tt_desc = _("TOWER_DARK_KNIGHTS_SHIELD_DESCRIPTION_1")
+		}}
+	}), tpl.rally, tpl.sell}},
+	rocket_riders = {{M(tpl.upgrade_power, {
+		action_arg = "mine",
+		image = "kr4_special_icons_0012",
+		place = 6,
+		sounds = {"RocketRidersMineTaunt"},
+		tt_phrase = _("TOWER_ROCKET_RIDERS_MINE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ROCKET_RIDERS_MINE_NAME_1"),
+			tt_desc = _("TOWER_ROCKET_RIDERS_MINE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ROCKET_RIDERS_MINE_NAME_2"),
+			tt_desc = _("TOWER_ROCKET_RIDERS_MINE_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ROCKET_RIDERS_MINE_NAME_3"),
+			tt_desc = _("TOWER_ROCKET_RIDERS_MINE_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "nitro",
+		image = "kr4_special_icons_0011",
+		place = 5,
+		sounds = {"RocketRidersNitroTaunt"},
+		tt_phrase = _("TOWER_ROCKET_RIDERS_NITRO_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ROCKET_RIDERS_NITRO_NAME_1"),
+			tt_desc = _("TOWER_ROCKET_RIDERS_NITRO_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ROCKET_RIDERS_NITRO_NAME_2"),
+			tt_desc = _("TOWER_ROCKET_RIDERS_NITRO_DESCRIPTION_2")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "engine",
+		image = "kr4_special_icons_0010",
+		place = 7,
+		sounds = {"RocketRidersEngineTaunt"},
+		tt_phrase = _("TOWER_ROCKET_RIDERS_ENGINE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ROCKET_RIDERS_ENGINE_NAME_1"),
+			tt_desc = _("TOWER_ROCKET_RIDERS_ENGINE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ROCKET_RIDERS_ENGINE_NAME_2"),
+			tt_desc = _("TOWER_ROCKET_RIDERS_ENGINE_DESCRIPTION_2")
+		}}
+	}), tpl.sell}},
+	grim_cemetery = {{M(tpl.upgrade_power, {
+		action_arg = "hands",
+		image = "kr4_special_icons_0034",
+		sounds = {"GrimCemeteryHandsTaunt"},
+		place = 6,
+		tt_phrase = _("TOWER_GRIM_CEMETERY_HANDS_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_GRIM_CEMETERY_HANDS_NAME_1"),
+			tt_desc = _("TOWER_GRIM_CEMETERY_HANDS_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_GRIM_CEMETERY_HANDS_NAME_2"),
+			tt_desc = _("TOWER_GRIM_CEMETERY_HANDS_DESCRIPTION_2")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "big",
+		image = "kr4_special_icons_0033",
+		sounds = {"GrimCemeteryBigTaunt"},
+		place = 5,
+		tt_phrase = _("TOWER_GRIM_CEMETERY_BIG_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_GRIM_CEMETERY_BIG_NAME_1"),
+			tt_desc = _("TOWER_GRIM_CEMETERY_BIG_DESCRIPTION_1")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "pestilence",
+		place = 7,
+		image = "kr4_special_icons_0035",
+		sounds = {"GrimCemeteryPestilenceTaunt"},
+		tt_phrase = _("TOWER_GRIM_CEMETERY_PESTILENCE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_GRIM_CEMETERY_PESTILENCE_NAME_1"),
+			tt_desc = _("TOWER_GRIM_CEMETERY_PESTILENCE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_GRIM_CEMETERY_PESTILENCE_NAME_2"),
+			tt_desc = _("TOWER_GRIM_CEMETERY_PESTILENCE_DESCRIPTION_2")
+		}}
+	}), tpl.sell}},
+	balloon = {{M(tpl.upgrade_power, {
+		action_arg = "bomber",
+		image = "kr4_special_icons_0014",
+		sounds = {"BalloonSkillATaunt"},
+		place = 6,
+		tt_phrase = _("TOWER_BALLOON_BOMBER_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BALLOON_BOMBER_NAME_1"),
+			tt_desc = _("TOWER_BALLOON_BOMBER_DESCRIPTION_1")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "watcher",
+		image = "kr4_special_icons_0015",
+		sounds = {"BalloonSkillBTaunt"},
+		place = 5,
+		tt_phrase = _("TOWER_BALLOON_WATCHER_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BALLOON_WATCHER_NAME_1"),
+			tt_desc = _("TOWER_BALLOON_WATCHER_DESCRIPTION_1")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "oil",
+		image = "kr4_special_icons_0013",
+		sounds = {"BalloonSkillCTaunt"},
+		place = 7,
+		tt_phrase = _("TOWER_BALLOON_OIL_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_BALLOON_OIL_NAME_1"),
+			tt_desc = _("TOWER_BALLOON_OIL_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_BALLOON_OIL_NAME_2"),
+			tt_desc = _("TOWER_BALLOON_OIL_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_BALLOON_OIL_NAME_3"),
+			tt_desc = _("TOWER_BALLOON_OIL_DESCRIPTION_3")
+		}}
+	}), tpl.rally, tpl.sell}},
+	-- 技能按钮从左到右固定为 skill_a(place 6，左) / skill_b(place 5，中) / skill_c(place 7，右)，切勿写反。
+	catapult = {{M(tpl.upgrade_power, {
+		action_arg = "skill_a",
+		image = "kr6_quickmenu_special_icons_catapult_0001",
+		sounds = {"TowerRoyalCatapultSkillATaunt"},
+		place = 6,
+		tt_phrase = _("TOWER_CATAPULT_SKILL_A_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_CATAPULT_SKILL_A_NAME_1"),
+			tt_desc = _("TOWER_CATAPULT_SKILL_A_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_CATAPULT_SKILL_A_NAME_2"),
+			tt_desc = _("TOWER_CATAPULT_SKILL_A_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_CATAPULT_SKILL_A_NAME_3"),
+			tt_desc = _("TOWER_CATAPULT_SKILL_A_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_b",
+		image = "kr6_quickmenu_special_icons_catapult_0002",
+		sounds = {"TowerRoyalCatapultSkillBTaunt"},
+		place = 5,
+		tt_phrase = _("TOWER_CATAPULT_SKILL_B_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_CATAPULT_SKILL_B_NAME_1"),
+			tt_desc = _("TOWER_CATAPULT_SKILL_B_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_CATAPULT_SKILL_B_NAME_2"),
+			tt_desc = _("TOWER_CATAPULT_SKILL_B_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_CATAPULT_SKILL_B_NAME_3"),
+			tt_desc = _("TOWER_CATAPULT_SKILL_B_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_c",
+		image = "kr6_quickmenu_special_icons_catapult_0003",
+		sounds = {"TowerRoyalCatapultSkillCTaunt"},
+		place = 7,
+		tt_phrase = _("TOWER_CATAPULT_SKILL_C_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_CATAPULT_SKILL_C_NAME_1"),
+			tt_desc = _("TOWER_CATAPULT_SKILL_C_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_CATAPULT_SKILL_C_NAME_2"),
+			tt_desc = _("TOWER_CATAPULT_SKILL_C_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_CATAPULT_SKILL_C_NAME_3"),
+			tt_desc = _("TOWER_CATAPULT_SKILL_C_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	alchemist = {{M(tpl.upgrade_power, {
+		action_arg = "skill_a",
+		image = "kr6_quickmenu_special_icons_alchemist_0001",
+		sounds = {"TowerAlchemistShackSkillATaunt"},
+		place = 6,
+		tt_phrase = _("TOWER_ALCHEMIST_SKILL_A_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ALCHEMIST_SKILL_A_NAME_1"),
+			tt_desc = _("TOWER_ALCHEMIST_SKILL_A_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ALCHEMIST_SKILL_A_NAME_2"),
+			tt_desc = _("TOWER_ALCHEMIST_SKILL_A_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ALCHEMIST_SKILL_A_NAME_3"),
+			tt_desc = _("TOWER_ALCHEMIST_SKILL_A_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_b",
+		image = "kr6_quickmenu_special_icons_alchemist_0002",
+		sounds = {"TowerAlchemistShackSkillBTaunt"},
+		place = 5,
+		tt_phrase = _("TOWER_ALCHEMIST_SKILL_B_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ALCHEMIST_SKILL_B_NAME_1"),
+			tt_desc = _("TOWER_ALCHEMIST_SKILL_B_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ALCHEMIST_SKILL_B_NAME_2"),
+			tt_desc = _("TOWER_ALCHEMIST_SKILL_B_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ALCHEMIST_SKILL_B_NAME_3"),
+			tt_desc = _("TOWER_ALCHEMIST_SKILL_B_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_c",
+		image = "kr6_quickmenu_special_icons_alchemist_0003",
+		sounds = {"TowerAlchemistShackSkillCTaunt"},
+		place = 7,
+		tt_phrase = _("TOWER_ALCHEMIST_SKILL_C_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_ALCHEMIST_SKILL_C_NAME_1"),
+			tt_desc = _("TOWER_ALCHEMIST_SKILL_C_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_ALCHEMIST_SKILL_C_NAME_2"),
+			tt_desc = _("TOWER_ALCHEMIST_SKILL_C_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_ALCHEMIST_SKILL_C_NAME_3"),
+			tt_desc = _("TOWER_ALCHEMIST_SKILL_C_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	culverine = {{M(tpl.upgrade_power, {
+		action_arg = "skill_a",
+		image = "kr6_quickmenu_special_icons_culverine_0001",
+		sounds = {"TowerDwarvenCulverinSkillATaunt"},
+		place = 6,
+		tt_phrase = _("TOWER_CULVERINE_SKILL_A_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_CULVERINE_SKILL_A_NAME_1"),
+			tt_desc = _("TOWER_CULVERINE_SKILL_A_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_CULVERINE_SKILL_A_NAME_2"),
+			tt_desc = _("TOWER_CULVERINE_SKILL_A_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_CULVERINE_SKILL_A_NAME_3"),
+			tt_desc = _("TOWER_CULVERINE_SKILL_A_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_b",
+		image = "kr6_quickmenu_special_icons_culverine_0002",
+		sounds = {"TowerDwarvenCulverinSkillBTaunt"},
+		place = 5,
+		tt_phrase = _("TOWER_CULVERINE_SKILL_B_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_CULVERINE_SKILL_B_NAME_1"),
+			tt_desc = _("TOWER_CULVERINE_SKILL_B_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_CULVERINE_SKILL_B_NAME_2"),
+			tt_desc = _("TOWER_CULVERINE_SKILL_B_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_CULVERINE_SKILL_B_NAME_3"),
+			tt_desc = _("TOWER_CULVERINE_SKILL_B_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_c",
+		image = "kr6_quickmenu_special_icons_culverine_0003",
+		sounds = {"TowerDwarvenCulverinSkillCTaunt"},
+		place = 7,
+		tt_phrase = _("TOWER_CULVERINE_SKILL_C_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_CULVERINE_SKILL_C_NAME_1"),
+			tt_desc = _("TOWER_CULVERINE_SKILL_C_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_CULVERINE_SKILL_C_NAME_2"),
+			tt_desc = _("TOWER_CULVERINE_SKILL_C_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_CULVERINE_SKILL_C_NAME_3"),
+			tt_desc = _("TOWER_CULVERINE_SKILL_C_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	-- 技能按钮从左到右固定为 skill_a(place 6，左) / skill_b(place 5，中) / skill_c(place 7，右)，切勿写反。
+	knights = {{M(tpl.upgrade_power, {
+		action_arg = "skill_a",
+		image = "kr6_quickmenu_special_icons_knights_0001",
+		sounds = {"TowerKnightsOrderSkillBTaunt"},
+		place = 6,
+		tt_phrase = _("TOWER_KNIGHTS_SKILL_A_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_KNIGHTS_SKILL_A_NAME_1"),
+			tt_desc = _("TOWER_KNIGHTS_SKILL_A_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_KNIGHTS_SKILL_A_NAME_2"),
+			tt_desc = _("TOWER_KNIGHTS_SKILL_A_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_KNIGHTS_SKILL_A_NAME_3"),
+			tt_desc = _("TOWER_KNIGHTS_SKILL_A_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_b",
+		image = "kr6_quickmenu_special_icons_knights_0002",
+		sounds = {"TowerKnightsOrderSkillATaunt"},
+		place = 5,
+		tt_phrase = _("TOWER_KNIGHTS_SKILL_B_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_KNIGHTS_SKILL_B_NAME_1"),
+			tt_desc = _("TOWER_KNIGHTS_SKILL_B_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_KNIGHTS_SKILL_B_NAME_2"),
+			tt_desc = _("TOWER_KNIGHTS_SKILL_B_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_KNIGHTS_SKILL_B_NAME_3"),
+			tt_desc = _("TOWER_KNIGHTS_SKILL_B_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_c",
+		image = "kr6_quickmenu_special_icons_knights_0003",
+		sounds = {"TowerKnightsOrderSkillCTaunt"},
+		place = 7,
+		tt_phrase = _("TOWER_KNIGHTS_SKILL_C_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_KNIGHTS_SKILL_C_NAME_1"),
+			tt_desc = _("TOWER_KNIGHTS_SKILL_C_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_KNIGHTS_SKILL_C_NAME_2"),
+			tt_desc = _("TOWER_KNIGHTS_SKILL_C_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_KNIGHTS_SKILL_C_NAME_3"),
+			tt_desc = _("TOWER_KNIGHTS_SKILL_C_DESCRIPTION_3")
+		}}
+	}), tpl.rally, tpl.sell}},
+	tree = {{M(tpl.upgrade_power, {
+		action_arg = "skill_a",
+		image = "kr6_quickmenu_special_icons_tree_0001",
+		sounds = {"TowerIronbarkTreantSkillATaunt"},
+		place = 6,
+		tt_phrase = _("TOWER_TREE_SKILL_A_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_TREE_SKILL_A_NAME_1"),
+			tt_desc = _("TOWER_TREE_SKILL_A_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_TREE_SKILL_A_NAME_2"),
+			tt_desc = _("TOWER_TREE_SKILL_A_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_TREE_SKILL_A_NAME_3"),
+			tt_desc = _("TOWER_TREE_SKILL_A_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_b",
+		image = "kr6_quickmenu_special_icons_tree_0002",
+		sounds = {"TowerIronbarkTreantSkillBTaunt"},
+		place = 5,
+		tt_phrase = _("TOWER_TREE_SKILL_B_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_TREE_SKILL_B_NAME_1"),
+			tt_desc = _("TOWER_TREE_SKILL_B_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_TREE_SKILL_B_NAME_2"),
+			tt_desc = _("TOWER_TREE_SKILL_B_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_TREE_SKILL_B_NAME_3"),
+			tt_desc = _("TOWER_TREE_SKILL_B_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_c",
+		image = "kr6_quickmenu_special_icons_tree_0003",
+		sounds = {"TowerIronbarkTreantSkillCTaunt"},
+		place = 7,
+		tt_phrase = _("TOWER_TREE_SKILL_C_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_TREE_SKILL_C_NAME_1"),
+			tt_desc = _("TOWER_TREE_SKILL_C_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_TREE_SKILL_C_NAME_2"),
+			tt_desc = _("TOWER_TREE_SKILL_C_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_TREE_SKILL_C_NAME_3"),
+			tt_desc = _("TOWER_TREE_SKILL_C_DESCRIPTION_3")
+		}}
+	}), tpl.rally, tpl.sell}},
+	wildcat = {{M(tpl.upgrade_power, {
+		action_arg = "skill_a",
+		image = "kr6_quickmenu_special_icons_wildcat_0001",
+		sounds = {"TowerWildcatHuntressesSkillATaunt"},
+		place = 6,
+		tt_phrase = _("TOWER_WILDCAT_SKILL_A_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_WILDCAT_SKILL_A_NAME_1"),
+			tt_desc = _("TOWER_WILDCAT_SKILL_A_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_WILDCAT_SKILL_A_NAME_2"),
+			tt_desc = _("TOWER_WILDCAT_SKILL_A_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_WILDCAT_SKILL_A_NAME_3"),
+			tt_desc = _("TOWER_WILDCAT_SKILL_A_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_b",
+		image = "kr6_quickmenu_special_icons_wildcat_0002",
+		sounds = {"TowerWildcatHuntressesSkillBTaunt"},
+		place = 5,
+		tt_phrase = _("TOWER_WILDCAT_SKILL_B_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_WILDCAT_SKILL_B_NAME_1"),
+			tt_desc = _("TOWER_WILDCAT_SKILL_B_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_WILDCAT_SKILL_B_NAME_2"),
+			tt_desc = _("TOWER_WILDCAT_SKILL_B_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_WILDCAT_SKILL_B_NAME_3"),
+			tt_desc = _("TOWER_WILDCAT_SKILL_B_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_c",
+		image = "kr6_quickmenu_special_icons_wildcat_0003",
+		sounds = {"TowerWildcatHuntressesSkillCTaunt"},
+		place = 7,
+		tt_phrase = _("TOWER_WILDCAT_SKILL_C_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_WILDCAT_SKILL_C_NAME_1"),
+			tt_desc = _("TOWER_WILDCAT_SKILL_C_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_WILDCAT_SKILL_C_NAME_2"),
+			tt_desc = _("TOWER_WILDCAT_SKILL_C_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_WILDCAT_SKILL_C_NAME_3"),
+			tt_desc = _("TOWER_WILDCAT_SKILL_C_DESCRIPTION_3")
+		}}
+	}), tpl.rally, tpl.sell}},
+	miners = {{M(tpl.upgrade_power, {
+		action_arg = "skill_a",
+		image = "kr6_quickmenu_special_icons_dwarven_miners_0001",
+		sounds = {"TowerGoldProspectorsSkillATaunt"},
+		place = 6,
+		tt_phrase = _("TOWER_MINERS_SKILL_A_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_MINERS_SKILL_A_NAME_1"),
+			tt_desc = _("TOWER_MINERS_SKILL_A_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_MINERS_SKILL_A_NAME_2"),
+			tt_desc = _("TOWER_MINERS_SKILL_A_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_MINERS_SKILL_A_NAME_3"),
+			tt_desc = _("TOWER_MINERS_SKILL_A_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_b",
+		image = "kr6_quickmenu_special_icons_dwarven_miners_0002",
+		sounds = {"TowerGoldProspectorsSkillBTaunt"},
+		place = 5,
+		tt_phrase = _("TOWER_MINERS_SKILL_B_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_MINERS_SKILL_B_NAME_1"),
+			tt_desc = _("TOWER_MINERS_SKILL_B_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_MINERS_SKILL_B_NAME_2"),
+			tt_desc = _("TOWER_MINERS_SKILL_B_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_MINERS_SKILL_B_NAME_3"),
+			tt_desc = _("TOWER_MINERS_SKILL_B_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_c",
+		image = "kr6_quickmenu_special_icons_dwarven_miners_0003",
+		sounds = {"TowerGoldProspectorsSkillCTaunt"},
+		place = 7,
+		tt_phrase = _("TOWER_MINERS_SKILL_C_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_MINERS_SKILL_C_NAME_1"),
+			tt_desc = _("TOWER_MINERS_SKILL_C_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_MINERS_SKILL_C_NAME_2"),
+			tt_desc = _("TOWER_MINERS_SKILL_C_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_MINERS_SKILL_C_NAME_3"),
+			tt_desc = _("TOWER_MINERS_SKILL_C_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	wizard = {{M(tpl.upgrade_power, {
+		action_arg = "skill_a",
+		image = "kr6_quickmenu_special_icons_wizard_0001",
+		sounds = {"TowerScholarMageSkillATaunt"},
+		place = 6,
+		tt_phrase = _("TOWER_WIZARD_SKILL_A_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_WIZARD_SKILL_A_NAME_1"),
+			tt_desc = _("TOWER_WIZARD_SKILL_A_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_WIZARD_SKILL_A_NAME_2"),
+			tt_desc = _("TOWER_WIZARD_SKILL_A_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_WIZARD_SKILL_A_NAME_3"),
+			tt_desc = _("TOWER_WIZARD_SKILL_A_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_b",
+		image = "kr6_quickmenu_special_icons_wizard_0002",
+		sounds = {"TowerScholarMageSkillBTaunt"},
+		place = 5,
+		tt_phrase = _("TOWER_WIZARD_SKILL_B_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_WIZARD_SKILL_B_NAME_1"),
+			tt_desc = _("TOWER_WIZARD_SKILL_B_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_WIZARD_SKILL_B_NAME_2"),
+			tt_desc = _("TOWER_WIZARD_SKILL_B_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_WIZARD_SKILL_B_NAME_3"),
+			tt_desc = _("TOWER_WIZARD_SKILL_B_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "skill_c",
+		image = "kr6_quickmenu_special_icons_wizard_0003",
+		sounds = {"TowerScholarMageSkillCTaunt"},
+		place = 7,
+		tt_phrase = _("TOWER_WIZARD_SKILL_C_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_WIZARD_SKILL_C_NAME_1"),
+			tt_desc = _("TOWER_WIZARD_SKILL_C_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_WIZARD_SKILL_C_NAME_2"),
+			tt_desc = _("TOWER_WIZARD_SKILL_C_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_WIZARD_SKILL_C_NAME_3"),
+			tt_desc = _("TOWER_WIZARD_SKILL_C_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	twilight_elves_barrack = {{M(tpl.upgrade_power, {
+		action_arg = "arrow_storm",
+		image = "kr4_special_icons_0050",
+		place = 5,
+		sounds = {"elves_barrack_multishoot_upgrade"},
+		tt_phrase = _("TOWER_TWILIGHT_ELVES_BARRACK_ARROW_STORM_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_TWILIGHT_ELVES_BARRACK_ARROW_STORM_NAME_1"),
+			tt_desc = _("TOWER_TWILIGHT_ELVES_BARRACK_ARROW_STORM_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_TWILIGHT_ELVES_BARRACK_ARROW_STORM_NAME_2"),
+			tt_desc = _("TOWER_TWILIGHT_ELVES_BARRACK_ARROW_STORM_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_TWILIGHT_ELVES_BARRACK_ARROW_STORM_NAME_3"),
+			tt_desc = _("TOWER_TWILIGHT_ELVES_BARRACK_ARROW_STORM_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "backstab",
+		image = "kr4_special_icons_0051",
+		place = 6,
+		sounds = {"elves_barrack_backstab_upgrade"},
+		tt_phrase = _("TOWER_TWILIGHT_ELVES_BARRACK_BACKSTAB_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_TWILIGHT_ELVES_BARRACK_BACKSTAB_NAME_1"),
+			tt_desc = _("TOWER_TWILIGHT_ELVES_BARRACK_BACKSTAB_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_TWILIGHT_ELVES_BARRACK_BACKSTAB_NAME_2"),
+			tt_desc = _("TOWER_TWILIGHT_ELVES_BARRACK_BACKSTAB_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_TWILIGHT_ELVES_BARRACK_BACKSTAB_NAME_3"),
+			tt_desc = _("TOWER_TWILIGHT_ELVES_BARRACK_BACKSTAB_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "last_breath",
+		image = "kr4_special_icons_0052",
+		place = 7,
+		sounds = {"elves_barrack_afterlife_upgrade"},
+		tt_phrase = _("TOWER_TWILIGHT_ELVES_BARRACK_LAST_BREATH_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_TWILIGHT_ELVES_BARRACK_LAST_BREATH_NAME_1"),
+			tt_desc = _("TOWER_TWILIGHT_ELVES_BARRACK_LAST_BREATH_DESCRIPTION_1")
+		}}
+	}), tpl.rally, tpl.sell}},
+	ignis_altar = {{M(tpl.upgrade_power, {
+		action_arg = "burning_elemental",
+		image = "kr4_special_icons_0068",
+		sounds = {"IgnisAltarGolemstoneUpgrade"},
+		place = 6,
+		tt_phrase = _("TOWER_IGNIS_ALTAR_BURNING_ELEMENTAL_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_IGNIS_ALTAR_BURNING_ELEMENTAL_NAME_1"),
+			tt_desc = _("TOWER_IGNIS_ALTAR_BURNING_ELEMENTAL_DESCRIPTION_1")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "single_extinction",
+		image = "kr4_special_icons_0070",
+		sounds = {"IgnisAltarFirewheelUpgrade"},
+		place = 5,
+		tt_phrase = _("TOWER_IGNIS_ALTAR_SINGLE_EXTINCTION_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_IGNIS_ALTAR_SINGLE_EXTINCTION_NAME_1"),
+			tt_desc = _("TOWER_IGNIS_ALTAR_SINGLE_EXTINCTION_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_IGNIS_ALTAR_SINGLE_EXTINCTION_NAME_2"),
+			tt_desc = _("TOWER_IGNIS_ALTAR_SINGLE_EXTINCTION_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_IGNIS_ALTAR_SINGLE_EXTINCTION_NAME_3"),
+			tt_desc = _("TOWER_IGNIS_ALTAR_SINGLE_EXTINCTION_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "true_fire",
+		image = "kr4_special_icons_0069",
+		sounds = {"IgnisAltarStickyLavaUpgrade"},
+		place = 7,
+		tt_phrase = _("TOWER_IGNIS_ALTAR_TRUE_FIRE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_IGNIS_ALTAR_TRUE_FIRE_NAME_1"),
+			tt_desc = _("TOWER_IGNIS_ALTAR_TRUE_FIRE_DESCRIPTION_1")
+		}}
+	}), tpl.rally, tpl.sell}},
+	goblirang = {{M(tpl.upgrade_power, {
+		action_arg = "big",
+		image = "kr4_special_icons_0009",
+		place = 5,
+		tt_phrase = _("TOWER_GOBLIRANG_BIG_NOTE"),
+		sounds = {"GoblirangsBigTaunt"},
+		tt_list = {{
+			tt_title = _("TOWER_GOBLIRANG_BIG_NAME_1"),
+			tt_desc = _("TOWER_GOBLIRANG_BIG_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_GOBLIRANG_BIG_NAME_2"),
+			tt_desc = _("TOWER_GOBLIRANG_BIG_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_GOBLIRANG_BIG_NAME_3"),
+			tt_desc = _("TOWER_GOBLIRANG_BIG_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "stun",
+		image = "kr4_special_icons_0008",
+		sounds = {"GoblirangsStunTaunt"},
+		place = 6,
+		tt_phrase = _("TOWER_GOBLIRANG_STUN_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_GOBLIRANG_STUN_NAME_1"),
+			tt_desc = _("TOWER_GOBLIRANG_STUN_DESCRIPTION_1")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "bees",
+		image = "kr4_special_icons_0007",
+		place = 7,
+		sounds = {"GoblirangsBeesTaunt"},
+		tt_phrase = _("TOWER_GOBLIRANG_BEES_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_GOBLIRANG_BEES_NAME_1"),
+			tt_desc = _("TOWER_GOBLIRANG_BEES_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_GOBLIRANG_BEES_NAME_2"),
+			tt_desc = _("TOWER_GOBLIRANG_BEES_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_GOBLIRANG_BEES_NAME_3"),
+			tt_desc = _("TOWER_GOBLIRANG_BEES_DESCRIPTION_3")
+		}}
+	}), tpl.sell}},
+	shaolin = {{M(tpl.upgrade_power, {
+		action_arg = "lion",
+		image = "kr4_special_icons_0061",
+		place = 5,
+		halo = "glow_ico_special",
+		sounds = {"ShaolinSkillBTaunt"},
+		tt_phrase = _("TOWER_SHAOLIN_LION_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SHAOLIN_LION_NAME_1"),
+			tt_desc = _("TOWER_SHAOLIN_LION_DESCRIPTION_1")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "dragon",
+		image = "kr4_special_icons_0062",
+		place = 6,
+		halo = "glow_ico_special",
+		sounds = {"ShaolinSkillATaunt"},
+		tt_phrase = _("TOWER_SHAOLIN_DRAGON_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SHAOLIN_DRAGON_NAME_1"),
+			tt_desc = _("TOWER_SHAOLIN_DRAGON_DESCRIPTION_1")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "total",
+		image = "kr4_special_icons_0063",
+		place = 7,
+		halo = "glow_ico_special",
+		sounds = {"ShaolinSkillCTaunt"},
+		tt_phrase = _("TOWER_SHAOLIN_TOTAL_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SHAOLIN_TOTAL_NAME_1"),
+			tt_desc = _("TOWER_SHAOLIN_TOTAL_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_SHAOLIN_TOTAL_NAME_2"),
+			tt_desc = _("TOWER_SHAOLIN_TOTAL_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_SHAOLIN_TOTAL_NAME_3"),
+			tt_desc = _("TOWER_SHAOLIN_TOTAL_DESCRIPTION_3")
+		}}
+	}), tpl.rally, tpl.sell}},
+	wicked_sisters = {{M(tpl.change_mode, {
+		image = "kr4_quickmenu_action_icons_0002",
+		image_mode0 = "kr4_quickmenu_action_icons_0002",
+		image_mode1 = "kr4_quickmenu_action_icons_0001",
+		tt_title_mode0 = _("TOWER_WICKED_SISTERS_CHANGE_MODE_MAGIC_NAME"),
+		tt_title_mode1 = _("TOWER_WICKED_SISTERS_CHANGE_MODE_POISON_NAME"),
+		tt_phrase_mode0 = _("TOWER_WICKED_SISTERS_CHANGE_MODE_MAGIC_NOTE"),
+		tt_phrase_mode1 = _("TOWER_WICKED_SISTERS_CHANGE_MODE_POISON_NOTE"),
+		tt_desc_mode0 = _("TOWER_WICKED_SISTERS_CHANGE_MODE_MAGIC_DESCRIPTION"),
+		tt_desc_mode1 = _("TOWER_WICKED_SISTERS_CHANGE_MODE_POISON_DESCRIPTION")
+	}), M(tpl.upgrade_power, {
+		action_arg = "silent",
+		image = "kr4_special_icons_0044",
+		place = 5,
+		sounds = {"WickedSistersSkillBTaunt"},
+		tt_phrase = _("TOWER_WICKED_SISTERS_SILENT_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_WICKED_SISTERS_SILENT_NAME_1"),
+			tt_desc = _("TOWER_WICKED_SISTERS_SILENT_DESCRIPTION_1")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "frog",
+		image = "kr4_special_icons_0045",
+		place = 6,
+		sounds = {"WickedSistersSkillATaunt"},
+		tt_phrase = _("TOWER_WICKED_SISTERS_FROG_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_WICKED_SISTERS_FROG_NAME_1"),
+			tt_desc = _("TOWER_WICKED_SISTERS_FROG_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_WICKED_SISTERS_FROG_NAME_2"),
+			tt_desc = _("TOWER_WICKED_SISTERS_FROG_DESCRIPTION_2")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "range",
+		image = "kr4_special_icons_0046",
+		place = 7,
+		sounds = {"WickedSistersSkillCTaunt"},
+		tt_phrase = _("TOWER_WICKED_SISTERS_RANGE_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_WICKED_SISTERS_RANGE_NAME_1"),
+			tt_desc = _("TOWER_WICKED_SISTERS_RANGE_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_WICKED_SISTERS_RANGE_NAME_2"),
+			tt_desc = _("TOWER_WICKED_SISTERS_RANGE_DESCRIPTION_2")
+		}}
+	}), tpl.rally, tpl.sell}},
+	melting_furnace = {{M(tpl.upgrade_power, {
+		action_arg = "coal",
+		image = "kr4_special_icons_0031",
+		place = 5,
+		sounds = {"MeltingFurnaceHotCoalTaunt"},
+		tt_phrase = _("TOWER_MELTING_FURNACE_COAL_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_MELTING_FURNACE_COAL_NAME_1"),
+			tt_desc = _("TOWER_MELTING_FURNACE_COAL_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_MELTING_FURNACE_COAL_NAME_2"),
+			tt_desc = _("TOWER_MELTING_FURNACE_COAL_DESCRIPTION_2")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "heat",
+		image = "kr4_special_icons_0032",
+		place = 6,
+		sounds = {"MeltingFurnaceAbrasiveHeatTaunt"},
+		tt_phrase = _("TOWER_MELTING_FURNACE_HEAT_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_MELTING_FURNACE_HEAT_NAME_1"),
+			tt_desc = _("TOWER_MELTING_FURNACE_HEAT_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_MELTING_FURNACE_HEAT_NAME_2"),
+			tt_desc = _("TOWER_MELTING_FURNACE_HEAT_DESCRIPTION_2")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "fuel",
+		image = "kr4_special_icons_0030",
+		place = 7,
+		sounds = {"MeltingFurnaceBurningFuelTaunt"},
+		tt_phrase = _("TOWER_MELTING_FURNACE_FUEL_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_MELTING_FURNACE_FUEL_NAME_1"),
+			tt_desc = _("TOWER_MELTING_FURNACE_FUEL_DESCRIPTION_1")
+		}}
+	}), tpl.sell}},
+	swamp_monster = {{M(tpl.change_mode, {
+		image = "kr4_quickmenu_action_icons_0003",
+		image_mode0 = "kr4_quickmenu_action_icons_0003",
+		image_mode1 = "kr4_quickmenu_action_icons_0004",
+		tt_title_mode0 = _("TOWER_SWAMP_MONSTER_CHANGE_MODE_BARRACK_NAME"),
+		tt_title_mode1 = _("TOWER_SWAMP_MONSTER_CHANGE_MODE_ARCHER_NAME"),
+		tt_phrase_mode0 = _("TOWER_SWAMP_MONSTER_CHANGE_MODE_BARRACK_NOTE"),
+		tt_phrase_mode1 = _("TOWER_SWAMP_MONSTER_CHANGE_MODE_ARCHER_NOTE"),
+		tt_desc_mode0 = _("TOWER_SWAMP_MONSTER_CHANGE_MODE_BARRACK_DESCRIPTION"),
+		tt_desc_mode1 = _("TOWER_SWAMP_MONSTER_CHANGE_MODE_ARCHER_DESCRIPTION")
+	}), M(tpl.upgrade_power, {
+		action_arg = "stun",
+		image = "kr4_special_icons_0065",
+		place = 5,
+		sounds = {"SwampMonsterSkillBTaunt"},
+		tt_phrase = _("TOWER_SWAMP_MONSTER_STUN_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SWAMP_MONSTER_STUN_NAME_1"),
+			tt_desc = _("TOWER_SWAMP_MONSTER_STUN_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_SWAMP_MONSTER_STUN_NAME_2"),
+			tt_desc = _("TOWER_SWAMP_MONSTER_STUN_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_SWAMP_MONSTER_STUN_NAME_3"),
+			tt_desc = _("TOWER_SWAMP_MONSTER_STUN_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "instakill",
+		image = "kr4_special_icons_0066",
+		place = 6,
+		sounds = {"SwampMonsterSkillATaunt"},
+		tt_phrase = _("TOWER_SWAMP_MONSTER_INSTAKILL_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SWAMP_MONSTER_INSTAKILL_NAME_1"),
+			tt_desc = _("TOWER_SWAMP_MONSTER_INSTAKILL_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_SWAMP_MONSTER_INSTAKILL_NAME_2"),
+			tt_desc = _("TOWER_SWAMP_MONSTER_INSTAKILL_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_SWAMP_MONSTER_INSTAKILL_NAME_3"),
+			tt_desc = _("TOWER_SWAMP_MONSTER_INSTAKILL_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "eat",
+		image = "kr4_special_icons_0067",
+		place = 7,
+		sounds = {"SwampMonsterSkillCTaunt"},
+		tt_phrase = _("TOWER_SWAMP_MONSTER_EAT_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SWAMP_MONSTER_EAT_NAME_1"),
+			tt_desc = _("TOWER_SWAMP_MONSTER_EAT_DESCRIPTION_1")
+		}}
+	}), tpl.rally, tpl.sell}},
+	sandworm = {{M(tpl.upgrade_power, {
+		action_arg = "worm",
+		image = "kr4_special_icons_0071",
+		place = 6,
+		sounds = {"sandwormSkillATaunt"},
+		tt_phrase = _("TOWER_SANDWORM_WORM_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SANDWORM_WORM_NAME_1"),
+			tt_desc = _("TOWER_SANDWORM_WORM_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_SANDWORM_WORM_NAME_2"),
+			tt_desc = _("TOWER_SANDWORM_WORM_DESCRIPTION_2")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "eat",
+		image = "kr4_special_icons_0072",
+		place = 5,
+		sounds = {"sandwormSkillBTaunt"},
+		tt_phrase = _("TOWER_SANDWORM_EAT_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SANDWORM_EAT_NAME_1"),
+			tt_desc = _("TOWER_SANDWORM_EAT_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_SANDWORM_EAT_NAME_2"),
+			tt_desc = _("TOWER_SANDWORM_EAT_DESCRIPTION_2")
+		}, {
+			tt_title = _("TOWER_SANDWORM_EAT_NAME_3"),
+			tt_desc = _("TOWER_SANDWORM_EAT_DESCRIPTION_3")
+		}}
+	}), M(tpl.upgrade_power, {
+		action_arg = "slime",
+		image = "kr4_special_icons_0073",
+		place = 7,
+		sounds = {"sandwormSkillCTaunt"},
+		tt_phrase = _("TOWER_SANDWORM_SLIME_NOTE"),
+		tt_list = {{
+			tt_title = _("TOWER_SANDWORM_SLIME_NAME_1"),
+			tt_desc = _("TOWER_SANDWORM_SLIME_DESCRIPTION_1")
+		}, {
+			tt_title = _("TOWER_SANDWORM_SLIME_NAME_2"),
+			tt_desc = _("TOWER_SANDWORM_SLIME_DESCRIPTION_2")
+		}}
+	}), tpl.sell}}
+}

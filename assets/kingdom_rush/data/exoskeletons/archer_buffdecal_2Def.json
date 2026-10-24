@@ -1,0 +1,1 @@
+{"schema_version":1,"fps":30,"parts":[{"name":"archer_buffdecal_2_asst_archer_buffdecal_2","offset":[0.0,0.0]}],"attach_points":[],"animations":{"idle":[0]},"frames":[[[1.0,1.0,1.0,0.0,-7.25,1.0,1.0,0.0,0.0,0.0]]],"entry_fields":["type","index_1_based","alpha","x","y","scale_x","scale_y","rotation","skew_x","skew_y"],"name":"archer_buffdecal_2Def"}

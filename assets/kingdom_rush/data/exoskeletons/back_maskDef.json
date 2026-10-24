@@ -1,0 +1,1 @@
+{"schema_version":1,"fps":30,"parts":[{"name":"back_mask_asst_stage_7_back_mask","offset":[309.75,241.39999389648438]}],"attach_points":[],"animations":{"idle":[0]},"frames":[[[1.0,1.0,1.0,-85.6500015258789,-121.30000305175781,1.0,1.0,0.0,0.0,0.0]]],"entry_fields":["type","index_1_based","alpha","x","y","scale_x","scale_y","rotation","skew_x","skew_y"],"name":"back_maskDef"}
