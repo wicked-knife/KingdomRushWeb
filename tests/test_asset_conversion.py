@@ -3,6 +3,7 @@ import importlib.util
 from pathlib import Path
 import struct
 import unittest
+import tempfile
 import zlib
 
 SPEC = importlib.util.spec_from_file_location("dove_importer", Path(__file__).resolve().parents[1] / "tools/import_dove_assets.py")
@@ -16,6 +17,64 @@ def text(value):
 
 
 class ConversionTests(unittest.TestCase):
+    @staticmethod
+    def vorbis_container(frames):
+        # Minimal container metadata: the duration reader deliberately does not decode packets.
+        identification = b"\x01vorbis" + struct.pack("<IBIiiiBB", 0, 2, 44100, 0, 0, 0, 0xB8, 1)
+        def page(payload, flags, granule, sequence):
+            return struct.pack("<4sBBQIIIB", b"OggS", 0, flags, granule, 7, sequence, 0, 1) + bytes([len(payload)]) + payload
+        return page(identification, 2, 0, 0) + page(b"\x00", 4, frames, 1)
+
+    def test_vorbis_duration_uses_final_granule(self):
+        with tempfile.TemporaryDirectory() as directory:
+            audio = Path(directory) / "audio.ogg"
+            audio.write_bytes(self.vorbis_container(0))
+            self.assertEqual(module.vorbis_info(audio), {"channels": 2, "sample_rate": 44100, "frames": 0})
+            audio.write_bytes(self.vorbis_container(22050))
+            self.assertEqual(module.vorbis_info(audio)["frames"], 22050)
+            audio.write_bytes(b"OggS truncated")
+            self.assertIsNone(module.vorbis_info(audio))
+
+    def test_vorbis_truncated_identification_is_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            audio = Path(directory) / "audio.ogg"
+            data = self.vorbis_container(0)
+            identification = data.index(b"\x01vorbis")
+            for length in range(7, 30):
+                with self.subTest(identification_length=length):
+                    audio.write_bytes(data[:identification + length])
+                    self.assertIsNone(module.vorbis_info(audio))
+
+    def test_empty_runtime_audio_is_silent_audited_and_reusable(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source"
+            project = root / "project"
+            (source / "_assets").mkdir(parents=True)
+            (source / "_assets/assets_index.lua").write_text("return {}", encoding="utf-8")
+            project.mkdir()
+            (project / "project.godot").write_text("config_version=5", encoding="utf-8")
+            audio = source / "_assets/empty.ogg"
+            audio.write_bytes(self.vorbis_container(0))
+            original_hash = module.digest(audio)
+            destination = project / "assets/kingdom_rush/empty.ogg"
+            migration = module.Migration(source, project, root / "reference")
+            try:
+                migration.copy(audio, destination, "copy_runtime_media")
+                self.assertEqual(module.digest(audio), original_hash)
+                self.assertEqual(migration.entries[0]["action"], module.AUDIO_SILENCE_ACTION)
+                self.assertGreater(module.vorbis_info(destination)["frames"], 0)
+                fixed_hash = module.digest(destination)
+            finally:
+                migration.journal.close()
+            resumed = module.Migration(source, project, root / "reference")
+            try:
+                resumed.copy(audio, destination, "copy_runtime_media")
+                self.assertEqual(resumed.reused, 1)
+                self.assertEqual(module.digest(destination), fixed_hash)
+            finally:
+                resumed.journal.close()
+
     def test_atlas_scales_uvs_but_preserves_logical_size_and_alias(self):
         data = b"KRAB\x01" + struct.pack("<IH", 1, 1) + text("sheet.dds")
         data += text("soldier_0001") + struct.pack("<H8Hf2HH", 1, 2, 3, 4, 5, 16, 16, 1, 2, 0.5, 8, 9, 1) + text("idle")

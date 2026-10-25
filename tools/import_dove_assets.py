@@ -27,6 +27,7 @@ PROJECT = Path(__file__).resolve().parents[1]
 DEFAULT_SOURCE = Path("D:/王国保卫战Dove版/KingdomRushDove")
 DEFAULT_REFERENCE = Path("D:/projects/KingdomRushDove")
 RESOURCE_ROOT = "res://assets/kingdom_rush/"
+AUDIO_SILENCE_ACTION = "empty_ogg_to_silence_v1"
 
 
 def digest(path: Path) -> str:
@@ -46,6 +47,92 @@ def atomic_bytes(path: Path, data: bytes):
 
 def json_bytes(value) -> bytes:
     return (json.dumps(value, ensure_ascii=False, allow_nan=False, separators=(",", ":")) + "\n").encode("utf-8")
+
+
+def vorbis_info(path: Path):
+    """Read Vorbis format/final granule without decoding or trusting file size as duration."""
+    with path.open("rb") as stream:
+        header = stream.read(128)
+        identification = header.find(b"\x01vorbis")
+        if not header.startswith(b"OggS") or identification < 0 or identification + 30 > len(header):
+            return None
+        channels = header[identification + 11]
+        rate = struct.unpack_from("<I", header, identification + 12)[0]
+        if channels == 0 or rate == 0:
+            return None
+        stream.seek(max(0, path.stat().st_size - 65536))
+        tail = stream.read()
+    page = tail.rfind(b"OggS")
+    if page < 0 or page + 27 > len(tail) or not tail[page + 5] & 4:
+        return None
+    segments = tail[page + 26]
+    end = page + 27 + segments
+    if end > len(tail) or end + sum(tail[page + 27:end]) != len(tail):
+        return None
+    return {"channels": channels, "sample_rate": rate,
+            "frames": struct.unpack_from("<Q", tail, page + 6)[0]}
+
+
+def write_empty_ogg_silence(destination: Path, info: dict):
+    """Keep empty source audio silent, but give Godot a decodable 10 ms waveform."""
+    import soundfile as sf
+
+    frames = max(1, info["sample_rate"] // 100)
+    tmp = destination.with_name(destination.name + ".tmp")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    with sf.SoundFile(tmp, "w", samplerate=info["sample_rate"], channels=info["channels"],
+                      format="OGG", subtype="VORBIS") as output:
+        output.write([[0.0] * info["channels"] for _ in range(frames)])
+    with sf.SoundFile(tmp) as output:
+        decoded = output.read(always_2d=True)
+        if output.frames != frames or abs(decoded).max() > 0.000001:
+            raise ValueError(f"silence verification failed: {destination}")
+    os.replace(tmp, destination)
+    return {"source_audio_frames": 0, "runtime_audio_frames": frames,
+            "sample_rate": info["sample_rate"], "channels": info["channels"],
+            "compatibility_reason": "Godot editor waveform preview cannot decode zero-duration Vorbis"}
+
+
+def repair_empty_audio(project: Path):
+    """Targeted repair of an existing conversion, with its hashes/journal kept consistent."""
+    manifest_path = project / "reports/assets_manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    verification_path = project / "reports/assets_verification.json"
+    verification = json.loads(verification_path.read_text(encoding="utf-8"))
+    repaired = []
+    delta = 0
+    for entry in manifest["files"]:
+        if not entry["destination"].startswith("assets/") or not entry["destination"].endswith(".ogg"):
+            continue
+        target = project / entry["destination"]
+        info = vorbis_info(target)
+        if not info or info["frames"] != 0:
+            continue
+        source = Path(entry["source"])
+        if digest(source) != entry["source_sha256"] or digest(target) != entry["sha256"]:
+            raise ValueError(f"audio differs from recorded source/runtime: {target}")
+        details = write_empty_ogg_silence(target, info)
+        previous_bytes = entry["bytes"]
+        entry.update(action=AUDIO_SILENCE_ACTION, bytes=target.stat().st_size,
+                     sha256=digest(target), **details)
+        delta += entry["bytes"] - previous_bytes
+        repaired.append(entry)
+    manifest["statistics"]["runtime_bytes"] += delta
+    verification["statistics"]["runtime_bytes"] += delta
+    warnings = verification.setdefault("source_warnings", {})
+    paths = warnings.setdefault("empty_ogg", [])
+    for entry in repaired:
+        if entry["source_relative"] not in paths:
+            paths.append(entry["source_relative"])
+    if repaired:
+        verification["status"] = "passed_with_source_warnings"
+        atomic_bytes(manifest_path, json_bytes(manifest))
+        atomic_bytes(verification_path, json_bytes(verification))
+        with (project / "reports/assets_migration_state.jsonl").open("ab") as journal:
+            for entry in repaired:
+                journal.write(json_bytes(entry))
+    print(json.dumps({"repaired_empty_audio": [e["destination"] for e in repaired],
+                      "original_sources_unchanged": True}, ensure_ascii=False), flush=True)
 
 
 class BinaryReader:
@@ -364,7 +451,15 @@ class Migration:
         self.converted += 1
 
     def copy(self, source, destination, action="copy_original"):
+        info = vorbis_info(source) if action == "copy_runtime_media" and source.suffix.lower() == ".ogg" else None
+        empty_audio = info is not None and info["frames"] == 0
+        if empty_audio:
+            action = AUDIO_SILENCE_ACTION
+            self.warnings["empty_ogg"].append(source.relative_to(self.source).as_posix())
         if self.reusable(source, destination, action): return
+        if empty_audio:
+            self.record(source, destination, action, **write_empty_ogg_silence(destination, info))
+            return
         destination.parent.mkdir(parents=True, exist_ok=True)
         tmp = destination.with_name(destination.name + ".tmp")
         shutil.copy2(source, tmp)
@@ -512,7 +607,7 @@ class Migration:
             missing_index = [key for key in installed_index if not (self.source / "_assets" / key).is_file()]
             if missing_index: raise ValueError(f"installed index has missing assets: {missing_index}")
             stats = {"original_files": originals, "dds_textures": len(textures), "dds_formats": formats, **metadata,
-                     "ogg_files": sum(1 for entry in self.entries if entry["action"] == "copy_runtime_media" and entry["destination"].endswith(".ogg")),
+                     "ogg_files": sum(1 for entry in self.entries if entry["action"] in {"copy_runtime_media", AUDIO_SILENCE_ACTION} and entry["destination"].endswith(".ogg")),
                      "font_files": sum(1 for entry in self.entries if entry["action"] == "copy_runtime_media" and Path(entry["destination"]).suffix in {".ttf", ".ttc", ".otf"}),
                      "original_bytes": sum(entry["bytes"] for entry in self.entries if entry["action"] == "copy_original"),
                      "runtime_bytes": sum(entry["bytes"] for entry in self.entries if entry["action"] != "copy_original")}
@@ -592,8 +687,11 @@ def main():
     parser.add_argument("--reference", type=Path, default=DEFAULT_REFERENCE)
     parser.add_argument("--verify-only", action="store_true")
     parser.add_argument("--check-source", action="store_true")
+    parser.add_argument("--repair-empty-audio", action="store_true", help="Repair empty runtime OGG files and update their recorded hashes")
     args = parser.parse_args()
-    if args.verify_only:
+    if args.repair_empty_audio:
+        repair_empty_audio(args.project.resolve())
+    elif args.verify_only:
         verify_existing(args.project.resolve(), args.check_source)
     else:
         Migration(args.source, args.project, args.reference).run()

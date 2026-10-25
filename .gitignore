@@ -5,3 +5,14 @@
 # Python importer caches
 __pycache__/
 *.py[cod]
+
+# Local Web exports
+/build/*
+!/build/.gdignore
+
+# Generated menu validation captures and logs (kept locally)
+/reports/menu_*.png
+/reports/menu_*.log
+/reports/web_export.log
+/reports/editor_startup_*.log
+/reports/editor_freeze_backup/

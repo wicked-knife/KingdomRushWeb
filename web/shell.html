@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>$GODOT_PROJECT_NAME</title>
+  <style>
+    html, body { margin: 0; width: 100%; height: 100%; background: #122722; overflow: hidden; }
+    #canvas { display: block; outline: none; }
+    #loading { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 24px; padding: 24px; color: #edda98; background: #122722;
+      font: 18px/1.6 system-ui, sans-serif; text-align: center; }
+    h1 { margin: 0; font-size: clamp(28px, 5vw, 48px); letter-spacing: 3px; }
+    progress { width: min(440px, 80vw); height: 16px; accent-color: #cfa858; }
+    #message { max-width: 720px; white-space: pre-wrap; overflow-wrap: anywhere; }
+    button { padding: 10px 32px; background: #cfa858; border: 0; border-radius: 6px;
+      color: #17271f; font: inherit; cursor: pointer; }
+    [hidden] { display: none !important; }
+  </style>
+  $GODOT_HEAD_INCLUDE
+</head>
+<body>
+  <canvas id="canvas" tabindex="0">浏览器不支持 Canvas，请使用新版 Chrome 或 Edge。</canvas>
+  <div id="loading" role="status" aria-live="polite">
+    <h1>KINGDOM RUSH</h1>
+    <div id="message">正在加载游戏，请稍候…</div>
+    <progress id="progress"></progress>
+    <button id="retry" hidden>重新加载</button>
+    <noscript>请启用 JavaScript 后重新加载。</noscript>
+  </div>
+  <script src="$GODOT_URL"></script>
+  <script>
+    const overlay = document.getElementById('loading');
+    const progress = document.getElementById('progress');
+    const message = document.getElementById('message');
+    const retry = document.getElementById('retry');
+    retry.addEventListener('click', () => location.reload());
+    function failure(error) {
+      console.error(error);
+      message.textContent = '加载失败，请检查网络后重试。\n' + String(error instanceof Error ? error.message : error || '未知错误');
+      progress.hidden = true;
+      retry.hidden = false;
+    }
+    try {
+      if (typeof Engine === 'undefined') throw new Error('无法下载游戏引擎。');
+      const missing = Engine.getMissingFeatures({ threads: $GODOT_THREADS_ENABLED });
+      if (missing.length) throw new Error('浏览器缺少所需能力：' + missing.join(', '));
+      const engine = new Engine($GODOT_CONFIG);
+      engine.startGame({
+          onProgress(current, total) {
+            if (total > 0) { progress.max = total; progress.value = current; }
+            else { progress.removeAttribute('value'); }
+          },
+        }).then(() => { overlay.remove(); document.getElementById('canvas').focus(); }, failure);
+    } catch (error) { failure(error); }
+  </script>
+</body>
+</html>

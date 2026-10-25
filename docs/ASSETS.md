@@ -4,6 +4,17 @@
 `D:\projects\KingdomRushDove` 提供同版本源码，用于后续玩法迁移与资源依赖核对。
 原安装目录始终只读；所有操作都是复制和生成新文件。
 
+### 空音频的 Godot 兼容处理
+
+原始 `kr6_sfx_ambiance_terrain3_var3_v1.ogg` 与 `Sound_MapRoad.ogg` 都是零时长 Vorbis。
+Godot 4.7.2 原生编辑器为它们生成音频波形预览时，会反复出现 `ran out of packets in stream` 和 `mixed < 0`，造成打开项目后无响应。
+运行资源中的这两段音频转换为同采样率、同声道的 10 ms 静音；原安装文件和 `source_assets` 快照保持原样。
+转换器会自动处理零时长 Vorbis，并在清单中记录 `empty_ogg_to_silence_v1`、来源哈希及实际输出哈希，重新导入不会把问题带回来。
+
+已有资源库可执行 `python tools/import_dove_assets.py --repair-empty-audio`，只修复空音频并同步资源清单与检查点。
+需要重新生成时先安装 `tools/requirements.txt` 中的 SoundFile。运行游戏与编辑器无需安装 Python 音频库。
+Godot 解码回归检查：`--headless --path . --script tests/verify_audio_compat.gd`。
+
 当前资源快照为 **2.1.0.2**（2026-10-24 同步），安装版本与源码提交均为 `e4278f83d913f96a8d35a17f912e0c21945bfdac`。
 
 ## 后续复刻指导

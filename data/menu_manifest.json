@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "baseline": "dove-2.1.0.2",
+  "background": "res://data/original_menu_background.tres",
+  "scenes": ["res://scenes/app_root.tscn", "res://scenes/main_menu.tscn"],
+  "scripts": [
+    "res://scripts/app_root.gd",
+    "res://scripts/dove_asset_catalog.gd",
+    "res://scripts/services/menu_boot_loader.gd",
+    "res://scripts/services/menu_settings.gd",
+    "res://scripts/services/menu_audio.gd",
+    "res://scripts/ui/menu_art.gd",
+    "res://scripts/ui/main_menu.gd"
+  ],
+  "catalog": "res://assets/kingdom_rush/catalog.json",
+  "font": "res://assets/kingdom_rush/all-desktop/fonts/msyh.ttc",
+  "locale": "res://assets/kingdom_rush/data/locale_zh-Hans.json",
+  "sounds": "res://assets/kingdom_rush/data/sounds.json",
+  "atlases": {
+    "screen_slots": "res://assets/kingdom_rush/data/atlases/screen_slots.json",
+    "view_options": "res://assets/kingdom_rush/data/atlases/view_options.json"
+  },
+  "textures": [
+    "res://assets/kingdom_rush/kr1-desktop/images/fullhd/screen_slots-1.png",
+    "res://assets/kingdom_rush/kr1-desktop/images/fullhd/screen_slots-2.png",
+    "res://assets/kingdom_rush/kr1-desktop/images/fullhd/screen_slots-3.png",
+    "res://assets/kingdom_rush/kr1-desktop/images/fullhd/screen_slots-4.png",
+    "res://assets/kingdom_rush/kr1-desktop/images/fullhd/view_options-1.png"
+  ],
+  "audio": {
+    "MusicMainMenu": "res://assets/kingdom_rush/kr1-desktop/sounds/files/MusicMainMenu.ogg",
+    "GUIButtonCommon": "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_GUIButtonCommon.ogg"
+  },
+  "frames": {
+    "screen_slots": [
+      "homeMenu_buttonsBg", "main_options_bg_notxt", "homeMenu_confirm_menu_0001",
+      "homeMenu_logo_0001", "homeMenu_logo_0002", "homeMenu_logo_0003", "homeMenu_logo_0004",
+      "homeMenu_logo_0005", "homeMenu_logo_0006", "homeMenu_logo_0007", "homeMenu_logo_0008",
+      "homeMenu_logo_0009", "homeMenu_logo_0010", "homeMenu_logo_0011", "homeMenu_logo_0012",
+      "homeMenu_logo_0013", "homeMenu_logo_0014", "homeMenu_logo_0015", "homeMenu_logo_0016", "homeMenu_logo_0017",
+      "homeMenu_btnStart_zh-Hans_0001", "homeMenu_btnStart_zh-Hans_0002", "homeMenu_btnStart_zh-Hans_0003",
+      "homeMenu_btnOptions_zh-Hans_0001", "homeMenu_btnOptions_zh-Hans_0002", "homeMenu_btnOptions_zh-Hans_0003",
+      "homeMenu_btnCredits_zh-Hans_0001", "homeMenu_btnCredits_zh-Hans_0002", "homeMenu_btnCredits_zh-Hans_0003",
+      "homeMenu_quit_0001", "homeMenu_quit_0002", "homeMenu_quit_0003"
+    ],
+    "view_options": ["options_barBg", "options_bar", "options_button_bg_0001", "options_button_bg_0002", "options_sounds_0001"]
+  }
+}
