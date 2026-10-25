@@ -24,6 +24,13 @@ __pycache__/
 !/reports/level01_web.json
 !/reports/ui_revision_report.json
 !/reports/battle_details_report.json
+!/reports/map_kr1_assets.json
+!/reports/map_kr1_logic.json
+!/reports/map_kr1_web.json
+!/reports/map_kr1_delivery.json
 
 # Generated output artifacts (kept locally)
 /output/
+
+!/reports/playtest_tools_logic.json
+!/reports/playtest_tools_delivery.json

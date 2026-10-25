@@ -8,6 +8,7 @@ signal failed(message: String)
 
 const Catalog = preload("res://scripts/dove_asset_catalog.gd")
 const MANIFEST_PATH := "res://data/menu_manifest.json"
+var fonts: RefCounted
 var catalog: RefCounted
 var manifest: Dictionary = {}
 var resources: Dictionary = {}
@@ -33,10 +34,13 @@ func initialize(manifest_path: String = MANIFEST_PATH) -> void:
 	var tasks: Array[Dictionary] = [
 		{"path": manifest.get("font", ""), "kind": "font", "label": "Loading font..."},
 		{"path": manifest.get("catalog", ""), "kind": "json", "label": "校验资源目录"},
+		{"path": manifest.get("font_roles", ""), "kind": "json", "label": "加载字体样式"},
 		{"path": manifest.get("locale", ""), "kind": "json", "label": "加载中文文案"},
 		{"path": manifest.get("sounds", ""), "kind": "json", "label": "加载声音配置"},
 		{"path": manifest.get("background", ""), "kind": "texture", "label": "加载主菜单背景"}
 	]
+	for font_path: String in manifest.get("fonts", []):
+		if font_path != manifest.font: tasks.append({"path": font_path, "kind": "font", "label": "加载原版字体"})
 	for group: String in manifest.get("atlases", {}):
 		tasks.append({"path": manifest.atlases[group], "kind": "json", "label": "加载界面图集"})
 	for path: String in manifest.get("textures", []):
@@ -64,7 +68,7 @@ func initialize(manifest_path: String = MANIFEST_PATH) -> void:
 				_fail("Unable to load resource: " + path)
 				return
 		resources[path] = resource
-		if task.kind == "font":
+		if task.kind == "font" and path == manifest.font:
 			font_loaded.emit(resource)
 		elif path == manifest.locale:
 			locale = resource
@@ -93,6 +97,8 @@ func initialize(manifest_path: String = MANIFEST_PATH) -> void:
 		catalog.get_texture(path)
 	progress_changed.emit(tasks.size() + 1, tasks.size() + 1, "加载完成")
 	await get_tree().process_frame
+	fonts = preload("res://scripts/services/dove_fonts.gd").new()
+	fonts.initialize(resources)
 	state = "ready"
 	completed.emit()
 

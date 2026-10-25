@@ -1,0 +1,105 @@
+{
+  "passed": true,
+  "scope": "Godot native, headless and source assets. Web acceptance is manual; no Web validation was run.",
+  "engine": "Godot 4.7.2 stable / Compatibility",
+  "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+  "assets": {
+    "passed": true,
+    "nodes": 27,
+    "animation_instances": 124,
+    "frames": 5161,
+    "canonical_frames_pixel_verified": 4150,
+    "pages": 13,
+    "commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2"
+  },
+  "campaign_logic": {
+    "passed": true,
+    "checks": 36063,
+    "victory": {
+      "difficulty": 2,
+      "generation": 1,
+      "level_id": 1,
+      "lives": 15,
+      "mode": 1,
+      "result": "victory",
+      "stars": 2
+    }
+  },
+  "native_map": {
+    "1280x720": {
+      "passed": true,
+      "text_boxes_checked": 228
+    },
+    "1920x1080": {
+      "passed": true,
+      "text_boxes_checked": 228
+    },
+    "1024x768": {
+      "passed": true,
+      "text_boxes_checked": 228
+    }
+  },
+  "native_battle_ui": {
+    "1280x720": {
+      "passed": true,
+      "states": 22,
+      "text_boxes_checked": 205
+    },
+    "1920x1080": {
+      "passed": true,
+      "states": 22,
+      "text_boxes_checked": 205
+    },
+    "1024x768": {
+      "passed": true,
+      "states": 22,
+      "text_boxes_checked": 205
+    }
+  },
+  "native_battle_replay": {
+    "passed": true,
+    "resolution": "1280x720",
+    "covers": [
+      "tutorials",
+      "legal building commands",
+      "rally",
+      "powers",
+      "pause",
+      "1x/2x",
+      "victory",
+      "undefended defeat",
+      "return to map",
+      "three restarts"
+    ]
+  },
+  "native_mouse_keyboard_check": {
+    "passed": true,
+    "covers": [
+      "menu start",
+      "first flag",
+      "enter battle",
+      "skip tutorial",
+      "Esc pause",
+      "return to map"
+    ]
+  },
+  "other_headless_regressions": {
+    "verify_menu_bootstrap.gd": "passed",
+    "verify_level01.gd": "passed",
+    "verify_battle_details.gd": "passed (485 checks)"
+  },
+  "limits": [
+    "Full victories and defeats are accelerated automated legal-command replays, not manual real-time playthroughs.",
+    "Native audio playback positions advance; no per-effect listening acceptance was performed."
+  ],
+  "web": {
+    "package_created": true,
+    "browser_tested": false,
+    "pck_isolated_check": false,
+    "bundle": "build\\KingdomRush-KR1-Map-Web.zip",
+    "bytes": 62004007,
+    "sha256": "825842999656d53a9f4bd7545f96c2c14889c95118cbd49c5cad4779b8e808f0"
+  },
+  "latest_revision_report": "reports/playtest_tools_delivery.json",
+  "checkpoint": "Original KR1 map checkpoint; font, HUD, developer menu and three-slot revision is recorded separately."
+}

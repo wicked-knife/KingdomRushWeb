@@ -45,6 +45,10 @@ func _init() -> void:
 	expected.append("res://scripts/battle/dove_animation.gd")
 	expected.append("res://scripts/battle/dove_projectile.gd")
 	expected.append("res://scripts/battle/dove_unit_info.gd")
+	var campaign_map: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/map_kr1/manifest.json"))
+	expected.append_array(campaign_map.resources)
+	expected.append_array(campaign_map.data)
+	expected.append("res://data/map_kr1/manifest.json")
 	var allowed_data := expected.duplicate()
 	allowed_data.append("res://data/menu_manifest.json")
 	var failures: Array[String] = []
@@ -64,6 +68,14 @@ func _init() -> void:
 		if not ResourceLoader.exists(atlas.texture_directory + frame.sheet):
 			failures.append("Missing first-level atlas " + frame.sheet)
 	var sim_script = load("res://scripts/battle/level01_sim.gd")
+	var map_definition: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/map_kr1/definition.json"))
+	if map_definition.levels.size() != 27 or map_definition.animations.size() != 124:
+		failures.append("Generation-one map data incomplete")
+	var map_catalog = load("res://scripts/dove_asset_catalog.gd").new("res://data/map_kr1/catalog.json")
+	var map_atlas: Dictionary = map_catalog.load_group("map_kr1")
+	for frame: Dictionary in map_atlas.frames.values():
+		if not ResourceLoader.exists(map_atlas.texture_directory + frame.sheet): failures.append("Missing map atlas " + frame.sheet)
+	if map_catalog.get_frame("map_kr1", "map_background_kr1").is_empty(): failures.append("Map background unavailable")
 	if sim_script == null: failures.append("First-level simulation cannot be loaded")
 	else:
 		var simulation = sim_script.new(definition)

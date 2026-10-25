@@ -1,6 +1,8 @@
 extends Control
 ## Native canvas view. Simulation owns all rules; this class submits player commands.
-signal returned_to_menu
+signal returned_to_map
+signal finished(outcome: Dictionary)
+const CampaignProgress = preload("res://scripts/services/campaign_progress.gd")
 const Simulation = preload("res://scripts/battle/level01_sim.gd")
 const Interface = preload("res://scripts/battle/battle_ui.gd")
 const SpriteAnimation = preload("res://scripts/battle/dove_animation.gd")
@@ -10,8 +12,10 @@ const ART_SCALE := 768.0 / 1080.0
 const INK := Color("ffe9b0")
 var sim: RefCounted
 var catalog: RefCounted
+var fonts: RefCounted
 var font: Font
 var interface: RefCounted
+var developer: RefCounted
 var audio: Node
 var selected := ""
 var selected_unit := 0
@@ -31,21 +35,21 @@ var fx_players: Array = []
 var sound_cache := {}
 var sound_last := {}
 var volume_drag := {}
+var outcome := {}
 
 func initialize(boot: Node, sound: Node) -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	name = "Level01"
 	mouse_filter = MOUSE_FILTER_STOP
-	font = boot.resources[boot.manifest.font].duplicate()
-	# Custom canvas transforms are not included in automatic font oversampling.
-	# Give the battle its own cache so scaled Chinese glyphs remain crisp.
-	if font is FontFile: (font as FontFile).oversampling = 3.0
+	fonts = boot.fonts
+	font = fonts.font_for("body")
 	audio = sound
 	catalog = Catalog.new("res://data/level01/catalog.json")
 	animations = JSON.parse_string(FileAccess.get_file_as_string("res://data/level01/animations.json")).animations
-	sim = Simulation.new()
+	sim = Simulation.new({}, 1, OS.is_debug_build())
 	sim.event.connect(_on_event)
 	interface = Interface.new(self)
+	developer = preload("res://scripts/battle/battle_developer.gd").new(self)
 	for i in range(12):
 		var player := AudioStreamPlayer.new()
 		player.bus = "SFX"; add_child(player); fx_players.append(player)
@@ -68,7 +72,11 @@ func _on_event(kind: String, payload: Dictionary) -> void:
 		"reward": _message("提前开波 +%d 金币，技能冷却缩短" % payload.gold)
 		"tip": tip = str(payload.id)
 		"notice_confirmed": interface.confirmed(payload.notice)
-		"finished": selected = ""; selected_unit = 0; targeting = ""
+		"finished":
+			selected = ""; selected_unit = 0; targeting = ""
+			if outcome.is_empty():
+				outcome = {"generation": 1, "level_id": 1, "mode": 1, "difficulty": 2, "result": sim.result, "lives": sim.lives, "stars": CampaignProgress.stars_for(sim.lives) if sim.result == "victory" else 0, "developer_used": sim.developer_used}
+				finished.emit(outcome.duplicate())
 
 func _music(id: String) -> void:
 	var definition: Dictionary = catalog.get_sound(id)
@@ -171,12 +179,14 @@ func _draw() -> void:
 			draw_polyline(ring, Color("ffe477"), 1.5, true)
 	_draw_selection()
 	_draw_hud()
+	developer.hud()
 	if message_time > 0: _text(message, Vector2(view_width / 2, 95), 20, INK, true)
 	if targeting != "":
 		var point := get_local_mouse_position() / zoom
 		var valid: bool = sim.valid_ground(Vector2(point.x - margin, 768 - point.y))
 		_art("pointer_set_rally_0001" if targeting == "rally" else "pointer_power_" + ("reinforcements" if targeting == "reinforcements" else "rain_of_fire"), point, Vector2(0.5, 0.5), 1, Color.WHITE if valid else Color(1, 0.3, 0.3))
-	if not sim.notices.is_empty(): _draw_notice(str(sim.notices[0]))
+	if developer.opened: developer.draw()
+	elif not sim.notices.is_empty(): _draw_notice(str(sim.notices[0]))
 	elif sim.result != "": _draw_result()
 	elif sim.paused: _draw_pause()
 	draw_set_transform(Vector2.ZERO)
@@ -254,6 +264,7 @@ func _gui_input(input: InputEvent) -> void:
 	if not input is InputEventMouseButton or not input.pressed: return
 	accept_event()
 	if input.button_index == MOUSE_BUTTON_RIGHT:
+		if developer.opened: developer.close(); return
 		targeting = ""; selected = ""; selected_unit = 0; hits.clear(); return
 	if input.button_index != MOUSE_BUTTON_LEFT: return
 	var point: Vector2 = input.position / zoom
@@ -289,12 +300,15 @@ func _gui_input(input: InputEvent) -> void:
 func _input(input: InputEvent) -> void:
 	if sim == null or not visible: return
 	if input is InputEventKey and input.pressed and not input.echo:
+		if input.keycode == KEY_F8:
+			developer.toggle(); get_viewport().set_input_as_handled(); return
 		if input.keycode == KEY_ESCAPE:
-			if not sim.notices.is_empty(): _action("confirm")
+			if developer.opened: developer.close()
+			elif not sim.notices.is_empty(): _action("confirm")
 			elif targeting != "" or selected != "" or selected_unit != 0: targeting = ""; selected = ""; selected_unit = 0
 			elif sim.result == "": _action("pause")
 			get_viewport().set_input_as_handled()
-		elif sim.notices.is_empty() and not sim.paused and sim.result == "":
+		elif not developer.opened and sim.notices.is_empty() and not sim.paused and sim.result == "":
 			if input.keycode == KEY_1: _action("target", {"power": "fire"})
 			elif input.keycode == KEY_2: _action("target", {"power": "reinforcements"})
 			elif input.keycode == KEY_SPACE: _action("wave")
@@ -304,6 +318,11 @@ func _action(action: String, args: Dictionary = {}) -> void:
 	# A command can replace the entire composition before the next rendered frame.
 	# Never dispatch a subsequent click through hit regions from the old mode.
 	hits.clear()
+	if action == "developer": developer.toggle(); return
+	if action.begins_with("dev_"):
+		if not developer.execute(action): _message("当前开发操作不可用")
+		queue_redraw(); return
+	if developer.opened: return
 	match action:
 		"skip_tutorial":
 			while not sim.notices.is_empty() and str(sim.notices[0]).begins_with("TUTORIAL_"): sim.command("confirm")
@@ -314,10 +333,12 @@ func _action(action: String, args: Dictionary = {}) -> void:
 			if power == "rally" or (sim.unlocked.get(power, false) and sim.cooldowns.get(power, 0) == 0): targeting = power
 			interface.power_hint_hidden = true
 		"restart":
+			developer.close()
+			outcome.clear()
 			sim.reset(); interface.reset(); selected = ""; selected_unit = 0; targeting = ""; tip = ""
 			_music("Level01PrepMusic")
 			for player: AudioStreamPlayer in fx_players: player.stop()
-		"menu": returned_to_menu.emit(); return
+		"map": returned_to_map.emit(); return
 		"tip": sim.notices.append(tip); tip = ""
 		_:
 			if not sim.command(action, args): _message("当前操作不可用")

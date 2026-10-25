@@ -15,7 +15,7 @@ func capture(id: String, wait: float = 0.46) -> void:
 	var records: Array = []
 	for item: Dictionary in battle.interface.paint.audit:
 		if not item.fits: failures.append(id + ":" + item.id)
-		records.append({"id": item.id, "font_size": item.font_size, "box": str(item.box), "extent": str(item.extent), "lines": item.lines, "fits": item.fits})
+		records.append({"id": item.id, "font_size": item.font_size, "font_role": item.font_role, "font_family": item.font_family, "box": str(item.box), "extent": str(item.extent), "lines": item.lines, "fits": item.fits})
 	for hit: Dictionary in battle.hits:
 		if not Rect2(0, 0, battle.view_width, 768).grow(1).encloses(hit.rect): failures.append(id + ":offscreen:" + hit.action)
 	audit[id] = records
@@ -27,9 +27,11 @@ func progress() -> float:
 	return -1
 func _run() -> void:
 	create_timer(45).timeout.connect(func(): quit(1))
-	app = App.instantiate(); app.settings_path = "user://ui_gallery.json"; root.add_child(app)
+	app = App.instantiate(); app.settings_path = "user://ui_gallery.json"; app.progress_path = "user://ui_gallery_" + str(Time.get_ticks_usec()) + ".progress"; root.add_child(app)
 	await app.menu_ready
-	app.menu.start_button.pressed.emit(); battle = app.battle; battle.set_process(false)
+	app.menu.start_button.pressed.emit(); app.menu._select_slot(1); await app.map_ready
+	app.campaign_map._action("level", {"id": 1}); app.campaign_map._action("battle")
+	battle = app.battle; battle.set_process(false)
 	# Gallery states are scripted; desktop pointer events must not dismiss a state
 	# while a screenshot is being collected. Gameplay input has its own replay.
 	battle.mouse_filter = Control.MOUSE_FILTER_IGNORE; battle.set_process_input(false)
@@ -37,8 +39,11 @@ func _run() -> void:
 	for i in range(3):
 		await capture("tutorial%d" % (i + 1)); battle._action("confirm")
 	await capture("hud")
+	battle.developer.toggle(); await capture("developer_prebattle"); battle.developer.close()
 	battle.sim.gold = 99999; battle.sim.lives = 999
 	await capture("hud_large_values")
+	battle.sim.gold = 10000270; battle.sim.lives = 1120
+	await capture("hud_extreme_values")
 	battle.sim.gold = 270; battle.sim.lives = 20
 	battle.selected = "1"; await capture("build_menu")
 	battle.hovered = "build" + str({"id": "1", "type": "mage"}); await capture("build_hover")
@@ -57,6 +62,10 @@ func _run() -> void:
 	battle.selected = ""
 	for id in ["TIP_ARMOR", "TIP_RALLY", "POWER_REINFORCEMENT", "POWER_FIREBALL"]:
 		battle.sim.notices.append(id); await capture(id.to_lower()); battle._action("confirm")
+	battle._action("wave")
+	battle.developer.toggle(); battle._action("dev_add_gold"); battle._action("dev_add_lives")
+	await capture("developer_active"); battle.developer.close()
+	await capture("debug_hud")
 	await capture("powers_unlocked", 0.7)
 	battle._action("target", {"power": "fire"})
 	await capture("road_hint")
@@ -72,10 +81,12 @@ func _run() -> void:
 			check(is_equal_approx(app.settings.music_volume, 0.25), "pause music slider updates shared settings")
 			check(is_equal_approx(app.settings.sfx_volume, old_sfx), "music slider preserves sfx")
 	app.settings.set_volumes(old_music, old_sfx)
-	battle.sim.lives = 0; battle.sim.result = "defeat"; await capture("defeat")
-	battle.sim.lives = 20; battle.sim.kills = 56; battle.sim.result = "victory"; await capture("victory", 2)
+	battle.sim.lives = 0; battle.sim._finish("defeat"); await capture("defeat")
+	battle.outcome.clear(); battle.sim.result = ""; battle.sim.lives = 20; battle.sim.kills = 56; battle.sim._finish("victory"); await capture("victory", 2)
 	var file := FileAccess.open("res://reports/ui_layout_" + suffix + ".json", FileAccess.WRITE)
 	file.store_string(JSON.stringify({"passed": failures.is_empty(), "failures": failures, "layouts": audit}, "\t")); file.close()
+	var progress_file: String = app.progress_path
 	app.queue_free(); await process_frame; await process_frame
+	for ending in ["", ".bak", ".tmp"]: if FileAccess.file_exists(progress_file + ending): DirAccess.remove_absolute(progress_file + ending)
 	print("BATTLE_UI_GALLERY: ", "PASS" if failures.is_empty() else str(failures), " ", suffix)
 	quit(0 if failures.is_empty() else 1)

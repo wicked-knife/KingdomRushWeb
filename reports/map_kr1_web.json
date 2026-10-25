@@ -1,0 +1,62 @@
+{
+  "package_created": true,
+  "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+  "browser_tested": false,
+  "build_type": "debug",
+  "developer_menu": true,
+  "pck_isolated_check": false,
+  "pck_files": null,
+  "bundle": "build\\KingdomRush-KR1-Playtest-Debug-Web.zip",
+  "bytes": 81590255,
+  "sha256": "4e86b82e71a11cb8dad4d14b94e3f8004eeb41f6f719d72453fa94c4b3989a79",
+  "web_files": {
+    "index.apple-touch-icon.png": {
+      "bytes": 11939,
+      "sha256": "071ccd3c3619e62c9e27995cf1afde427bb1b630767801a0fe1ac33505b2f221"
+    },
+    "index.audio.position.worklet.js": {
+      "bytes": 2973,
+      "sha256": "be33985bc7160d6bf9646f259cd86b259cd67b02ccb297ee5c44f8ac84327bc8"
+    },
+    "index.audio.worklet.js": {
+      "bytes": 7298,
+      "sha256": "5b476a9c9ce642c0ee4256436d1bc31d9c38f868aca0f9a8e2a57c18d2dec2a3"
+    },
+    "index.html": {
+      "bytes": 3145,
+      "sha256": "a05ab2beb3a7bb0a3c657b73b72e0cee9dabc72608e6a702f1b019bd58e32655"
+    },
+    "index.icon.png": {
+      "bytes": 5765,
+      "sha256": "662f81d7672001a6f5f928532493267c226624757de3b5fa2908f6e5923964b7"
+    },
+    "index.js": {
+      "bytes": 315645,
+      "sha256": "ffc3898b59fba6f5af0c02f76e5ee526cc061e65c7d2d6f4f98186876cea15c4"
+    },
+    "index.pck": {
+      "bytes": 74901784,
+      "sha256": "f2976d201cd46256ea74f2d6c0de365b6d83eba515d10202a69fc4ad4bf2cbbc"
+    },
+    "index.png": {
+      "bytes": 21443,
+      "sha256": "3cb4495c0b98dfbe4b663cbf2b6836473572339beb66d902367893162a70be0e"
+    },
+    "index.wasm": {
+      "bytes": 37902138,
+      "sha256": "11ea19645368f8e73cf337b59cfd7ceeb4ebb51f7a3bbf77d1a5c3ddfedbc522"
+    },
+    "export_receipt.json": {
+      "bytes": 261,
+      "sha256": "d42722198bd9f044d3eb3d00fa5fd65aef3e096d17003e6919613d27af40a28f"
+    },
+    "README.txt": {
+      "bytes": 1572,
+      "sha256": "b7478486d3073d3da172e4a26d7b17e7fe6b0c428f749334ca0f9d5b45f3610e"
+    },
+    "start_server.cmd": {
+      "bytes": 180,
+      "sha256": "8f021ad5511504a288354fec02c4bf8514f054a2457cc229710e1d6069558b32"
+    }
+  }
+}

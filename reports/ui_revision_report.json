@@ -2,36 +2,131 @@
   "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
   "passed": true,
   "native_layouts": {
-    "1024x768": {
-      "passed": true,
-      "states": 22,
-      "text_boxes": 201,
-      "failures": []
-    },
     "1280x720": {
       "passed": true,
-      "states": 22,
-      "text_boxes": 201,
+      "states": 26,
+      "text_boxes": 272,
       "failures": []
     },
     "1920x1080": {
       "passed": true,
-      "states": 22,
-      "text_boxes": 201,
+      "states": 26,
+      "text_boxes": 272,
+      "failures": []
+    },
+    "1024x768": {
+      "passed": true,
+      "states": 26,
+      "text_boxes": 272,
       "failures": []
     }
   },
   "native_campaign_replay": [
-    "1280x720",
-    "1920x1080",
-    "1024x768"
+    "1280x720"
   ],
   "headless_logic": true,
-  "source_hashes_and_pixels": true,
-  "menu_and_audio_regression": true,
-  "pck_isolated_check": true,
+  "source_font_hashes_and_characters": true,
+  "menu_and_audio_playback_regression": true,
+  "pck_isolated_check": false,
   "browser_tested": false,
   "adaptation_spec": "docs/UI_ADAPTATION.md",
-  "web_delivery_report": "reports/level01_web.json",
-  "captures": "Generated locally by tests/battle_ui_gallery.gd; ignored by Git."
+  "web_delivery_report": "reports/map_kr1_web.json",
+  "feature_report": "reports/playtest_tools_delivery.json",
+  "captures": "Generated locally under reports/ and ignored by Git.",
+  "menu_map_alignment": {
+    "source_files": [
+      "kr1-desktop/data/kui_templates/slot_view.lua",
+      "lib/klove/kui_fast_fn.lua",
+      "all-desktop/screen_map.lua"
+    ],
+    "changes": [
+      "Correct KView rotation sign; plain black 12 px save counters",
+      "Visible-glyph fitting for compact captions with oversampled outline conversion",
+      "Centered illuminated capitals and source CJK description flow on all three mode pages",
+      "Source title decorations, challenge rule columns, banner anchors and state colors",
+      "Remove extra difficulty-icon caption absent from source"
+    ],
+    "native_menu": {
+      "resolutions": [
+        "1280x720",
+        "1920x1080",
+        "1024x768"
+      ],
+      "passed": true,
+      "fixtures": [
+        "empty",
+        "zero",
+        "3/135",
+        "135/135 with 27 heroic and 27 iron",
+        "delete confirmation",
+        "settings"
+      ]
+    },
+    "native_map": {
+      "1280x720": {
+        "failures": [],
+        "passed": true,
+        "resolution": "1280x720",
+        "text_boxes_checked": 311
+      },
+      "1920x1080": {
+        "failures": [],
+        "passed": true,
+        "resolution": "1920x1080",
+        "text_boxes_checked": 311
+      },
+      "1024x768": {
+        "failures": [],
+        "passed": true,
+        "resolution": "1024x768",
+        "text_boxes_checked": 311
+      }
+    },
+    "native_visual_review": true,
+    "native_battle_gallery_regression": {
+      "resolutions": [
+        "1280x720",
+        "1920x1080",
+        "1024x768"
+      ],
+      "passed": true,
+      "states_per_resolution": 26
+    },
+    "headless_route_save_developer_checks": {
+      "checks": 69,
+      "failures": [],
+      "passed": true,
+      "web_tested": false
+    },
+    "browser_tested": false,
+    "pck_isolated_check": false
+  },
+  "map_star_counter": {
+    "source_template": "kr1-desktop/data/kui_templates/map_counters_view.lua",
+    "source_sha256": "d9991bf412e46de01fef99d447f16f967ef4d18b23e4efdc528da22bf9181982",
+    "font_role": "numbers_bold",
+    "font": "TOONISH",
+    "source_size": 30,
+    "content_size": [
+      110,
+      36
+    ],
+    "alignment": "middle-caps",
+    "shadow": [
+      2,
+      2
+    ],
+    "native_visual_review": true,
+    "values_checked": [
+      "0/135",
+      "36/135",
+      "135/135"
+    ],
+    "resolutions": [
+      "1280x720",
+      "1920x1080",
+      "1024x768"
+    ],
+    "passed": true
+  }
 }

@@ -20,7 +20,7 @@ var power_hint := ""
 var power_hint_hidden := false
 
 func _init(battle: Control) -> void:
-	view = battle; paint = Layout.new(view, view.font)
+	view = battle; paint = Layout.new(view, view.fonts)
 	data = view.sim.data.ui; strings = data.strings
 
 func clock() -> float: return Time.get_ticks_msec() / 1000.0
@@ -95,7 +95,7 @@ func _menu_icon(image: String, center: Vector2, action: String, args: Dictionary
 		var tag := _size("price_tag")
 		var at := pos + Vector2((dimensions.x - tag.x) / 2, dimensions.y - 11)
 		paint.image("price_tag", at)
-		paint.label(str(price), Rect2(at + Vector2(2, 2), tag - Vector2(4, 4)), 11, Color("ffe000"), "center", "middle", 1, 1)
+		paint.label(str(price), Rect2(at + Vector2(2, 2), tag - Vector2(4, 4)), 11, Color("ffe000"), "center", "middle", 1, 1, "", "numbers")
 	paint.hit(Rect2(pos, dimensions), action, args, enabled)
 
 func _tower_tooltip(tower: Dictionary) -> void:
@@ -115,7 +115,7 @@ func _tower_tooltip(tower: Dictionary) -> void:
 	point.y = clampf(point.y, 90, 660 - dimensions.y)
 	paint.push(point)
 	paint.image("tooltip_bg_standard")
-	paint.label(title, Rect2(12, 8, dimensions.x - 24, 25), 17, Color("ffe9b0"), "left", "middle", 1, 1)
+	paint.label(title, Rect2(12, 8, dimensions.x - 24, 25), 17, Color("ffe9b0"), "left", "middle", 1, 1, "", "body_bold")
 	paint.label(description, Rect2(12, 39, dimensions.x - 24, dimensions.y - 53), 13, Color("f1e6c4"), "left", "top", 0, 1)
 	paint.pop()
 
@@ -123,9 +123,9 @@ func hud() -> void:
 	var sim: RefCounted = view.sim
 	paint.push(Vector2(0, -22), 0.9)
 	paint.image("top_left")
-	paint.label(str(sim.lives), Rect2(80, 39, 48, 35), 12, Color.WHITE, "left", "top", 1, 1, "hud:lives")
-	paint.label(str(sim.gold), Rect2(136, 39, 71, 35), 12, Color.WHITE, "left", "top", 1, 1, "hud:gold")
-	paint.label("%d/%d 波" % [sim.wave, 7], Rect2(240, 38, 74, 28), 12, Color.WHITE, "center", "middle", 1, 1, "hud:wave")
+	paint.label(str(sim.lives), Rect2(78, 33, 31, 35), 18, Color.WHITE, "center", "middle", 1, 1, "hud:lives", "numbers_bold")
+	paint.label(str(sim.gold), Rect2(135, 33, 58, 35), 18, Color.WHITE, "center", "middle", 1, 1, "hud:gold", "numbers_bold")
+	paint.label("%d/%d 波" % [sim.wave, 7], Rect2(234, 31, 82, 35), 16, Color.WHITE, "center", "middle", 1, 1, "hud:wave", "numbers_bold")
 	paint.pop()
 	paint.push(Vector2(view.view_width - 37, -21), 0.9)
 	var base := _size("pause_base")
@@ -136,7 +136,7 @@ func hud() -> void:
 	paint.hit(Rect2(button_pos, button), "pause")
 	paint.pop()
 	paint.push(Vector2(view.view_width - 190, 2), 0.60)
-	paint.button("options_button_bg_0001", Vector2.ZERO, "%d×" % sim.speed, "speed")
+	paint.button("options_button_bg_0001", Vector2.ZERO, "%d×" % sim.speed, "speed", {}, true, "options", "numbers_bold")
 	paint.pop()
 	paint.image("bg_bottom_bar", Vector2(0, 769), Vector2(0, 1))
 	paint.push(Vector2(105, 733))
@@ -195,13 +195,13 @@ func _unit_info() -> void:
 		paint.image(info.portrait, Vector2.ZERO, Vector2(0.5, 0.5))
 		paint.image("info_portraits_0000", Vector2.ZERO, Vector2(0.5, 0.5))
 		paint.pop()
-	paint.label(info.name, Rect2(97, 5, 320, 21), 12, Color.WHITE, "left", "bottom", 1, 1, "unit:name")
+	paint.label(info.name, Rect2(97, 5, 320, 21), 12, Color.WHITE, "left", "bottom", 1, 1, "unit:name", "infobar_name")
 	paint.push(Vector2(100, 33), 0.8)
 	var health_size := _size("base_info_bar_bg")
 	paint.image("base_info_bar_bg")
 	var foreground := _size("base_info_bar")
 	paint.image("base_info_bar", (health_size - foreground) / 2, Vector2.ZERO, Color.WHITE, Vector2(clampf(info.hp / info.hp_max, 0, 1), 1))
-	paint.label("%d / %d" % [int(info.hp), int(info.hp_max)], Rect2(0, 0, health_size.x, 17), 11, Color.WHITE, "center", "middle", 1, 1, "unit:hp")
+	paint.label("%d / %d" % [int(info.hp), int(info.hp_max)], Rect2(0, 0, health_size.x, 17), 11, Color.WHITE, "center", "middle", 1, 1, "unit:hp", "infobar_stats")
 	var columns := [
 		["base_info_icons_sword", "%d–%d / %s秒" % [int(info.damage_min), int(info.damage_max), str(info.cooldown)], 112.0],
 		["base_info_icons_armor", "%d%%" % roundi(info.armor * 100), 60.0],
@@ -210,7 +210,7 @@ func _unit_info() -> void:
 	var x := 145.0
 	for column: Array in columns:
 		paint.image(column[0], Vector2(x, 0))
-		paint.label(column[1], Rect2(x + 19, -2, float(column[2]) - 20, 20), 12, Color.WHITE, "left", "middle", 1, 1, "unit:" + column[0])
+		paint.label(column[1], Rect2(x + 19, -2, float(column[2]) - 20, 20), 12, Color.WHITE, "left", "middle", 1, 1, "unit:" + column[0], "infobar_stats")
 		x += float(column[2])
 	paint.pop()
 	# Consume clicks on the entire bar, including empty space around its labels.
@@ -251,7 +251,7 @@ func _title(image: String, caption: String, at: Vector2, center: bool = true) ->
 	var dimensions := _size(image)
 	var pos := at - Vector2(dimensions.x / 2 if center else 0, dimensions.y)
 	paint.image(image, pos)
-	paint.label(caption, Rect2(pos + Vector2((dimensions.x - 208) / 2, 16), Vector2(208, 38)), 24, Color("f7f4b9"), "center", "middle", 1, 1)
+	paint.label(caption, Rect2(pos + Vector2((dimensions.x - 208) / 2, 16), Vector2(208, 38)), 24, Color("f7f4b9"), "center", "middle", 1, 1, "", "h_noti")
 
 func notice(id: String) -> void:
 	view._dim()
@@ -268,7 +268,7 @@ func notice(id: String) -> void:
 		paint.image(image, Vector2.ZERO, Vector2(0.5, 0.5))
 		paint.image("notifications_polaroid_overlay", Vector2.ZERO, Vector2(0.5, 0.5))
 		paint.pop()
-		paint.label(text(notification.prefix + "_NAME"), Rect2(255, 50, 320, 35), 28, Color("181a0f"), "left", "middle", 1)
+		paint.label(text(notification.prefix + "_NAME"), Rect2(255, 50, 320, 35), 28, Color("181a0f"), "left", "middle", 1, 0, "", "h_noti")
 		var copy := text(notification.prefix + "_LARGE_DESCRIPTION")
 		copy = copy.replace("%$T('power_reinforcements_control').cooldown%$", str(int(view.sim.templates.power_reinforcements_control.cooldown)))
 		paint.label(copy, Rect2(255, 85, 320, 130), 17, Color("181a0f"), "left", "top")
@@ -295,17 +295,17 @@ func pause() -> void:
 	var dimensions := _size("options_bg_notxt")
 	_panel("pause", dimensions, 1.15, 0.25)
 	paint.image("options_bg_notxt")
-	paint.label("游戏暂停", Rect2(172, 28, 170, 32), 24, Color("fafafa"), "center", "middle", 1, 2)
+	paint.label("游戏暂停", Rect2(172, 28, 170, 32), 24, Color("fafafa"), "center", "middle", 1, 2, "", "h_popup")
 	var settings: Node = view.get_parent().settings
 	_volume("音效", 100, "sfx", settings.sfx_volume, 4)
 	_volume("音乐", 184, "music", settings.music_volume, 1)
 	var button_size := _size("options_button_bg_0001")
-	for item in [["返回菜单", "menu", 45 + button_size.x / 2], ["重新开始", "restart", ceil(dimensions.x / 2)], ["继续战斗", "pause", dimensions.x - 45 - button_size.x / 2]]:
+	for item in [["返回地图", "map", 45 + button_size.x / 2], ["重新开始", "restart", ceil(dimensions.x / 2)], ["继续战斗", "pause", dimensions.x - 45 - button_size.x / 2]]:
 		paint.button("options_button_bg_0001", Vector2(item[2] - button_size.x / 2, 338 - button_size.y / 2), item[0], item[1])
 	_end_panel()
 
 func _volume(caption: String, y: float, bus: String, value: float, index: int) -> void:
-	paint.label(caption, Rect2(0, y, _size("options_bg_notxt").x, 28), 20, Color("e9e9b2"), "center", "middle", 1, 1)
+	paint.label(caption, Rect2(0, y, _size("options_bg_notxt").x, 28), 20, Color("e9e9b2"), "center", "middle", 1, 1, "", "h_noti")
 	var at := Vector2(100, y + 34)
 	var track := _size("options_barBg")
 	var fill := _size("options_bar")
@@ -321,25 +321,25 @@ func result() -> void:
 		var dimensions := _size("victoryBadges_notxt_0002")
 		_panel("victory", Vector2(dimensions.x, 480), 1.15)
 		paint.image("victoryBadges_notxt_0002")
-		paint.label("胜 利", Rect2(dimensions.x / 2 - 160, 165, 320, 78), 64, Color("4c3817"), "center", "middle", 1)
-		var stars := 3 if view.sim.lives >= 18 else (2 if view.sim.lives >= 6 else 1)
+		paint.label("胜 利", Rect2(dimensions.x / 2 - 160, 165, 320, 78), 64, Color("4c3817"), "center", "middle", 1, 0, "", "h_popup")
+		var stars: int = view.outcome.get("stars", 1)
 		var end_frame: int = [19, 38, 54][stars - 1]
 		var frame := mini(int((clock() - panel_at) * 30), end_frame)
 		paint.image("victoryStars_%04d" % maxi(1, frame), Vector2(dimensions.x / 2, 230), Vector2(0.5, 0))
-		paint.label("生命 %d · 击杀 %d · 7/7 波" % [view.sim.lives, view.sim.kills], Rect2(60, 347, dimensions.x - 120, 28), 17, Color("ffe9b0"), "center", "middle", 1, 1)
+		paint.label(("调试局 · " if view.sim.developer_used else "") + "生命 %d · 击杀 %d · 7/7 波" % [view.sim.lives, view.sim.kills], Rect2(60, 347, dimensions.x - 120, 28), 17, Color("ffe9b0"), "center", "middle", 1, 1)
 		var button := _size("button_border_large_0001")
-		paint.button("button_border_large_0001", Vector2((dimensions.x - button.x) / 2, 389), "返回菜单", "menu")
+		paint.button("button_border_large_0001", Vector2((dimensions.x - button.x) / 2, 389), "返回地图", "map")
 		paint.push(Vector2(dimensions.x / 2, 448), 0.85)
 		paint.button("button_border_0001", Vector2(-_size("button_border_0001").x / 2, 0), "重新开始", "restart")
 		paint.pop()
 	else:
 		_panel("defeat", Vector2(455, 384), 1.25)
 		paint.image("defeat_bg_notxt")
-		paint.label("防线失守", Rect2(160, 81, 140, 32), 24, Color.WHITE, "center", "middle", 1, 2)
+		paint.label("防线失守", Rect2(160, 81, 140, 32), 24, Color.WHITE, "center", "middle", 1, 2, "", "h_popup")
 		paint.label("生命已经耗尽\n调整防御塔搭配，再试一次。", Rect2(104, 155, 246, 90), 15, Color.WHITE, "center", "middle", 3, 1)
 		var dimensions := _size("options_button_bg_0001")
 		paint.button("options_button_bg_0001", Vector2(84, 266), "重新开始", "restart")
-		paint.button("options_button_bg_0001", Vector2(455 - 84 - dimensions.x, 266), "返回菜单", "menu")
+		paint.button("options_button_bg_0001", Vector2(455 - 84 - dimensions.x, 266), "返回地图", "map")
 	_end_panel()
 
 func confirmed(id: String) -> void:

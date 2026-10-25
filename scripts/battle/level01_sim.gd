@@ -34,8 +34,11 @@ var accumulator := 0.0
 var next_id := 1
 var kills := 0
 var leaks := 0
+var developer_enabled := false
+var developer_used := false
 
-func _init(definition: Dictionary = {}, seed_value: int = 1) -> void:
+func _init(definition: Dictionary = {}, seed_value: int = 1, allow_developer: bool = false) -> void:
+	developer_enabled = allow_developer and OS.is_debug_build()
 	data = definition if not definition.is_empty() else JSON.parse_string(FileAccess.get_file_as_string("res://data/level01/definition.json"))
 	templates = data.templates
 	animations = JSON.parse_string(FileAccess.get_file_as_string("res://data/level01/animations.json")).animations
@@ -46,6 +49,7 @@ func reset(seed_value: int = 1) -> void:
 	tick = 0; gold = int(data.waves.cash); lives = int(data.waves.lives)
 	wave = 0; next_wave_tick = -1; wave_end_tick = -1; result = ""
 	paused = false; speed = 1; accumulator = 0; next_id = 1; kills = 0; leaks = 0
+	developer_used = false
 	towers.clear(); enemies.clear(); soldiers.clear(); projectiles.clear(); effects.clear(); decals.clear(); spawn_queue.clear(); spawn_log.clear()
 	notices = ["TUTORIAL_1", "TUTORIAL_2", "TUTORIAL_3"]
 	unlocked = {"reinforcements": false, "fire": false}
@@ -87,6 +91,18 @@ func command(kind: String, args: Dictionary = {}) -> bool:
 	if kind == "speed":
 		speed = 2 if speed == 1 else 1; return true
 	if result != "": return false
+	if kind.begins_with("dev_"):
+		if not developer_enabled: return false
+		match kind:
+			"dev_add_gold": gold += 10000
+			"dev_add_lives": lives += 100
+			"dev_skip_wave":
+				if wave == 0 or not notices.is_empty(): return false
+				developer_used = true
+				_skip_wave()
+			_: return false
+		developer_used = true
+		return true
 	if kind == "confirm":
 		if notices.is_empty(): return false
 		var notice: String = notices.pop_front()
@@ -230,8 +246,20 @@ func step() -> void:
 	elif wave == 7 and spawn_queue.is_empty() and enemies.all(func(e): return e.hp <= 0): _finish("victory")
 
 func _finish(value: String) -> void:
+	if result != "": return
 	result = value; event.emit("finished", {"result": result})
 	event.emit("sound", {"id": "GUIWinStars" if result == "victory" else "GUILooseLife"})
+
+func _skip_wave() -> void:
+	spawn_queue.clear()
+	for enemy: Dictionary in enemies:
+		if enemy.hp > 0: damage(enemy, enemy.hp, 1)
+	for soldier: Dictionary in soldiers: _unblock(soldier)
+	for tower: Dictionary in towers: tower.pending = {}
+	projectiles.clear()
+	next_wave_tick = -1; wave_end_tick = tick
+	if wave == data.waves.groups.size(): _finish("victory")
+	else: _start_wave(false)
 
 func _spawn_enemy(type: String, subpath: int = -1) -> Dictionary:
 	var t: Dictionary = templates[type]

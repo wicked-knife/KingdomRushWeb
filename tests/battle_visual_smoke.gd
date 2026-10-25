@@ -36,11 +36,22 @@ func capture(label: String) -> void:
 
 func _run() -> void:
 	create_timer(95).timeout.connect(func(): quit(1))
-	app = App.instantiate(); app.settings_path = "user://battle_smoke.json"; root.add_child(app)
+	app = App.instantiate(); app.settings_path = "user://battle_smoke.json"; app.progress_path = "user://battle_smoke_" + str(Time.get_ticks_usec()) + ".progress"; root.add_child(app)
 	await app.menu_ready
-	app.menu.start_button.pressed.emit()
+	app.menu.start_button.pressed.emit(); app.menu._select_slot(1)
+	await app.map_ready
+	app.campaign_map._action("level", {"id": 1}); app.campaign_map._action("battle")
 	battle = app.battle; suffix = "%dx%d" % [root.size.x, root.size.y]
 	check(battle != null and not app.menu.visible, "menu enters battle")
+	var f8 := InputEventKey.new(); f8.keycode = KEY_F8; f8.pressed = true
+	Input.parse_input_event(f8); await process_frame
+	check(battle.developer.opened and battle.sim.paused, "F8 opens developer overlay over tutorial")
+	await action("dev_add_gold"); await action("dev_add_lives")
+	check(battle.sim.gold == 10270 and battle.sim.lives == 120, "native developer controls apply increments")
+	var dev_escape := InputEventKey.new(); dev_escape.keycode = KEY_ESCAPE; dev_escape.pressed = true
+	Input.parse_input_event(dev_escape); await process_frame
+	check(not battle.developer.opened and not battle.sim.paused and battle.sim.notices.size() == 3, "Escape closes developer overlay without confirming tutorial")
+	battle.sim.reset()
 	await capture("tutorial")
 	click(battle.world(battle.sim.tower_by_id("1").pos))
 	check(battle.selected == "" and battle.sim.gold == 270, "tutorial blocks click-through")
@@ -90,10 +101,9 @@ func _run() -> void:
 		if battle.sim.result != "": break
 	await capture("defeat")
 	check(battle.sim.result == "defeat", "native loss result")
-	await action("menu")
-	check(app.battle == null and app.menu.visible, "result returns menu")
-	await process_frame
-	app.menu.start_button.pressed.emit(); battle = app.battle
+	await action("map"); await app.map_ready
+	check(app.battle == null and app.campaign_map != null, "result returns map")
+	app.campaign_map._action("level", {"id": 1}); app.campaign_map._action("battle"); battle = app.battle
 	await process_frame
 	check(battle.sim.tick == 0 and battle.sim.gold == 270, "fresh battle on reentry")
 	battle.set_process(false)
@@ -129,8 +139,9 @@ func _run() -> void:
 		check(battle.sim.towers.size() == 8 and battle.get_child_count() == 12 and battle.sim.speed == 1 and battle.sim.enemies.is_empty(), "three UI restarts do not retain entities/audio")
 		for j in range(3): await action("confirm")
 		await action("pause")
-	await action("menu")
-	check(app.battle == null and app.menu.visible, "pause returns menu")
+	await action("map"); await app.map_ready
+	check(app.battle == null and app.campaign_map != null, "pause returns map")
+	app._return_to_menu()
 	await process_frame
 	app.queue_free(); await process_frame; await process_frame
 	print("BATTLE_VISUAL_SMOKE: ", "PASS" if failures.is_empty() else str(failures), " ", suffix)

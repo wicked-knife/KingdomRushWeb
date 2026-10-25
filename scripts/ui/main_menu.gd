@@ -1,9 +1,15 @@
 extends Control
 
-signal campaign_requested
+signal campaign_requested(slot_id: int)
 
 const Art = preload("res://scripts/ui/menu_art.gd")
 const INK := Color("f3e5ae")
+var fonts: RefCounted
+var slots: RefCounted
+var slot_panel: Control
+var slot_tween: Tween
+var slots_open := false
+var pending_delete := 0
 var boot: Node
 var settings: Node
 var audio: Node
@@ -23,12 +29,12 @@ var _logo_frames: Array[AtlasTexture] = []
 var _design: Control
 
 
-func initialize(loader: Node, preferences: Node, sound: Node) -> void:
-	boot = loader
+func initialize(loader: Node, preferences: Node, sound: Node, saves: RefCounted) -> void:
+	boot = loader; fonts = boot.fonts; slots = saves
 	settings = preferences
 	audio = sound
 	var theme := Theme.new()
-	theme.default_font = boot.resources[boot.manifest.font]
+	theme.default_font = fonts.font_for("body")
 	theme.default_font_size = 30
 	self.theme = theme
 	var background := TextureRect.new()
@@ -45,7 +51,7 @@ func initialize(loader: Node, preferences: Node, sound: Node) -> void:
 		_logo_frames.append(Art.texture(boot.catalog, "homeMenu_logo_%04d" % index))
 	var banner := Art.image(boot.catalog, "homeMenu_buttonsBg", Vector2(100, 632))
 	add_child(banner)
-	start_button = _menu_button("StartButton", "homeMenu_btnStart_zh-Hans", Vector2(279, 739), func(): campaign_requested.emit())
+	start_button = _menu_button("StartButton", "homeMenu_btnStart_zh-Hans", Vector2(279, 739), toggle_slots)
 	options_button = _menu_button("OptionsButton", "homeMenu_btnOptions_zh-Hans", Vector2(310, 894), show_options)
 	credits_button = _menu_button("CreditsButton", "homeMenu_btnCredits_zh-Hans", Vector2(330, 994), func(): _show_message(_text("CREDITS"), "制作人员页面暂未开放。"))
 	if not OS.has_feature("web"):
@@ -54,6 +60,7 @@ func initialize(loader: Node, preferences: Node, sound: Node) -> void:
 		quit_button.rotation = -0.1
 		quit_button.add_child(_label(_text("QUIT"), Vector2(58, 76), Vector2(110, 50), 38))
 	status = _label("", Vector2(800, 1012), Vector2(1050, 50), 24)
+	status.add_theme_font_override("font", fonts.font_for("body"))
 	status.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	add_child(status)
@@ -77,6 +84,9 @@ func initialize(loader: Node, preferences: Node, sound: Node) -> void:
 			_design.add_child(child)
 	resized.connect(_layout_design)
 	_layout_design()
+	_build_slots()
+	slots.changed.connect(_refresh_slots)
+	slots.notice_changed.connect(_update_status.unbind(1))
 	modulate.a = 0.0
 	create_tween().tween_property(self, "modulate:a", 1.0, 0.35)
 	start_button.grab_focus()
@@ -105,8 +115,10 @@ func _input(event: InputEvent) -> void:
 	if status != null and (event is InputEventMouseButton or event is InputEventKey) and event.is_pressed():
 		audio.unlock()
 		_update_status()
-	if event.is_action_pressed("ui_cancel") and overlay != null and overlay.visible:
-		close_modal()
+	if event.is_action_pressed("ui_cancel"):
+		if overlay != null and overlay.visible: close_modal()
+		elif slots_open: toggle_slots()
+		else: return
 		get_viewport().set_input_as_handled()
 
 
@@ -121,14 +133,18 @@ func _menu_button(id: String, prefix: String, at: Vector2, action: Callable) -> 
 	return control
 
 
-func _label(value: String, at: Vector2, dimensions: Vector2, font_size: int = 30) -> Label:
+func _label(value: String, at: Vector2, dimensions: Vector2, font_size: int = 30, role: String = "h") -> Label:
 	var label := Label.new()
 	label.text = value
 	label.position = at
 	label.size = dimensions
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.add_theme_font_size_override("font_size", font_size)
+	label.add_theme_font_override("font", fonts.font_for(role))
+	var actual: int = fonts.size_for(role, font_size)
+	var face: Font = fonts.font_for(role)
+	while actual > 6 and (face.get_string_size(value, HORIZONTAL_ALIGNMENT_LEFT, -1, actual).x > dimensions.x or face.get_height(actual) > dimensions.y): actual -= 1
+	label.add_theme_font_size_override("font_size", actual)
 	label.add_theme_color_override("font_color", INK)
 	label.add_theme_color_override("font_outline_color", Color("272519"))
 	label.add_theme_constant_override("outline_size", 3)
@@ -149,6 +165,7 @@ func _begin_modal(kind: String, background: String, dimensions: Vector2) -> Cont
 	panel.name = "Dialog"
 	panel.mouse_filter = Control.MOUSE_FILTER_STOP
 	overlay.add_child(panel)
+	if slot_panel != null: _set_slots_focus(false)
 	overlay.show()
 	return panel
 
@@ -157,12 +174,14 @@ func close_modal() -> void:
 	if modal_kind == "options":
 		settings.save()
 	overlay.hide()
+	if slot_panel != null: _set_slots_focus(true)
 	modal_kind = ""
 	for button: TextureButton in [start_button, options_button, credits_button, quit_button]:
 		if button != null:
 			button.focus_mode = Control.FOCUS_ALL
-	if is_instance_valid(_previous_focus):
+	if is_instance_valid(_previous_focus) and _previous_focus.is_inside_tree() and _previous_focus.is_visible_in_tree():
 		_previous_focus.grab_focus()
+	else: start_button.grab_focus()
 
 
 func _dialog_button(parent: Control, value: String, at: Vector2, action: Callable) -> TextureButton:
@@ -179,7 +198,7 @@ func _dialog_button(parent: Control, value: String, at: Vector2, action: Callabl
 func _show_message(title: String, message: String) -> void:
 	var panel := _begin_modal("message", "homeMenu_confirm_menu_0001", Vector2(720, 260))
 	panel.add_child(_label(title, Vector2(60, 24), Vector2(600, 44), 36))
-	panel.add_child(_label(message, Vector2(40, 82), Vector2(640, 50), 28))
+	panel.add_child(_label(message, Vector2(40, 82), Vector2(640, 50), 28, "body"))
 	_dialog_button(panel, _text("Done"), Vector2(263, 154), close_modal).grab_focus()
 
 
@@ -250,7 +269,9 @@ func show_quit() -> void:
 
 
 func _update_status() -> void:
-	if not settings.notice.is_empty():
+	if slots != null and not slots.notice.is_empty():
+		status.text = slots.notice
+	elif not settings.notice.is_empty():
 		status.text = settings.notice
 	elif OS.has_feature("web") and not audio.unlocked:
 		status.text = "点击任意按钮或按键开启声音"
@@ -260,3 +281,90 @@ func _update_status() -> void:
 
 func _text(key: String) -> String:
 	return str(boot.locale.get(key, key))
+
+
+func _build_slots() -> void:
+	slot_panel = Art.image(boot.catalog, "homeMenu_submenues_0001", Vector2(380, 660))
+	slot_panel.name = "SaveSlots"
+	slot_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	slot_panel.hide()
+	_design.add_child(slot_panel)
+	_design.move_child(slot_panel, 1)
+	_refresh_slots()
+
+
+func _refresh_slots() -> void:
+	if slot_panel == null: return
+	for child in slot_panel.get_children(): slot_panel.remove_child(child); child.queue_free()
+	var positions := [Vector2(72, 60), Vector2(88, 170), Vector2(110, 282)]
+	for row: Dictionary in slots.summaries():
+		var id := int(row.id)
+		var base: int = 4 if row.state == "empty" else [1, 7, 10][id - 1]
+		var button := TextureButton.new()
+		button.name = "Slot%d" % id
+		button.position = positions[id - 1]; button.size = Vector2(242, 120)
+		button.ignore_texture_size = true; button.stretch_mode = TextureButton.STRETCH_SCALE
+		button.texture_normal = Art.texture(boot.catalog, "homeMenu_btnSlot_zh-Hans_%04d" % base)
+		button.texture_hover = Art.texture(boot.catalog, "homeMenu_btnSlot_zh-Hans_%04d" % (base + 1))
+		button.texture_pressed = Art.texture(boot.catalog, "homeMenu_btnSlot_zh-Hans_%04d" % (base + 2))
+		button.texture_focused = button.texture_hover
+		button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		button.focus_mode = Control.FOCUS_NONE if overlay.visible else Control.FOCUS_ALL
+		button.pressed.connect(_select_slot.bind(id))
+		slot_panel.add_child(button)
+		if row.state == "empty": continue
+		var remove := Art.button(boot.catalog, "homeMenu_btnSlot_delete", Vector2(190, 12))
+		remove.name = "DeleteSlot%d" % id
+		remove.focus_mode = button.focus_mode
+		remove.pressed.connect(_confirm_delete.bind(id)); button.add_child(remove)
+		if row.state != "used":
+			button.add_child(_label("版本较新" if row.state == "future" else "存档损坏", Vector2(35, 63), Vector2(150, 35), 18, "body_bold"))
+			continue
+		# KView draws G.rotate(-r); Godot's rotation uses the opposite sign.
+		var stats := Control.new(); stats.position = Vector2(42, 70); stats.rotation = -0.06
+		stats.mouse_filter = Control.MOUSE_FILTER_IGNORE; button.add_child(stats)
+		# slot_view.lua uses plain black KLabels at 12 px, aligned to the top
+		# of the rotated group; menu-title centering and outlines do not apply.
+		for item in [["%d/135" % int(row.stars), 14, 2], [str(row.heroic), 108, 4], [str(row.iron), 154, 4]]:
+			var label := _label(item[0], Vector2(item[1], item[2]), Vector2(64, 27), 12, "numbers_italic")
+			label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+			label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+			label.add_theme_color_override("font_color", Color.BLACK)
+			label.add_theme_constant_override("outline_size", 0)
+			stats.add_child(label)
+		if row.notice != "": button.tooltip_text = row.notice
+
+
+func toggle_slots() -> void:
+	if overlay.visible: return
+	if slot_tween != null: slot_tween.kill()
+	slots_open = not slots_open
+	if slots_open: _refresh_slots(); slot_panel.show()
+	slot_tween = create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	slot_tween.tween_property(slot_panel, "position:x", 540.0 if slots_open else 380.0, 0.1)
+	if not slots_open: slot_tween.tween_callback(slot_panel.hide)
+
+
+func _select_slot(id: int) -> void:
+	if overlay.visible or not slots_open: return
+	audio.play_click()
+	campaign_requested.emit(id)
+	_update_status()
+
+
+func _confirm_delete(id: int) -> void:
+	if overlay.visible or not slots_open: return
+	pending_delete = id; audio.play_click()
+	var panel := _begin_modal("delete_slot", "homeMenu_confirm_menu_0001", Vector2(720, 260))
+	panel.add_child(_label("确定删除存档 %d？" % id, Vector2(60, 44), Vector2(600, 60), 32))
+	_dialog_button(panel, "删除", Vector2(153, 140), func():
+		if slots.delete_slot(pending_delete): close_modal()
+		else: close_modal(); _show_message("删除失败", slots.notice)
+		_update_status()
+	)
+	_dialog_button(panel, "取消", Vector2(373, 140), close_modal).grab_focus()
+
+
+func _set_slots_focus(enabled: bool) -> void:
+	for button: BaseButton in slot_panel.find_children("*", "BaseButton", true, false):
+		button.focus_mode = Control.FOCUS_ALL if enabled else Control.FOCUS_NONE

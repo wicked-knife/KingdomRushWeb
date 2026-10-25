@@ -1,13 +1,27 @@
 extends Control
 
 signal menu_ready
+signal map_ready
 
 const BootLoader = preload("res://scripts/services/menu_boot_loader.gd")
 const MenuSettings = preload("res://scripts/services/menu_settings.gd")
 const MenuAudio = preload("res://scripts/services/menu_audio.gd")
 const Menu = preload("res://scenes/main_menu.tscn")
 const Battle = preload("res://scripts/battle/battle_view.gd")
+const MapScreen = preload("res://scripts/map/map_screen.gd")
+const MapLoader = preload("res://scripts/services/map_loader.gd")
+const SaveSlots = preload("res://scripts/services/save_slots.gd")
+const CampaignProgress = preload("res://scripts/services/campaign_progress.gd")
 var battle: Control
+var campaign_map: Control
+var map_loader: Node
+var slots: RefCounted
+var campaign: RefCounted
+var slot_cameras := {}
+var slots_path := ""
+var camera_state := {}
+var transitioning := false
+var retry_action: Callable
 var loader: Node
 var settings: Node
 var audio: Node
@@ -19,6 +33,7 @@ var progress: ProgressBar
 var retry: Button
 var _font_ready := false
 var settings_path := MenuSettings.DEFAULT_PATH
+var progress_path := CampaignProgress.DEFAULT_PATH
 
 
 func _ready() -> void:
@@ -26,6 +41,8 @@ func _ready() -> void:
 	settings = MenuSettings.new()
 	settings.name = "Settings"
 	add_child(settings)
+	slots = SaveSlots.new()
+	slots.initialize(slots_path if slots_path != "" else (SaveSlots.DEFAULT_ROOT if progress_path == CampaignProgress.DEFAULT_PATH else progress_path + ".slots"), progress_path)
 	audio = MenuAudio.new()
 	audio.name = "Audio"
 	add_child(audio)
@@ -78,7 +95,10 @@ func _build_loading() -> void:
 	retry.text = "Retry"
 	retry.position = Vector2(840, 735)
 	retry.size = Vector2(240, 65)
-	retry.pressed.connect(_start)
+	retry.pressed.connect(func():
+		if retry_action.is_valid(): retry_action.call()
+		else: _start()
+	)
 	retry.hide()
 	loading.add_child(retry)
 
@@ -112,27 +132,74 @@ func _on_completed() -> void:
 	audio.configure(loader.resources[loader.manifest.audio.MusicMainMenu], loader.resources[loader.manifest.audio.GUIButtonCommon], settings)
 	menu = Menu.instantiate()
 	add_child(menu)
-	menu.initialize(loader, settings, audio)
+	menu.initialize(loader, settings, audio, slots)
 	menu.campaign_requested.connect(_start_campaign)
 	loading.hide()
 	menu_ready.emit()
 
 
-func _start_campaign() -> void:
-	if battle != null: return
+func _start_campaign(slot_id: int) -> void:
+	if battle != null or campaign_map != null or transitioning: return
+	campaign = slots.select_slot(slot_id)
+	if campaign == null: return
+	camera_state = slot_cameras.get(slot_id, {})
+	_open_map()
+
+
+func _open_map() -> void:
+	if transitioning: return
+	transitioning = true
 	menu.hide()
 	menu.set_process_input(false)
+	loading.show(); retry.hide()
+	if map_loader != null: remove_child(map_loader); map_loader.queue_free()
+	map_loader = MapLoader.new(); add_child(map_loader)
+	map_loader.progress_changed.connect(_on_progress)
+	var loaded: bool = await map_loader.initialize()
+	transitioning = false
+	if not loaded:
+		retry_action = _open_map
+		_on_failed(map_loader.error_message)
+		return
+	campaign_map = MapScreen.new(); add_child(campaign_map)
+	campaign_map.initialize(map_loader, loader, audio, settings, campaign, camera_state)
+	campaign_map.battle_requested.connect(_start_level)
+	campaign_map.returned_to_menu.connect(_return_to_menu)
+	retry_action = Callable(); loading.hide(); map_ready.emit()
+
+
+func _release_map() -> void:
+	if campaign_map != null:
+		camera_state = campaign_map.snapshot()
+		slot_cameras[slots.active_slot] = camera_state
+		remove_child(campaign_map); campaign_map.queue_free(); campaign_map = null
+	if map_loader != null:
+		remove_child(map_loader); map_loader.queue_free(); map_loader = null
+
+
+func _start_level(level_id: int, mode: int, difficulty: int) -> void:
+	if battle != null or transitioning or not campaign.is_playable(level_id, mode, difficulty): return
+	_release_map()
 	battle = Battle.new()
 	add_child(battle)
 	battle.initialize(loader, audio)
-	battle.returned_to_menu.connect(_return_to_menu)
+	battle.finished.connect(campaign.record_result)
+	battle.returned_to_map.connect(_return_to_map)
+
+
+func _return_to_map() -> void:
+	if battle != null:
+		remove_child(battle); battle.queue_free(); battle = null
+	_open_map()
 
 
 func _return_to_menu() -> void:
+	_release_map()
 	if battle != null:
 		remove_child(battle)
 		battle.queue_free()
 		battle = null
+	loading.hide()
 	audio.music_player.volume_db = 0.0
 	audio.configure(loader.resources[loader.manifest.audio.MusicMainMenu], loader.resources[loader.manifest.audio.GUIButtonCommon], settings)
 	menu.show()
@@ -149,6 +216,8 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST and settings != null:
 		if battle != null:
 			if not battle.sim.paused: battle.sim.command("pause")
+		elif campaign_map != null:
+			campaign_map._action("options")
 		elif menu != null:
 			menu.show_quit()
 		else:

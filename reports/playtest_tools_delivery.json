@@ -1,0 +1,115 @@
+{
+  "passed": true,
+  "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+  "engine": "Godot 4.7.2 stable / Compatibility",
+  "fonts": {
+    "bundled_faces": 6,
+    "source_characters_covered": 864,
+    "source_slide_roles": 37,
+    "font_hashes_verified": true,
+    "host_fallback": false
+  },
+  "logic": {
+    "checks": 69,
+    "failures": [],
+    "passed": true,
+    "web_tested": false
+  },
+  "native_battle_ui": {
+    "1280x720": {
+      "passed": true,
+      "states": 26,
+      "text_boxes": 272,
+      "failures": []
+    },
+    "1920x1080": {
+      "passed": true,
+      "states": 26,
+      "text_boxes": 272,
+      "failures": []
+    },
+    "1024x768": {
+      "passed": true,
+      "states": 26,
+      "text_boxes": 272,
+      "failures": []
+    }
+  },
+  "native_map": {
+    "1280x720": {
+      "failures": [],
+      "passed": true,
+      "resolution": "1280x720",
+      "text_boxes_checked": 311
+    },
+    "1920x1080": {
+      "failures": [],
+      "passed": true,
+      "resolution": "1920x1080",
+      "text_boxes_checked": 311
+    },
+    "1024x768": {
+      "failures": [],
+      "passed": true,
+      "resolution": "1024x768",
+      "text_boxes_checked": 311
+    }
+  },
+  "native_menu": {
+    "resolutions": [
+      "1280x720",
+      "1920x1080",
+      "1024x768"
+    ],
+    "passed": true,
+    "covers": [
+      "empty and used slots",
+      "native delete click",
+      "confirmation cancel and delete",
+      "options",
+      "quit",
+      "volume inheritance",
+      "zero and maximum save counters",
+      "source rotation and icon baseline alignment"
+    ]
+  },
+  "native_battle_replay": {
+    "passed": true,
+    "resolution": "1280x720",
+    "accelerated_legal_command_replay": true,
+    "manual_full_playthrough": false,
+    "covers": [
+      "F8 and Escape over tutorial",
+      "developer add gold/lives",
+      "normal victory",
+      "undefended defeat",
+      "rally",
+      "powers",
+      "pause",
+      "speed",
+      "three restarts",
+      "return to map/menu"
+    ]
+  },
+  "save_slots": {
+    "count": 3,
+    "legacy_migration": true,
+    "atomic_slot_delete": true,
+    "backup_recovery": true,
+    "write_failure_keeps_session": true,
+    "debug_results_saved": true
+  },
+  "web": {
+    "browser_tested": false,
+    "pck_isolated_check": false,
+    "delivery": "build/KingdomRush-KR1-Playtest-Debug-Web.zip",
+    "export_succeeded": true,
+    "build_type": "debug",
+    "developer_menu": true,
+    "bytes": 81590255,
+    "sha256": "4e86b82e71a11cb8dad4d14b94e3f8004eeb41f6f719d72453fa94c4b3989a79",
+    "project_name": "Kingdom Rush Web"
+  },
+  "captures": "Generated locally under reports/ and ignored by Git.",
+  "alignment_report": "reports/ui_revision_report.json"
+}

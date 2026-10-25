@@ -17,6 +17,7 @@ func _run() -> void:
 	)
 	var app := App.instantiate()
 	app.settings_path = "user://menu_visual_test_" + str(Time.get_ticks_usec()) + ".json"
+	app.progress_path = app.settings_path + ".progress"
 	root.add_child(app)
 	await app.menu_ready
 	var menu: Control = app.menu
@@ -24,9 +25,34 @@ func _run() -> void:
 	var suffix := "%dx%d" % [root.size.x, root.size.y]
 	await _capture("menu_" + suffix)
 	menu.start_button.pressed.emit()
-	check(app.battle != null and not menu.visible, "start opens first campaign")
+	await create_timer(0.2).timeout
+	await _capture("menu_slots_empty_" + suffix)
+	check(menu.slots_open and app.campaign_map == null, "Start opens save slots")
+	menu._select_slot(1)
+	await app.map_ready
+	check(app.campaign_map != null and not menu.visible, "start opens generation-one map")
+	app._return_to_menu(); await process_frame
+	await _capture("menu_slots_zero_" + suffix)
+	menu._select_slot(1); await app.map_ready
+	app.campaign.record_result({"level_id": 1, "mode": 1, "difficulty": 2, "result": "victory", "lives": 20})
+	# Native presentation fixtures cover multi-digit counters beside all three
+	# painted icons. No player-facing progress shortcut is introduced.
+	var full: RefCounted = app.slots.select_slot(2)
+	for stage: Dictionary in full.definition.levels:
+		full.levels[str(int(stage.id))] = {"campaign": 2, "stars": 3, "heroic": 2, "iron": 2}
+	full.save(); full.changed.emit()
+	app.slots.select_slot(1)
 	app._return_to_menu()
 	await process_frame
+	await _capture("menu_slots_used_" + suffix)
+	var delete_button: Control = menu.slot_panel.get_node("Slot1/DeleteSlot1")
+	var click := InputEventMouseButton.new(); click.position = root.get_final_transform() * delete_button.get_global_rect().get_center(); click.button_index = MOUSE_BUTTON_LEFT; click.pressed = true
+	Input.parse_input_event(click); await process_frame
+	click = click.duplicate(); click.pressed = false; Input.parse_input_event(click); await process_frame
+	check(menu.modal_kind == "delete_slot" and app.campaign_map == null, "delete click opens confirmation without entering campaign")
+	await _capture("menu_delete_" + suffix)
+	menu.close_modal()
+	check(app.slots.status(1) == "used", "cancel deletion retains slot")
 	var cancel := InputEventAction.new()
 	cancel.action = "ui_cancel"
 	cancel.pressed = true
@@ -46,6 +72,12 @@ func _run() -> void:
 	menu.show_quit()
 	check(menu.modal_kind == "quit", "desktop quit confirmation")
 	menu.close_modal()
+	if not menu.slots_open: menu.toggle_slots()
+	menu._confirm_delete(1)
+	for button: TextureButton in menu.overlay.find_children("*", "TextureButton", true, false):
+		if button.get_child_count() > 0 and button.get_child(0) is Label and button.get_child(0).text == "删除":
+			button.pressed.emit(); break
+	check(app.slots.status(1) == "empty" and not menu.overlay.visible, "confirmed deletion removes slot and closes modal")
 	app.audio.unlock()
 	app.audio.unlock()
 	check(app.audio.music_player.playing, "music running without duplicate player")

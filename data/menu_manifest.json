@@ -2,7 +2,10 @@
   "schema_version": 1,
   "baseline": "dove-2.1.0.2",
   "background": "res://data/original_menu_background.tres",
-  "scenes": ["res://scenes/app_root.tscn", "res://scenes/main_menu.tscn"],
+  "scenes": [
+    "res://scenes/app_root.tscn",
+    "res://scenes/main_menu.tscn"
+  ],
   "scripts": [
     "res://scripts/app_root.gd",
     "res://scripts/dove_asset_catalog.gd",
@@ -10,7 +13,9 @@
     "res://scripts/services/menu_settings.gd",
     "res://scripts/services/menu_audio.gd",
     "res://scripts/ui/menu_art.gd",
-    "res://scripts/ui/main_menu.gd"
+    "res://scripts/ui/main_menu.gd",
+    "res://scripts/services/dove_fonts.gd",
+    "res://scripts/services/save_slots.gd"
   ],
   "catalog": "res://assets/kingdom_rush/catalog.json",
   "font": "res://assets/kingdom_rush/all-desktop/fonts/msyh.ttc",
@@ -33,16 +38,83 @@
   },
   "frames": {
     "screen_slots": [
-      "homeMenu_buttonsBg", "main_options_bg_notxt", "homeMenu_confirm_menu_0001",
-      "homeMenu_logo_0001", "homeMenu_logo_0002", "homeMenu_logo_0003", "homeMenu_logo_0004",
-      "homeMenu_logo_0005", "homeMenu_logo_0006", "homeMenu_logo_0007", "homeMenu_logo_0008",
-      "homeMenu_logo_0009", "homeMenu_logo_0010", "homeMenu_logo_0011", "homeMenu_logo_0012",
-      "homeMenu_logo_0013", "homeMenu_logo_0014", "homeMenu_logo_0015", "homeMenu_logo_0016", "homeMenu_logo_0017",
-      "homeMenu_btnStart_zh-Hans_0001", "homeMenu_btnStart_zh-Hans_0002", "homeMenu_btnStart_zh-Hans_0003",
-      "homeMenu_btnOptions_zh-Hans_0001", "homeMenu_btnOptions_zh-Hans_0002", "homeMenu_btnOptions_zh-Hans_0003",
-      "homeMenu_btnCredits_zh-Hans_0001", "homeMenu_btnCredits_zh-Hans_0002", "homeMenu_btnCredits_zh-Hans_0003",
-      "homeMenu_quit_0001", "homeMenu_quit_0002", "homeMenu_quit_0003"
+      "homeMenu_buttonsBg",
+      "main_options_bg_notxt",
+      "homeMenu_confirm_menu_0001",
+      "homeMenu_logo_0001",
+      "homeMenu_logo_0002",
+      "homeMenu_logo_0003",
+      "homeMenu_logo_0004",
+      "homeMenu_logo_0005",
+      "homeMenu_logo_0006",
+      "homeMenu_logo_0007",
+      "homeMenu_logo_0008",
+      "homeMenu_logo_0009",
+      "homeMenu_logo_0010",
+      "homeMenu_logo_0011",
+      "homeMenu_logo_0012",
+      "homeMenu_logo_0013",
+      "homeMenu_logo_0014",
+      "homeMenu_logo_0015",
+      "homeMenu_logo_0016",
+      "homeMenu_logo_0017",
+      "homeMenu_btnStart_zh-Hans_0001",
+      "homeMenu_btnStart_zh-Hans_0002",
+      "homeMenu_btnStart_zh-Hans_0003",
+      "homeMenu_btnOptions_zh-Hans_0001",
+      "homeMenu_btnOptions_zh-Hans_0002",
+      "homeMenu_btnOptions_zh-Hans_0003",
+      "homeMenu_btnCredits_zh-Hans_0001",
+      "homeMenu_btnCredits_zh-Hans_0002",
+      "homeMenu_btnCredits_zh-Hans_0003",
+      "homeMenu_quit_0001",
+      "homeMenu_quit_0002",
+      "homeMenu_quit_0003",
+      "homeMenu_btnSlot_delete_0001",
+      "homeMenu_btnSlot_delete_0002",
+      "homeMenu_btnSlot_delete_0003",
+      "homeMenu_btnSlot_zh-Hans_0001",
+      "homeMenu_btnSlot_zh-Hans_0002",
+      "homeMenu_btnSlot_zh-Hans_0003",
+      "homeMenu_btnSlot_zh-Hans_0004",
+      "homeMenu_btnSlot_zh-Hans_0005",
+      "homeMenu_btnSlot_zh-Hans_0006",
+      "homeMenu_btnSlot_zh-Hans_0007",
+      "homeMenu_btnSlot_zh-Hans_0008",
+      "homeMenu_btnSlot_zh-Hans_0009",
+      "homeMenu_btnSlot_zh-Hans_0010",
+      "homeMenu_btnSlot_zh-Hans_0011",
+      "homeMenu_btnSlot_zh-Hans_0012",
+      "homeMenu_submenues_0001"
     ],
-    "view_options": ["options_barBg", "options_bar", "options_button_bg_0001", "options_button_bg_0002", "options_sounds_0001"]
+    "view_options": [
+      "options_barBg",
+      "options_bar",
+      "options_button_bg_0001",
+      "options_button_bg_0002",
+      "options_sounds_0001"
+    ]
+  },
+  "fonts": [
+    "res://assets/kingdom_rush/all-desktop/fonts/msyh.ttc",
+    "res://assets/kingdom_rush/all-desktop/fonts/msyhbd.ttc",
+    "res://assets/kingdom_rush/all-desktop/fonts/JIMOJW.ttf",
+    "res://assets/kingdom_rush/all-desktop/fonts/Comic Book Italic.ttf",
+    "res://assets/kingdom_rush/all-desktop/fonts/TOONISH.ttf",
+    "res://assets/kingdom_rush/all-desktop/fonts/NotoSansCJKkr-Regular.otf"
+  ],
+  "font_roles": "res://assets/kingdom_rush/data/fonts.json",
+  "font_source": {
+    "commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+    "mapping_sha256": "c25d534dee067284d4f9c4a1c3571df30a068b17a74dcc1aec66f2fc43b516a0",
+    "resources": {
+      "res://assets/kingdom_rush/all-desktop/fonts/msyh.ttc": "d79c55e68b1131eea0cc1c47be4f572d964f28c682e143db2ad09c1e4cb07a3f",
+      "res://assets/kingdom_rush/all-desktop/fonts/msyhbd.ttc": "4508821b3dffe01f0ef5e5326a3e60df705a44633858811f67b6982dce3f6ee6",
+      "res://assets/kingdom_rush/all-desktop/fonts/JIMOJW.ttf": "aa07ea1b5fa02a4ec1afcbb2a91038c57fc6154d8c3b7ba8f6db5eae9c2b8204",
+      "res://assets/kingdom_rush/all-desktop/fonts/Comic Book Italic.ttf": "bd7e13f8fc1fb4dca3e5b5adb0941b1f101d8fe40f7cc3dbb434fd5103a6306f",
+      "res://assets/kingdom_rush/all-desktop/fonts/TOONISH.ttf": "27e05f9dee922d6523892771db9a0eb011cc4881fec33d9f71728b9a7b5414fa",
+      "res://assets/kingdom_rush/all-desktop/fonts/NotoSansCJKkr-Regular.otf": "40e7ceff42091ee00eb2dd02215f5e1765ad5fa9776dd2cc4270cf008f413612",
+      "res://assets/kingdom_rush/data/fonts.json": "a2c5a9b675a005bab0810855c3dd341179350af026a389fd227b5f7c3da7bbf0"
+    }
   }
 }

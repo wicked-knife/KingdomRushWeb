@@ -21,6 +21,10 @@ def prepare(source, love):
     data=json.loads(evaluated.read_text(encoding="utf-8"))
     inputs=set(data.pop("inputs"))|{"all-desktop/game_gui.lua","all-desktop/gg_views_custom.lua","kr1/data/tower_menus_data_scripts.lua","all/constants.lua","lib/klua/table.lua","lib/klua/vector.lua","all/entity_db.lua","all/utils.lua","all/script_utils.lua","all/wave_utils.lua","all/systems/wave_spawn.lua","all/systems/enemy.lua","kr1/game_settings.lua","all/difficulty.lua","all/scripts.lua","kr1/tower_scripts.lua","kr1/data/levels/level01.lua"}
     data["source"]={"version":"2.1.0.2","commit":BASE,"difficulty":2,"inputs":{p:hashlib.sha256((source/p).read_bytes()).hexdigest() for p in sorted(inputs)}}
+    # GGTextLabel slide and TutorialBalloon class defaults are part of the source layout.
+    for slide_id, labels in data["ui"]["slides"].items():
+        for label in labels:
+            label.setdefault("font_name", "body" if slide_id.startswith("TB_") else "body_slides")
     data["schema_version"]=1
     settings=(source/"kr1/game_settings.lua").read_text(encoding="utf-8")
     def scalar(key): return float(re.search(r"GS\."+key+r"\s*=\s*([\d.]+)",settings)[1])
