@@ -11,6 +11,8 @@
 设计尺寸为 1920×1080，默认窗口为 1280×720。菜单内容等比适配窗口；战场固定逻辑高度 768，按宽高比扩展可见区域，支持 4:3 和 16:9。
 
 首关固定普通难度、无英雄、零科技、未选第三法术；初始 20 生命、270 金币、8 塔位，7 波共 48 个哥布林、8 个兽人。点击塔位建造四类一级塔；选中已建塔可出售，兵营可调整集结点。二级塔锁定。
+
+地图左下角“英雄”可浏览全部 79 名英雄的资料和技能数值，按原版通关条件解锁，最多选择两名并分别保存到当前槽位。首关通关解锁 12 名英雄；满员后选择新英雄替换第二名。Tab 切换已选英雄，完成/Esc/右键关闭。当前选择尚不影响首关战斗，英雄不会参战。详情和资源兜底说明见 [HERO_SELECTION_DELIVERY.md](HERO_SELECTION_DELIVERY.md)。
 读完开场教学后手动开始第一波，后续有倒计时，可提前开波获得金币及技能冷却奖励。援军、火雨分别在第三、七波的教学确认后解锁。生命归零失败；最后一波清场后胜利，均可重开或返回地图。
 
 大地图保留一代 27 个节点的数据与 124 个动画实例，按 Dove 逐步解锁。首关胜利立即保存最好星级并解锁第二关；第二关可查看详情但尚未实现战斗。地图齿轮/Esc 打开设置，可返回主菜单；鼠标边缘与滚轮平移，Shift＋滚轮横移，触屏拖动与捏合缩放。详情与验证见 [MAP_KR1_DELIVERY.md](MAP_KR1_DELIVERY.md)。三个槽位分别保存于 `user://saves/kr1/slot_1..3/campaign.json`，采用临时写入与有效备份恢复。旧 `user://campaign_kr1.json` 自动迁入槽位 1 并归档，不会在删除后再次迁入；删除槽位需要确认，损坏或较新版本存档不能作为空槽自动覆盖。
@@ -42,6 +44,11 @@
 以下命令在项目根目录的 PowerShell 中运行：
 
 ```powershell
+# 英雄目录、资源像素、解锁、双选、存档与原生界面
+python tests/verify_hero_assets.py
+& 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script tests/verify_hero_room.gd
+& 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --path . --script tests/hero_room_visual.gd --resolution 1280x720
+
 # 设置默认值、持久化、损坏恢复、写入失败、加载缺失资源与重试、图集裁切
 & 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script tests/verify_menu_bootstrap.gd
 
@@ -104,10 +111,10 @@ python tools/web_bootstrap.py serve
 导出目录为 `build/web/`，可整体作为静态站点发布。本地服务器已经设置 WASM、PCK、JS 的 MIME 类型，并关闭本地缓存以方便手动验收。
 浏览器首次点击或按键后启用声音。存储受到限制时会提示设置可能无法保留，不影响主菜单使用。
 
-导出由菜单、`data/map_kr1/manifest.json` 和首关 manifest 控制，只包含菜单、地图和首关使用的脚本、场景、字体、图集、声音及 JSON。首关使用 5 张、一代地图使用 13 张 2048×2048 派生图集，不打包完整素材库。
+导出由菜单、`data/map_kr1/manifest.json`、`data/heroes/manifest.json` 和首关 manifest 控制，只包含菜单、地图、英雄房间和首关使用的脚本、场景、字体、图集、声音及 JSON。首关使用 5 张、一代地图使用 13 张、英雄房间使用 4 张 2048×2048 派生图集，不打包完整素材库。
 `export_presets.cfg` 由工具生成；修改依赖时先更新对应 manifest，再运行 `python tools/web_bootstrap.py preset`。
-导出默认只生成文件，不执行 Web 验证。本轮依照用户要求，未运行 PCK 检查，也未操作浏览器；Web 功能与兼容性由用户手动验收。
-工具保留显式 `export --check-pack` 选项，供需要时另行运行隔离 PCK 检查；结果写入 `build/web/pack_files.json`。每次导出先移除旧检查报告，避免沿用上一版结论；`export_receipt.json` 记录本次导出及检查状态。
+导出默认只生成文件；本次英雄选择交付使用 `export --debug --check-pack`，已通过隔离 PCK 资源完整性检查，共 411 个文件。未操作浏览器，Web 功能与兼容性由用户手动验收。
+显式 `export --check-pack` 的结果写入 `build/web/pack_files.json`。每次导出先移除旧检查报告，避免沿用上一版结论；`export_receipt.json` 记录本次导出及检查状态。
 
 本轮可直接使用 `build/KingdomRush-KR1-Playtest-Debug-Web.zip`。解压后运行 `start_server.cmd`，在浏览器打开其中提示的本地地址；保持命令窗口开启。首次点击、声音开启、页面切后台与浏览器兼容性由用户手动检查。
 

@@ -29,6 +29,8 @@ func _init() -> void:
 		return
 	var manifest: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/menu_manifest.json"))
 	var expected: Array = [manifest.catalog, manifest.locale, manifest.sounds, manifest.font, manifest.background]
+	expected.append_array(manifest.get("fonts", [manifest.font]))
+	expected.append(manifest.font_roles)
 	expected.append_array(manifest.scenes)
 	expected.append_array(manifest.scripts)
 	expected.append_array(manifest.textures)
@@ -49,6 +51,10 @@ func _init() -> void:
 	expected.append_array(campaign_map.resources)
 	expected.append_array(campaign_map.data)
 	expected.append("res://data/map_kr1/manifest.json")
+	var heroes: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/heroes/manifest.json"))
+	expected.append_array(heroes.resources)
+	expected.append_array(heroes.data)
+	expected.append("res://data/heroes/manifest.json")
 	var allowed_data := expected.duplicate()
 	allowed_data.append("res://data/menu_manifest.json")
 	var failures: Array[String] = []
@@ -61,6 +67,8 @@ func _init() -> void:
 	if load("res://scenes/app_root.tscn") == null:
 		failures.append("Exported main scene or script dependencies failed to load")
 	var definition: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/level01/definition.json"))
+	var hero_definition: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/heroes/definition.json"))
+	if hero_definition.get("heroes", []).size() != 79: failures.append("Hero roster incomplete")
 	if definition.waves.groups.size() != 7 or definition.waves.cash != 270:
 		failures.append("First campaign data invalid")
 	var atlas: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/level01/atlas.json"))
@@ -76,6 +84,13 @@ func _init() -> void:
 	for frame: Dictionary in map_atlas.frames.values():
 		if not ResourceLoader.exists(map_atlas.texture_directory + frame.sheet): failures.append("Missing map atlas " + frame.sheet)
 	if map_catalog.get_frame("map_kr1", "map_background_kr1").is_empty(): failures.append("Map background unavailable")
+	var hero_catalog = load("res://scripts/dove_asset_catalog.gd").new("res://data/heroes/catalog.json")
+	var hero_atlas: Dictionary = hero_catalog.load_group("heroes")
+	for frame: Dictionary in hero_atlas.get("frames", {}).values():
+		if not ResourceLoader.exists(hero_atlas.texture_directory + frame.sheet): failures.append("Missing hero atlas " + frame.sheet)
+	if hero_catalog.get_frame("heroes", "portrait_notxt_0001").is_empty(): failures.append("Hero portrait unavailable")
+	for hero: Dictionary in hero_definition.get("heroes", []):
+		if not hero_atlas.lookup.has(hero.thumbnail) or not hero_atlas.lookup.has(hero.portrait) or not map_atlas.lookup.has(hero.map_icon): failures.append("Hero artwork unavailable " + hero.name)
 	if sim_script == null: failures.append("First-level simulation cannot be loaded")
 	else:
 		var simulation = sim_script.new(definition)

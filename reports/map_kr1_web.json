@@ -4,11 +4,12 @@
   "browser_tested": false,
   "build_type": "debug",
   "developer_menu": true,
-  "pck_isolated_check": false,
-  "pck_files": null,
+  "includes_hero_room": true,
+  "pck_isolated_check": true,
+  "pck_files": 411,
   "bundle": "build\\KingdomRush-KR1-Playtest-Debug-Web.zip",
-  "bytes": 81590255,
-  "sha256": "4e86b82e71a11cb8dad4d14b94e3f8004eeb41f6f719d72453fa94c4b3989a79",
+  "bytes": 92085154,
+  "sha256": "9018b180a55ee61f1c1b0601ae9537f31b7c1c089999b061db6aae1539831cbe",
   "web_files": {
     "index.apple-touch-icon.png": {
       "bytes": 11939,
@@ -24,7 +25,7 @@
     },
     "index.html": {
       "bytes": 3145,
-      "sha256": "a05ab2beb3a7bb0a3c657b73b72e0cee9dabc72608e6a702f1b019bd58e32655"
+      "sha256": "78dc2ce4df21dd465f766faed7f9462cd30febe499959f9ea29aeff8418006a7"
     },
     "index.icon.png": {
       "bytes": 5765,
@@ -35,8 +36,8 @@
       "sha256": "ffc3898b59fba6f5af0c02f76e5ee526cc061e65c7d2d6f4f98186876cea15c4"
     },
     "index.pck": {
-      "bytes": 74901784,
-      "sha256": "f2976d201cd46256ea74f2d6c0de365b6d83eba515d10202a69fc4ad4bf2cbbc"
+      "bytes": 85999120,
+      "sha256": "582ad9bc312768944aa6b796c04449d52df0dd1a5c14fe53aff1b277886065ab"
     },
     "index.png": {
       "bytes": 21443,
@@ -47,16 +48,20 @@
       "sha256": "11ea19645368f8e73cf337b59cfd7ceeb4ebb51f7a3bbf77d1a5c3ddfedbc522"
     },
     "export_receipt.json": {
-      "bytes": 261,
-      "sha256": "d42722198bd9f044d3eb3d00fa5fd65aef3e096d17003e6919613d27af40a28f"
+      "bytes": 291,
+      "sha256": "fb16492de26acf69c728443bfef197818b98e3e32eb3415f0437e8427ad09ab2"
     },
     "README.txt": {
-      "bytes": 1572,
-      "sha256": "b7478486d3073d3da172e4a26d7b17e7fe6b0c428f749334ca0f9d5b45f3610e"
+      "bytes": 1867,
+      "sha256": "e68501bc997b8e7f731b5a9eaa30c9dc70074f64c7c0d378fa98c229636acc24"
     },
     "start_server.cmd": {
       "bytes": 180,
       "sha256": "8f021ad5511504a288354fec02c4bf8514f054a2457cc229710e1d6069558b32"
+    },
+    "pack_files.json": {
+      "bytes": 32425,
+      "sha256": "9fce950cabb8cd4f228c2a5448bf67833e5a0bd0a25d2651c5db310041756f5b"
     }
   }
 }

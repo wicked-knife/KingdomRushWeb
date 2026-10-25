@@ -4,7 +4,11 @@ signal changed
 signal notice_changed(message: String)
 const DEFAULT_PATH := "user://campaign_kr1.json"
 const DEFINITION := "res://data/map_kr1/definition.json"
+const HERO_DEFINITION := "res://data/heroes/definition.json"
 var definition: Dictionary
+var hero_definition: Dictionary
+var hero_rows := {}
+var heroes := {"selected": []}
 var levels := {}
 var unlocked: Array[int] = [1]
 var notice := ""
@@ -17,10 +21,14 @@ static func stars_for(lives: int) -> int:
 
 func initialize(save_path: String = DEFAULT_PATH) -> void:
 	path = save_path; levels.clear(); unlocked = [1]; save_allowed = true
+	heroes = {"selected": []}; hero_rows.clear()
+	hero_definition = _read(HERO_DEFINITION)
+	for row: Dictionary in hero_definition.get("heroes", []): hero_rows[row.name] = row
 	pending = {"stars": {}, "unlocked": []}; _notice("")
 	definition = JSON.parse_string(FileAccess.get_file_as_string(DEFINITION))
+	var loaded := {}
 	if FileAccess.file_exists(path):
-		var loaded := _read(path)
+		loaded = _read(path)
 		if not _valid(loaded):
 			if int(loaded.get("schema_version", 0)) > 1:
 				save_allowed = false; _notice("进度来自较新版本，本次进度暂不写入该文件。")
@@ -39,6 +47,30 @@ func initialize(save_path: String = DEFAULT_PATH) -> void:
 				if int(normalized.get("campaign", 0)) > 0 and int(normalized.get("stars", 0)) > 0:
 					levels[str(int(stage.id))] = normalized
 	_recompute()
+	var hero_data: Variant = loaded.get("heroes", {})
+	var selected: Variant = hero_data.get("selected", []) if hero_data is Dictionary else []
+	if selected is Array:
+		for id: Variant in selected:
+			if id is String and is_hero_unlocked(id) and not id in heroes.selected and heroes.selected.size() < 2:
+				heroes.selected.append(id)
+
+func hero(id: String) -> Dictionary: return hero_rows.get(id, {})
+func selected_hero_ids() -> Array[String]:
+	var ids: Array[String] = []
+	ids.assign(heroes.selected)
+	return ids
+func is_hero_unlocked(id: String) -> bool:
+	var row := hero(id)
+	return not row.is_empty() and int(record(int(row.available_level)).get("stars", 0)) > 0
+func select_hero(id: String) -> bool:
+	if not is_hero_unlocked(id) or id in heroes.selected: return false
+	if heroes.selected.size() == 2: heroes.selected[1] = id
+	else: heroes.selected.append(id)
+	save(); changed.emit(); return true
+func deselect_hero(id: String) -> bool:
+	if not id in heroes.selected: return false
+	heroes.selected.erase(id)
+	save(); changed.emit(); return true
 
 func _read(filename: String) -> Dictionary:
 	if not FileAccess.file_exists(filename): return {}
@@ -103,7 +135,7 @@ func save() -> bool:
 	if not save_allowed: return false
 	var file := FileAccess.open(path + ".tmp", FileAccess.WRITE)
 	if file == null: _notice("进度已在本次游戏中生效，但无法保存到本地。"); return false
-	file.store_string(JSON.stringify({"schema_version": 1, "generation": 1, "content_version": definition.source.commit, "levels": levels}))
+	file.store_string(JSON.stringify({"schema_version": 1, "generation": 1, "content_version": definition.source.commit, "levels": levels, "heroes": heroes}))
 	file.flush(); var error := file.get_error(); file.close()
 	if error != OK: _notice("进度写入失败，本次游戏仍可继续。"); return false
 	# Preserve only a validated previous save; never replace a healthy backup with corruption.

@@ -37,6 +37,10 @@ def package():
         "6. Victory saves best stars and unlocks the second flag. Return to the map to see it.\n"
         "Only level 1 campaign is playable; other stages and challenges are previews.\n"
         "Three independent local save slots; volume settings remain global.\n"
+        "Hero room: browse 79 heroes, view computed skills, select up to two unlocked heroes.\n"
+        "Completing level 1 unlocks 12 heroes; selecting a third replaces slot two.\n"
+        "Selections save per slot. Heroes do not enter battle in this playtest.\n"
+        "Tab cycles selected heroes; Done, Esc or right click closes the hero room.\n"
         "The earlier single campaign save migrates into slot 1 automatically.\n\n"
         "Map: screen edges/wheel = pan, Shift+wheel = horizontal pan; touch drag/pinch = pan/zoom.\n"
         "Controls: left click to select/build/cast; right click to cancel; Esc to close/pause.\n"
@@ -66,6 +70,7 @@ def package():
         "browser_tested": False,
         "build_type": receipt.get("build_type", "release"),
         "developer_menu": debug,
+        "includes_hero_room": receipt.get("includes_hero_room", False),
         "pck_isolated_check": checked,
         "pck_files": len(report["files"]) if checked else None,
         "bundle": str(output.relative_to(ROOT)),

@@ -1,0 +1,108 @@
+{
+  "passed": true,
+  "date": "2026-10-26",
+  "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+  "engine": "Godot 4.7.2 stable / Compatibility",
+  "hero_combat_implemented": false,
+  "assets": {
+    "passed": true,
+    "heroes": 79,
+    "skills": 373,
+    "frames_pixel_verified": 181,
+    "pages": 4,
+    "portrait_fallbacks": [
+      "hero_dwarf",
+      "hero_vampiress",
+      "hero_bolverk"
+    ],
+    "commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2"
+  },
+  "logic": {
+    "checks": 30,
+    "failures": [],
+    "heroes": 79,
+    "passed": true
+  },
+  "native_hero_room": {
+    "1280x720": {
+      "failures": [],
+      "passed": true,
+      "resolution": "1280x720",
+      "text_boxes_checked": 985
+    },
+    "1920x1080": {
+      "failures": [],
+      "passed": true,
+      "resolution": "1920x1080",
+      "text_boxes_checked": 985
+    },
+    "1024x768": {
+      "failures": [],
+      "passed": true,
+      "resolution": "1024x768",
+      "text_boxes_checked": 985
+    }
+  },
+  "native_checks": [
+    "seven-column scrolling",
+    "selection badges and dual map portrait",
+    "three portrait fallbacks",
+    "skill details",
+    "Tab positioning",
+    "Done/close/Esc/right-click",
+    "map input blocked",
+    "selection voice playback position"
+  ],
+  "regressions": {
+    "map_assets": {
+      "passed": true,
+      "nodes": 27,
+      "animation_instances": 124,
+      "frames": 5246,
+      "canonical_frames_pixel_verified": 4235,
+      "pages": 13,
+      "commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2"
+    },
+    "campaign_logic": {
+      "passed": true,
+      "checks": 36063,
+      "victory": {
+        "developer_used": false,
+        "difficulty": 2,
+        "generation": 1,
+        "level_id": 1,
+        "lives": 15,
+        "mode": 1,
+        "result": "victory",
+        "stars": 2
+      }
+    },
+    "playtest_tools": {
+      "checks": 69,
+      "failures": [],
+      "passed": true,
+      "web_tested": false
+    },
+    "menu_bootstrap": "passed",
+    "menu_map_battle_return": "passed in hero logic checks"
+  },
+  "web": {
+    "export_succeeded": true,
+    "includes_hero_room": true,
+    "build_type": "debug",
+    "developer_menu": true,
+    "pck_isolated_check": true,
+    "pck_files": 411,
+    "pck_sha256": "582ad9bc312768944aa6b796c04449d52df0dd1a5c14fe53aff1b277886065ab",
+    "browser_tested": false,
+    "bundle": "build/KingdomRush-KR1-Playtest-Debug-Web.zip",
+    "bytes": 92085154,
+    "sha256": "9018b180a55ee61f1c1b0601ae9537f31b7c1c089999b061db6aae1539831cbe",
+    "zip_contents_hash_verified": true
+  },
+  "limits": [
+    "Heroes are browsable and selectable but do not participate in combat.",
+    "Native input checks use engine-dispatched events; audio playback positions were checked, without per-voice listening acceptance.",
+    "Browser functionality and compatibility require manual user acceptance."
+  ]
+}

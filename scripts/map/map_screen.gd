@@ -5,6 +5,8 @@ signal returned_to_menu
 const Layout = preload("res://scripts/battle/dove_ui_layout.gd")
 const Animations = preload("res://scripts/map/map_animations.gd")
 const Interface = preload("res://scripts/map/map_interface.gd")
+const HeroRoom = preload("res://scripts/map/hero_room.gd")
+var hero_room: Control
 var catalog: RefCounted
 var progress: RefCounted
 var definition: Dictionary
@@ -278,12 +280,19 @@ func _click(point: Vector2) -> void:
 func _action(action: String, args: Dictionary = {}) -> void:
 	hits.clear(); volume_drag.clear()
 	match action:
+		"heroes":
+			overlay = "heroes"; touches.clear()
+			if hero_room == null:
+				hero_room = HeroRoom.new(); add_child(hero_room); hero_room.initialize(self)
+			hero_room.open()
 		"level":
 			if not progress.is_unlocked(int(args.id)): return
 			selected_level = int(args.id); mode = 1; overlay = "level"
 		"mode": mode = int(args.mode)
 		"close": close_overlay()
-		"options": overlay = "options"; touches.clear()
+		"options":
+			if hero_room != null: hero_room.hide()
+			overlay = "options"; touches.clear()
 		"menu": returned_to_menu.emit(); return
 		"battle":
 			if progress.is_playable(selected_level, mode, 2): battle_requested.emit(selected_level, mode, 2); return
@@ -291,6 +300,7 @@ func _action(action: String, args: Dictionary = {}) -> void:
 	_sound("GUIButtonCommon"); queue_redraw()
 
 func close_overlay() -> void:
+	if hero_room != null: hero_room.hide()
 	overlay = ""; pointer = Vector2(-1000, -1000); hits.clear(); touches.clear(); volume_drag.clear(); queue_redraw()
 func show_message(value: String) -> void:
 	message = value; message_until = animation_player.time + 3; queue_redraw()
@@ -299,6 +309,8 @@ func _volume(x: float) -> void:
 	settings.set_volumes(value if volume_drag.bus == "music" else settings.music_volume, value if volume_drag.bus == "sfx" else settings.sfx_volume)
 
 func _input(event: InputEvent) -> void:
+	if overlay == "heroes" and event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_TAB:
+		hero_room.tab_focus(); get_viewport().set_input_as_handled(); return
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE:
 		if overlay != "": close_overlay()
 		else: _action("options")

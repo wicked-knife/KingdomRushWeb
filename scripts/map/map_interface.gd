@@ -19,20 +19,44 @@ func draw() -> void:
 	var buttons := [["mapButtons_notxt_0001", "mapButtons_notxt_0002", "英雄", 95.0], ["mapButtons_notxt_0010", "mapButtons_notxt_0011", "科技", sw - 440], ["mapButtons_notxt_0007", "mapButtons_notxt_0008", "图鉴", sw - 270], ["mapButtons_notxt_0004", "mapButtons_notxt_0005", "成就", sw - 100]]
 	for item: Array in buttons:
 		var at := Vector2(float(item[3]) - 113, 898)
-		paint.image(item[0], at, Vector2.ZERO, Color(0.65, 0.65, 0.65))
+		var hero_button: bool = item[2] == "英雄"
+		paint.image(item[1] if hero_button and view.hovered == "heroes{}" else item[0], at, Vector2.ZERO, Color.WHITE if hero_button else Color(0.65, 0.65, 0.65))
+		if hero_button: _hero_icon(at)
 		paint.label(item[2], Rect2(at + Vector2(50, 121), Vector2(126, 30)), 18, Color("e4bc72"), "center", "middle", 1, 1, "", "h_map")
-		paint.label("暂未开放", Rect2(at + Vector2(50, 151), Vector2(126, 24)), 15, Color("ccb58b"), "center", "middle", 1, 1)
-		if view.overlay == "": paint.hit(Rect2(at + Vector2(40, 20), Vector2(146, 152)), "unavailable")
+		if not hero_button: paint.label("暂未开放", Rect2(at + Vector2(50, 151), Vector2(126, 24)), 15, Color("ccb58b"), "center", "middle", 1, 1)
+		if view.overlay == "": paint.hit(Rect2(at + Vector2(40, 20), Vector2(146, 152)), "heroes" if hero_button else "unavailable")
 	if view.overlay != "":
 		paint._apply(); view.draw_rect(Rect2(Vector2.ZERO, view.view_size), Color(0, 0, 0, 0.58))
 		# Underlying HUD is also inert while a modal is open.
 		view.hits.clear()
 		if view.overlay == "level": _level()
-		else: _options()
+		elif view.overlay == "options": _options()
 	if view.message_until > view.animation_player.time:
 		paint.label(view.message, Rect2(sw / 2 - 360, 1002, 720, 42), 23, GOLD, "center", "middle", 2, 2)
 	elif view.progress.notice != "":
 		paint.label(view.progress.notice, Rect2(180, 1010, sw - 360, 50), 18, GOLD, "center", "middle", 2, 1)
+
+func _hero_icon(at: Vector2) -> void:
+	var selected: Array = view.progress.heroes.selected
+	if selected.is_empty(): paint.image("mapButtons_portrait_hero_0000", at); return
+	if selected.size() == 1: paint.image(view.progress.hero(selected[0]).map_icon, at); return
+	# Clip in the original 226 x 184 canvas, then map the trimmed polygon back to
+	# the derived atlas. This preserves Dove's diagonal without sampling neighbours.
+	var w := 226.0; var h := 184.0; var d := w / 5.0
+	var halves := [PackedVector2Array([Vector2.ZERO, Vector2(w / 2 + d, 0), Vector2(w / 2 - d, h), Vector2(0, h)]), PackedVector2Array([Vector2(w / 2 + d, 0), Vector2(w, 0), Vector2(w, h), Vector2(w / 2 - d, h)])]
+	paint._apply()
+	for i in range(2):
+		var frame: Dictionary = view._frame(view.progress.hero(selected[i]).map_icon)
+		var texture: AtlasTexture = frame.texture
+		var trim: Vector2 = frame.trim * frame.ref_scale
+		var dimensions: Vector2 = frame.logical_size * frame.ref_scale
+		var bounds := PackedVector2Array([trim, trim + Vector2(dimensions.x, 0), trim + dimensions, trim + Vector2(0, dimensions.y)])
+		for polygon: PackedVector2Array in Geometry2D.intersect_polygons(halves[i], bounds):
+			var points := PackedVector2Array(); var uv := PackedVector2Array()
+			for point: Vector2 in polygon:
+				points.append(point + at)
+				uv.append((texture.region.position + (point - trim) / frame.ref_scale) / texture.atlas.get_size())
+			view.draw_polygon(points, PackedColorArray([Color.WHITE]), uv, texture.atlas)
 
 func _button(normal: String, over: String, at: Vector2, action: String, args: Dictionary = {}, enabled: bool = true, caption: String = "") -> void:
 	var dimensions: Vector2 = paint.image_size(normal)

@@ -65,7 +65,7 @@ func get_frame(group: String, frame_name: String) -> Dictionary:
 
 
 func get_texture(path: String) -> Texture2D:
-	if not (path.begins_with(ROOT) or path.begins_with("res://data/level01/") or path.begins_with("res://data/map_kr1/")):
+	if not (path.begins_with(ROOT) or path.begins_with("res://data/level01/") or path.begins_with("res://data/map_kr1/") or path.begins_with("res://data/heroes/")):
 		push_error("Texture path is outside the Dove asset directory: " + path)
 		return null
 	if not _textures.has(path):

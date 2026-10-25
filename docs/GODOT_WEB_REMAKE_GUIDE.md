@@ -74,11 +74,12 @@
 | [素材说明](ASSETS.md)、[转换器](../tools/import_dove_assets.py) | 原始资源复制、DDS 转 PNG、KRAB/动画/EXO3 元数据转换、哈希与像素校验 | 不转换完整玩法逻辑 |
 | [DoveAssetCatalog](../scripts/dove_asset_catalog.gd) | 按需访问帧、图组、动画、EXO、声音和静态数据 | 不负责组合动画绘制、完整依赖分包和游戏对象生命周期 |
 | [素材预览](../scenes/asset_preview.tscn) | 背景、裁切帧、普通动画、字体与音效展示 | 独立预览场景，不是游戏主场景 |
-| [启动与主菜单](RUNNING.md)、[首页场景](../scenes/app_root.tscn) | 加载、原版菜单、音量持久化、弹窗与退出确认；裁剪 Web 导出入口 | 开始直接进入首关战役；其他选关尚未开放，浏览器功能由用户手动验收 |
+| [启动与主菜单](RUNNING.md)、[首页场景](../scenes/app_root.tscn) | 加载、原版菜单、音量持久化、弹窗与退出确认；裁剪 Web 导出入口 | 开始后选择存档槽进入地图，仅首关战役可玩；浏览器功能由用户手动验收 |
+| [地图与英雄选择](HERO_SELECTION_DELIVERY.md) | 一代地图、三槽进度、79 名英雄资料与 373 条技能说明、原版解锁、双英雄选择及存档 | 仅首关战役可玩；英雄战斗行为尚未接入 |
 | [转换测试](../tests/test_asset_conversion.py)、[Godot 校验](../tests/verify_godot_assets.gd) | 二进制转换样例和部分引擎资源加载检查 | 不证明战斗、EXO 显示、Web 导出已通过 |
 | [汇总报告](../reports/verification_summary.json) | 记录已有导入及兼容渲染预览结果 | 已有素材检查结果，不代表完整游戏或浏览器验收通过 |
 
-【事实】`project.godot` 当前采用 Compatibility 和 `canvas_items`，`run/main_scene` 为 `scenes/app_root.tscn`。已有启动加载、原版主菜单、音量设置及退出确认；开始已接通第一代第一关完整战役，制作人员入口仍为暂未开放提示。已有按 `data/menu_manifest.json` 和 `data/level01/manifest.json` 裁剪的单线程 Web 导出预设及工具，操作说明见 [RUNNING.md](RUNNING.md)，首关已按普通难度、无英雄与零科技完成闭环，其他完整玩法和动态分包仍待实现。Godot 4.7.2 stable 与对应单线程 Web 模板已安装。3D 物理 Jolt 的配置存在，但本项目的 2D 战斗不依赖它。
+【事实】`project.godot` 当前采用 Compatibility 和 `canvas_items`，`run/main_scene` 为 `scenes/app_root.tscn`。已有启动加载、原版主菜单、音量设置及退出确认；开始后经三个独立存档槽进入一代地图，已接通第一代第一关完整战役及 79 名英雄的资料、解锁与双选存档，制作人员入口仍为暂未开放提示。已有按菜单、地图、英雄房间和首关 manifest 裁剪的单线程 Web 导出预设及工具，操作说明见 [RUNNING.md](RUNNING.md)，首关已按普通难度、无英雄参战与零科技完成闭环，其他完整玩法和动态分包仍待实现。Godot 4.7.2 stable 与对应单线程 Web 模板已安装。3D 物理 Jolt 的配置存在，但本项目的 2D 战斗不依赖它。
 
 ### 1.4 资源与内容规模
 

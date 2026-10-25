@@ -34,3 +34,6 @@ __pycache__/
 
 !/reports/playtest_tools_logic.json
 !/reports/playtest_tools_delivery.json
+!/reports/heroes_assets.json
+!/reports/heroes_logic.json
+!/reports/heroes_delivery.json

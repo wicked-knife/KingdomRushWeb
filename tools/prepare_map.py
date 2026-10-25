@@ -58,10 +58,11 @@ def prepare(source, love):
             for child in value:
                 collect(child)
     collect(data)
-    groups = ["screen_map_backgrond", "screen_map_animations", "screen_map_flags", "screen_map_buttons", "stars_container", "level_select", "ballon", "view_options"]
+    groups = ["screen_map_backgrond", "screen_map_animations", "screen_map_flags", "screen_map_buttons", "stars_container", "level_select", "ballon", "view_options", "hero_room"]
     atlases = {g: json.loads((assets / f"data/atlases/{g}.json").read_text(encoding="utf-8")) for g in groups}
     for group in ["screen_map_flags", "screen_map_buttons", "stars_container"]:
         wanted.update(atlases[group]["frames"])
+    wanted.update(k for k in atlases["hero_room"]["frames"] if "mapButtons_portrait_hero_" in k)
     wanted.update(k for k in atlases["level_select"]["frames"] if k.startswith("levelSelect_"))
     wanted.update(k for k in atlases["view_options"]["frames"] if k.startswith("options_") and not k.startswith("options_lang"))
     lookup = {}
