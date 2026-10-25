@@ -1,0 +1,62 @@
+{
+	"defeat": {
+		"lives": 0,
+		"result": "defeat",
+		"ticks": 4493
+	},
+	"failures": [],
+	"passed": true,
+	"timeline": [
+		{
+			"count": 3,
+			"end": 153,
+			"start": 0,
+			"wave": 1
+		},
+		{
+			"count": 6,
+			"end": 509,
+			"start": 153,
+			"wave": 2
+		},
+		{
+			"count": 9,
+			"end": 951,
+			"start": 509,
+			"wave": 3
+		},
+		{
+			"count": 5,
+			"end": 1231,
+			"start": 951,
+			"wave": 4
+		},
+		{
+			"count": 3,
+			"end": 1384,
+			"start": 1231,
+			"wave": 5
+		},
+		{
+			"count": 14,
+			"end": 2148,
+			"start": 1384,
+			"wave": 6
+		},
+		{
+			"count": 16,
+			"end": 2356,
+			"start": 2148,
+			"wave": 7
+		}
+	],
+	"victory": {
+		"gold": 36,
+		"kills": 55,
+		"leaks": 1,
+		"lives": 19,
+		"result": "victory",
+		"spawned": 56,
+		"ticks": 8542
+	}
+}

@@ -15,9 +15,13 @@ Godot 4.7.2 原生编辑器为它们生成音频波形预览时，会反复出�
 需要重新生成时先安装 `tools/requirements.txt` 中的 SoundFile。运行游戏与编辑器无需安装 Python 音频库。
 Godot 解码回归检查：`--headless --path . --script tests/verify_audio_compat.gd`。
 
-当前资源快照为 **2.1.0.2**（2026-10-24 同步），安装版本与源码提交均为 `e4278f83d913f96a8d35a17f912e0c21945bfdac`。
+当前资源快照为 **2.1.0.2**（2026-10-25 同步），安装版本与源码 HEAD 均为 `e29ece82939fd73fb69bfc4b469d484a72e4dfd2`。同一版本号下仍有后续提交，迁移时同时锁定版本与提交。
+
+本次更新了 `go_enemies_T2-1`、`go_enemies_spiders-1` 两张 DDS 及对应图集元数据，已重新生成 Godot PNG 和图集 JSON；另同步 78 份关卡脚本。未新增音频、字体、图集或 EXO。源码还包含哨兵修复、数值调整、塔技能升级回调与辅助函数整理，详见复刻指南 1.2.1 和 `reports/assets_sync_summary.json`。
 
 ## 后续复刻指导
+
+首关已新增受控派生资源：`data/level01/` 包含布局、模板、路径、地形、波次、依赖清单和 5 张 2048² 图集。1038 个运行帧 ID、68 段动画与 49 个音频文件通过独立 manifest 导出，原素材库保持完整。生成、像素及哈希校验方法见 [首关交付报告](LEVEL01_DELIVERY.md)。
 
 源码阅读索引、Godot 架构、数据迁移规则、Web 分包、阶段任务和验收清单见 [Godot Web 复刻指导文档](GODOT_WEB_REMAKE_GUIDE.md)。指南统一以 `2.1.0.2` 及上述提交为唯一基准，覆盖该版本的完整玩家玩法、配套资源与验收要求。
 
@@ -49,7 +53,7 @@ python tools/import_dove_assets.py
 python tools/import_dove_assets.py --source 'D:\王国保卫战Dove版\KingdomRushDove'
 ```
 
-工具逐项写入检查点；中断后执行同一个命令即可继续。只有来源哈希、转换器版本、目标大小和目标哈希都匹配的文件才会跳过。
+工具逐项写入本地检查点 `reports/assets_migration_state.jsonl`（不提交 Git）；中断后执行同一个命令即可继续。只有来源哈希、转换器版本、目标大小和目标哈希都匹配的文件才会跳过。
 582 张 DDS 转换时逐张解码为 RGBA，再重新读取 PNG 比较像素，覆盖 DXT1、DXT5 和 BC7。
 原始文件、OGG 和字体通过 SHA-256 核对。不会启动或执行原游戏 Lua。
 

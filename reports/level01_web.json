@@ -1,0 +1,60 @@
+{
+  "passed": true,
+  "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+  "browser_tested": false,
+  "pck_isolated_check": true,
+  "pck_files": 170,
+  "bundle": "build\\KingdomRush-Level01-Web.zip",
+  "bytes": 44331473,
+  "sha256": "0a3b4f6b68642667295c45bc13ccad08bf8a45ed2266487bac04e61d79d6018a",
+  "web_files": {
+    "index.apple-touch-icon.png": {
+      "bytes": 11939,
+      "sha256": "071ccd3c3619e62c9e27995cf1afde427bb1b630767801a0fe1ac33505b2f221"
+    },
+    "index.audio.position.worklet.js": {
+      "bytes": 2973,
+      "sha256": "be33985bc7160d6bf9646f259cd86b259cd67b02ccb297ee5c44f8ac84327bc8"
+    },
+    "index.audio.worklet.js": {
+      "bytes": 7298,
+      "sha256": "5b476a9c9ce642c0ee4256436d1bc31d9c38f868aca0f9a8e2a57c18d2dec2a3"
+    },
+    "index.html": {
+      "bytes": 3146,
+      "sha256": "4bd9591d71b5930aa350e6b6e462eb9d42e47b3b3314bc7f2b2c8c70ecedb720"
+    },
+    "index.icon.png": {
+      "bytes": 5765,
+      "sha256": "662f81d7672001a6f5f928532493267c226624757de3b5fa2908f6e5923964b7"
+    },
+    "index.js": {
+      "bytes": 279815,
+      "sha256": "33c94cb3175f3333b82e2a3be5e8e86f77986f0aa2042b1631f6367a4e5bb6ba"
+    },
+    "index.pck": {
+      "bytes": 36033956,
+      "sha256": "0eceb22ea6db8d93766131c96e0567b0e4ee50d41c0d1e22bfa07c8b903a70d0"
+    },
+    "index.png": {
+      "bytes": 21443,
+      "sha256": "3cb4495c0b98dfbe4b663cbf2b6836473572339beb66d902367893162a70be0e"
+    },
+    "index.wasm": {
+      "bytes": 39514754,
+      "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
+    },
+    "pack_files.json": {
+      "bytes": 12848,
+      "sha256": "cc7dade4558f895d661525d657d9e76eb5dd839c1e7bfb9ca589faf7d0d4714c"
+    },
+    "README.txt": {
+      "bytes": 844,
+      "sha256": "b3c51d3c3beec16b9f866a4ddf5ba8e9521ee2d05d8fa7d97c9460cfed469ecc"
+    },
+    "start_server.cmd": {
+      "bytes": 180,
+      "sha256": "8f021ad5511504a288354fec02c4bf8514f054a2457cc229710e1d6069558b32"
+    }
+  }
+}

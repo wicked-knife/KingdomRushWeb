@@ -1,6 +1,9 @@
 {
-  "installed_version": "2.1.0.2",
-  "installed_revision": "e4278f83d913f96a8d35a17f912e0c21945bfdac",
+  "verified_at": "2026-10-25T14:16:53+08:00",
+  "installed_version": "com.ironhidegames.kingdomrush.standalone",
+  "installed_revision": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+  "reference_revision": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+  "manifest_sha256": "51c8c3dfb9a84433a6963d017bf79773a463145db146fbee518e8954fde2d887",
   "manifest_files": 13032,
   "source_files": 7016,
   "installed_index_missing": [],
@@ -12,7 +15,7 @@
   },
   "format_tests": {
     "passed": true,
-    "tests": 7
+    "tests": 10
   },
   "godot": {
     "failures": [],
@@ -24,7 +27,43 @@
   "godot_imported_audio_count": 3899,
   "godot_imported_font_count": 8,
   "compatibility_preview_passed": true,
-  "preview_stderr_empty": true,
+  "updated_asset_native_preview": {
+    "failures": [],
+    "godot": "4.7.2-stable (official)",
+    "groups": [
+      {
+        "frames_loaded": 1217,
+        "group": "go_enemies_T2",
+        "height": 6316,
+        "width": 6316
+      },
+      {
+        "frames_loaded": 421,
+        "group": "go_enemies_spiders",
+        "height": 2804,
+        "width": 2808
+      }
+    ],
+    "passed": true
+  },
+  "audio_compat_passed": true,
+  "menu_bootstrap_passed": true,
+  "menu_native_smoke": {
+    "passed": true,
+    "resolution": [
+      1280,
+      720
+    ]
+  },
+  "source_warning_counts": {
+    "empty_ogg": 2,
+    "atlas": 35,
+    "exo_missing_parts": 86,
+    "animation_missing_frames": 1015,
+    "missing_font_mappings": 8
+  },
   "temporary_asset_ignore_removed": true,
-  "raw_snapshot_ignored": true
+  "raw_snapshot_ignored": true,
+  "browser_validation_performed": false,
+  "web_export_regenerated": false
 }

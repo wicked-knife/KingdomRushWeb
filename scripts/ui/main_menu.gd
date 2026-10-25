@@ -1,5 +1,7 @@
 extends Control
 
+signal campaign_requested
+
 const Art = preload("res://scripts/ui/menu_art.gd")
 const INK := Color("f3e5ae")
 var boot: Node
@@ -18,6 +20,7 @@ var _previous_focus: Control
 var _logo: TextureRect
 var _logo_time := 0.0
 var _logo_frames: Array[AtlasTexture] = []
+var _design: Control
 
 
 func initialize(loader: Node, preferences: Node, sound: Node) -> void:
@@ -42,7 +45,7 @@ func initialize(loader: Node, preferences: Node, sound: Node) -> void:
 		_logo_frames.append(Art.texture(boot.catalog, "homeMenu_logo_%04d" % index))
 	var banner := Art.image(boot.catalog, "homeMenu_buttonsBg", Vector2(100, 632))
 	add_child(banner)
-	start_button = _menu_button("StartButton", "homeMenu_btnStart_zh-Hans", Vector2(279, 739), func(): _show_message(_text("START"), "关卡尚未开放，敬请期待。"))
+	start_button = _menu_button("StartButton", "homeMenu_btnStart_zh-Hans", Vector2(279, 739), func(): campaign_requested.emit())
 	options_button = _menu_button("OptionsButton", "homeMenu_btnOptions_zh-Hans", Vector2(310, 894), show_options)
 	credits_button = _menu_button("CreditsButton", "homeMenu_btnCredits_zh-Hans", Vector2(330, 994), func(): _show_message(_text("CREDITS"), "制作人员页面暂未开放。"))
 	if not OS.has_feature("web"):
@@ -63,11 +66,29 @@ func initialize(loader: Node, preferences: Node, sound: Node) -> void:
 	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	overlay.hide()
 	add_child(overlay)
+	_design = Control.new()
+	_design.name = "MenuDesign"
+	_design.size = Vector2(1920, 1080)
+	_design.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_design)
+	for child in get_children():
+		if child != background and child != _design:
+			remove_child(child)
+			_design.add_child(child)
+	resized.connect(_layout_design)
+	_layout_design()
 	modulate.a = 0.0
 	create_tween().tween_property(self, "modulate:a", 1.0, 0.35)
 	start_button.grab_focus()
 	if OS.is_debug_build():
 		print("MENU_READY music=", settings.music_volume, " sfx=", settings.sfx_volume, " web=", OS.has_feature("web"))
+
+
+func _layout_design() -> void:
+	if _design == null: return
+	var factor := minf(size.x / 1920.0, size.y / 1080.0)
+	_design.scale = Vector2.ONE * factor
+	_design.position = (size - Vector2(1920, 1080) * factor) / 2
 
 
 func _process(delta: float) -> void:

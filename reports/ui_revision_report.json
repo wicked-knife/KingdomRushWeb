@@ -1,0 +1,37 @@
+{
+  "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+  "passed": true,
+  "native_layouts": {
+    "1024x768": {
+      "passed": true,
+      "states": 22,
+      "text_boxes": 201,
+      "failures": []
+    },
+    "1280x720": {
+      "passed": true,
+      "states": 22,
+      "text_boxes": 201,
+      "failures": []
+    },
+    "1920x1080": {
+      "passed": true,
+      "states": 22,
+      "text_boxes": 201,
+      "failures": []
+    }
+  },
+  "native_campaign_replay": [
+    "1280x720",
+    "1920x1080",
+    "1024x768"
+  ],
+  "headless_logic": true,
+  "source_hashes_and_pixels": true,
+  "menu_and_audio_regression": true,
+  "pck_isolated_check": true,
+  "browser_tested": false,
+  "adaptation_spec": "docs/UI_ADAPTATION.md",
+  "web_delivery_report": "reports/level01_web.json",
+  "captures": "Generated locally by tests/battle_ui_gallery.gd; ignored by Git."
+}

@@ -10,9 +10,20 @@ __pycache__/
 /build/*
 !/build/.gdignore
 
-# Generated menu validation captures and logs (kept locally)
-/reports/menu_*.png
-/reports/menu_*.log
-/reports/web_export.log
-/reports/editor_startup_*.log
-/reports/editor_freeze_backup/
+# Validation output is reproducible. Track source manifests and compact summaries.
+/reports/*
+!/reports/.gdignore
+!/reports/ASSET_REPORT.md
+!/reports/assets_manifest.json
+!/reports/assets_verification.json
+!/reports/assets_sync_summary.json
+!/reports/verification_summary.json
+!/reports/godot_assets_verification.json
+!/reports/level01_assets.json
+!/reports/level01_logic.json
+!/reports/level01_web.json
+!/reports/ui_revision_report.json
+!/reports/battle_details_report.json
+
+# Generated output artifacts (kept locally)
+/output/

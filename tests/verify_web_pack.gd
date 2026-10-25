@@ -34,6 +34,17 @@ func _init() -> void:
 	expected.append_array(manifest.textures)
 	expected.append_array(manifest.audio.values())
 	expected.append_array(manifest.atlases.values())
+	var level: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/level01/manifest.json"))
+	expected.append_array(level.resources)
+	expected.append_array(level.data)
+	expected.append("res://data/level01/manifest.json")
+	expected.append("res://scripts/battle/level01_sim.gd")
+	expected.append("res://scripts/battle/battle_view.gd")
+	expected.append("res://scripts/battle/battle_ui.gd")
+	expected.append("res://scripts/battle/dove_ui_layout.gd")
+	expected.append("res://scripts/battle/dove_animation.gd")
+	expected.append("res://scripts/battle/dove_projectile.gd")
+	expected.append("res://scripts/battle/dove_unit_info.gd")
 	var allowed_data := expected.duplicate()
 	allowed_data.append("res://data/menu_manifest.json")
 	var failures: Array[String] = []
@@ -45,6 +56,18 @@ func _init() -> void:
 			failures.append("Missing resource: " + path)
 	if load("res://scenes/app_root.tscn") == null:
 		failures.append("Exported main scene or script dependencies failed to load")
+	var definition: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/level01/definition.json"))
+	if definition.waves.groups.size() != 7 or definition.waves.cash != 270:
+		failures.append("First campaign data invalid")
+	var atlas: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/level01/atlas.json"))
+	for frame: Dictionary in atlas.frames.values():
+		if not ResourceLoader.exists(atlas.texture_directory + frame.sheet):
+			failures.append("Missing first-level atlas " + frame.sheet)
+	var sim_script = load("res://scripts/battle/level01_sim.gd")
+	if sim_script == null: failures.append("First-level simulation cannot be loaded")
+	else:
+		var simulation = sim_script.new(definition)
+		if simulation.towers.size() != 8: failures.append("Exported simulation initialization failed")
 	var background := load(manifest.background) as Texture2D
 	if background == null or background.get_size() != Vector2(1920, 1080):
 		failures.append("Exported menu background or its atlas dependency failed to load")

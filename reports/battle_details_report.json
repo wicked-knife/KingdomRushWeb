@@ -1,0 +1,129 @@
+{
+  "passed": true,
+  "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+  "logic": {
+    "checks": 485,
+    "failures": [],
+    "passed": true
+  },
+  "native": {
+    "1280x720": {
+      "passed": true,
+      "states": 43,
+      "unit_variants": [
+        "丹·麦吉尔",
+        "丹·麦吉尔",
+        "兽人",
+        "赛拉斯"
+      ]
+    },
+    "1920x1080": {
+      "passed": true,
+      "states": 43,
+      "unit_variants": [
+        "丹·麦吉尔",
+        "丹·麦吉尔",
+        "兽人",
+        "赛拉斯"
+      ]
+    },
+    "1024x768": {
+      "passed": true,
+      "states": 43,
+      "unit_variants": [
+        "丹·麦吉尔",
+        "丹·麦吉尔",
+        "兽人",
+        "赛拉斯"
+      ]
+    }
+  },
+  "campaign": {
+    "defeat": {
+      "lives": 0,
+      "result": "defeat",
+      "ticks": 4493
+    },
+    "failures": [],
+    "passed": true,
+    "timeline": [
+      {
+        "count": 3,
+        "end": 153,
+        "start": 0,
+        "wave": 1
+      },
+      {
+        "count": 6,
+        "end": 509,
+        "start": 153,
+        "wave": 2
+      },
+      {
+        "count": 9,
+        "end": 951,
+        "start": 509,
+        "wave": 3
+      },
+      {
+        "count": 5,
+        "end": 1231,
+        "start": 951,
+        "wave": 4
+      },
+      {
+        "count": 3,
+        "end": 1384,
+        "start": 1231,
+        "wave": 5
+      },
+      {
+        "count": 14,
+        "end": 2148,
+        "start": 1384,
+        "wave": 6
+      },
+      {
+        "count": 16,
+        "end": 2356,
+        "start": 2148,
+        "wave": 7
+      }
+    ],
+    "victory": {
+      "gold": 36,
+      "kills": 55,
+      "leaks": 1,
+      "lives": 19,
+      "result": "victory",
+      "spawned": 56,
+      "ticks": 8542
+    }
+  },
+  "assets": {
+    "source_inputs": 34,
+    "frames": 1038,
+    "canonical_frames": 565,
+    "animations": 68,
+    "resources": 54
+  },
+  "web": {
+    "pck_isolated_check": true,
+    "pck_files": 170,
+    "bundle": "build\\KingdomRush-Level01-Web.zip",
+    "bytes": 44331473,
+    "sha256": "0a3b4f6b68642667295c45bc13ccad08bf8a45ed2266487bac04e61d79d6018a",
+    "browser_tested": false
+  },
+  "native_campaign_replay": {
+    "passed": true,
+    "resolution": "1280x720",
+    "runner": "tests/battle_visual_smoke.gd"
+  },
+  "ui_regression": {
+    "passed": true,
+    "resolution": "1280x720",
+    "runner": "tests/battle_ui_gallery.gd"
+  },
+  "captures": "Generated locally by tests/battle_details_visual.gd; ignored by Git."
+}

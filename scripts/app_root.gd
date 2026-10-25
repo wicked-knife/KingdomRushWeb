@@ -6,6 +6,8 @@ const BootLoader = preload("res://scripts/services/menu_boot_loader.gd")
 const MenuSettings = preload("res://scripts/services/menu_settings.gd")
 const MenuAudio = preload("res://scripts/services/menu_audio.gd")
 const Menu = preload("res://scenes/main_menu.tscn")
+const Battle = preload("res://scripts/battle/battle_view.gd")
+var battle: Control
 var loader: Node
 var settings: Node
 var audio: Node
@@ -111,8 +113,31 @@ func _on_completed() -> void:
 	menu = Menu.instantiate()
 	add_child(menu)
 	menu.initialize(loader, settings, audio)
+	menu.campaign_requested.connect(_start_campaign)
 	loading.hide()
 	menu_ready.emit()
+
+
+func _start_campaign() -> void:
+	if battle != null: return
+	menu.hide()
+	menu.set_process_input(false)
+	battle = Battle.new()
+	add_child(battle)
+	battle.initialize(loader, audio)
+	battle.returned_to_menu.connect(_return_to_menu)
+
+
+func _return_to_menu() -> void:
+	if battle != null:
+		remove_child(battle)
+		battle.queue_free()
+		battle = null
+	audio.music_player.volume_db = 0.0
+	audio.configure(loader.resources[loader.manifest.audio.MusicMainMenu], loader.resources[loader.manifest.audio.GUIButtonCommon], settings)
+	menu.show()
+	menu.set_process_input(true)
+	menu.start_button.grab_focus()
 
 
 func _input(event: InputEvent) -> void:
@@ -122,7 +147,9 @@ func _input(event: InputEvent) -> void:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST and settings != null:
-		if menu != null:
+		if battle != null:
+			if not battle.sim.paused: battle.sim.command("pause")
+		elif menu != null:
 			menu.show_quit()
 		else:
 			get_tree().quit()

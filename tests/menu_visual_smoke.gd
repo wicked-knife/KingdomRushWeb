@@ -24,8 +24,9 @@ func _run() -> void:
 	var suffix := "%dx%d" % [root.size.x, root.size.y]
 	await _capture("menu_" + suffix)
 	menu.start_button.pressed.emit()
-	check(menu.modal_kind == "message" and menu.overlay.visible, "start opens placeholder")
-	await _capture("menu_message_" + suffix)
+	check(app.battle != null and not menu.visible, "start opens first campaign")
+	app._return_to_menu()
+	await process_frame
 	var cancel := InputEventAction.new()
 	cancel.action = "ui_cancel"
 	cancel.pressed = true

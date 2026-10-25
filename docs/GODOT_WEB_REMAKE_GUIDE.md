@@ -1,15 +1,15 @@
 # Kingdom Rush Dove → Godot Web 复刻指导文档
 
-版本基准：**Dove 2.1.0.2**。调研与编制日期：2026-10-24。目标工程：`D:/projects/KingdomRushWeb`。
+版本基准：**Dove 2.1.0.2**。调研与编制日期：2026-10-24；源码与资源基准更新日期：2026-10-25。目标工程：`D:/projects/KingdomRushWeb`。
 
-本文是后续开发的实施依据，覆盖源码定位、技术设计、内容迁移、任务拆分和验收。**当前交付只有文档；文中的新场景、服务、数据结构和命令，除明确标为已有者外，均待实现。**
+本文是后续开发的实施依据，覆盖源码定位、技术设计、内容迁移、任务拆分和验收。**工程已有素材链路、启动加载、主菜单和第一代第一关完整试玩闭环；首关实现及验证边界见 [首关交付报告](LEVEL01_DELIVERY.md)。文中的其他通用服务、多关卡能力和数据结构，除明确标为已有者外，均待实现。**
 
 ## 阅读方式与约定
 
 - **【事实】**：已读取代码、Git 对象、现有资源或校验报告得到的结论。
 - **【设计】**：本项目建议采用的实现约定，不表示原版已经如此实现。
 - **【验证任务】**：必须在对应里程碑用真实数据或浏览器完成的验证，不视为已通过。
-- `WEB` 指本工程；`SNAPSHOT` 指 `WEB/source_assets/kingdom_rush_dove`；`SRC` 指 `D:/projects/KingdomRushDove`；`BASE` 指 Dove `2.1.0.2` 的冻结提交 `e4278f83d913f96a8d35a17f912e0c21945bfdac`。
+- `WEB` 指本工程；`SNAPSHOT` 指 `WEB/source_assets/kingdom_rush_dove`；`SRC` 指 `D:/projects/KingdomRushDove`；`BASE` 指 Dove `2.1.0.2` 的冻结提交 `e29ece82939fd73fb69bfc4b469d484a72e4dfd2`。
 - 本文源码链接指向相邻源码工作目录；已核对 SRC、安装目录和 SNAPSHOT 均对应上述版本与提交。实施时按 BASE 读取代码，并校验资源清单与来源哈希。
 - 同一功能的完成顺序是：确认原行为 → 整理依赖与样例 → 实现通用能力 → 对照验证 → 批量迁移内容。素材能显示不等于玩法已还原。
 
@@ -50,7 +50,7 @@
 
 | 来源 | 已验证标识 | 使用规则 |
 | --- | --- | --- |
-| SRC 源码 | `id=2.1.0.2`；HEAD 为 `e4278f83d913f96a8d35a17f912e0c21945bfdac`，工作区干净 | 完整玩法代码、数值和行为的冻结依据 |
+| SRC 源码 | `id=2.1.0.2`；HEAD 为 `e29ece82939fd73fb69bfc4b469d484a72e4dfd2`，工作区干净 | 完整玩法代码、数值和行为的冻结依据 |
 | 本机安装目录 | `D:/王国保卫战Dove版/KingdomRushDove`；`id=2.1.0.2`，提交记录与 BASE 一致 | 同版本运行对照与原始素材来源 |
 | SNAPSHOT | `id=2.1.0.2`，提交记录与 BASE 一致 | 保存原始素材及配套数据；完整运行时代码仍从 SRC 读取 |
 | Godot 运行素材 | 当前 manifest 与校验汇总对应 `2.1.0.2` | 所有资源包从这份配套资源生成，逐项保留来源哈希 |
@@ -59,6 +59,14 @@
 
 【设计】M0 在隔离目录建立 BASE 只读导出副本，玩法数据、资源依赖和原版对照样本统一使用 `2.1.0.2`。生成基准清单，记录提交、工作区状态、版本文件、资源 manifest 哈希及每个导出输入的哈希；发现不匹配则阻止该批导出。后续更新内容时同步更新该清单、玩法数据、行为和验收样本。
 
+### 1.2.1 2026-10-25 同版本更新
+
+【事实】源码从 `e4278f83d913f96a8d35a17f912e0c21945bfdac` 快进 7 个提交至 `e29ece82939fd73fb69bfc4b469d484a72e4dfd2`，版本号仍为 `2.1.0.2`。本机安装目录的更新记录与新 HEAD 一致；本轮变更的 198 个源码/元数据文件已逐项核对与安装目录相同（不含由更新器记录安装提交的 `current_version_commit_hash.txt`）。因此后续迁移锁定新提交，仅凭版本号不能判断资源与行为是否配套。
+
+更新包括 `go_enemies_T2-1`、`go_enemies_spiders-1` 两张 DDS 及对应图集元数据，未新增音频、字体、图集或 EXO；哨兵射程补偿倍率恢复为 1，流血倍率计算、攻击大眼报错及猎犬 flags 得到修正；树人单位移速及狼人化限制、部分塔技能升级回调和通用辅助函数也有调整。配套快照中更新了 78 份关卡脚本，许多变化是辅助函数与实体队列调用整理，不能按文件数量推断新增关卡。
+
+本轮资源增量、来源哈希和验证范围见 [assets_sync_summary.json](../reports/assets_sync_summary.json)。本节记录源码与素材更新，相关战斗行为仍须在对应迁移阶段验收。
+
 ### 1.3 本工程已有能力
 
 | 已有产物 | 能做什么 | 当前边界 |
@@ -66,10 +74,11 @@
 | [素材说明](ASSETS.md)、[转换器](../tools/import_dove_assets.py) | 原始资源复制、DDS 转 PNG、KRAB/动画/EXO3 元数据转换、哈希与像素校验 | 不转换完整玩法逻辑 |
 | [DoveAssetCatalog](../scripts/dove_asset_catalog.gd) | 按需访问帧、图组、动画、EXO、声音和静态数据 | 不负责组合动画绘制、完整依赖分包和游戏对象生命周期 |
 | [素材预览](../scenes/asset_preview.tscn) | 背景、裁切帧、普通动画、字体与音效展示 | 独立预览场景，不是游戏主场景 |
+| [启动与主菜单](RUNNING.md)、[首页场景](../scenes/app_root.tscn) | 加载、原版菜单、音量持久化、弹窗与退出确认；裁剪 Web 导出入口 | 开始直接进入首关战役；其他选关尚未开放，浏览器功能由用户手动验收 |
 | [转换测试](../tests/test_asset_conversion.py)、[Godot 校验](../tests/verify_godot_assets.gd) | 二进制转换样例和部分引擎资源加载检查 | 不证明战斗、EXO 显示、Web 导出已通过 |
 | [汇总报告](../reports/verification_summary.json) | 记录已有导入及兼容渲染预览结果 | 已有素材检查结果，不代表完整游戏或浏览器验收通过 |
 
-【事实】`project.godot` 当前采用 Compatibility 和 `canvas_items`，尚未设置 `run/main_scene`，未发现游戏导出预设。Godot 4.7.2 stable 与对应单线程 Web 模板已安装。3D 物理 Jolt 的配置存在，但本项目的 2D 战斗不依赖它。
+【事实】`project.godot` 当前采用 Compatibility 和 `canvas_items`，`run/main_scene` 为 `scenes/app_root.tscn`。已有启动加载、原版主菜单、音量设置及退出确认；开始已接通第一代第一关完整战役，制作人员入口仍为暂未开放提示。已有按 `data/menu_manifest.json` 和 `data/level01/manifest.json` 裁剪的单线程 Web 导出预设及工具，操作说明见 [RUNNING.md](RUNNING.md)，首关已按普通难度、无英雄与零科技完成闭环，其他完整玩法和动态分包仍待实现。Godot 4.7.2 stable 与对应单线程 Web 模板已安装。3D 物理 Jolt 的配置存在，但本项目的 2D 战斗不依赖它。
 
 ### 1.4 资源与内容规模
 
@@ -77,8 +86,8 @@
 
 | 项目 | 数值 | 口径与约束 |
 | --- | ---: | --- |
-| 原始资源及配套数据 | 7,016 个文件 / 4,131,494,843 字节 | 约 3.85 GiB，包含原始格式 |
-| Godot 运行资源 | 3,318,960,209 字节 | 约 3.09 GiB，不含 `.godot` 导入缓存 |
+| 原始资源及配套数据 | 7,016 个文件 / 4,166,296,932 字节 | 约 3.88 GiB，包含原始格式 |
+| Godot 运行资源 | 3,341,219,788 字节 | 约 3.11 GiB，不含 `.godot` 导入缓存 |
 | 原 DDS / 运行 PNG | 582 / 590 | PNG 另含光标等非 DDS 来源图片；Godot 导入的 591 张纹理还包括工程图标 |
 | 图集 / 标准帧 / 别名 | 490 / 158,627 / 136,501 | 帧 ID 必须带图集组，不能假设全局唯一 |
 | 普通动画 / 动画帧引用 | 12,178 / 250,791 | 保留重复、倒序和零帧号 |
@@ -91,9 +100,9 @@
 | TSV 波次文件 | 97 | 同一搜索来源下原加载器优先尝试 TSV |
 | 当前源码索引缺失素材 | 0 | 索引完整不等于所有动画和 EXO 引用均无告警，见附录 B |
 
-【事实】590 张 PNG 的 `宽×高×4` 累计为 **14,733,551,072 字节，约 13.72 GiB**。这只是基础 RGBA 数据估算，不包含 mipmap、驱动开销、双份解码和导入压缩差异，不是实测 GPU 占用。最大图片 `go_enemies_T3-1.png` 为 7732×7728，单张基础 RGBA 约 228 MiB；22 张图片至少一边超过 4096。
+【事实】590 张 PNG 的 `宽×高×4` 累计为 **14,872,770,400 字节，约 13.85 GiB**。这只是基础 RGBA 数据估算，不包含 mipmap、驱动开销、双份解码和导入压缩差异，不是实测 GPU 占用。最大图片 `go_enemies_T3-1.png` 为 7732×7728，单张基础 RGBA 约 228 MiB；23 张图片至少一边超过 4096。
 
-当前 [assets_manifest.json](../reports/assets_manifest.json) 的 SHA-256 为 `dbaf8b6a0e3bbbb9e5708842193b26bac396a248f6c5a3d1f9f1cdde6c39c8f6`。[verification_summary.json](../reports/verification_summary.json) 记录的安装版本为 `2.1.0.2`、提交为 BASE；文件哈希核对无错误，素材格式测试、Godot 导入与资源校验、Compatibility 素材预览已有通过记录。它们证明素材处理链路，不证明游戏玩法、Web 分包或浏览器性能已通过。
+当前 [assets_manifest.json](../reports/assets_manifest.json) 的 SHA-256 为 `51c8c3dfb9a84433a6963d017bf79773a463145db146fbee518e8954fde2d887`。[verification_summary.json](../reports/verification_summary.json) 记录的安装版本为 `2.1.0.2`、提交为 BASE；文件哈希核对无错误，素材格式测试、Godot 导入与资源校验、Compatibility 素材预览已有通过记录。它们证明素材处理链路，不证明游戏玩法、Web 分包或浏览器性能已通过。
 
 【结论】开发库可以全量保存；浏览器发布包必须裁剪依赖、分批下载并控制驻留资源。禁止先把全素材打进一个 PCK，再把运行崩溃当作后期优化。
 
@@ -258,7 +267,7 @@ AppRoot
 {
   "schema_version": 1,
   "id": "level01",
-  "source": {"version": "2.1.0.2", "commit": "e4278f83d913f96a8d35a17f912e0c21945bfdac"},
+  "source": {"version": "2.1.0.2", "commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2"},
   "mode_ids": [1, 2, 3],
   "layout_ref": "levels/level01.layout.json",
   "paths_ref": "levels/level01.paths.json",
@@ -451,6 +460,8 @@ Web 派生图集优先以最大 4096 为切分目标，对超大图按帧重新�
 ### 7.3 实体与队列
 
 【事实】`simulation:do_tick` 先增加 tick_ts，再处理本步开始时的 pending_inserts、pending_removals，然后依次更新系统。插入采用本批长度快照和正向处理；处理期间新加入的实体不会无限递归入场。插入方向以本版本的正向处理代码为准。
+
+【事实】2026-10-25 同步的 BASE 将多处局部辅助函数归并到 `U.fts`、`U.tpos`、`U.ready_to_attack`、`U.enemy_ready_to_magic_attack` 和 `U.queue_damage`，实体插入/移除直接调用 `simulation:queue_insert_entity` / `queue_remove_entity`。部分塔技能改用 `on_power_upgrade` 回调；关卡恢复技能时只对 `level > 0` 的技能调用升级入口。迁移时按当前调用链核对升级、恢复和入场顺序。
 
 【设计】在每个 tick 明确批次边界；成功入场后更新对应分类、索敌及渲染索引，取消插入不留下半个实体。死亡状态、移除、死亡生成、奖励和表现销毁分开处理。生成于本批处理期间的下一批对象按原可见性推进。
 
@@ -914,20 +925,20 @@ M0-03 可与 M0-01/02 按任务依赖独立推进；这是任务图，不要求�
 | 回溯重复副作用或随机语义变化 | 成就变多、声音爆发、随机塔不同 | 区分玩家回溯/调试回放、命令覆盖审计 |
 | 发布混用 PCK/import 缓存 | 只有部分客户端缺资源 | 内容哈希 URL、会话锁版本、原子清单与回滚 |
 
-### 16.5 文档交付时的实际验证范围
+### 16.5 当前调研与验证范围
 
 【已完成调研】核对 Dove `2.1.0.2` 的 SRC、安装目录及 SNAPSHOT 版本标识与 BASE 提交；读取核心系统、模板和数据入口；核对当前报告统计、首关布局与波次、塔列表、PNG 头尺寸、Godot 版本和模板安装情况；通过 Context7/官方文档核对 Web 约束。
 
-【已有素材验证记录】当前转换报告记录全体 DDS 转 PNG 像素一致；汇总报告记录 13,032 个产物文件哈希及 7,016 个来源文件核对无错误、7 项格式测试通过、Godot 导入与资源校验通过、Compatibility 素材预览通过。来源与具体口径见第 1 章和附录 B。这些是已有报告记录，本次文档修订未重新运行全量转换或引擎测试。
+【2026-10-25 素材验证】已执行增量转换，并独立核对 13,032 个产物文件和 7,016 个来源文件的哈希，无错误。转换链路保持全体 DDS/PNG 的像素校验记录，其中本轮两张更新 DDS 已重新逐像素核对。10 项格式与音频转换测试、Godot 导入、资源加载、空音频解码及主菜单 headless 检查通过；Compatibility 原生窗口加载了本轮两个图集的全部 1,638 个标准帧并抽样截图，1280×720 主菜单交互与音乐播放检查通过。素材数量及源定义告警数量保持不变。
 
-【本次文档检查】核对本地链接、目录锚点、JSON 示例、任务/用例引用、BASE 源码路径和关键统计。本次修订仅涉及本指南及素材说明；未启动原游戏，未修改游戏源码、素材或存档。所有新游戏系统、Web 分包探针、浏览器与性能用例均为后续实现及验收任务。
+【本轮范围】更新了相邻 SRC 参考仓库、原始资源快照、Godot 运行资源及本文基准和统计；本机安装目录始终只读，未启动原游戏或修改其存档。原生截图和一次性资源检查产物曾生成于 `output/dove_sync_20261025_after/`，现已清理且不提交 Git；结论汇总见 [assets_sync_summary.json](../reports/assets_sync_summary.json) 与 [verification_summary.json](../reports/verification_summary.json)。已有 Web 导出保留，本轮未重新导出或自动操作浏览器；战斗、完整 Web 分包和浏览器性能验收仍待实施。
 
 <a id="appendix-a"></a>
 ## 附录 A：2.1.0.2 基准与内容核对
 
 ### A.1 基准登记入口
 
-本指南只使用 Dove `2.1.0.2`，冻结提交为 `e4278f83d913f96a8d35a17f912e0c21945bfdac`。实施任务及验收报告均引用该标识。
+本指南只使用 Dove `2.1.0.2`，冻结提交为 `e29ece82939fd73fb69bfc4b469d484a72e4dfd2`。实施任务及验收报告均引用该标识。
 
 | 核对项 | 文件 / 入口 | 预期 |
 | --- | --- | --- |
@@ -985,8 +996,8 @@ M0-03 可与 M0-01/02 按任务依赖独立推进；这是任务图，不要求�
 
 ~~~powershell
 git -C 'D:/projects/KingdomRushDove' rev-parse HEAD
-git -C 'D:/projects/KingdomRushDove' show 'e4278f83d913f96a8d35a17f912e0c21945bfdac:version.lua'
-git -C 'D:/projects/KingdomRushDove' show 'e4278f83d913f96a8d35a17f912e0c21945bfdac:all/game.lua'
+git -C 'D:/projects/KingdomRushDove' show 'e29ece82939fd73fb69bfc4b469d484a72e4dfd2:version.lua'
+git -C 'D:/projects/KingdomRushDove' show 'e29ece82939fd73fb69bfc4b469d484a72e4dfd2:all/game.lua'
 git -C 'D:/projects/KingdomRushDove' status --short
 Get-Content 'source_assets/kingdom_rush_dove/version.lua'
 Get-Content 'source_assets/kingdom_rush_dove/current_version_commit_hash.txt'
@@ -997,7 +1008,7 @@ Get-FileHash 'reports/assets_manifest.json' -Algorithm SHA256
 
 ### C.2 已有素材检查命令
 
-以下在 WEB 根目录运行，对应现有工具。它们是可执行入口说明，本文编制未重复运行全量转换：
+以下在 WEB 根目录运行，对应现有工具。最近一次实际执行范围见 16.5 及校验报告：
 
 ~~~powershell
 python tools/import_dove_assets.py --verify-only
