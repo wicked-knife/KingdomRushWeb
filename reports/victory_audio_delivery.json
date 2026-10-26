@@ -1,0 +1,43 @@
+{
+  "passed": true,
+  "scope": "Victory audio only; controlled settlement states, no campaign reruns.",
+  "source": "Dove 2.1.0.2 / e29ece82, all-desktop/game_gui.lua VictoryView:show",
+  "fix": "GUIQuestCompleted fanfare, stop battle audio, timed star cues and animation, cancel on restart.",
+  "logic": {
+    "checks": 29,
+    "failures": [],
+    "native": false,
+    "passed": true,
+    "scope": "victory audio only"
+  },
+  "native": {
+    "checks": 34,
+    "failures": [],
+    "native": true,
+    "passed": true,
+    "scope": "victory audio only"
+  },
+  "pck_files": 477,
+  "pck_isolated_check": true,
+  "zip_crc_passed": true,
+  "web_exports_this_fix": 1,
+  "browser_tested": false,
+  "bundle": "build\\KingdomRush-KR1-Levels01-03-Web.zip",
+  "bytes": 111867881,
+  "sha256": "8c6aa57ad6cf5c29b37208e5c8fdcc6fa25a43c852208a89c1da78834da3acd7",
+  "validation_inputs": {
+    "scripts/battle/battle_view.gd": "be663cb3252e8d4605b96d76a34195fc6af668e67c00395c298a40b4ca33cf6a",
+    "scripts/battle/battle_ui.gd": "07686aa2f21a8469aa551f32bedc2e4e1845e7104baab1d30088a573654f23a9",
+    "scripts/battle/level01_sim.gd": "fae695ae2497e4c205e2f5798ba362604d7aad3d1d694480b5ca3b0b243f7b95",
+    "tools/prepare_level01.py": "c224591de2b7421e51a61ae5ef201a69f76a62ceee038092bba46400840e18d1",
+    "tests/verify_victory_audio.gd": "741c09544a835cea49f66b1e245cfb7233c885b078ff1c72df02b899b5764725",
+    "tests/verify_web_pack.gd": "1b77e27d3d8d18049c1de32dc805be8c0ba1b842f58bc3bcb607fad0c50fcec6",
+    "assets/kingdom_rush/kr1-desktop/sounds/files/Sound_QuestCompleted.ogg": "d8a64b156e7c9789397457e45fde8327b055b4a657e5b592683adc9b5058b466",
+    "data/level01/sounds.json": "bef71dd6253a9703d5c3e90ca7234cd5ffa173bcb381289c570f21c59b06ea19",
+    "data/level01/manifest.json": "391dd94a8a4718670e4e5d332490c3bdb7b743481a3da3eda0da9821c7b0ed8b",
+    "data/level02/sounds.json": "ce6020e293f102765f6d0fdba01703fb3e6fcc33516bad28fb208590a25ad948",
+    "data/level02/manifest.json": "13790bba2a8f31e01bd24db03e74f49d0da4b35323745e98760a1361a0db3d53",
+    "data/level03/sounds.json": "09f450d474947cd47378602ea20840a508a1090d764d70dd4ed14b304dba5ae0",
+    "data/level03/manifest.json": "a567fe60a2d13e2a9ab9b4ab7eed888669342f1958bf536abea9e518e88799b0"
+  }
+}

@@ -50,6 +50,31 @@ func image(id: String, at: Vector2 = Vector2.ZERO, anchor: Vector2 = Vector2.ZER
 func region(rect: Rect2) -> Rect2:
 	return transform * rect
 
+func image_sector(id: String, at: Vector2, fraction: float) -> void:
+	# Clip the source timer texture to its filling sector, respecting atlas trim.
+	if fraction <= 0: return
+	if fraction >= 1: image(id, at, Vector2(0.5, 0.5)); return
+	var frame: Dictionary = canvas._frame(id)
+	if frame.is_empty(): return
+	var center: Vector2 = frame.original_size / 2
+	var arc := PackedVector2Array([center])
+	var steps := maxi(2, ceili(64 * fraction))
+	for i in range(steps + 1):
+		var angle := -PI / 2 + TAU * fraction * i / steps
+		arc.append(center + Vector2(cos(angle), sin(angle)) * frame.original_size.x / 2)
+	var trim: Vector2 = frame.trim
+	var end: Vector2 = trim + frame.logical_size
+	var crop := PackedVector2Array([trim, Vector2(end.x, trim.y), end, Vector2(trim.x, end.y)])
+	var texture: AtlasTexture = frame.texture
+	for polygon: PackedVector2Array in Geometry2D.intersect_polygons(arc, crop):
+		var vertices := PackedVector2Array()
+		var uvs := PackedVector2Array()
+		for point: Vector2 in polygon:
+			vertices.append(at + (point - center) * float(frame.ref_scale) * image_scale)
+			uvs.append((texture.region.position + (point - trim) / frame.logical_size * texture.region.size) / texture.atlas.get_size())
+		_apply()
+		canvas.draw_polygon(vertices, PackedColorArray([Color(1, 1, 1, opacity)]), uvs, texture.atlas)
+
 func hit(rect: Rect2, action: String, args: Dictionary = {}, enabled: bool = true) -> void:
 	canvas.hits.append({"rect": region(rect), "action": action, "args": args, "enabled": enabled})
 
@@ -142,6 +167,7 @@ func button(id: String, at: Vector2, caption: String, action: String, args: Dict
 	var fs := 19
 	if style == "notice": content = Rect2(at + Vector2(20, 14), Vector2(dimensions.x - 40, 34)); fs = 20
 	if style == "gotcha": content = Rect2(at + Vector2(20, 0), Vector2(dimensions.x - 40, 26)); fs = 20
-	label(caption, content, fs, Color("fffec8"), "center", "middle", 1, 1, "button:" + action, role)
+	if style == "wave": display_label(caption, content, fs, Color("fffec8"), role, "button:" + action, 1)
+	else: label(caption, content, fs, Color("fffec8"), "center", "middle", 1, 1, "button:" + action, role)
 	hit(rect, action, args, enabled)
 	return rect

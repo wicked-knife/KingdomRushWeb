@@ -1,0 +1,12 @@
+{
+	"captures": [
+		"power_feedback_cooldown.png",
+		"power_feedback_refresh.png",
+		"power_feedback_ready.png"
+	],
+	"checks": 40,
+	"failures": [],
+	"native": true,
+	"passed": true,
+	"scope": "skill ready transitions and disabled input only"
+}

@@ -5,6 +5,9 @@ function love.errorhandler(msg)
 end
 local source = assert(os.getenv("DOVE_SOURCE_DIR"))
 local destination = assert(os.getenv("DOVE_EXPORT_PATH"))
+local level_id = tonumber(os.getenv("DOVE_LEVEL_ID") or "1")
+assert(level_id >= 1 and level_id <= 3)
+local level_name = string.format("level%02d", level_id)
 package.path = source .. "/?.lua;" .. source .. "/all/?.lua;" .. source .. "/kr1/?.lua;" .. package.path
 local loaded_inputs = {}
 local function chunk(relative, text)
@@ -26,6 +29,7 @@ package.loaded.scripts=scripts("scripts")
 package.loaded.game_scripts=scripts("game_scripts")
 package.loaded.i18n={cjk=function(_,a) return a end}
 package.loaded["all.rally_utils"]=functions("rally_utils")
+package.loaded.achievements=functions("achievements")
 local U={fts=function(v) return v/30 end}
 U.set_terrain_style=function(e,style)
   e.tower.terrain_style=style
@@ -57,7 +61,10 @@ local function run()
   chunk("kr1/foundamental_towers.lua",foundation:sub(1,assert(foundation:find('tt = RT("tower_neptune_holder")',1,true))-1))
   local enemies=read("kr1/enemies.lua")
   local header=enemies:sub(1,assert(enemies:find("tt = RT(",1,true))-1)
-  for _,id in ipairs({"enemy_goblin","enemy_fat_orc"}) do
+  local enemy_ids={"enemy_goblin","enemy_fat_orc"}
+  if level_id >= 2 then table.insert(enemy_ids,"enemy_wolf_small") end
+  if level_id >= 3 then table.insert(enemy_ids,"enemy_shaman");table.insert(enemy_ids,"enemy_ogre") end
+  for _,id in ipairs(enemy_ids) do
     local start=assert(enemies:find('tt = RT("'..id..'"',1,true))
     local finish=enemies:find("\ntt = ",start+1,true) or #enemies+1
     chunk("kr1/enemies.lua",header..enemies:sub(start,finish-1))
@@ -66,9 +73,11 @@ local function run()
   local start=assert(game:find('tt = RT("re_farmer",',1,true))
   local finish=assert(game:find('tt = RT("re_farmer_well_fed",',start,true))
   chunk("kr1/game_templates.lua","local tt;local image_y;local anchor_y;local scripts=require('game_scripts');local function ady(v) return v-anchor_y*image_y end;"..game:sub(start,finish-1))
-  chunk("kr1/template_groups/level01_templates.lua")
-  chunk("kr1/template_groups/decal_mill.lua")
-  chunk("kr1/template_groups/decal_sheep.lua")
+  if level_id == 3 then
+    local a=assert(game:find('tt = RT("mod_shaman_heal",',1,true))
+    local b=assert(game:find('\ntt = ',a+1,true))
+    chunk("kr1/game_templates.lua","local tt;local scripts=require('game_scripts');"..game:sub(a,b-1))
+  end
   local function clean(v)
     local kind=type(v)
     if kind=="function" then return behavior_names[v] or "local_source_function" end
@@ -80,15 +89,24 @@ local function run()
     if kind~="table" then return v end
     local out={};for k,value in pairs(v) do out[k]=clean(value) end;return out
   end
-  local fields={"template_name","render","health","health_bar","motion","unit","enemy","tower","barrack","attacks","melee","bullet","sound_events","reinforcement","cooldown","duration","fireball_count","max_spread","delayed_play","ui","regen","tween","build_duration","info"}
+  local fields={"template_name","render","health","health_bar","motion","unit","enemy","soldier","tower","barrack","attacks","melee","bullet","sound_events","reinforcement","cooldown","duration","fireball_count","max_spread","delayed_play","ui","regen","tween","build_duration","info","dodge","timed_attacks","modifier","hps","vis"}
   local out={templates={},inputs=loaded_inputs,constants={FPS=FPS,ASPECT=ASPECT,TERRAIN_LAND=TERRAIN_LAND,TERRAIN_NOWALK=TERRAIN_NOWALK,DAMAGE_PHYSICAL=DAMAGE_PHYSICAL,DAMAGE_MAGICAL=DAMAGE_MAGICAL,DAMAGE_EXPLOSION=DAMAGE_EXPLOSION,DAMAGE_TRUE=DAMAGE_TRUE}}
-  for _,id in ipairs({"tower_archer_1","tower_archer_2","tower_barrack_1","tower_barrack_2","tower_mage_1","tower_mage_2","tower_engineer_1","tower_engineer_2","tower_holder_grass","tower_build_archer","tower_build_barrack","tower_build_mage","tower_build_engineer","enemy_goblin","enemy_fat_orc","soldier_militia","soldier_footmen","re_farmer","arrow_1","arrow_2","bolt_1","bolt_2","bomb","bomb_dynamite","power_fireball_control","power_fireball","power_reinforcements_control","fx_fireball_explosion","fx_bolt_hit","fx_explosion_small","fx_unit_explode","decal_bomb_crater","fx_blood_splat","fx_tower_buy_dust","fx_tower_sell_dust","decal_s01_trees","decal_mill_big","decal_mill_small","decal_sheep_big","decal_sheep_small"}) do
+  out.constants.spatial_cell_size=SPATIAL_HASH_CELL_SIZE
+  out.constants.spatial_origin={x=IN_GAME_X_MIN,y=IN_GAME_Y_MIN}
+  for _,pair in ipairs({{"layout","kr1/data/levels/"..level_name.."_data.lua"},{"paths","kr1/data/levels/"..level_name.."_paths.lua"},{"terrain","kr1/data/levels/"..level_name.."_grid.lua"},{"waves","kr1/data/waves/"..level_name.."_waves_campaign.lua"}}) do
+    local env={v=V.v};local f=assert(loadstring(read(pair[2]),"@"..pair[2]));setfenv(f,env);out[pair[1]]=clean(f());loaded_inputs[pair[2]]=true
+  end
+  for _,id in ipairs(out.layout.required_templates) do chunk("kr1/template_groups/"..id..".lua") end
+  local template_ids={"tower_archer_1","tower_archer_2","tower_barrack_1","tower_barrack_2","tower_mage_1","tower_mage_2","tower_engineer_1","tower_engineer_2","tower_holder_grass","tower_build_archer","tower_build_barrack","tower_build_mage","tower_build_engineer","soldier_militia","soldier_footmen","re_farmer","arrow_1","arrow_2","bolt_1","bolt_2","bomb","bomb_dynamite","power_fireball_control","power_fireball","power_reinforcements_control","fx_fireball_explosion","fx_bolt_hit","fx_explosion_small","fx_unit_explode","decal_bomb_crater","fx_blood_splat","fx_tower_buy_dust","fx_tower_sell_dust"}
+  for _,id in ipairs(enemy_ids) do table.insert(template_ids,id) end
+  if level_id == 3 then table.insert(template_ids,"mod_shaman_heal") end
+  for _,entity in ipairs(out.layout.entities_list) do
+    if E.entities[entity.template] and entity.template ~= "decal_background" and entity.template ~= "decal_defend_point" and entity.template ~= "editor_wave_flag" then table.insert(template_ids,entity.template) end
+  end
+  for _,id in ipairs(template_ids) do
     local t=E:get_template(id);local filtered={};for _,key in ipairs(fields) do if t[key]~=nil then filtered[key]=clean(t[key]) end end
     if t.bullet then filtered.behavior=clean(t.main_script.update) end
     out.templates[id]=filtered
-  end
-  for _,pair in ipairs({{"layout","kr1/data/levels/level01_data.lua"},{"paths","kr1/data/levels/level01_paths.lua"},{"terrain","kr1/data/levels/level01_grid.lua"},{"waves","kr1/data/waves/level01_waves_campaign.lua"}}) do
-    local env={v=V.v};local f=assert(loadstring(read(pair[2]),"@"..pair[2]));setfenv(f,env);out[pair[1]]=clean(f());loaded_inputs[pair[2]]=true
   end
   -- UI data only: evaluate the Chinese CJK branch, without loading any UI runtime.
   package.loaded.i18n.cjk=function(_,default,zh) return zh or default end
@@ -96,7 +114,10 @@ local function run()
   for _,key in ipairs({"N_ENEMY","N_TUTORIAL","N_TIP","N_POWER","N_TOWER","N_TOWER_2","N_TOWER_4"}) do _G[key]=key end
   local gui=chunk("kr1-desktop/data/game_gui_data.lua")
   out.ui={notifications={},slides={},balloons={},tower_menu_button_places=clean(gui.tower_menu_button_places),tower_menu_center_x=gui.tower_menu_center_x,tower_menu_center_y=gui.tower_menu_center_y}
-  for _,id in ipairs({"TUTORIAL_1","TUTORIAL_2","TUTORIAL_3","TIP_ARMOR","TIP_RALLY","POWER_REINFORCEMENT","POWER_FIREBALL"}) do
+  local notification_ids={"TUTORIAL_1","TUTORIAL_2","TUTORIAL_3","TIP_ARMOR","TIP_RALLY","POWER_REINFORCEMENT","POWER_FIREBALL"}
+  if level_id >= 2 then table.insert(notification_ids,"TOWER_LEVEL2");table.insert(notification_ids,"TIP_STRATEGY");table.insert(notification_ids,"enemy_wolf_small") end
+  if level_id == 3 then table.insert(notification_ids,"TIP_ARMOR_MAGIC");table.insert(notification_ids,"enemy_shaman");table.insert(notification_ids,"enemy_ogre") end
+  for _,id in ipairs(notification_ids) do
     out.ui.notifications[id]=clean(gui.notifications[id]);out.ui.slides[id]=clean(gui.notification_slides[id])
   end
   out.ui.tutorial_balloons={}
@@ -112,6 +133,10 @@ local function run()
     elseif type(v)=="table" then for _,value in pairs(v) do collect(value) end end
   end
   collect(out.ui)
+  for _,id in ipairs(enemy_ids) do
+    local prefix=string.upper(id)
+    for _,suffix in ipairs({"_NAME","_DESCRIPTION","_EXTRA"}) do out.ui.strings[prefix..suffix]=strings[prefix..suffix] or "" end
+  end
   out.ui.unit_names={}
   for id,t in pairs(out.templates) do
     if t.info and t.info.random_name_format then

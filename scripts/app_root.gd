@@ -179,11 +179,17 @@ func _release_map() -> void:
 
 func _start_level(level_id: int, mode: int, difficulty: int) -> void:
 	if battle != null or transitioning or not campaign.is_playable(level_id, mode, difficulty): return
+	var definition := preload("res://scripts/services/campaign_levels.gd").load_definition(level_id, mode, difficulty)
+	if definition.is_empty():
+		if campaign_map != null: campaign_map.show_message(preload("res://scripts/services/campaign_levels.gd").last_error)
+		return
+	definition["seen_notifications"] = campaign.seen_notifications.duplicate()
 	_release_map()
 	battle = Battle.new()
 	add_child(battle)
-	battle.initialize(loader, audio)
+	battle.initialize(loader, audio, definition)
 	battle.finished.connect(campaign.record_result)
+	battle.notification_seen.connect(campaign.mark_notification_seen)
 	battle.returned_to_map.connect(_return_to_map)
 
 
@@ -208,7 +214,7 @@ func _return_to_menu() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if audio != null and (event is InputEventMouseButton or event is InputEventKey) and event.is_pressed():
+	if audio != null and (event is InputEventMouseButton or event is InputEventKey or event is InputEventScreenTouch or event is InputEventJoypadButton) and event.is_pressed():
 		audio.unlock()
 
 

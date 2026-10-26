@@ -1,0 +1,13 @@
+{
+	"captures": [
+		"wave_reward_start.png",
+		"wave_reward_floating.png",
+		"wave_reward_gold_fading.png",
+		"wave_reward_finished.png"
+	],
+	"checks": 27,
+	"failures": [],
+	"native": true,
+	"passed": true,
+	"scope": "early-wave rewards only"
+}

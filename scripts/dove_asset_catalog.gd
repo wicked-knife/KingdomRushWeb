@@ -12,9 +12,11 @@ var _textures: Dictionary = {}
 var _animations: Dictionary = {}
 var _exoskeletons: Dictionary = {}
 var _static: Dictionary = {}
+var _local_root := ROOT
 
 
 func _init(catalog_path: String = CATALOG_PATH) -> void:
+	_local_root = catalog_path.get_base_dir() + "/"
 	_catalog = _read_json(catalog_path)
 	if not _catalog.is_empty() and int(_catalog.get("schema_version", 0)) != 1:
 		push_error("Unsupported Dove asset catalog schema")
@@ -65,7 +67,7 @@ func get_frame(group: String, frame_name: String) -> Dictionary:
 
 
 func get_texture(path: String) -> Texture2D:
-	if not (path.begins_with(ROOT) or path.begins_with("res://data/level01/") or path.begins_with("res://data/map_kr1/") or path.begins_with("res://data/heroes/")):
+	if not (path.begins_with(ROOT) or path.begins_with(_local_root)):
 		push_error("Texture path is outside the Dove asset directory: " + path)
 		return null
 	if not _textures.has(path):

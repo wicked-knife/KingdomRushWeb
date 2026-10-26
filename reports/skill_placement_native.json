@@ -1,0 +1,12 @@
+{
+	"captures": [
+		"skill_placement_invalid_cross.png",
+		"skill_placement_placement_mode.png"
+	],
+	"checks": 185,
+	"failures": [],
+	"native": true,
+	"passed": true,
+	"scope": "skill placement, rejected-cast side effects, cursor feedback and adjacent rally path filter",
+	"source_samples": 820
+}

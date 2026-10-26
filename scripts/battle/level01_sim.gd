@@ -7,6 +7,13 @@ const TYPES := ["archer", "barrack", "mage", "engineer"]
 const UPGRADES := {"tower_archer_1": "tower_archer_2", "tower_barrack_1": "tower_barrack_2", "tower_mage_1": "tower_mage_2", "tower_engineer_1": "tower_engineer_2"}
 const SpriteAnimation = preload("res://scripts/battle/dove_animation.gd")
 const Projectile = preload("res://scripts/battle/dove_projectile.gd")
+# Frozen Dove path_db:path_width and game_gui POWER_1 / POWER_2 rules.
+const PATH_WIDTH := 42.0
+const FIRE_PATH_WIDTH_FACTOR := 1.4285714285714286
+const RALLY_TERRAINS := 1 | 2048 # LAND | ICE; cell_is_only excludes all other bits.
+const FIRE_EXCLUDED_TERRAINS := 4 | 1024 # CLIFF | FAERIE.
+const NF_RALLY := 1
+const NF_POWER_1 := 128
 var data: Dictionary
 var templates: Dictionary
 var animations: Dictionary
@@ -37,12 +44,17 @@ var kills := 0
 var leaks := 0
 var developer_enabled := false
 var developer_used := false
+var seen_enemies := {}
+var alerts: Array[String] = []
+var enemy_cells := {}
+var cell_for_enemy := {}
+var spatial_tick := -1
 
 func _init(definition: Dictionary = {}, seed_value: int = 1, allow_developer: bool = false) -> void:
 	developer_enabled = allow_developer and OS.is_debug_build()
 	data = definition.duplicate(true) if not definition.is_empty() else JSON.parse_string(FileAccess.get_file_as_string("res://data/level01/definition.json"))
 	templates = data.templates
-	animations = JSON.parse_string(FileAccess.get_file_as_string("res://data/level01/animations.json")).animations
+	animations = JSON.parse_string(FileAccess.get_file_as_string(data.get("level", {}).get("root", "res://data/level01/") + "animations.json")).animations
 	reset(seed_value)
 
 func reset(seed_value: int = 1) -> void:
@@ -52,17 +64,27 @@ func reset(seed_value: int = 1) -> void:
 	paused = false; speed = 1; accumulator = 0; next_id = 1; kills = 0; leaks = 0
 	developer_used = false
 	towers.clear(); enemies.clear(); soldiers.clear(); projectiles.clear(); effects.clear(); decals.clear(); spawn_queue.clear(); spawn_log.clear()
-	notices = ["TUTORIAL_1", "TUTORIAL_2", "TUTORIAL_3"]
+	var first: bool = int(data.get("level", {}).get("id", 1)) == 1
+	notices = ["TUTORIAL_1", "TUTORIAL_2", "TUTORIAL_3"] if first else []
+	# Dove enables the non-tutorial powers from the first next-wave-sent event,
+	# not while the battlefield is still in its pre-wave setup state.
 	unlocked = {"reinforcements": false, "fire": false}
+	seen_enemies.clear(); alerts.clear()
+	for id: String in data.get("seen_notifications", []): seen_enemies[id] = true
+	enemy_cells.clear(); cell_for_enemy.clear(); spatial_tick = -1
 	cooldowns = {"reinforcements": 0, "fire": 0}
+	if not first:
+		for entry: Dictionary in data.waves.groups[0].waves:
+			if entry.has("notification") and data.ui.notifications.has(entry.notification): notices.append(entry.notification)
 	for index in range(data.layout.entities_list.size()):
 		var e: Dictionary = data.layout.entities_list[index]
 		if str(e.template).begins_with("tower_holder"):
 			towers.append(_holder({"id": str(e["tower.holder_id"]), "pos": vec(e.pos), "rally": vec(e["tower.default_rally_pos"]), "holder": e.template}))
-		elif templates.has(e.template) and templates[e.template].has("delayed_play"):
-			var d: Dictionary = templates[e.template].delayed_play
+		elif templates.has(e.template) and (templates[e.template].has("delayed_play") or templates[e.template].template_name == "decal_fish"):
+			var fish: bool = templates[e.template].template_name == "decal_fish"
+			var d: Dictionary = templates[e.template].get("delayed_play", {"min_delay": 5, "max_delay": 10})
 			decals.append({"id": index, "template": e.template, "pos": vec(e.pos), "clicks": 0, "clicked_at": -1000, "removed": false,
-				"state": d.idle_animation, "state_at": 0, "next_play": frames(rng.randf_range(d.min_delay, d.max_delay)),
+				"state": d.get("idle_animation", ""), "hidden": not d.has("idle_animation"), "fish": fish, "state_at": 0, "next_play": frames(rng.randf_range(d.min_delay, d.max_delay)),
 				"flip": rng.randf() < float(d.get("flip_chance", 0)), "alternate": rng.randf() < float(d.get("required_clicks_fx_alt_chance", 0))})
 
 static func vec(v: Dictionary) -> Vector2:
@@ -174,16 +196,18 @@ func command(kind: String, args: Dictionary = {}) -> bool:
 			var tower := tower_by_id(str(args.get("id", "")))
 			var point: Vector2 = args.get("pos", Vector2(-999, -999))
 			if tower.is_empty() or tower.type != "barrack" or tower.ready > tick: return false
-			if distance(tower.pos, point) > tower_template(tower).barrack.rally_range or not valid_ground(point): return false
+			point = resolve_rally_point(tower, point)
+			if not point.is_finite(): return false
 			tower.rally = point
 			for s: Dictionary in soldiers:
 				if s.home == tower.id and s.hp > 0:
-					_unblock(s); s.dest = _formation(point, s.slot, tower); s.rallying = true; s.pending = {}
+					_unblock(s); s.dest = _formation(point, s.slot, tower); s.rally_center = point; s.rallying = true; s.pending = {}
 			event.emit("sound", {"id": "BarrackTaunt"}); return true
 		"decal_click":
 			for decal: Dictionary in decals:
 				if decal.id != int(args.get("id", -1)) or decal.removed: continue
-				var d: Dictionary = templates[decal.template].delayed_play
+				var d: Dictionary = templates[decal.template].get("delayed_play", {})
+				if not d.has("required_clicks"): return false
 				decal.clicks += 1; decal.clicked_at = tick
 				if decal.clicks >= int(d.required_clicks):
 					decal.removed = true
@@ -198,7 +222,7 @@ func command(kind: String, args: Dictionary = {}) -> bool:
 		"cast":
 			var power: String = str(args.get("power", ""))
 			var point: Vector2 = args.get("pos", Vector2(-999, -999))
-			if not unlocked.get(power, false) or cooldowns.get(power, 0) > 0 or not valid_ground(point): return false
+			if wave == 0 or not unlocked.get(power, false) or cooldowns.get(power, 0) > 0 or not valid_power_point(power, point): return false
 			if power == "reinforcements":
 				cooldowns[power] = frames(templates.power_reinforcements_control.cooldown)
 				for slot in range(2):
@@ -236,14 +260,65 @@ func _upgrade_garrison(old: Dictionary, upgraded: Dictionary) -> void:
 		else: _unblock(s)
 		soldiers.erase(s)
 
-func valid_ground(point: Vector2) -> bool:
-	if point.x < 0 or point.x > 1024 or point.y < 40 or point.y > 735: return false
+func _terrain_flags(point: Vector2) -> int:
 	var terrain: Dictionary = data.terrain
-	var x := ceili((point.x - float(terrain.ox)) / 16.0) - 1
-	var y := ceili((point.y - float(terrain.oy)) / 16.0) - 1
-	if x < 0 or x >= terrain.grid.size() or y < 0 or y >= terrain.grid[x].size(): return false
-	var flags := int(terrain.grid[x][y])
-	return (flags & 1) != 0 and (flags & 256) == 0
+	# grid_db:get_coords clamps ceil-based, one-indexed cells to the grid edges.
+	var x := clampi(ceili((point.x - float(terrain.ox)) / 16.0) - 1, 0, terrain.grid.size() - 1)
+	var y := clampi(ceili((point.y - float(terrain.oy)) / 16.0) - 1, 0, terrain.grid[x].size() - 1)
+	return int(terrain.grid[x][y])
+
+func _valid_node_nearby(point: Vector2, width_factor: float, flags: int) -> bool:
+	var radius_squared := pow(PATH_WIDTH * width_factor, 2)
+	var active: Array = data.paths.get("active", [])
+	for pi in range(data.paths.paths.size()):
+		if pi < active.size() and active[pi] == false: continue
+		# Dove searches the main subpath's nodes, using Euclidean distance (not
+		# the combat ellipse or a distance to the interpolated road segments).
+		var nodes: Array = data.paths.paths[pi][0]
+		for ni in range(nodes.size()):
+			if point.distance_squared_to(vec(nodes[ni])) >= radius_squared: continue
+			var valid := true
+			for invalid in data.layout.get("invalid_path_ranges", []):
+				if int(invalid.path_id) == pi + 1 and ni + 1 >= int(invalid.get("from", 1)) and ni + 1 <= int(invalid.get("to", nodes.size())) and (flags & ~int(invalid.get("flags", 0xffffffff))) == 0:
+					valid = false; break
+			if valid: return true
+	return false
+
+func valid_ground(point: Vector2, terrains: int = RALLY_TERRAINS) -> bool:
+	return point.is_finite() and (_terrain_flags(point) & ~terrains) == 0 and _valid_node_nearby(point, 1.0, NF_RALLY)
+
+func _inside_rally_range(center: Vector2, point: Vector2, radius: float) -> bool:
+	# U.is_inside_ellipse uses the range-offset center and this source Y factor.
+	var delta := point - center
+	var y: float = delta.y * 1.42857142857
+	return delta.x * delta.x + y * y <= radius * radius
+
+func _valid_rally_point(barrack: Dictionary, center: Vector2, point: Vector2) -> bool:
+	return _inside_rally_range(center, point, float(barrack.rally_range)) and (barrack.get("rally_anywhere", false) or valid_ground(point, int(barrack.rally_terrains)))
+
+func resolve_rally_point(tower: Dictionary, point: Vector2) -> Vector2:
+	if not point.is_finite() or tower.is_empty() or tower.type != "barrack": return Vector2.INF
+	var template := tower_template(tower)
+	var barrack: Dictionary = template.barrack
+	var center: Vector2 = tower.pos + vec(template.tower.range_offset)
+	if _valid_rally_point(barrack, center, point): return point
+	var direction := point - center
+	# PickView:on_down first caps the Euclidean direction at rally_range, then
+	# scans 99% down to 1%. Each candidate must pass the ellipse AND road filter.
+	if not _inside_rally_range(center, point, float(barrack.rally_range)): direction = direction.normalized() * float(barrack.rally_range)
+	for i in range(99, 0, -1):
+		var candidate := center + direction * (i / 100.0)
+		if _valid_rally_point(barrack, center, candidate): return candidate
+	return Vector2.INF
+
+func valid_power_point(power: String, point: Vector2) -> bool:
+	if not point.is_finite(): return false
+	if power == "reinforcements": return valid_ground(point)
+	if power != "fire": return false
+	var terrain := _terrain_flags(point)
+	# The first three levels have no fn_can_power override. Fire additionally
+	# accepts water, and uses a wider path radius than troop deployment.
+	return (terrain & FIRE_EXCLUDED_TERRAINS) == 0 and ((terrain & 2) != 0 or _valid_node_nearby(point, FIRE_PATH_WIDTH_FACTOR, NF_POWER_1))
 
 func can_send_wave() -> bool:
 	return wave < data.waves.groups.size() and spawn_queue.is_empty() and (wave == 0 or next_wave_tick >= 0)
@@ -262,9 +337,16 @@ func _start_wave(manual: bool) -> void:
 		var remaining := maxi(0, roundi(float(next_wave_tick - tick) / 30.0))
 		var reward := ceili(remaining * float(data.rules.early_wave_reward_per_second))
 		gold += reward
-		for power: String in cooldowns: cooldowns[power] = maxi(0, cooldowns[power] - remaining * 30)
-		event.emit("reward", {"gold": reward})
+		var cooling_powers: Array[String] = []
+		for power: String in cooldowns:
+			# Capture the pre-bonus state: a power that becomes ready still gets its FX.
+			if unlocked.get(power, false) and cooldowns[power] > 0: cooling_powers.append(power)
+			cooldowns[power] = maxi(0, cooldowns[power] - remaining * 30)
+		event.emit("reward", {"gold": reward, "seconds": remaining, "powers": cooling_powers})
 	wave += 1; next_wave_tick = -1
+	if wave == 1 and int(data.get("level", {}).get("id", 1)) != 1:
+		unlocked.reinforcements = true
+		unlocked.fire = true
 	var group: Dictionary = data.waves.groups[wave - 1]
 	var end_tick := tick
 	for w: Dictionary in group.waves:
@@ -273,12 +355,15 @@ func _start_wave(manual: bool) -> void:
 			var spawn: Dictionary = w.spawns[i]
 			for j in range(int(spawn.max)):
 				spawn_tick += int(spawn.interval)
-				spawn_queue.append({"tick": spawn_tick, "type": spawn.creep, "subpath": int(spawn.path) - 1 if int(spawn.fixed_sub_path) == 1 else -1})
+				var type: String = spawn.creep
+				if spawn.get("max_same", 0) > 0 and spawn.has("creep_aux") and (j / int(spawn.max_same)) % 2 == 1: type = spawn.creep_aux
+				spawn_queue.append({"tick": spawn_tick, "type": type, "path": int(w.path_index) - 1, "subpath": int(spawn.path) - 1 if int(spawn.fixed_sub_path) == 1 else -1, "order": spawn_queue.size()})
+			if int(spawn.max) == 0: spawn_tick += int(spawn.interval)
 			if i + 1 < w.spawns.size(): spawn_tick += int(spawn.interval_next)
 		end_tick = maxi(end_tick, spawn_tick)
-		if w.has("notification"): notices.append(w.notification)
+		if w.has("notification") and data.ui.notifications.has(w.notification) and (wave > 1 or int(data.get("level", {}).get("id", 1)) == 1): notices.append(w.notification)
 		if w.has("notification_second_level"): event.emit("tip", {"id": w.notification_second_level})
-	spawn_queue.sort_custom(func(a, b): return a.tick < b.tick)
+	spawn_queue.sort_custom(func(a, b): return a.tick < b.tick if a.tick != b.tick else a.order < b.order)
 	wave_end_tick = end_tick
 	event.emit("wave", {"number": wave})
 	event.emit("sound", {"id": "GUINextWaveIncoming"})
@@ -289,13 +374,14 @@ func step() -> void:
 	for power: String in cooldowns: cooldowns[power] = maxi(0, cooldowns[power] - 1)
 	while not spawn_queue.is_empty() and spawn_queue[0].tick <= tick:
 		var spawn: Dictionary = spawn_queue.pop_front()
-		_spawn_enemy(spawn.type, spawn.subpath)
-	if wave > 0 and spawn_queue.is_empty() and next_wave_tick < 0 and wave < 7:
+		_spawn_enemy(spawn.type, spawn.subpath, spawn.path)
+	if wave > 0 and spawn_queue.is_empty() and next_wave_tick < 0 and wave < data.waves.groups.size():
 		next_wave_tick = wave_end_tick + int(data.waves.groups[wave].interval)
 		event.emit("sound", {"id": "GUINextWaveReady"})
 	if next_wave_tick >= 0 and tick >= next_wave_tick: _start_wave(false)
 	if not notices.is_empty(): return
 	_decals_step()
+	_sync_enemy_cells()
 	for tower: Dictionary in towers: _tower_step(tower)
 	for soldier: Dictionary in soldiers: _soldier_step(soldier)
 	for enemy: Dictionary in enemies: _enemy_step(enemy)
@@ -305,12 +391,12 @@ func step() -> void:
 	soldiers = soldiers.filter(func(s): return s.hp > 0 or tick - s.dead_at < 60)
 	effects = effects.filter(func(e): return tick - e.at < e.duration)
 	if lives <= 0: _finish("defeat")
-	elif wave == 7 and spawn_queue.is_empty() and enemies.all(func(e): return e.hp <= 0): _finish("victory")
+	elif wave == data.waves.groups.size() and spawn_queue.is_empty() and enemies.all(func(e): return e.hp <= 0): _finish("victory")
 
 func _finish(value: String) -> void:
 	if result != "": return
 	result = value; event.emit("finished", {"result": result})
-	event.emit("sound", {"id": "GUIWinStars" if result == "victory" else "GUILooseLife"})
+	if result == "defeat": event.emit("sound", {"id": "GUILooseLife"})
 
 func _skip_wave() -> void:
 	spawn_queue.clear()
@@ -323,13 +409,15 @@ func _skip_wave() -> void:
 	if wave == data.waves.groups.size(): _finish("victory")
 	else: _start_wave(false)
 
-func _spawn_enemy(type: String, subpath: int = -1) -> Dictionary:
+func _spawn_enemy(type: String, subpath: int = -1, path: int = 0) -> Dictionary:
 	var t: Dictionary = templates[type]
-	if subpath < 0: subpath = rng.randi_range(0, 2)
+	if subpath < 0: subpath = rng.randi_range(0, data.paths.paths[path].size() - 1)
 	var hp := floori(float(t.health.hp_max) * float(data.rules.enemy_hp_factor))
-	var e := {"id": next_id, "template": type, "hp": float(hp), "max_hp": float(hp), "pos": vec(data.paths.paths[0][subpath][0]), "subpath": subpath, "node": 0, "progress": 0.0, "blocker": 0, "blockers": [], "attack_at": tick, "pending": {}, "state": "walkingDown", "state_at": tick, "dead_at": -1, "flip": false, "last_dir": Vector2.ZERO}
+	var e := {"id": next_id, "template": type, "hp": float(hp), "max_hp": float(hp), "pos": vec(data.paths.paths[path][subpath][0]), "path": path, "subpath": subpath, "node": 0, "progress": 0.0, "blocker": 0, "blockers": [], "attack_at": tick, "pending": {}, "state": "walkingDown", "state_at": tick, "dead_at": -1, "flip": false, "last_dir": Vector2.ZERO, "heal_at": tick, "casting": {}}
 	next_id += 1; enemies.append(e)
-	spawn_log.append({"tick": tick, "type": type, "subpath": subpath, "wave": wave})
+	spawn_log.append({"tick": tick, "type": type, "path": path, "subpath": subpath, "wave": wave})
+	if type in ["enemy_wolf_small", "enemy_shaman", "enemy_ogre"] and not seen_enemies.has(type):
+		seen_enemies[type] = true; alerts.append(type)
 	return e
 
 func _tower_step(tower: Dictionary) -> void:
@@ -387,11 +475,12 @@ func _tower_step(tower: Dictionary) -> void:
 		tower.layers[sid] = {"state": state, "at": tick, "loop": false, "flip": tower.type == "archer" and target.pos.x < tower.pos.x + float(offset.x), "idle": idle if sprite.has("angles") else "idle"}
 
 func _target(point: Vector2, radius: float, unblocked: bool = false) -> Dictionary:
-	var best := {}; var progress := -1.0
+	var best := {}; var remaining := INF
 	for e: Dictionary in enemies:
 		if e.hp <= 0 or (unblocked and e.blockers.size() >= 3): continue
-		if distance(point, e.pos) <= radius and e.progress > progress:
-			best = e; progress = e.progress
+		var nodes_left: float = data.paths.paths[e.get("path", 0)][e.subpath].size() - e.progress
+		if distance(point, e.pos) <= radius and nodes_left < remaining:
+			best = e; remaining = nodes_left
 	return best
 
 func _barrack_step(tower: Dictionary, template: Dictionary) -> void:
@@ -425,14 +514,14 @@ func _barrack_step(tower: Dictionary, template: Dictionary) -> void:
 func _decals_step() -> void:
 	for decal: Dictionary in decals:
 		if decal.removed: continue
-		var d: Dictionary = templates[decal.template].delayed_play
-		if decal.state == d.play_animation:
+		var d: Dictionary = templates[decal.template].get("delayed_play", {"min_delay": 5, "max_delay": 10, "play_animation": "jump"})
+		if not decal.hidden and decal.state == d.play_animation:
 			var sprite: Dictionary = templates[decal.template].render.sprites[0]
 			if tick - decal.state_at >= SpriteAnimation.duration(animations, SpriteAnimation.key(sprite, d.play_animation)):
-				decal.state = d.idle_animation; decal.state_at = tick
+				decal.state = d.get("idle_animation", ""); decal.hidden = not d.has("idle_animation"); decal.state_at = tick
 				decal.next_play = tick + frames(rng.randf_range(d.min_delay, d.max_delay))
 		elif tick >= decal.next_play:
-			decal.state = d.play_animation; decal.state_at = tick
+			decal.state = d.play_animation; decal.state_at = tick; decal.hidden = false
 			if rng.randf() < float(d.get("flip_chance", 0)): decal.flip = not decal.flip
 
 func add_effect(template_name: String, point: Vector2, extra: Dictionary = {}) -> void:
@@ -448,7 +537,7 @@ func add_effect(template_name: String, point: Vector2, extra: Dictionary = {}) -
 
 func _predict(e: Dictionary, seconds: float) -> Vector2:
 	if e.blocker != 0: return e.pos
-	var points: Array = data.paths.paths[0][e.subpath]
+	var points: Array = data.paths.paths[e.get("path", 0)][e.subpath]
 	var remaining := seconds * float(templates[e.template].motion.max_speed) * float(data.rules.enemy_speed_factor)
 	var point: Vector2 = e.pos
 	for node in range(int(e.node) + 1, points.size()):
@@ -460,6 +549,7 @@ func _predict(e: Dictionary, seconds: float) -> Vector2:
 func _soldier(type: String, home: String, slot: int, point: Vector2, rally: Vector2) -> Dictionary:
 	var t: Dictionary = templates[type]
 	var s := {"id": next_id, "template": type, "home": home, "slot": slot, "pos": point, "dest": _formation(rally, slot, tower_by_id(home)), "hp": float(t.health.hp_max), "max_hp": float(t.health.hp_max), "target": 0, "attack_at": tick, "pending": {}, "state": "idle", "state_at": tick, "dead_at": -1, "last_hit": tick, "regen_at": tick, "born_at": tick, "expires": -1, "flip": false, "variant": rng.randi_range(1, 3)}
+	s.rally_center = rally
 	s.attack_started_at = 0
 	s.attack_at = maxi(tick, _melee_period(t))
 	s.rallying = true
@@ -473,6 +563,41 @@ func _formation(point: Vector2, slot: int, tower: Dictionary = {}) -> Vector2:
 	var radius: float = tower_template(tower).barrack.rally_radius if not tower.is_empty() and tower.type == "barrack" else 25.0
 	return point + Vector2(cos(angle), sin(angle) * 0.7) * radius
 
+func _soldier_target(s: Dictionary, only_free: bool = false) -> Dictionary:
+	# Dove searches around nav_rally.center, not the soldier's formation slot.
+	var target := {}
+	var remaining := INF
+	for e: Dictionary in enemies:
+		if e.hp <= 0 or (only_free and not e.blockers.is_empty()): continue
+		if templates[e.template].enemy.has("max_blockers") and not e.blockers.is_empty(): continue
+		var nodes_left: float = data.paths.paths[e.path][e.subpath].size() - e.progress
+		if distance(s.rally_center, e.pos) <= float(templates[s.template].melee.range) and nodes_left < remaining:
+			target = e; remaining = nodes_left
+	return target
+
+func melee_slot(s: Dictionary, e: Dictionary) -> Vector2:
+	# U.melee_slot_position: ranks repeat in threes and use the enemy's path heading.
+	var rank: int = e.blockers.find(s.id) % 3
+	var offset := Vector2.ZERO if rank == 0 else Vector2(-3, -6 if rank == 1 else 6)
+	var forward: Vector2 = e.last_dir
+	if forward == Vector2.ZERO:
+		var route: Array = data.paths.paths[e.path][e.subpath]
+		forward = vec(route[mini(e.node + 1, route.size() - 1)]) - e.pos
+	var slot := vec(templates[e.template].enemy.melee_slot) + offset + vec(templates[s.template].soldier.melee_slot_offset)
+	slot.x *= 1 if forward.x > 0 else -1
+	return e.pos + slot
+
+func _soldier_move(s: Dictionary, point: Vector2, speed_value: float) -> bool:
+	if not s.pos.is_equal_approx(point):
+		s.flip = point.x < s.pos.x
+		s.pos = s.pos.move_toward(point, speed_value * STEP)
+	if s.pos.is_equal_approx(point):
+		s.pos = point
+		if s.state == "running": _state(s, "idle")
+		return false
+	_state(s, "running")
+	return true
+
 func _soldier_step(s: Dictionary) -> void:
 	if s.hp <= 0: return
 	if s.expires >= 0 and tick >= s.expires: _retire(s); return
@@ -481,30 +606,23 @@ func _soldier_step(s: Dictionary) -> void:
 		_unblock(s); s.rally_pending = false; s.rallying = true
 	# y_soldier_new_rally moves directly and suppresses interception until arrival.
 	if s.rallying:
-		s.flip = s.dest.x < s.pos.x
-		s.pos = s.pos.move_toward(s.dest, t.motion.max_speed * STEP)
-		_state(s, "running")
-		if s.pos.is_equal_approx(s.dest): s.rallying = false; _state(s, "idle")
+		if not _soldier_move(s, s.dest, t.motion.max_speed): s.rallying = false; _state(s, "idle")
 		return
 	var target := unit_by_id(s.target)
 	if target.is_empty() or target.hp <= 0 or not s.id in target.blockers:
-		s.target = 0; s.pending = {}
-		target = _target(s.dest, float(t.melee.range), true)
-		if not target.is_empty() and distance(s.pos, target.pos) < float(t.melee.range):
-			s.target = target.id; target.blockers.append(s.id); target.blocker = target.blockers[0]
+		_unblock(s)
+		target = _soldier_target(s)
+	elif target.blockers.find(s.id) > 0 and s.pending.is_empty():
+		var alternate := _soldier_target(s, true)
+		if not alternate.is_empty(): _unblock(s); target = alternate
+	if not target.is_empty() and s.target == 0:
+		s.target = target.id; target.blockers.append(s.id); target.blocker = target.blockers[0]
 	if not target.is_empty() and s.target != 0:
-		var delta: Vector2 = target.pos - s.pos
-		s.flip = delta.x < 0
-		if distance(s.pos, target.pos) > 20:
-			s.pos = s.pos.move_toward(target.pos + Vector2(-16 if delta.x > 0 else 16, 0), t.motion.max_speed * STEP)
-			_state(s, "running")
-		else:
-			_melee(s, target, t)
+		if _soldier_move(s, melee_slot(s, target), t.motion.max_speed): return
+		s.flip = target.pos.x < s.pos.x
+		_melee(s, target, t)
 	else:
-		if s.pos.distance_to(s.dest) > 2:
-			s.flip = s.dest.x < s.pos.x
-			s.pos = s.pos.move_toward(s.dest, t.motion.max_speed * STEP); _state(s, "running")
-		else:
+		if not _soldier_move(s, s.dest, t.motion.max_speed):
 			_state(s, "idle")
 			if tick - s.last_hit >= frames(float(t.regen.last_hit_standoff_time)) and tick >= s.regen_at:
 				s.hp = minf(s.max_hp, s.hp + s.max_hp * float(data.rules.soldier_regen_factor)); s.regen_at = tick + frames(t.regen.cooldown)
@@ -512,15 +630,16 @@ func _soldier_step(s: Dictionary) -> void:
 func _enemy_step(e: Dictionary) -> void:
 	if e.hp <= 0: return
 	var t: Dictionary = templates[e.template]
+	if t.has("timed_attacks") and _healer_step(e, t): return
 	if e.blocker != 0:
 		var s := unit_by_id(e.blocker)
 		if s.is_empty() or s.hp <= 0 or s.target != e.id: e.blocker = 0; e.pending = {}
 		else:
 			e.flip = s.pos.x < e.pos.x
-			if distance(e.pos, s.pos) <= 24: _melee(e, s, t)
+			if s.pos.is_equal_approx(melee_slot(s, e)): _melee(e, s, t)
 			else: _state(e, "idle")
 			return
-	var points: Array = data.paths.paths[0][e.subpath]
+	var points: Array = data.paths.paths[e.get("path", 0)][e.subpath]
 	var remaining := float(t.motion.max_speed) * float(data.rules.enemy_speed_factor) * STEP
 	var previous: Vector2 = e.pos
 	while remaining > 0 and e.node + 1 < points.size():
@@ -543,16 +662,88 @@ func _enemy_step(e: Dictionary) -> void:
 
 func _melee(attacker: Dictionary, target: Dictionary, template: Dictionary) -> void:
 	var attack: Dictionary = template.melee.attacks[0]
+	# Arriving during the attack cooldown must stop the walk animation immediately.
+	if attacker.state == "running": _state(attacker, "idle")
+	if not attacker.pending.is_empty() and attacker.pending.has("dodge_at") and tick >= attacker.pending.dodge_at and not attacker.pending.has("dodged"):
+		var dodge: Dictionary = templates[target.template].get("dodge", {})
+		attacker.pending.dodged = rng.randf() <= float(dodge.get("chance", 0))
 	if not attacker.pending.is_empty() and tick >= attacker.pending.at:
-		if target.hp > 0: damage(target, float(rng.randi_range(int(attack.damage_min), int(attack.damage_max))), int(attack.damage_type))
+		if target.hp > 0 and not attacker.pending.get("dodged", false): damage(target, float(rng.randi_range(int(attack.damage_min), int(attack.damage_max))), int(attack.damage_type))
 		attacker.pending = {}
 	if tick >= attacker.attack_at:
 		attacker.attack_started_at = tick
 		attacker.attack_at = tick + _melee_period(template)
 		attacker.pending = {"at": tick + frames(attack.hit_time)}
+		if templates[target.template].has("dodge") and attack.has("dodge_time"):
+			attacker.pending.dodge_at = tick + frames(attack.dodge_time)
 		_state(attacker, "attack", true)
 		if attack.has("sound"): event.emit("sound", {"id": attack.sound})
 	elif tick - attacker.state_at > frames(attack.cooldown) - 1: _state(attacker, "idle")
+
+func _healing_targets(source: Dictionary, attack: Dictionary) -> Array:
+	_sync_enemy_cells()
+	var targets: Array = []
+	var cells: Array = enemy_cells.keys()
+	cells.sort_custom(func(a, b): return a.y < b.y if a.y != b.y else a.x < b.x)
+	# seek.filter_on visits source spatial cells in row/column order; it does not
+	# prioritize nearest or most wounded enemies. Preserve swap-removal ordering.
+	for cell: Vector2i in cells:
+		for id: int in enemy_cells[cell]:
+			var e := unit_by_id(id)
+			var flags: Dictionary = templates[e.template].get("vis", {})
+			if e.hp > 0 and e.hp < e.max_hp and distance(source.pos, e.pos) <= float(attack.max_range) and (int(flags.get("bans", 0)) & int(attack.vis_flags)) == 0 and (int(flags.get("flags", 0)) & int(attack.vis_bans)) == 0:
+				targets.append(e)
+	return targets
+
+func _sync_enemy_cells() -> void:
+	if spatial_tick == tick: return
+	spatial_tick = tick
+	var active := {}
+	for e: Dictionary in enemies:
+		active[e.id] = true
+		var origin := vec(data.constants.get("spatial_origin", {"x": -400, "y": -250}))
+		var cell_size := float(data.constants.get("spatial_cell_size", 50))
+		var cell := Vector2i(floori((e.pos.x - origin.x) / cell_size), floori((e.pos.y - origin.y) / cell_size))
+		if cell_for_enemy.has(e.id) and cell_for_enemy[e.id] == cell: continue
+		_remove_enemy_cell(e.id)
+		if not enemy_cells.has(cell): enemy_cells[cell] = []
+		enemy_cells[cell].append(e.id); cell_for_enemy[e.id] = cell
+	for id: int in cell_for_enemy.keys():
+		if not active.has(id): _remove_enemy_cell(id)
+
+func _remove_enemy_cell(id: int) -> void:
+	if not cell_for_enemy.has(id): return
+	var cell: Vector2i = cell_for_enemy[id]
+	var ids: Array = enemy_cells[cell]
+	var index := ids.find(id)
+	ids[index] = ids[-1]; ids.pop_back()
+	if ids.is_empty(): enemy_cells.erase(cell)
+	cell_for_enemy.erase(id)
+
+func _healer_step(e: Dictionary, template: Dictionary) -> bool:
+	var attack: Dictionary = template.timed_attacks.list[0]
+	if not e.casting.is_empty():
+		if not e.casting.applied and tick >= e.casting.hit_at:
+			e.casting.applied = true
+			var targets := _healing_targets(e, attack)
+			var modifier: Dictionary = templates[attack.mod]
+			for target: Dictionary in targets.slice(0, int(attack.max_count)):
+				var amount := float(rng.randi_range(int(modifier.hps.heal_min), int(modifier.hps.heal_max)))
+				target.hp = minf(target.max_hp, target.hp + amount)
+				add_effect(attack.mod, target.pos, {"target": target.id, "duration": frames(modifier.modifier.duration), "state": modifier.render.sprites[0].size_names[int(templates[target.template].unit.size) - 1]})
+				event.emit("healed", {"source": e.id, "target": target.id, "amount": amount})
+		if tick < e.casting.ends_at: return true
+		e.casting = {}
+	if tick - int(e.heal_at) <= frames(attack.cooldown): return false
+	if _healing_targets(e, attack).is_empty():
+		e.heal_at = tick - frames(attack.cooldown) + frames(0.5) - 1; return false
+	e.heal_at = tick
+	e.pending = {}
+	e.last_dir = Vector2.ZERO
+	_state(e, attack.animation, true)
+	e.casting = {"hit_at": tick + frames(attack.cast_time), "ends_at": tick + SpriteAnimation.duration(animations, SpriteAnimation.key(template.render.sprites[0], attack.animation)), "applied": false}
+	event.emit("sound", {"id": attack.sound})
+	return true
 
 func _state(unit: Dictionary, state: String, restart: bool = false) -> void:
 	if unit.state != state or restart: unit.state = state; unit.state_at = tick
@@ -561,7 +752,11 @@ func _unblock(unit: Dictionary) -> void:
 	if unit.has("target") and unit.target != 0:
 		var enemy := unit_by_id(unit.target)
 		if not enemy.is_empty():
-			enemy.blockers.erase(unit.id); enemy.blocker = 0 if enemy.blockers.is_empty() else enemy.blockers[0]; enemy.pending = {}
+			var old_blocker: int = enemy.blocker
+			enemy.blockers.erase(unit.id)
+			if enemy.blockers.size() > 1: enemy.blockers.push_front(enemy.blockers.pop_back())
+			enemy.blocker = 0 if enemy.blockers.is_empty() else enemy.blockers[0]
+			if enemy.blocker != old_blocker: enemy.pending = {}
 		unit.target = 0
 		unit.pending = {}
 	if unit.has("blockers"):

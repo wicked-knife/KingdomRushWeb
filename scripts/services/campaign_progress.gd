@@ -5,10 +5,12 @@ signal notice_changed(message: String)
 const DEFAULT_PATH := "user://campaign_kr1.json"
 const DEFINITION := "res://data/map_kr1/definition.json"
 const HERO_DEFINITION := "res://data/heroes/definition.json"
+const CampaignLevels = preload("res://scripts/services/campaign_levels.gd")
 var definition: Dictionary
 var hero_definition: Dictionary
 var hero_rows := {}
 var heroes := {"selected": []}
+var seen_notifications: Array[String] = []
 var levels := {}
 var unlocked: Array[int] = [1]
 var notice := ""
@@ -22,6 +24,7 @@ static func stars_for(lives: int) -> int:
 func initialize(save_path: String = DEFAULT_PATH) -> void:
 	path = save_path; levels.clear(); unlocked = [1]; save_allowed = true
 	heroes = {"selected": []}; hero_rows.clear()
+	seen_notifications.clear()
 	hero_definition = _read(HERO_DEFINITION)
 	for row: Dictionary in hero_definition.get("heroes", []): hero_rows[row.name] = row
 	pending = {"stars": {}, "unlocked": []}; _notice("")
@@ -47,6 +50,10 @@ func initialize(save_path: String = DEFAULT_PATH) -> void:
 				if int(normalized.get("campaign", 0)) > 0 and int(normalized.get("stars", 0)) > 0:
 					levels[str(int(stage.id))] = normalized
 	_recompute()
+	var seen: Variant = loaded.get("seen_notifications", [])
+	if seen is Array:
+		for id: Variant in seen:
+			if id is String and id in ["enemy_wolf_small", "enemy_shaman", "enemy_ogre"] and not id in seen_notifications: seen_notifications.append(id)
 	var hero_data: Variant = loaded.get("heroes", {})
 	var selected: Variant = hero_data.get("selected", []) if hero_data is Dictionary else []
 	if selected is Array:
@@ -96,8 +103,11 @@ func _recompute() -> void:
 
 func is_unlocked(id: int) -> bool: return id in unlocked
 func is_playable(id: int, mode: int = 1, difficulty: int = 2) -> bool:
-	return is_unlocked(id) and id == 1 and mode == 1 and difficulty == 2
+	return is_unlocked(id) and CampaignLevels.supports(id, mode, difficulty)
 func record(id: int) -> Dictionary: return levels.get(str(id), {})
+func mark_notification_seen(id: String) -> void:
+	if id in seen_notifications or not id in ["enemy_wolf_small", "enemy_shaman", "enemy_ogre"]: return
+	seen_notifications.append(id); save()
 func total_stars() -> int:
 	var total := 0
 	for value: Dictionary in levels.values():
@@ -135,7 +145,7 @@ func save() -> bool:
 	if not save_allowed: return false
 	var file := FileAccess.open(path + ".tmp", FileAccess.WRITE)
 	if file == null: _notice("进度已在本次游戏中生效，但无法保存到本地。"); return false
-	file.store_string(JSON.stringify({"schema_version": 1, "generation": 1, "content_version": definition.source.commit, "levels": levels, "heroes": heroes}))
+	file.store_string(JSON.stringify({"schema_version": 1, "generation": 1, "content_version": definition.source.commit, "levels": levels, "heroes": heroes, "seen_notifications": seen_notifications}))
 	file.flush(); var error := file.get_error(); file.close()
 	if error != OK: _notice("进度写入失败，本次游戏仍可继续。"); return false
 	# Preserve only a validated previous save; never replace a healthy backup with corruption.

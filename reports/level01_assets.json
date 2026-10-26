@@ -1,23 +1,23 @@
 {
   "passed": true,
   "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
-  "source_inputs": 36,
-  "frames": 1358,
-  "canonical_frames": 647,
+  "source_inputs": 40,
+  "frames": 1419,
+  "canonical_frames": 708,
   "animations": 96,
-  "resources": 55,
+  "resources": 58,
   "sha256": {
-    "animations.json": "eda58073f5583699ebb85a44bcde4911662b0d0a370e297ca0073f8dc0636b53",
-    "atlas.json": "9923842ec412ee35503f1505ec65fd22daa34b4376f698f922de544ea5bf56c4",
+    "animations.json": "d73f530ebb5028266520441a3e86ea4aa606939fd18118b141606c7efe947e56",
+    "atlas.json": "695f1d7c29968717253ef9bdad496cc673a8eeae17974dc3eaf01ed7eb2d042c",
     "atlas_0.png": "a4d88fa903e31ea5f439e8df3bc20b5bb05c83c79e941b006703f9750629ccdb",
     "atlas_1.png": "85b55908f54cb467b259246b8d29ae5778102787eaf0e4f68cdb7a5191bfa55e",
-    "atlas_2.png": "fc783a0a09c984af0a1dc7ec5804d706544e25251713fc9d2fd28f4b5fc5153a",
-    "atlas_3.png": "a00767338448e31e40233e072cff9277a9349f19733ffdd8a2ec661566b1c9e3",
-    "atlas_4.png": "f476294a7ba3f0d3e4517f34a6fee3144d86aacda679bb9b0023bff922f314da",
+    "atlas_2.png": "4eeb5cf0238bdd06433b75c8567ae8f14312596338e068ab7437dea7132baed5",
+    "atlas_3.png": "9b32f77ee7e6be27377b1361ac9f811b0cab90879b48d14b41a5c0be3b6b9dc4",
+    "atlas_4.png": "2d4e54b2bac4c924cb139e15951f451a57894e110c8a520957e263743f107c3f",
     "atlas_5.png": "0ec974ccba7a21202dd1ebfb38ea42c2f5af7aaa54c74fd9e75d00bf362a48cc",
     "catalog.json": "2c699d7f66216c28b65473f1abbf9cb7d0c016f24d33d54767b0249b62e584c6",
-    "definition.json": "3f4a66db86230ef6cc2f6af82a6dff17e7b0fcf11f59e9603021fa86dea0c8bd",
-    "manifest.json": "383f8a214d351096d21529d66ae29a01130bfcda6d93a9930061d35c2be0005a",
-    "sounds.json": "7e1f3b501d1a68ef8bc42dcd4934f2fd3f0e05051dde13ba52c2f9390ffa446b"
+    "definition.json": "4a8e16dcb80bc60260e6ff1f2a1aa8f66c3f7b577bf2118e8a1cf2982be976eb",
+    "manifest.json": "a1f965d73c5494d4f544540b7981d69b20380863e6273d0199026b7f8b5791db",
+    "sounds.json": "cf3d2a4b39dcc6e853243ab91f262a681a399a2f5e5cd69749f0c9027d4e091b"
   }
 }

@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+  "scope": "Skill placement rules and invalid-click cursor feedback; adjacent barrack rally path filter",
+  "source_reference": {
+    "generator": "tools/skill_placement_reference",
+    "fixture": "tests/fixtures/skill_placement_reference.json",
+    "samples": 820,
+    "powers_per_sample": 2,
+    "mismatches": 0,
+    "method": "Execute frozen grid_db/path_db and extract the original POWER_1/2 expressions from game_gui.lua"
+  },
+  "headless": {"report": "reports/skill_placement_logic.json", "checks": 185, "passed": true},
+  "native": {
+    "report": "reports/skill_placement_native.json",
+    "checks": 185,
+    "passed": true,
+    "resolution": "1280x720",
+    "screenshots_viewed": ["reports/skill_placement_invalid_cross.png", "reports/skill_placement_placement_mode.png"]
+  },
+  "coverage": [
+    "Main path node proximity, strict 42/60 boundaries and circular distance",
+    "Terrain bit masks, water, inactive paths and per-purpose invalid node flags",
+    "Invalid cast retains targeting and consumes no cooldown, troops, projectiles or RNG",
+    "Original 14-frame cursor feedback, repeated rejection, valid retry, cancellation and restart",
+    "Legal default barrack rallies and troop interception on all four paths in campaigns 1-3"
+  ],
+  "source_pixel_and_hash_checks": ["reports/level01_assets.json", "reports/level02_assets.json", "reports/level03_assets.json"],
+  "web": {
+    "build_type": "release",
+    "exports_this_change": 1,
+    "pck_isolated_check": true,
+    "pck_files": 479,
+    "pck_sha256": "bb64a6f3ce2010ca12240e751b623d6e76d829cbef832acaf9ee759540305895",
+    "zip_integrity_check": true,
+    "bundle": "build/KingdomRush-KR1-Levels01-03-Web.zip",
+    "bytes": 112057534,
+    "sha256": "3faa485526842c0a344590375fb477555f41380f4faa8827a9a855863a1f95c7",
+    "browser_tested": false
+  },
+  "validation_boundary": "Focused Godot checks only; no full campaign, multiple-resolution sweep or browser gameplay rerun"
+}

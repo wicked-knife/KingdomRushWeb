@@ -30,7 +30,7 @@ func _run() -> void:
 	for lives in [0, 1, 5, 6, 17, 18, 20]: check(Progress.stars_for(lives) == {0: 0, 1: 1, 5: 1, 6: 2, 17: 2, 18: 3, 20: 3}[lives], "source star threshold %d" % lives)
 	check(not p.record_result(outcome(2, 20)), "locked result rejected")
 	check(p.record_result(outcome(1, 5)) and p.is_unlocked(2), "first win unlocks second flag")
-	check(p.total_stars() == 1 and not p.is_playable(2), "availability independent of unlock")
+	check(p.total_stars() == 1 and p.is_playable(2) and not p.is_playable(3) and not p.is_playable(2, 2), "availability requires unlock and implemented mode")
 	check(p.record_result(outcome(1, 17)) and p.total_stars() == 2, "best score improves")
 	check(not p.record_result(outcome(1, 1)) and p.total_stars() == 2, "lower score does not reduce progress")
 	check(not p.record_result(outcome(1, 17)), "duplicate result is idempotent")

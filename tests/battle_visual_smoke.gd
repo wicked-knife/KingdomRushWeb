@@ -23,7 +23,7 @@ func action(id: String, args: Dictionary = {}) -> void:
 	await process_frame
 	await RenderingServer.frame_post_draw
 	for hit in battle.hits:
-		if hit.action == id and hit.args == args:
+		if hit.action == id and (hit.args == args or (id == "wave" and args.is_empty())):
 			click(hit.rect.get_center()); return
 	check(false, "missing UI action " + id + str(args))
 	quit(1)

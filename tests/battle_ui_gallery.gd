@@ -9,7 +9,10 @@ func _init() -> void: call_deferred("_run")
 func capture(id: String, wait: float = 0.46) -> void:
 	battle.queue_redraw(); await process_frame; await RenderingServer.frame_post_draw
 	await create_timer(wait).timeout
-	if id == "build_hover": battle.hovered = "build" + str({"id": "1", "type": "mage"})
+	battle.interface.wave_flags.advance(wait)
+	if id == "build_hover":
+		for hit: Dictionary in battle.hits:
+			if hit.action == "build" and hit.args == {"id":"1", "type":"mage"}: battle.pointer = hit.rect.get_center()
 	battle.queue_redraw(); await process_frame; await process_frame; await RenderingServer.frame_post_draw
 	root.get_texture().get_image().save_png("res://reports/ui_" + id + "_" + suffix + ".png")
 	var records: Array = []
@@ -48,7 +51,7 @@ func _run() -> void:
 	battle.selected = "1"; await capture("build_menu")
 	battle.hovered = "build" + str({"id": "1", "type": "mage"}); await capture("build_hover")
 	battle.sim.gold = 50; await capture("build_disabled")
-	battle.sim.gold = 270; battle.hovered = ""
+	battle.sim.gold = 270; battle.hovered = ""; battle.pointer = Vector2(-1000, -1000)
 	battle._action("build", {"id": "1", "type": "archer"})
 	await capture("construction0", 0.15)
 	check(is_equal_approx(progress(), 0), "construction starts empty")

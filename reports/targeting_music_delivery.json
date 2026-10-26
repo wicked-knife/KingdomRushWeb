@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "scope": "Web audio output and pre-wave skill lock only; no campaign reruns.",
+  "source": "Dove 2.1.0.2 / e29ece82 and Godot 4.7 AudioServer PlaybackType",
+  "fixes": [
+    "Forced all runtime music and SFX AudioStreamPlayer nodes to PLAYBACK_TYPE_STREAM on Web.",
+    "Kept first-gesture audio unlock and delayed music reattachment.",
+    "Locked both powers before wave 1 in campaigns 2 and 3 and unlocked them when wave 1 is sent.",
+    "Preserved campaign 1 wave 3 and wave 7 tutorial unlocks."
+  ],
+  "logic": {
+    "targeting_music": {"passed": true, "checks": 26},
+    "power_feedback": {"passed": true, "checks": 35}
+  },
+  "native": {
+    "power_feedback": {"passed": true, "checks": 40}
+  },
+  "web_audio_output_probe": {
+    "browser": "Chrome via Playwright",
+    "audio_context": "running",
+    "sample_rate": 48000,
+    "output_node": "AudioWorkletNode",
+    "destination_rms": 0.05133762346035437,
+    "destination_peak": 0.111968994140625,
+    "console_errors": [],
+    "passed": true
+  },
+  "pck_isolated_check": true,
+  "pck_files": 479,
+  "bundle": "build/KingdomRush-KR1-Levels01-03-Web.zip",
+  "bytes": 111874504,
+  "sha256": "8e08a133269dfb07abfbe23fa5aeb2f45f644d334d5cfa0b32051d57b259ca60",
+  "zip_crc_passed": true,
+  "manual_gameplay_acceptance": false
+}

@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+  "scope": "Barrack directional rally fallback and range-offset center",
+  "source_reference": {
+    "fixture": "tests/fixtures/rally_clamp_reference.json",
+    "cases": 80,
+    "mismatches": 0,
+    "method": "Execute extracted PickView:on_down rally search and U.is_inside_ellipse with frozen grid/path modules",
+    "coverage": "Two sites per campaign, all unlocked barrack tiers, legal clicks, four cardinal and diagonal outside clicks, invalid directions"
+  },
+  "headless": {"report": "reports/rally_clamp_logic.json", "checks": 129, "passed": true},
+  "native": {
+    "report": "reports/rally_clamp_native.json",
+    "checks": 129,
+    "passed": true,
+    "resolution": "1280x720",
+    "screenshot_viewed": "reports/rally_clamp_native.png"
+  },
+  "adjacent_regression": {"report": "reports/skill_placement_logic.json", "checks": 185, "passed": true},
+  "soldier_checks": "Actual input uses resolved rally center and formation destinations for all three soldiers and releases old combat blockers",
+  "web": {
+    "build_type": "release",
+    "exports_this_change": 1,
+    "pck_isolated_check": true,
+    "pck_files": 479,
+    "pck_rally_behavior_checked": true,
+    "pck_sha256": "86d668c32398acb61b757c87878c3e97bdf3bdf505c6142635ae383529fe15ce",
+    "bundle": "build/KingdomRush-KR1-Levels01-03-Web.zip",
+    "bytes": 112057763,
+    "sha256": "7a841da7336882c581d211d0d2844cd11d9bf4a5367c55ed5ecafe2fbd31204c",
+    "zip_integrity_check": true,
+    "browser_tested": false
+  },
+  "validation_boundary": "Focused Godot regression; no full campaign, multiple-resolution sweep, asset regeneration or browser gameplay rerun"
+}

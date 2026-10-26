@@ -1,7 +1,8 @@
 extends RefCounted
-## First-level compositions transcribed from Dove game_gui.lua. Shared layout
+## Campaign battle compositions transcribed from Dove game_gui.lua. Shared layout
 ## mechanics (image, text fitting, transforms and hit regions) live in one place.
 const Layout = preload("res://scripts/battle/dove_ui_layout.gd")
+const WaveFlags = preload("res://scripts/battle/battle_wave_flags.gd")
 var view: Control
 var paint: RefCounted
 var data: Dictionary
@@ -18,18 +19,89 @@ var panel_id := ""
 var panel_at := 0.0
 var power_mode := {}
 var power_at := {}
+var power_animation := {}
 var power_hint := ""
 var power_hint_hidden := false
+var wave_flags: RefCounted
+var reward_fx: Array[Dictionary] = []
 
 func _init(battle: Control) -> void:
 	view = battle; paint = Layout.new(view, view.fonts)
 	data = view.sim.data.ui; strings = data.strings
+	wave_flags = WaveFlags.new(view, paint)
 
 func clock() -> float: return Time.get_ticks_msec() / 1000.0
 func begin() -> void: paint.begin()
 func text(key: String) -> String: return strings.get(key, key)
 func _number(value: float) -> String: return ("%.2f" % value).trim_suffix("0").trim_suffix("0").trim_suffix(".")
 func _size(id: String) -> Vector2: return paint.image_size(id)
+
+func power_frame(power: String, now: float) -> String:
+	var sim: RefCounted = view.sim
+	var mode := "locked" if not sim.unlocked[power] else ("cooldown" if sim.cooldowns[power] > 0 else ("selected" if view.targeting == power else "ready"))
+	var previous: String = power_mode.get(power, "")
+	if previous != mode:
+		power_mode[power] = mode; power_at[power] = now; power_animation[power] = ""
+		if mode == "ready" and previous == "cooldown":
+			power_animation[power] = "ready"; view._sound("GUISpellRefresh")
+		elif mode == "ready" and previous == "locked": power_animation[power] = "unlocked"
+	var prefix := "fire" if power == "fire" else "reinforcements"
+	var ready_prefix := "fire_ready" if power == "fire" else "reinforcement_ready"
+	var elapsed := maxi(0, int((now - float(power_at[power])) * 30))
+	if mode == "locked": return ready_prefix + "_0030"
+	if mode == "selected": return ready_prefix + "_0029"
+	# Dove reserves 30–44 for first unlock; cooldown refresh uses 1–28.
+	if mode == "ready":
+		if power_animation.get(power, "") == "ready" and elapsed < 28: return "%s_%04d" % [ready_prefix, 1 + elapsed]
+		if power_animation.get(power, "") == "unlocked" and elapsed < 15: return "%s_%04d" % [ready_prefix, 30 + elapsed]
+		if view.hovered == "target" + str({"power": power}): return prefix + "_0002"
+	return prefix + "_0001"
+
+func show_wave_reward(reward: Dictionary) -> void:
+	# Dove WaveRewardFx / TimeRewardFx use sprite digits with 0.7 letter spacing.
+	if int(reward.gold) > 0:
+		_add_reward("+%d" % int(reward.gold), "")
+		view._sound("GUICoins")
+	if int(reward.seconds) > 1:
+		for power: String in reward.powers: _add_reward("-%ds" % int(reward.seconds), power)
+
+func _add_reward(value: String, power: String) -> void:
+	var glyphs: Array[Dictionary] = []
+	var offset := 0.0
+	var height := 0.0
+	for c in value:
+		var index := 11 if c in ["+", "-"] else (12 if c == "s" else int(c))
+		var frame := ("waveReward_" if power == "" else "waveRewardTimer_") + "%04d" % index
+		var dimensions := _size(frame)
+		glyphs.append({"frame": frame, "x": offset})
+		offset += roundf(0.7 * dimensions.x); height = maxf(height, dimensions.y)
+	var coin_width := _size("nextwave_coin_0001").x if power == "" else 0.0
+	if power == "": height = maxf(height, _size("nextwave_coin_0001").y)
+	var width := coin_width + offset if power == "" else offset + offset * 0.3 / value.length()
+	reward_fx.append({"text": value, "power": power, "age": 0.0, "duration": 1.5 if power == "" else 1.0,
+		"glyphs": glyphs, "coin_width": coin_width, "size": Vector2(width, height)})
+
+func advance_rewards(delta: float) -> void:
+	# HUD animation time, like Dove's UI tweens, is independent of simulation speed.
+	for fx: Dictionary in reward_fx: fx.age += delta
+	reward_fx = reward_fx.filter(func(fx): return fx.age < fx.duration)
+
+func reward_bounds(fx: Dictionary) -> Rect2:
+	if fx.power == "":
+		# Anchor the source coin/digits below the gold counter as requested.
+		return Rect2(Vector2(164 * 0.9 - fx.size.x / 2, 46), fx.size)
+	var button_size := _size("fire_0001" if fx.power == "fire" else "reinforcements_0001")
+	var center := Vector2(164 + (66 if fx.power == "reinforcements" else 0) + button_size.x / 2, 763 - button_size.y)
+	var ease := 1 - pow(1 - clampf(fx.age, 0, 1), 2)
+	return Rect2(center - Vector2(fx.size.x / 2, fx.size.y * (2 + ease) / 3), fx.size)
+
+func _draw_wave_rewards() -> void:
+	for fx: Dictionary in reward_fx:
+		var alpha := pow(1 - clampf(fx.age / fx.duration, 0, 1), 2)
+		paint.push(reward_bounds(fx).position, 1, alpha)
+		if fx.power == "": paint.image("nextwave_coin_%04d" % mini(14, 1 + int(fx.age * 30)))
+		for glyph: Dictionary in fx.glyphs: paint.image(glyph.frame, Vector2(fx.coin_width + glyph.x, 0))
+		paint.pop()
 
 func selection() -> void:
 	if selection_id != view.selected:
@@ -141,7 +213,7 @@ func hud() -> void:
 	paint.image("top_left")
 	paint.label(str(sim.lives), Rect2(78, 33, 31, 35), 18, Color.WHITE, "center", "middle", 1, 1, "hud:lives", "numbers_bold")
 	paint.label(str(sim.gold), Rect2(135, 33, 58, 35), 18, Color.WHITE, "center", "middle", 1, 1, "hud:gold", "numbers_bold")
-	paint.label("%d/%d 波" % [sim.wave, 7], Rect2(234, 31, 82, 35), 16, Color.WHITE, "center", "middle", 1, 1, "hud:wave", "numbers_bold")
+	paint.label("%d/%d 波" % [sim.wave, sim.data.waves.groups.size()], Rect2(234, 31, 82, 35), 16, Color.WHITE, "center", "middle", 1, 1, "hud:wave", "numbers_bold")
 	paint.pop()
 	paint.push(Vector2(view.view_width - 37, -21), 0.9)
 	var base := _size("pause_base")
@@ -159,17 +231,8 @@ func hud() -> void:
 	paint.image("base_powers_bg", Vector2(20.5, 36), Vector2(0, 1))
 	for i in range(2):
 		var power := "fire" if i == 0 else "reinforcements"
-		var mode := "locked" if not sim.unlocked[power] else ("cooldown" if sim.cooldowns[power] > 0 else ("selected" if view.targeting == power else "ready"))
-		if power_mode.get(power, "") != mode:
-			power_mode[power] = mode; power_at[power] = clock()
-		var elapsed := int((clock() - float(power_at[power])) * 30)
-		var prefix := "fire" if i == 0 else "reinforcements"
-		var ready_prefix := "fire_ready" if i == 0 else "reinforcement_ready"
-		var frame := prefix + "_0001"
-		if mode == "locked": frame = ready_prefix + "_0030"
-		elif mode == "selected": frame = ready_prefix + "_0029"
-		elif mode == "ready" and elapsed < 15: frame = "%s_%04d" % [ready_prefix, 30 + elapsed]
-		elif view.hovered == "target" + str({"power": power}): frame = prefix + "_0002"
+		var frame := power_frame(power, clock())
+		var mode: String = power_mode[power]
 		var pos := Vector2(59 + i * 66, 30)
 		var dimensions := _size(frame)
 		paint.image(frame, pos, Vector2(0, 1))
@@ -182,17 +245,22 @@ func hud() -> void:
 		paint.image("power_nbrs_000%d" % (i + 1), Vector2(pos.x + dimensions.x / 2, 36), Vector2(0.5, 1))
 		paint.hit(rect, "target", {"power": power}, mode not in ["locked", "cooldown"])
 	paint.pop()
-	paint.image("bg_bottom_nextwave", Vector2(view.view_width, 769), Vector2(1, 1))
-	paint.push(Vector2(view.view_width - 169, 706), 0.90)
-	var caption := "开始战斗" if sim.wave == 0 else ("下一波 · %d秒" % maxi(0, ceili((sim.next_wave_tick - sim.tick) / 30.0)) if sim.can_send_wave() else "战斗中")
-	paint.button("button_border_0001", Vector2.ZERO, caption, "wave", {}, sim.can_send_wave())
-	paint.pop()
+	wave_flags.draw()
 	_unit_info()
+	for i in range(sim.alerts.size()):
+		var id: String = sim.alerts[i]
+		var icon: String = data.notifications[id].icon
+		paint.push(Vector2(14, 135 + i * 49), 0.7)
+		paint.image(icon)
+		paint.hit(Rect2(Vector2.ZERO, _size(icon)), "enemy_notice", {"id": id})
+		paint.pop()
 	if view.tip != "":
 		paint.push(Vector2(12, 79), 0.75)
 		paint.button("options_button_bg_0001", Vector2.ZERO, "战斗提示", "tip")
 		paint.pop()
 	if sim.notices.is_empty() and not sim.paused and sim.result == "": _balloons()
+	wave_flags.draw_tooltip()
+	_draw_wave_rewards()
 
 func _unit_info() -> void:
 	var info: Dictionary = view.unit_info()
@@ -235,22 +303,29 @@ func _unit_info() -> void:
 
 func _balloons() -> void:
 	var sim: RefCounted = view.sim
+	if int(sim.data.get("level", {}).get("id", 1)) != 1: return
 	if view.targeting == "" and view.selected != "": return
 	var built := false
 	for t: Dictionary in sim.towers:
 		if t.type != "": built = true
 	var id := "TB_BUILD" if not built and sim.wave == 0 else ("TB_START" if sim.wave == 0 else "")
 	if power_hint != "" and not power_hint_hidden: id = power_hint
-	if view.targeting != "": id = "TB_ROAD"
 	if id == "": return
+	if id == "TB_START" and not wave_flags.hovered_flag().is_empty(): return
 	var d: Dictionary = data.tutorial_balloons[id]
 	var pos := Vector2(d.offset.x, d.offset.y)
 	if d.origin == "world": pos = view.world(pos)
 	elif d.origin == "bottom-right": pos += Vector2(view.view_width, 768)
 	else: pos += Vector2(0, 768)
+	if id == "TB_START" and not wave_flags.active.is_empty():
+		pos = wave_flags.position(wave_flags.active[0]) + Vector2(-24, 58)
 	paint.push(pos - _size(d.image) / 2)
-	paint.image(d.image)
-	for definition: Dictionary in data.slides.get(id, []): paint.source_label(definition, strings)
+	if id == "TB_START": paint.image(d.image, Vector2(0, _size(d.image).y), Vector2.ZERO, Color.WHITE, Vector2(1, -1))
+	else: paint.image(d.image)
+	for definition: Dictionary in data.slides.get(id, []):
+		if id == "TB_START":
+			definition = definition.duplicate(true); definition.pos.y += 20
+		paint.source_label(definition, strings)
 	paint.pop()
 
 func _panel(id: String, dimensions: Vector2, preferred: float = 1.3, duration: float = 0.4) -> void:
@@ -273,10 +348,30 @@ func notice(id: String) -> void:
 	view._dim()
 	var notification: Dictionary = data.notifications[id]
 	var power := id.begins_with("POWER_")
-	var paper: String = "notifications_newenemy" if power else notification.paper
+	var enemy := id.begins_with("enemy_")
+	var paper: String = "notifications_newenemy" if power or enemy else notification.paper
 	var dimensions := _size(paper)
 	_panel(id, dimensions + Vector2(0, 48))
-	if power:
+	if notification.get("layout", "") == "upgrade":
+		_title("notifications_tit_towers_bg", "二级防御塔", Vector2(80, 40), false)
+		paint.image(paper)
+		paint.label("现在可以升级防御塔！", Rect2(70, 45, 480, 40), 27, Color("181a0f"), "center", "middle")
+		paint.label("选中已建造的防御塔，点击升级图标。升级会增强防御塔；金币不足时按钮不可用。", Rect2(65, 100, 500, 85), 20, Color("181a0f"), "left", "top")
+		paint.label("本关四类防御塔均可升至二级。", Rect2(65, 195, 500, 40), 19, Color("181a0f"), "center", "middle")
+		paint.button("notifications_but_dark_bg_0001", Vector2(400, 254), "知道了", "confirm", {}, true, "notice")
+	elif enemy:
+		_title("notifications_tit_newenemy_bg", "新敌人", Vector2(80, 40), false)
+		paint.image(paper)
+		var prefix := id.to_upper()
+		paint.push(Vector2(134, 160), 1, 1, PI / 24)
+		paint.image("encyclopedia_creeps_%04d" % int(view.sim.templates[id].info.enc_icon), Vector2.ZERO, Vector2(0.5, 0.5))
+		paint.image("notifications_polaroid_overlay", Vector2.ZERO, Vector2(0.5, 0.5))
+		paint.pop()
+		paint.label(text(prefix + "_NAME"), Rect2(255, 50, 320, 36), 28, Color("181a0f"), "left", "top", 1, 0, "", "body_slides")
+		paint.label(text(prefix + "_DESCRIPTION"), Rect2(255, 86, 320, 100), 19, Color("181a0f"), "left", "top")
+		paint.label(text(prefix + "_EXTRA").replace("- ", "* "), Rect2(255, 187, 320, 90), 13, Color("921900"), "left", "top")
+		paint.button("notifications_but_dark_bg_0001", Vector2(400, 254), "知道了", "confirm", {}, true, "notice")
+	elif power:
 		_title("notifications_tit_newpower_bg", text("NEW SPECIAL POWER!"), Vector2(80, 40), false)
 		paint.image(paper)
 		var image: String = notification.image
@@ -340,9 +435,11 @@ func result() -> void:
 		paint.label("胜 利", Rect2(dimensions.x / 2 - 160, 165, 320, 78), 64, Color("4c3817"), "center", "middle", 1, 0, "", "h_popup")
 		var stars: int = view.outcome.get("stars", 1)
 		var end_frame: int = [19, 38, 54][stars - 1]
-		var frame := mini(int((clock() - panel_at) * 30), end_frame)
-		paint.image("victoryStars_%04d" % maxi(1, frame), Vector2(dimensions.x / 2, 230), Vector2(0.5, 0))
-		paint.label(("调试局 · " if view.sim.developer_used else "") + "生命 %d · 击杀 %d · 7/7 波" % [view.sim.lives, view.sim.kills], Rect2(60, 347, dimensions.x - 120, 28), 17, Color("ffe9b0"), "center", "middle", 1, 1)
+		var elapsed: float = clock() - panel_at - view.VICTORY_STAR_DELAY
+		var frame := mini(int(maxf(0, elapsed) * 30), end_frame)
+		if elapsed >= 0:
+			paint.image("victoryStars_%04d" % maxi(1, frame), Vector2(dimensions.x / 2, 230), Vector2(0.5, 0))
+		paint.label(("调试局 · " if view.sim.developer_used else "") + "生命 %d · 击杀 %d · %d/%d 波" % [view.sim.lives, view.sim.kills, view.sim.wave, view.sim.data.waves.groups.size()], Rect2(60, 347, dimensions.x - 120, 28), 17, Color("ffe9b0"), "center", "middle", 1, 1)
 		var button := _size("button_border_large_0001")
 		paint.button("button_border_large_0001", Vector2((dimensions.x - button.x) / 2, 389), view.return_label, "map")
 		paint.push(Vector2(dimensions.x / 2, 448), 0.85)
@@ -364,4 +461,6 @@ func confirmed(id: String) -> void:
 		power_hint = "TB_POWER2" if id == "POWER_REINFORCEMENT" else "TB_POWER1"; power_hint_hidden = false
 
 func reset() -> void:
-	selection_id = ""; closing_id = ""; panel_id = ""; power_mode.clear(); power_at.clear(); power_hint = ""
+	selection_id = ""; closing_id = ""; panel_id = ""; power_mode.clear(); power_at.clear(); power_animation.clear(); power_hint = ""
+	wave_flags.reset()
+	reward_fx.clear()

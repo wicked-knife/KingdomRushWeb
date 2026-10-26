@@ -63,7 +63,7 @@ func _run() -> void:
 	check(sim.command("build", {"id": "4", "type": "barrack"}), "barrack build")
 	for i in range(180): sim.step()
 	check(sim.soldiers.size() == 3, "three militia")
-	check(not sim.command("rally", {"id": "4", "pos": Vector2(-200, 0)}), "invalid rally")
+	check(not sim.command("rally", {"id": "4", "pos": Vector2(NAN, 0)}), "nonfinite rally rejected")
 	check(sim.command("rally", {"id": "4", "pos": Vector2(478, 228)}), "valid rally")
 	e = sim._spawn_enemy("enemy_goblin", 0); e.pos = Vector2(478, 228); e.node = 110
 	for i in range(45): sim.step()

@@ -1,0 +1,179 @@
+{
+  "passed": true,
+  "date": "2026-10-26",
+  "engine": "Godot 4.7.2 stable / Compatibility",
+  "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+  "scope": "KR1 levels 2 and 3, normal campaign; original backgrounds and assets; four level-2 towers; no hero combat, technology, third spell or challenge modes.",
+  "assets": {
+    "1": {
+      "passed": true,
+      "source_inputs": 38,
+      "frames": 1368,
+      "canonical_frames": 657,
+      "animations": 96,
+      "atlas_pages": 6,
+      "audio_files": 49
+    },
+    "2": {
+      "passed": true,
+      "source_inputs": 36,
+      "frames": 1419,
+      "canonical_frames": 693,
+      "animations": 101,
+      "atlas_pages": 6,
+      "audio_files": 52
+    },
+    "3": {
+      "passed": true,
+      "source_inputs": 43,
+      "frames": 1878,
+      "canonical_frames": 944,
+      "animations": 123,
+      "atlas_pages": 7,
+      "audio_files": 54
+    }
+  },
+  "campaign_logic": {
+    "checks": 577,
+    "failures": [],
+    "levels": {
+      "2": {
+        "defeat_ticks": 1984,
+        "victory": {
+          "gold": 82,
+          "kills": 139,
+          "leaks": 15,
+          "lives": 5,
+          "result": "victory",
+          "spawned": 154,
+          "ticks": 9037
+        }
+      },
+      "3": {
+        "defeat_ticks": 2360,
+        "victory": {
+          "gold": 19,
+          "kills": 320,
+          "leaks": 9,
+          "lives": 11,
+          "result": "victory",
+          "spawned": 329,
+          "ticks": 19175
+        }
+      }
+    },
+    "passed": true
+  },
+  "headless_regressions": {
+    "verify_interaction_fixes.gd": "passed",
+    "verify_level01.gd": "passed",
+    "verify_battle_details.gd": "passed",
+    "verify_tower_upgrades.gd": "passed",
+    "verify_archer_upgrade.gd": "passed",
+    "verify_playtest_tools.gd": "passed",
+    "verify_campaign_levels.gd": "passed",
+    "verify_campaign_map.gd": "passed"
+  },
+  "native_campaigns": {
+    "1280x720": {
+      "passed": true,
+      "captures": 25,
+      "report": "reports/campaign_levels_visual_1280x720.json"
+    },
+    "1920x1080": {
+      "passed": true,
+      "captures": 25,
+      "report": "reports/campaign_levels_visual_1920x1080.json"
+    },
+    "1024x768": {
+      "passed": true,
+      "captures": 25,
+      "report": "reports/campaign_levels_visual_1024x768.json"
+    }
+  },
+  "native_checks": [
+    "legal full victories and empty-defense defeats",
+    "pointer builds, upgrades and notification confirmations",
+    "actual level result and stars saved",
+    "pause, double speed and three restarts per level",
+    "six cross-level transitions and freed scene weakrefs",
+    "battle music stream released immediately on exit",
+    "preparation music, battle music and build sound playback",
+    "source enemy notifications, shaman cast and healing effects",
+    "text and hit regions stay within viewport"
+  ],
+  "first_level_ui": {
+    "passed": true,
+    "states": 26
+  },
+  "web": {
+    "package_created": true,
+    "build_type": "release",
+    "developer_menu": false,
+    "playable_levels": [
+      1,
+      2,
+      3
+    ],
+    "pck_isolated_check": true,
+    "pck_files": 473,
+    "browser_tested": false,
+    "bytes": 111682268,
+    "sha256": "dd0ed7c3705f7b16dce595d4ff92baf532384bfd8df1911ee016b649c74c94c7",
+    "bundle": "build/KingdomRush-KR1-Levels01-03-Web.zip"
+  },
+  "limits": [
+    "Native full battles use accelerated automated legal-command replays; they are not manual real-time playthroughs.",
+    "Audio players and calls were checked; no per-effect manual listening acceptance.",
+    "Browser gameplay, persistence, audio unlocking, background-tab handling and compatibility require manual acceptance.",
+    "TOWER_LEVEL2 has no GUI page in the frozen source; this delivery supplies an adaptation using source artwork.",
+    "Fish animation is present; its achievement system is not migrated.",
+    "Independent RNG and existing analytic projectile sampling do not guarantee identical Lua random sequences."
+  ],
+  "validation_input_sha256": {
+    "data/level01/animations.json": "5639b2b3587f7cfcc3de3d242ac6cca3038a6861a8b3451df0ffb0de51c616cb",
+    "data/level01/atlas.json": "f6d123a51a8dee8f37845df0e79d1155f5bfb63a6299d71c28eb3ca41cde377c",
+    "data/level01/definition.json": "cc1c531537a7af82e24d9878db2aec043db29cf59be6567a6b3e40d06cfe0065",
+    "data/level01/manifest.json": "7e4dee330b90dae88a62c948eab852c747e7e03d8ffcfb1c098139db24a2edc3",
+    "data/level01/sounds.json": "1be663f0ce0b33defcd2d9a5868ecc5d8caf18a7933665bdf0b8f9483499ba94",
+    "data/level02/animations.json": "21a01bb5dde777354f52afaf737c683806990e9115f809773c177828ca00e3ee",
+    "data/level02/atlas.json": "5b517badedfde4dff302cf2c585f482b50fba7a8f60e418e5efcb7a1af422f91",
+    "data/level02/definition.json": "470a4195e23a0df38231e97dd35408422d00017a905629b890ae929c4df7c54b",
+    "data/level02/manifest.json": "da04d1609711546bbc206e056f24872a0268ef8f58472d2635a11de10fa97f80",
+    "data/level02/sounds.json": "9f55c0ea781c6685d9127d4260ca5d74e2e73d1517a5cb2c92ea7a5db29eb3c1",
+    "data/level03/animations.json": "a3766546a3248d106720b0b9cb559a40aab9811e895521dada6d9626fddb9d36",
+    "data/level03/atlas.json": "6797cc4d041aac907fd36082994c8a9f84cd3ac940733a39525007c943d42e78",
+    "data/level03/definition.json": "979e6c9a090de644d6208eed9a16e97ef5e8461e90fc3063a5f04d94bd29b8d4",
+    "data/level03/manifest.json": "0b024b3a48480cb92305df7be038f9c236325490c77298348bac20827a1e36b9",
+    "data/level03/sounds.json": "ae2bf496fb9f714d8a8001eea1c14b5cd8d8b15dee6be3c0225216ee618baecb",
+    "scripts/app_root.gd": "de70f4f5ff1d8b7dcb4c8ad0a8fe0eeb745704085d9eb8aecdf4425294741067",
+    "scripts/battle/battle_ui.gd": "338a139d47cd370e97ddc9c0d7b949e661373404484165b791b8556b8d8abf9c",
+    "scripts/battle/battle_view.gd": "5e3e6a2845ddb52e3ac96df28212dc5efd0ef066fc7d33fb09423763466bd9b0",
+    "scripts/battle/battle_wave_flags.gd": "cd0494c877bc180db8c28aa90f4bf23195f27d1c63917e6676a0a7d38947773a",
+    "scripts/battle/dove_ui_layout.gd": "8fc48d6c7c7881cb55306e001e9dd68052ac1b6e1bcf383e600b8a7b6cf6587a",
+    "scripts/battle/level01_sim.gd": "9465e4cd01fb247ec81884eca0f638ea8025984ab49fc096b42870d72c74e048",
+    "scripts/dove_asset_catalog.gd": "ae7a7505fa1aa3b788e7c31eaef9c633dfa743915699dc0025e15a986ce66cc8",
+    "scripts/map/dove_map_flag.gd": "ed16fd0e2ed4e396e76f13ad797052c8fe1060cd5735d481802f23b2b7117e26",
+    "scripts/map/map_screen.gd": "b7c2cbc85aed42aef02016589852aab79c869cde49707f88bfe2dc498913895a",
+    "scripts/services/campaign_levels.gd": "706d93e871e1d2a60ebb2866d2330a134ab5518225831e8a3be6ef96b30a7a32",
+    "scripts/services/campaign_progress.gd": "7c63a282767cb068cb9825119034b7b86a3e1c740fd49af371d2dcf686b96f4d",
+    "tests/battle_ui_gallery.gd": "982be42732ce3765a255928b8f96f7da26ee462430302c3e5a331f7d751653e6",
+    "tests/battle_visual_smoke.gd": "8cc3261646bc9c75613d8d911126d3a0fc92de4098bf00ba779b494eb3f9c79f",
+    "tests/campaign_levels_visual.gd": "6e2e59dc6005293d4ed2f804b3f8c4e5066b9ca752e49ebbdd7f9032418c9d1e",
+    "tests/campaign_playback.gd": "20ecf45ff4aa8c71b533ed55a304cde666684266e959baac63072aeace554267",
+    "tests/interaction_fixes_visual.gd": "c60918a813e9aeee65bac6cae431991641d8655372a565149ee66a115185684a",
+    "tests/verify_campaign_levels.gd": "a657a0642b311a4e0441d18c11a533fe606947cc293187abbb3f78a247936d52",
+    "tests/verify_interaction_fixes.gd": "4c847d752d97a24c505186ac9374f009d4fb82460bef36d7ab08e3f2505df4c8",
+    "tests/verify_web_pack.gd": "192f831936435adfd765e110128ab9ab6375b72db4e69c3f8a072bf10b20fe7b",
+    "tools/level01_export/main.lua": "90f2c5b7bb27c8ce92d1598bf394659c4d809eae6d4520300399def135ef82b0",
+    "tools/package_level01.py": "5e8ffa0b9f7ac8d6d987fa3d1032b2412457b9260bcc02763d138acf202b51ff",
+    "tools/prepare_level01.py": "bf436317e3b7dc254777521b7933b9f7061d0d78c279b6f54770e6433f4666b9",
+    "tools/web_bootstrap.py": "44ffc607e0bbf9f2aa49304e3b2beaeb07af48316b10e788cd618f596e3cf41a"
+  },
+  "initial_delivery_other_regressions": {
+    "verify_menu_bootstrap.gd": "passed",
+    "verify_hero_room.gd": "passed",
+    "verify_audio_compat.gd": "passed"
+  },
+  "interaction_fixes": "reports/interaction_fixes_delivery.json"
+}

@@ -2,6 +2,7 @@ extends Control
 ## Native canvas view. Simulation owns all rules; this class submits player commands.
 signal returned_to_map
 signal finished(outcome: Dictionary)
+signal notification_seen(id: String)
 const CampaignProgress = preload("res://scripts/services/campaign_progress.gd")
 const Simulation = preload("res://scripts/battle/level01_sim.gd")
 const Interface = preload("res://scripts/battle/battle_ui.gd")
@@ -10,6 +11,9 @@ const UnitInfo = preload("res://scripts/battle/dove_unit_info.gd")
 const Catalog = preload("res://scripts/dove_asset_catalog.gd")
 const ART_SCALE := 768.0 / 1080.0
 const INK := Color("ffe9b0")
+const VICTORY_STAR_DELAY := 0.65
+const VICTORY_STAR_INTERVAL := 0.7
+const INVALID_POINT_DURATION := 14.0 / 30.0
 var sim: RefCounted
 var catalog: RefCounted
 var fonts: RefCounted
@@ -20,7 +24,9 @@ var audio: Node
 var selected := ""
 var selected_unit := 0
 var targeting := ""
+var invalid_point_time := 0.0
 var hovered := ""
+var pointer := Vector2(-1000, -1000)
 var hits: Array = []
 var frames_cache := {}
 var animations := {}
@@ -37,63 +43,91 @@ var sound_last := {}
 var volume_drag := {}
 var outcome := {}
 var return_label := "返回地图"
+var victory_elapsed := -1.0
+var victory_star_sounds := 0
 
 func initialize(boot: Node, sound: Node, definition: Dictionary = {}) -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	name = "Level01"
+	name = "Battle"
 	mouse_filter = MOUSE_FILTER_STOP
 	fonts = boot.fonts
 	font = fonts.font_for("body")
 	audio = sound
-	catalog = Catalog.new("res://data/level01/catalog.json")
-	animations = JSON.parse_string(FileAccess.get_file_as_string("res://data/level01/animations.json")).animations
 	sim = Simulation.new(definition, 1, OS.is_debug_build())
+	var base: String = sim.data.get("level", {}).get("root", "res://data/level01/")
+	catalog = Catalog.new(base + "catalog.json")
+	animations = sim.animations
 	sim.event.connect(_on_event)
 	interface = Interface.new(self)
 	developer = preload("res://scripts/battle/battle_developer.gd").new(self)
 	for i in range(12):
 		var player := AudioStreamPlayer.new()
+		player.playback_type = AudioServer.PLAYBACK_TYPE_STREAM
 		player.bus = "SFX"; add_child(player); fx_players.append(player)
-	_music("Level01PrepMusic")
+	_music(sim.data.get("level", {}).get("prep_music", "Level01PrepMusic"))
 	queue_redraw()
 
 func _process(delta: float) -> void:
 	if sim == null: return
 	sim.advance(delta)
+	interface.wave_flags.sync()
+	interface.wave_flags.advance(delta)
+	interface.advance_rewards(delta)
+	_advance_victory_audio(delta)
 	if selected_unit != 0 and unit_info().is_empty(): selected_unit = 0
 	message_time = maxf(0, message_time - delta)
+	advance_target_feedback(delta)
 	queue_redraw()
+
+func advance_target_feedback(delta: float) -> void:
+	invalid_point_time = maxf(0, invalid_point_time - delta) if targeting != "" else 0.0
+
+func target_pointer_frame() -> String:
+	if invalid_point_time > 0:
+		return "error_feedback_%04d" % clampi(1 + floori((INVALID_POINT_DURATION - invalid_point_time) * 30), 1, 14)
+	return "pointer_set_rally_0001" if targeting == "rally" else "pointer_power_" + ("reinforcements" if targeting == "reinforcements" else "rain_of_fire")
 
 func _on_event(kind: String, payload: Dictionary) -> void:
 	match kind:
 		"sound": _sound(str(payload.id))
 		"wave":
 			selected = ""; targeting = ""
-			if int(payload.number) == 1: _music("Level01Music")
-		"reward": _message("提前开波 +%d 金币，技能冷却缩短" % payload.gold)
+			if int(payload.number) == 1: _music(sim.data.get("level", {}).get("music", "Level01Music"))
+		"reward": interface.show_wave_reward(payload)
 		"tip": tip = str(payload.id)
 		"notice_confirmed": interface.confirmed(payload.notice)
 		"finished":
 			selected = ""; selected_unit = 0; targeting = ""
 			if outcome.is_empty():
-				outcome = {"generation": 1, "level_id": 1, "mode": 1, "difficulty": 2, "result": sim.result, "lives": sim.lives, "stars": CampaignProgress.stars_for(sim.lives) if sim.result == "victory" else 0, "developer_used": sim.developer_used}
+				outcome = {"generation": 1, "level_id": sim.data.get("level", {}).get("id", 1), "mode": 1, "difficulty": 2, "result": sim.result, "lives": sim.lives, "stars": CampaignProgress.stars_for(sim.lives) if sim.result == "victory" else 0, "developer_used": sim.developer_used}
+				if sim.result == "victory": _begin_victory_audio()
 				finished.emit(outcome.duplicate())
+
+func _begin_victory_audio() -> void:
+	# Dove VictoryView:show stops battle audio before the completion fanfare.
+	audio.stop_music(); audio.click_player.stop()
+	for player: AudioStreamPlayer in fx_players: player.stop()
+	victory_elapsed = 0; victory_star_sounds = 0
+	_sound("GUIQuestCompleted", false)
+
+func _advance_victory_audio(delta: float) -> void:
+	if sim.result != "victory" or victory_elapsed < 0: return
+	victory_elapsed += delta
+	while victory_star_sounds < int(outcome.get("stars", 0)) and victory_elapsed >= VICTORY_STAR_DELAY + victory_star_sounds * VICTORY_STAR_INTERVAL:
+		_sound("GUIWinStars", false)
+		victory_star_sounds += 1
 
 func _music(id: String) -> void:
 	var definition: Dictionary = catalog.get_sound(id)
 	if definition.is_empty(): return
-	audio.music_player.stop()
-	audio.music_player.stream = load(definition.paths[0])
-	if audio.music_player.stream is AudioStreamOggVorbis: audio.music_player.stream.loop = true
-	audio.music_player.volume_db = linear_to_db(float(definition.get("gain", 1.0)))
-	audio.unlock()
+	audio.play_music(load(definition.paths[0]), float(definition.get("gain", 1.0)))
 
-func _sound(id: String) -> void:
+func _sound(id: String, limit_repeats: bool = true) -> void:
 	if not is_inside_tree(): return
 	if DisplayServer.get_name() == "headless": return
 	if not catalog.get_static("sounds").has(id): return
 	var now := Time.get_ticks_msec()
-	if now - int(sound_last.get(id, -1000)) < 90: return
+	if limit_repeats and now - int(sound_last.get(id, -1000)) < 90: return
 	sound_last[id] = now
 	if not sound_cache.has(id):
 		var definition: Dictionary = catalog.get_sound(id)
@@ -108,12 +142,14 @@ func _sound(id: String) -> void:
 
 func _exit_tree() -> void:
 	for player: AudioStreamPlayer in fx_players: player.stop(); player.stream = null
+	if is_instance_valid(audio) and is_instance_valid(audio.music_player):
+		audio.stop_music()
 	sound_cache.clear(); frames_cache.clear()
 	if catalog != null: catalog.clear_cache()
 	if sim != null and sim.event.is_connected(_on_event): sim.event.disconnect(_on_event)
 
 func _frame(name_value: String) -> Dictionary:
-	if not frames_cache.has(name_value): frames_cache[name_value] = catalog.get_frame("level01", name_value)
+	if not frames_cache.has(name_value): frames_cache[name_value] = catalog.get_frame(sim.data.get("level", {}).get("group", "level01"), name_value)
 	return frames_cache[name_value]
 
 func _art(frame_name: String, at: Vector2, anchor: Vector2 = Vector2(0.5, 0.5), factor: float = 1.0, tint: Color = Color.WHITE, flip: bool = false, rotation_value: float = 0.0, sprite_scale: Vector2 = Vector2.ONE) -> void:
@@ -139,12 +175,12 @@ func _draw() -> void:
 	zoom = size.y / 768.0; view_width = size.x / zoom; margin = (view_width - 1024) / 2
 	draw_set_transform(Vector2.ZERO, 0, Vector2(zoom, zoom))
 	hits.clear(); draw_list.clear(); interface.begin()
-	_art("stage_1", Vector2(view_width / 2, 384))
+	_art(sim.data.get("level", {}).get("background", "stage_1"), Vector2(view_width / 2, 384))
 	for i in range(sim.data.layout.entities_list.size()):
 		var e: Dictionary = sim.data.layout.entities_list[i]
 		if not sim.templates.has(e.template): continue
 		if str(e.template).begins_with("tower_holder"): continue
-		if sim.templates[e.template].has("delayed_play"): continue
+		if sim.templates[e.template].has("delayed_play") or sim.templates[e.template].template_name == "decal_fish": continue
 		_queue_template(e.template, Simulation.vec(e.pos))
 	for decal: Dictionary in sim.decals:
 		if not decal.removed: _queue_template(decal.template, decal.pos, decal.state, decal.state_at, decal.flip, false, 1, false, "", decal)
@@ -161,7 +197,12 @@ func _draw() -> void:
 		_queue_template(unit.template, unit.pos, unit.state, unit.state_at, unit.flip, false, int(unit.get("variant", 1)), unit.hp <= 0, "", unit)
 	for p: Dictionary in sim.projectiles:
 		_queue_template(p.template, p.pos, "flying" if sim.templates[p.template].get("behavior", "") == "scripts.bolt.update" else "", p.at, false, false, 1, false, "", p)
-	for effect: Dictionary in sim.effects: _queue_template(effect.template, effect.pos, "", effect.at, false, false, 1, false, "", effect)
+	for effect: Dictionary in sim.effects:
+		if effect.has("target"):
+			var target: Dictionary = sim.unit_by_id(effect.target)
+			if target.is_empty() or target.hp <= 0: continue
+			effect.pos = target.pos + Simulation.vec(sim.templates[target.template].unit.mod_offset)
+		_queue_template(effect.template, effect.pos, effect.get("state", ""), effect.at, false, false, 1, false, "", effect)
 	draw_list.sort_custom(func(a, b):
 		if a.z != b.z: return a.z < b.z
 		if a.sort_y != b.sort_y: return a.sort_y > b.sort_y
@@ -170,8 +211,9 @@ func _draw() -> void:
 	for unit: Dictionary in sim.enemies + sim.soldiers:
 		if unit.hp <= 0 or unit.hp >= unit.max_hp: continue
 		var p := world(unit.pos + Simulation.vec(sim.templates[unit.template].health_bar.offset))
-		draw_rect(Rect2(p + Vector2(-13, -2), Vector2(26, 4)), Color("362519"))
-		draw_rect(Rect2(p + Vector2(-12, -1), Vector2(24 * unit.hp / unit.max_hp, 2)), Color("67ce26"))
+		var width := 36.0 if sim.templates[unit.template].health_bar.type == "medium" else 24.0
+		draw_rect(Rect2(p + Vector2(-width / 2 - 1, -2), Vector2(width + 2, 4)), Color("362519"))
+		draw_rect(Rect2(p + Vector2(-width / 2, -1), Vector2(width * unit.hp / unit.max_hp, 2)), Color("67ce26"))
 	if selected_unit != 0:
 		var unit: Dictionary = sim.unit_by_id(selected_unit)
 		if not unit.is_empty() and unit.hp > 0:
@@ -179,17 +221,17 @@ func _draw() -> void:
 			for i in range(33): ring.append(world(unit.pos) + Vector2(cos(i * TAU / 32) * 14, sin(i * TAU / 32) * 7))
 			draw_polyline(ring, Color("ffe477"), 1.5, true)
 	_draw_selection()
+	interface.wave_flags.draw_path()
 	_draw_hud()
 	developer.hud()
 	if message_time > 0: _text(message, Vector2(view_width / 2, 95), 20, INK, true)
 	if targeting != "":
-		var point := get_local_mouse_position() / zoom
-		var valid: bool = sim.valid_ground(Vector2(point.x - margin, 768 - point.y))
-		_art("pointer_set_rally_0001" if targeting == "rally" else "pointer_power_" + ("reinforcements" if targeting == "reinforcements" else "rain_of_fire"), point, Vector2(0.5, 0.5), 1, Color.WHITE if valid else Color(1, 0.3, 0.3))
+		_art(target_pointer_frame(), pointer, Vector2(0.5, 0.5))
 	if developer.opened: developer.draw()
 	elif not sim.notices.is_empty(): _draw_notice(str(sim.notices[0]))
 	elif sim.result != "": _draw_result()
 	elif sim.paused: _draw_pause()
+	_refresh_hover()
 	draw_set_transform(Vector2.ZERO)
 
 func _queue_template(template_name: String, point: Vector2, state: String = "", at: int = 0, flip: bool = false, up: bool = false, variant: int = 1, dead: bool = false, preview: String = "", runtime: Dictionary = {}) -> void:
@@ -198,7 +240,7 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 	var order := 0
 	for sprite: Dictionary in template.get("render", {}).get("sprites", []):
 		order += 1
-		if sprite.get("hidden", false) and sprite.get("name", "") != preview: continue
+		if sprite.get("hidden", false) and sprite.get("name", "") != preview and not runtime.get("fish", false): continue
 		var playback := {"state": state, "elapsed": maxi(0, sim.tick - at)}
 		var layer: Dictionary = runtime.get("layers", {}).get(order, {})
 		if not layer.is_empty():
@@ -207,7 +249,7 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 			if layer.has("idle") and int(playback.elapsed) >= length:
 				playback.state = layer.idle; playback.elapsed -= length; playback.loop = true
 		elif state != "":
-			playback.loop = state not in ["attack", "death", "play", "shoot"]
+			playback.loop = state not in ["attack", "death", "play", "shoot", "heal", "jump", "small", "medium", "large"]
 			if sprite.has("angles") and state == "shoot": playback.state = "shootingUp" if up else "shootingDown"
 			if state == "attack" and int(playback.elapsed) >= SpriteAnimation.duration(animations, SpriteAnimation.key(sprite, state)):
 				playback.state = "idle"; playback.loop = true
@@ -253,12 +295,9 @@ func _gui_input(input: InputEvent) -> void:
 	queue_redraw()
 	if input is InputEventMouseMotion:
 		var point: Vector2 = input.position / zoom
+		pointer = point
 		if not volume_drag.is_empty(): _set_volume(volume_drag, point.x)
-		var previous := hovered
-		hovered = ""
-		for hit: Dictionary in hits:
-			if hit.rect.has_point(point): hovered = hit.action + str(hit.args)
-		if previous != hovered and hovered.begins_with("build"): _sound("GUIQuickMenuOver")
+		_refresh_hover()
 		return
 	if input is InputEventMouseButton and not input.pressed:
 		volume_drag.clear(); return
@@ -266,9 +305,10 @@ func _gui_input(input: InputEvent) -> void:
 	accept_event()
 	if input.button_index == MOUSE_BUTTON_RIGHT:
 		if developer.opened: developer.close(); return
-		targeting = ""; selected = ""; selected_unit = 0; hits.clear(); return
+		targeting = ""; invalid_point_time = 0; selected = ""; selected_unit = 0; hits.clear(); return
 	if input.button_index != MOUSE_BUTTON_LEFT: return
 	var point: Vector2 = input.position / zoom
+	pointer = point
 	for i in range(hits.size() - 1, -1, -1):
 		var hit: Dictionary = hits[i]
 		if hit.rect.has_point(point):
@@ -276,14 +316,15 @@ func _gui_input(input: InputEvent) -> void:
 				volume_drag = hit.args
 				_set_volume(hit.args, point.x)
 			elif hit.enabled: _action(hit.action, hit.args)
-			else: _message("金币不足、技能尚未解锁或冷却未结束")
+			elif hit.action != "target" or hit.args.get("power", "") not in ["fire", "reinforcements"]:
+				_message("金币不足或当前操作不可用")
 			return
 	if not sim.notices.is_empty() or sim.paused or sim.result != "": return
 	var world_point := Vector2(point.x - margin, 768 - point.y)
 	if targeting != "":
 		var success: bool = sim.command("rally", {"id": selected, "pos": world_point}) if targeting == "rally" else sim.command("cast", {"power": targeting, "pos": world_point})
-		if success: targeting = ""; selected = ""
-		else: _message("无效落点：请选择范围内道路")
+		if success: targeting = ""; selected = ""; invalid_point_time = 0
+		else: invalid_point_time = INVALID_POINT_DURATION
 		return
 	selected_unit = UnitInfo.pick(sim.soldiers + sim.enemies, sim.templates, world_point)
 	if selected_unit != 0:
@@ -293,10 +334,25 @@ func _gui_input(input: InputEvent) -> void:
 		if rect.has_point(world_point) and tower.ready <= sim.tick: selected = tower.id; _sound("GUIQuickMenuOpen"); return
 	selected = ""
 	for decal: Dictionary in sim.decals:
-		if decal.removed: continue
+		if decal.removed or decal.hidden: continue
+		if not sim.templates[decal.template].get("delayed_play", {}).has("required_clicks"): continue
 		var area: Dictionary = sim.templates[decal.template].ui.click_rect
 		if Rect2(decal.pos + Simulation.vec(area.pos), Simulation.vec(area.size)).has_point(world_point):
 			sim.command("decal_click", {"id": decal.id}); return
+
+func _refresh_hover() -> void:
+	var previous := hovered
+	hovered = ""
+	for hit: Dictionary in hits:
+		if hit.rect.has_point(pointer): hovered = hit.action + str(hit.args)
+	if previous != hovered:
+		if hovered.begins_with("build"): _sound("GUIQuickMenuOver")
+		mouse_default_cursor_shape = CURSOR_POINTING_HAND if hovered != "" else CURSOR_ARROW
+		queue_redraw()
+
+func _notification(what: int) -> void:
+	if what in [NOTIFICATION_WM_MOUSE_EXIT, NOTIFICATION_APPLICATION_FOCUS_OUT]:
+		pointer = Vector2(-1000, -1000); hovered = ""; mouse_default_cursor_shape = CURSOR_ARROW
 
 func _input(input: InputEvent) -> void:
 	if sim == null or not visible: return
@@ -306,7 +362,7 @@ func _input(input: InputEvent) -> void:
 		if input.keycode == KEY_ESCAPE:
 			if developer.opened: developer.close()
 			elif not sim.notices.is_empty(): _action("confirm")
-			elif targeting != "" or selected != "" or selected_unit != 0: targeting = ""; selected = ""; selected_unit = 0
+			elif targeting != "" or selected != "" or selected_unit != 0: targeting = ""; invalid_point_time = 0; selected = ""; selected_unit = 0
 			elif sim.result == "": _action("pause")
 			get_viewport().set_input_as_handled()
 		elif not developer.opened and sim.notices.is_empty() and not sim.paused and sim.result == "":
@@ -330,17 +386,26 @@ func _action(action: String, args: Dictionary = {}) -> void:
 		"locked", "unit_info": return
 		"target":
 			var power: String = args.power
+			if power != "rally" and (sim.wave == 0 or not sim.unlocked.get(power, false) or sim.cooldowns.get(power, 0) > 0): return
 			selected_unit = 0
+			invalid_point_time = 0
 			if power == "rally" or (sim.unlocked.get(power, false) and sim.cooldowns.get(power, 0) == 0): targeting = power
 			interface.power_hint_hidden = true
 		"restart":
 			developer.close()
 			outcome.clear()
-			sim.reset(); interface.reset(); selected = ""; selected_unit = 0; targeting = ""; tip = ""
-			_music("Level01PrepMusic")
+			victory_elapsed = -1; victory_star_sounds = 0
+			sim.reset(); interface.reset(); selected = ""; selected_unit = 0; targeting = ""; invalid_point_time = 0; tip = ""
+			_music(sim.data.get("level", {}).get("prep_music", "Level01PrepMusic"))
 			for player: AudioStreamPlayer in fx_players: player.stop()
 		"map": returned_to_map.emit(); return
 		"tip": sim.notices.append(tip); tip = ""
+		"enemy_notice":
+			if sim.alerts.has(str(args.id)):
+				sim.alerts.erase(str(args.id)); sim.notices.append(str(args.id))
+				if not sim.data.has("seen_notifications"): sim.data.seen_notifications = []
+				if not str(args.id) in sim.data.seen_notifications: sim.data.seen_notifications.append(str(args.id))
+				notification_seen.emit(str(args.id))
 		_:
 			if not sim.command(action, args): _message("当前操作不可用")
 			elif action in ["build", "upgrade", "sell"]: selected = ""

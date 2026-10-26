@@ -36,10 +36,13 @@ func _init() -> void:
 	expected.append_array(manifest.textures)
 	expected.append_array(manifest.audio.values())
 	expected.append_array(manifest.atlases.values())
-	var level: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/level01/manifest.json"))
-	expected.append_array(level.resources)
-	expected.append_array(level.data)
-	expected.append("res://data/level01/manifest.json")
+	for id in [1, 2, 3]:
+		var base := "res://data/level%02d/" % id
+		var level: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(base + "manifest.json"))
+		expected.append_array(level.resources)
+		expected.append_array(level.data)
+		expected.append(base + "manifest.json")
+	expected.append("res://scripts/services/campaign_levels.gd")
 	expected.append("res://scripts/battle/level01_sim.gd")
 	expected.append("res://scripts/battle/battle_view.gd")
 	expected.append("res://scripts/battle/battle_ui.gd")
@@ -47,6 +50,8 @@ func _init() -> void:
 	expected.append("res://scripts/battle/dove_animation.gd")
 	expected.append("res://scripts/battle/dove_projectile.gd")
 	expected.append("res://scripts/battle/dove_unit_info.gd")
+	expected.append("res://scripts/battle/battle_wave_flags.gd")
+	expected.append("res://scripts/map/dove_map_flag.gd")
 	var campaign_map: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/map_kr1/manifest.json"))
 	expected.append_array(campaign_map.resources)
 	expected.append_array(campaign_map.data)
@@ -76,6 +81,28 @@ func _init() -> void:
 		if not ResourceLoader.exists(atlas.texture_directory + frame.sheet):
 			failures.append("Missing first-level atlas " + frame.sheet)
 	var sim_script = load("res://scripts/battle/level01_sim.gd")
+	for script: String in ["res://scripts/map/dove_map_flag.gd", "res://scripts/battle/battle_wave_flags.gd"]:
+		if not ResourceLoader.exists(script) or load(script) == null: failures.append("Interaction script missing: " + script)
+	for id in [1, 2, 3]:
+		var stage: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/level%02d/definition.json" % id))
+		if stage.get("locations", {}).get("entrances", []).size() != {1:1, 2:1, 3:2}[id]: failures.append("Exported entrances incomplete %d" % id)
+		var art = load("res://scripts/dove_asset_catalog.gd").new(stage.level.root + "catalog.json")
+		for image: String in ["nextwaveTimer_Full", "nextwaveTimer_0001", "nextwaveTimer_0002", "nextwaveTimer_0020", "nextwaveTimer_glow_0001"]:
+			if art.get_frame(stage.level.group, image).is_empty(): failures.append("Exported wave flag art missing: " + image)
+		for image: String in ["nextwave_coin_0001", "nextwave_coin_0014", "waveReward_0011", "waveRewardTimer_0011", "waveRewardTimer_0012"]:
+			if art.get_frame(stage.level.group, image).is_empty(): failures.append("Exported wave reward art missing: " + image)
+		for frame in range(1,15):
+			if art.get_frame(stage.level.group, "error_feedback_%04d" % frame).is_empty(): failures.append("Exported invalid-point feedback missing %d/%d" % [id,frame])
+		var placement = sim_script.new(stage)
+		var grass: Vector2 = {1:Vector2(256,424), 2:Vector2(256,328), 3:Vector2(256,376)}[id]
+		if placement.valid_power_point("reinforcements", grass) or not placement.valid_power_point("reinforcements", placement.towers[0].rally): failures.append("Exported troop placement rules invalid %d" % id)
+		if id == 2:
+			placement.notices.clear(); placement.command("build", {"id":"5", "type":"barrack"})
+			var barrack: Dictionary = placement.tower_by_id("5"); placement.tick = barrack.ready
+			if not placement.command("rally", {"id":"5", "pos":Vector2(129,150)}) or barrack.rally.distance_to(Vector2(424.8,150)) > 0.002: failures.append("Exported directional rally fallback invalid")
+		if art.get_sound("GUICoins").is_empty(): failures.append("Exported wave reward sound missing %d" % id)
+		if art.get_sound("GUIQuestCompleted").is_empty(): failures.append("Exported victory fanfare missing %d" % id)
+		if art.get_sound("GUISpellRefresh").is_empty(): failures.append("Exported skill refresh sound missing %d" % id)
 	var map_definition: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/map_kr1/definition.json"))
 	if map_definition.levels.size() != 27 or map_definition.animations.size() != 124:
 		failures.append("Generation-one map data incomplete")
@@ -95,6 +122,14 @@ func _init() -> void:
 	else:
 		var simulation = sim_script.new(definition)
 		if simulation.towers.size() != 8: failures.append("Exported simulation initialization failed")
+		var levels = load("res://scripts/services/campaign_levels.gd")
+		for id in [2, 3]:
+			var stage: Dictionary = levels.load_definition(id)
+			if stage.is_empty(): failures.append("Exported campaign dependencies invalid %d" % id); continue
+			var campaign = sim_script.new(stage)
+			if campaign.towers.size() != {2: 7, 3: 12}[id] or campaign.data.waves.groups.size() != {2: 7, 3: 11}[id]: failures.append("Exported campaign initialization invalid %d" % id)
+			var art = load("res://scripts/dove_asset_catalog.gd").new(stage.level.root + "catalog.json")
+			if art.get_frame(stage.level.group, stage.level.background).is_empty(): failures.append("Exported campaign background missing %d" % id)
 	var background := load(manifest.background) as Texture2D
 	if background == null or background.get_size() != Vector2(1920, 1080):
 		failures.append("Exported menu background or its atlas dependency failed to load")

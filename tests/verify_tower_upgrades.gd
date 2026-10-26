@@ -124,10 +124,13 @@ func garrison() -> void:
 	for dx in range(-150, 151):
 		for dy in range(-105, 106):
 			var point: Vector2 = tower.pos + Vector2(dx, dy)
-			if Sim.distance(point, tower.pos) > 145 and Sim.distance(point, tower.pos) <= 150 and sim.valid_ground(point): rally = point; break
+			var center: Vector2 = tower.pos + Sim.vec(sim.tower_template(tower).tower.range_offset)
+			if Sim.distance(point, center) > 145 and Sim.distance(point, center) <= 150 and sim.valid_ground(point): rally = point; break
 		if rally != Vector2.ZERO: break
 	check(rally != Vector2.ZERO and sim.command("rally", {"id": "8", "pos": rally}), "upgraded rally accepts newly available 145-150 band")
-	check(not sim.command("rally", {"id": "8", "pos": tower.pos + Vector2(151, 0)}), "upgraded rally rejects outside 150")
+	var outside: Vector2 = tower.pos + Sim.vec(sim.tower_template(tower).tower.range_offset) + Vector2(151, 0)
+	var expected: Vector2 = sim.resolve_rally_point(tower, outside)
+	check(sim.command("rally", {"id": "8", "pos": outside}) == expected.is_finite() and (not expected.is_finite() or tower.rally.is_equal_approx(expected)), "upgraded rally resolves outside click to the legal edge")
 	# Fixed attack samples avoid motion and regeneration masking timing/armor errors.
 	replacement.rally_pending = false; replacement.rallying = false; replacement.pending = {}
 	sim.tick = started + 41; sim._melee(replacement, e, sim.templates.soldier_footmen)

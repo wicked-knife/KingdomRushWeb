@@ -1,6 +1,6 @@
 """Validate frozen input hashes, all runtime animation/audio references and repacked pixels."""
 from pathlib import Path
-import hashlib, json, math
+import argparse, hashlib, json, math
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -8,8 +8,9 @@ ROOT = Path(__file__).resolve().parents[1]
 def read(path): return json.loads(path.read_text(encoding="utf-8"))
 def sha(path): return hashlib.sha256(path.read_bytes()).hexdigest()
 
-def verify():
-    folder=ROOT/"data/level01"; manifest=read(folder/"manifest.json"); data=read(folder/"definition.json")
+def verify(level_id=1):
+    level_name=f"level{level_id:02d}"
+    folder=ROOT/f"data/{level_name}"; manifest=read(folder/"manifest.json"); data=read(folder/"definition.json")
     source=Path("D:/projects/KingdomRushDove")
     for name,digest in data["source"]["inputs"].items(): assert sha(source/name)==digest, name
     for name,digest in manifest["source_texture_hashes"].items(): assert sha(ROOT/name)==digest, name
@@ -47,7 +48,10 @@ def verify():
     for alias,canonical in atlas["lookup"].items(): assert canonical in atlas["frames"],alias
     for im in [*images.values(),*originals.values()]: im.close()
     report={"passed":True,"source_commit":data["source"]["commit"],"source_inputs":len(data["source"]["inputs"]),"frames":len(atlas["lookup"]),"canonical_frames":len(atlas["frames"]),"animations":len(animations),"resources":len(manifest["resources"]),"sha256":{p.name:sha(p) for p in sorted(folder.glob('*')) if p.suffix in ['.json','.png']}}
-    (ROOT/"reports/level01_assets.json").write_text(json.dumps(report,indent=2)+"\n",encoding="utf-8")
+    (ROOT/f"reports/{level_name}_assets.json").write_text(json.dumps(report,indent=2)+"\n",encoding="utf-8")
     print(json.dumps({k:v for k,v in report.items() if k!='sha256'}))
 
-if __name__=="__main__": verify()
+if __name__=="__main__":
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--level",type=int,choices=[1,2,3],default=1)
+    verify(parser.parse_args().level)

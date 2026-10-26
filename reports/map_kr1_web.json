@@ -2,14 +2,19 @@
   "package_created": true,
   "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
   "browser_tested": false,
-  "build_type": "debug",
-  "developer_menu": true,
+  "build_type": "release",
+  "developer_menu": false,
   "includes_hero_room": true,
+  "playable_levels": [
+    1,
+    2,
+    3
+  ],
   "pck_isolated_check": true,
-  "pck_files": 411,
-  "bundle": "build\\KingdomRush-KR1-Playtest-Debug-Web.zip",
-  "bytes": 92085154,
-  "sha256": "9018b180a55ee61f1c1b0601ae9537f31b7c1c089999b061db6aae1539831cbe",
+  "pck_files": 479,
+  "bundle": "build\\KingdomRush-KR1-Levels01-03-Web.zip",
+  "bytes": 112057763,
+  "sha256": "7a841da7336882c581d211d0d2844cd11d9bf4a5367c55ed5ecafe2fbd31204c",
   "web_files": {
     "index.apple-touch-icon.png": {
       "bytes": 11939,
@@ -24,44 +29,44 @@
       "sha256": "5b476a9c9ce642c0ee4256436d1bc31d9c38f868aca0f9a8e2a57c18d2dec2a3"
     },
     "index.html": {
-      "bytes": 3145,
-      "sha256": "78dc2ce4df21dd465f766faed7f9462cd30febe499959f9ea29aeff8418006a7"
+      "bytes": 3146,
+      "sha256": "b19503736343c683bd3afe473912bb47e043c2ecd60164ec466f041bd3d586fd"
     },
     "index.icon.png": {
       "bytes": 5765,
       "sha256": "662f81d7672001a6f5f928532493267c226624757de3b5fa2908f6e5923964b7"
     },
     "index.js": {
-      "bytes": 315645,
-      "sha256": "ffc3898b59fba6f5af0c02f76e5ee526cc061e65c7d2d6f4f98186876cea15c4"
+      "bytes": 279815,
+      "sha256": "33c94cb3175f3333b82e2a3be5e8e86f77986f0aa2042b1631f6367a4e5bb6ba"
     },
     "index.pck": {
-      "bytes": 85999120,
-      "sha256": "582ad9bc312768944aa6b796c04449d52df0dd1a5c14fe53aff1b277886065ab"
+      "bytes": 107205120,
+      "sha256": "86d668c32398acb61b757c87878c3e97bdf3bdf505c6142635ae383529fe15ce"
     },
     "index.png": {
       "bytes": 21443,
       "sha256": "3cb4495c0b98dfbe4b663cbf2b6836473572339beb66d902367893162a70be0e"
     },
     "index.wasm": {
-      "bytes": 37902138,
-      "sha256": "11ea19645368f8e73cf337b59cfd7ceeb4ebb51f7a3bbf77d1a5c3ddfedbc522"
+      "bytes": 39514754,
+      "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
     },
     "export_receipt.json": {
-      "bytes": 291,
-      "sha256": "fb16492de26acf69c728443bfef197818b98e3e32eb3415f0437e8427ad09ab2"
+      "bytes": 347,
+      "sha256": "f3894913d645394c609a83ffd8a93fa38d7cb04608084b8667411ff6d9b8a567"
     },
     "README.txt": {
-      "bytes": 1867,
-      "sha256": "e68501bc997b8e7f731b5a9eaa30c9dc70074f64c7c0d378fa98c229636acc24"
+      "bytes": 2412,
+      "sha256": "0900729d32c15b34357f6e0a400a1dcb66a72c5a9f7a3e44425beae06187f85b"
     },
     "start_server.cmd": {
       "bytes": 180,
       "sha256": "8f021ad5511504a288354fec02c4bf8514f054a2457cc229710e1d6069558b32"
     },
     "pack_files.json": {
-      "bytes": 32425,
-      "sha256": "9fce950cabb8cd4f228c2a5448bf67833e5a0bd0a25d2651c5db310041756f5b"
+      "bytes": 36729,
+      "sha256": "c9d32a7cca63047fcb1007ee1f2b4abbcb6f2b460ce7aac7afa7f767fb152d80"
     }
   }
 }

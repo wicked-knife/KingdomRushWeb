@@ -1,0 +1,31 @@
+{
+	"checks": 577,
+	"failures": [],
+	"levels": {
+		"2": {
+			"defeat_ticks": 1984,
+			"victory": {
+				"gold": 82,
+				"kills": 139,
+				"leaks": 15,
+				"lives": 5,
+				"result": "victory",
+				"spawned": 154,
+				"ticks": 9037
+			}
+		},
+		"3": {
+			"defeat_ticks": 2360,
+			"victory": {
+				"gold": 19,
+				"kills": 320,
+				"leaks": 9,
+				"lives": 11,
+				"result": "victory",
+				"spawned": 329,
+				"ticks": 19175
+			}
+		}
+	},
+	"passed": true
+}

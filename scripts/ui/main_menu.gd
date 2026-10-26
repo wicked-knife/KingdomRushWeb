@@ -112,7 +112,7 @@ func _process(delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if status != null and (event is InputEventMouseButton or event is InputEventKey) and event.is_pressed():
+	if status != null and (event is InputEventMouseButton or event is InputEventKey or event is InputEventScreenTouch or event is InputEventJoypadButton) and event.is_pressed():
 		audio.unlock()
 		_update_status()
 	if event.is_action_pressed("ui_cancel"):

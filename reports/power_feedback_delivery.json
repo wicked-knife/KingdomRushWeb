@@ -1,0 +1,48 @@
+{
+  "passed": true,
+  "scope": "Skill cooldown readiness and disabled input only; no campaign reruns.",
+  "source": "Dove 2.1.0.2 / e29ece82, all-desktop/game_gui.lua PowerButton/Power1Button/Power2Button",
+  "fix": "Cooldown uses ready frames 1-28 and GUISpellRefresh; unlock doors 30-44 only on first unlock. Ignore disabled skill clicks and shortcuts.",
+  "logic": {
+    "captures": [],
+    "checks": 29,
+    "failures": [],
+    "native": false,
+    "passed": true,
+    "scope": "skill ready transitions and disabled input only"
+  },
+  "native": {
+    "captures": [
+      "power_feedback_cooldown.png",
+      "power_feedback_refresh.png",
+      "power_feedback_ready.png"
+    ],
+    "checks": 34,
+    "failures": [],
+    "native": true,
+    "passed": true,
+    "scope": "skill ready transitions and disabled input only"
+  },
+  "pck_isolated_check": true,
+  "pck_files": 479,
+  "zip_crc_passed": true,
+  "web_exports_this_fix": 1,
+  "browser_tested": false,
+  "bundle": "build\\KingdomRush-KR1-Levels01-03-Web.zip",
+  "bytes": 111873723,
+  "sha256": "b656be3e692075833d6976a5fc1babfeb2910fdbebc4bfc1efb2e3cf54522cdf",
+  "validation_inputs": {
+    "scripts/battle/battle_view.gd": "63286f5db56b4601b5b9e0999c2931a1fc0914670aca0481991d04f908bac723",
+    "scripts/battle/battle_ui.gd": "5bb51fa22bbb1f366ba192cace3daa2e1b275f2d367c832be64c17bd401cff52",
+    "tools/prepare_level01.py": "397091f9bee80bc4788f46d98d2bf8509cced02a40192f2ef5b299ffa050eb2f",
+    "tests/verify_power_feedback.gd": "acdac800964b83b8418e65f6871b26e65aef2bb0cc7fc669ac295d12df2fa215",
+    "tests/verify_web_pack.gd": "708e014418c3563687363cd3c546ffdd001a2d73ac680c6e5267159b6002a53e",
+    "assets/kingdom_rush/kr1-desktop/sounds/files/Sound_SpellRefresh.ogg": "2e26bdbea52dc52670024d499eb414698ade7a0c2fa1ac83bc9627e6da6f0f5e",
+    "data/level01/sounds.json": "b08e378de7daa73eae6593118a3b9e8b01e94c0a30fddd20e25e6d7546d62a78",
+    "data/level01/manifest.json": "b17d131c3f02a22b697a8b4fe46913dbd0e5d31441b95cff37d75273ffe31618",
+    "data/level02/sounds.json": "2b575d931d4d03a2348818b0bc5112ee90fa26bd7d993af899e46cc69ecc8e8c",
+    "data/level02/manifest.json": "2e3cbb64a10fb4415ab64054324b6b0e5f224b448d2a02189d29b1fb60aa7430",
+    "data/level03/sounds.json": "8ad886ceb974000e419bf784c85ffc4205f502d16fe70b1ea76b6be5a0bf197b",
+    "data/level03/manifest.json": "45b436ffe23d5039cf97955d3d29e4e516c5d52aaae5853ff20e1c00f2e6fac6"
+  }
+}

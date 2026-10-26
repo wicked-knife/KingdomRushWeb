@@ -1,0 +1,9 @@
+{
+	"captures": [],
+	"checks": 185,
+	"failures": [],
+	"native": false,
+	"passed": true,
+	"scope": "skill placement, rejected-cast side effects, cursor feedback and adjacent rally path filter",
+	"source_samples": 820
+}

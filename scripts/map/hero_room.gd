@@ -77,8 +77,8 @@ func initialize(owner_map: Control) -> void:
 	paint = Layout.new(self, fonts, 1080)
 	loader = Loader.new(); add_child(loader)
 	loader.progress_changed.connect(func(done: int, total: int): load_fraction = float(done) / maxf(1, total); queue_redraw())
-	voice = AudioStreamPlayer.new(); voice.bus = "SFX"; add_child(voice)
-	click_sound = AudioStreamPlayer.new(); click_sound.bus = "SFX"; add_child(click_sound)
+	voice = AudioStreamPlayer.new(); voice.playback_type = AudioServer.PLAYBACK_TYPE_STREAM; voice.bus = "SFX"; add_child(voice)
+	click_sound = AudioStreamPlayer.new(); click_sound.playback_type = AudioServer.PLAYBACK_TYPE_STREAM; click_sound.bus = "SFX"; add_child(click_sound)
 	scroll = ScrollContainer.new(); scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED; scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_ALWAYS
 	scroll.size = Vector2(355, 244); add_child(scroll)
 	grid = ThumbGrid.new(); grid.room = self; grid.custom_minimum_size = Vector2(330, ceil(progress.hero_rows.size() / 7.0) * 50 + 3)

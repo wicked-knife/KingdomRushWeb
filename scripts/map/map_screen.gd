@@ -6,6 +6,7 @@ const Layout = preload("res://scripts/battle/dove_ui_layout.gd")
 const Animations = preload("res://scripts/map/map_animations.gd")
 const Interface = preload("res://scripts/map/map_interface.gd")
 const HeroRoom = preload("res://scripts/map/hero_room.gd")
+const FlagAnimation = preload("res://scripts/map/dove_map_flag.gd")
 var hero_room: Control
 var catalog: RefCounted
 var progress: RefCounted
@@ -41,6 +42,7 @@ var change_times := {}
 var fx: Array[AudioStreamPlayer] = []
 var sounds := {}
 var announced := {}
+var flag_states := {}
 
 func initialize(loader: Node, boot: Node, sound: Node, preferences: Node, campaign: RefCounted, camera: Dictionary = {}) -> void:
 	name = "CampaignMapKR1"; set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -59,7 +61,8 @@ func initialize(loader: Node, boot: Node, sound: Node, preferences: Node, campai
 			if int(deco.get("trigger_level", 0)) == int(id): duration = (int(deco.animations.to) - int(deco.animations.from) + 1) / 30.0
 		change_times[int(id)] = {"road": 1.2, "flag": 1.2 + duration}
 	for i in range(4):
-		var player := AudioStreamPlayer.new(); player.bus = "SFX"; add_child(player); fx.append(player)
+		var player := AudioStreamPlayer.new(); player.playback_type = AudioServer.PLAYBACK_TYPE_STREAM
+		player.bus = "SFX"; add_child(player); fx.append(player)
 	_refresh_size()
 	magnification = clampf(float(camera.get("magnification", 1)), 1, 3)
 	camera_scale = maxf(view_size.x / 1920.0, 1.0) * magnification
@@ -82,10 +85,8 @@ func initialize(loader: Node, boot: Node, sound: Node, preferences: Node, campai
 					camera_offset.x = view_size.x / 2 - float(stage.flag.pos.x) * camera_scale
 				_clamp_camera()
 	var music: Dictionary = catalog.get_sound("MusicMap1")
-	audio.music_player.stop(); audio.music_player.stream = load(music.paths[0])
-	if audio.music_player.stream is AudioStreamOggVorbis: audio.music_player.stream.loop = true
-	audio.music_player.volume_db = linear_to_db(float(music.get("gain", 1)))
-	audio.unlock(); queue_redraw()
+	audio.play_music(load(music.paths[0]), float(music.get("gain", 1)))
+	queue_redraw()
 
 func _refresh_size() -> void:
 	if size.y <= 0: return
@@ -121,6 +122,7 @@ func _process(delta: float) -> void:
 	if animation_player == null: return
 	if not is_equal_approx(size.y / zoom, 1080) or not is_equal_approx(size.x / zoom, view_size.x): _refresh_size()
 	animation_player.advance(delta)
+	for state: RefCounted in flag_states.values(): state.advance(delta)
 	if overlay == "" and touches.is_empty() and volume_drag.is_empty():
 		var direction := Vector2.ZERO
 		if Rect2(Vector2.ZERO, view_size).has_point(pointer):
@@ -178,6 +180,7 @@ func _draw() -> void:
 	paint.image("map_vignette_small", Vector2(-2, -2), Vector2.ZERO, Color.WHITE, view_size * 1.02 / Vector2(400, 225))
 	if overlay != "": hits.clear()
 	interface.draw()
+	_refresh_hover()
 	draw_set_transform_matrix(Transform2D.IDENTITY)
 
 func _flag(stage: Dictionary) -> void:
@@ -186,16 +189,17 @@ func _flag(stage: Dictionary) -> void:
 	var elapsed: float = animation_player.time - born
 	if elapsed < 0: return
 	var stars: int = int(progress.record(id).get("stars", 0))
-	var frame := "map_flag_0181" if stars > 0 else "map_flag_0180"
-	var period := fmod(animation_player.time + id * 1.13, 6.0)
+	if not flag_states.has(id): flag_states[id] = FlagAnimation.new(stars > 0)
+	var state: RefCounted = flag_states[id]
+	state.completed = stars > 0
+	state.set_hovered(hovered == "level" + str({"id": id}))
+	var frame: String = state.frame()
 	if born >= 0 and elapsed < 0.8: frame = "map_flag_%04d" % (1 + mini(23, int(elapsed * 30)))
-	elif period < 1.3:
-		frame = "map_flag_%04d" % ((90 if stars > 0 else 24) + mini(40, int(period * 30)))
 	if changes.get("stars", {}).has(str(id)) and animation_player.time >= 0.3 and animation_player.time < 0.3 + 25.0 / 30.0:
 		frame = "map_flag_%04d" % (65 + mini(24, int((animation_player.time - 0.3) * 30)))
 	var at := Animations.vec(stage.flag.pos)
 	paint.push(at - Vector2(44, 60))
-	if hovered == "level" + str({"id": id}): frame = "map_flag_0181" if stars > 0 else "map_flag_0180"
+	if state.hovered: frame = state.frame()
 	paint.image(frame)
 	var visible_stars := stars
 	if changes.get("stars", {}).has(str(id)):
@@ -210,16 +214,26 @@ func _flag(stage: Dictionary) -> void:
 	if overlay == "" and (born < 0 or elapsed >= 0.8): paint.hit(Rect2(20, 34, 44, 74), "level", {"id": id})
 	paint.pop()
 
+func _set_hovered(value: String) -> void:
+	if hovered == value: return
+	hovered = value
+	for id in flag_states: flag_states[id].set_hovered(value == "level" + str({"id": id}))
+	if hovered.begins_with("level"): _sound("GUIQuickMenuOver")
+	mouse_default_cursor_shape = CURSOR_POINTING_HAND if hovered != "" else CURSOR_ARROW
+	queue_redraw()
+
+func _refresh_hover() -> void:
+	var value := ""
+	for hit: Dictionary in hits:
+		if hit.rect.has_point(pointer): value = hit.action + str(hit.args)
+	_set_hovered(value)
+
 func _gui_input(event: InputEvent) -> void:
 	if paint == null: return
 	if event is InputEventMouseMotion:
 		pointer = event.position / zoom
 		if not volume_drag.is_empty(): _volume(pointer.x)
-		var previous := hovered; hovered = ""
-		for hit: Dictionary in hits:
-			if hit.rect.has_point(pointer): hovered = hit.action + str(hit.args)
-		if previous != hovered and hovered.begins_with("level"): _sound("GUIQuickMenuOver")
-		mouse_default_cursor_shape = CURSOR_POINTING_HAND if hovered != "" else CURSOR_ARROW
+		_refresh_hover()
 	elif event is InputEventMouseButton:
 		if Time.get_ticks_msec() < suppress_mouse_until: accept_event(); return
 		pointer = event.position / zoom
@@ -279,6 +293,7 @@ func _click(point: Vector2) -> void:
 
 func _action(action: String, args: Dictionary = {}) -> void:
 	hits.clear(); volume_drag.clear()
+	_set_hovered("")
 	match action:
 		"heroes":
 			overlay = "heroes"; touches.clear()
@@ -301,7 +316,7 @@ func _action(action: String, args: Dictionary = {}) -> void:
 
 func close_overlay() -> void:
 	if hero_room != null: hero_room.hide()
-	overlay = ""; pointer = Vector2(-1000, -1000); hits.clear(); touches.clear(); volume_drag.clear(); queue_redraw()
+	overlay = ""; pointer = Vector2(-1000, -1000); _set_hovered(""); hits.clear(); touches.clear(); volume_drag.clear(); queue_redraw()
 func show_message(value: String) -> void:
 	message = value; message_until = animation_player.time + 3; queue_redraw()
 func _volume(x: float) -> void:
@@ -317,8 +332,8 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_WM_MOUSE_EXIT: pointer = Vector2(-1000, -1000)
-	if what == NOTIFICATION_APPLICATION_FOCUS_OUT: touches.clear(); pointer = Vector2(-1000, -1000); volume_drag.clear()
+	if what == NOTIFICATION_WM_MOUSE_EXIT: pointer = Vector2(-1000, -1000); _set_hovered("")
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT: touches.clear(); pointer = Vector2(-1000, -1000); volume_drag.clear(); _set_hovered("")
 
 func _sound(id: String) -> void:
 	if DisplayServer.get_name() == "headless": return

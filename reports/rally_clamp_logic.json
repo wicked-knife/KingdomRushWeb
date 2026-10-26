@@ -1,0 +1,8 @@
+{
+	"checks": 129,
+	"failures": [],
+	"native": false,
+	"passed": true,
+	"scope": "directional rally fallback, range center and soldier destination",
+	"source_cases": 80
+}
