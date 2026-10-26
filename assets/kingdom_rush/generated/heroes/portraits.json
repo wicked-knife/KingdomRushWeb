@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "portraits": {
+    "hero_dwarf": {
+      "file": "hero_dwarf.png",
+      "prompt": "hero_dwarf.prompt.txt",
+      "model": "gpt-image-2.5-sunburst",
+      "approved": true,
+      "approved_on": "2026-10-26"
+    },
+    "hero_vampiress": {
+      "file": "hero_vampiress.png",
+      "prompt": "hero_vampiress.prompt.txt",
+      "model": "gpt-image-2.5-sunburst",
+      "approved": true,
+      "approved_on": "2026-10-26"
+    },
+    "hero_bolverk": {
+      "file": "hero_bolverk.png",
+      "prompt": "hero_bolverk.prompt.txt",
+      "model": "gpt-image-2.5-sunburst",
+      "approved": true,
+      "approved_on": "2026-10-26"
+    }
+  }
+}

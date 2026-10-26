@@ -2,12 +2,13 @@
   "passed": true,
   "heroes": 79,
   "skills": 373,
-  "frames_pixel_verified": 181,
+  "frames_pixel_verified": 184,
   "pages": 4,
-  "portrait_fallbacks": [
+  "generated_portraits": [
     "hero_dwarf",
     "hero_vampiress",
     "hero_bolverk"
   ],
+  "portrait_fallbacks": [],
   "commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2"
 }

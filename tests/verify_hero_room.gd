@@ -54,6 +54,11 @@ func _run() -> void:
 	write(temporary + "/bad_manifest.json", {"schema_version": 1, "resources": ["res://data/heroes/missing.png"]})
 	check(not await loader.initialize(temporary + "/bad_manifest.json"), "missing dependency fails")
 	check(await loader.initialize(), "hero resource loader retries successfully")
+	for hero_id in ["hero_dwarf", "hero_vampiress", "hero_bolverk"]:
+		var hero: Dictionary = p.hero(hero_id)
+		check(not hero.portrait_fallback and hero.portrait != hero.thumbnail, "approved art replaces the thumbnail fallback: " + hero_id)
+		var portrait: Dictionary = loader.catalog.get_frame("heroes", hero.portrait)
+		check(not portrait.is_empty() and portrait.logical_size == Vector2(254, 371), "approved portrait loads through the hero manifest and catalog: " + hero_id)
 	loader.queue_free(); await process_frame
 	var app := App.instantiate(); app.settings_path = temporary + "/settings.json"; app.progress_path = temporary + "/route.json"
 	root.add_child(app); await app.menu_ready

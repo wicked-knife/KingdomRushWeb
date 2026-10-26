@@ -6,8 +6,46 @@ import json
 import math
 import os
 import subprocess
-from PIL import Image
+from PIL import Image, ImageChops, ImageDraw, ImageOps
 from prepare_map import BASE, ROOT, write
+
+
+def apply_approved_portraits(data, out, frames, lookup):
+    """Add reviewed art without modifying any frozen Dove source pixels."""
+    folder = ROOT / "assets/kingdom_rush/generated/heroes"
+    config_path = folder / "portraits.json"
+    if not config_path.is_file():
+        return {}
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    assert config["schema_version"] == 1
+    rows = {row["name"]: row for row in data["heroes"]}
+    generated = {}
+    for hero_id, entry in config["portraits"].items():
+        assert entry["approved"] is True, f"Unapproved portrait: {hero_id}"
+        row = rows[hero_id]
+        source, prompt = [folder / entry[key] for key in ["file", "prompt"]]
+        assert source.parent == prompt.parent == folder
+        frame_id = f"generated_portrait_{hero_id}"
+        filename = f"portrait_{hero_id}.png"
+        with Image.open(source) as image:
+            # Preserve the full approved composition, including helmet tips.
+            card = ImageOps.pad(image.convert("RGBA"), (254, 371), Image.Resampling.LANCZOS, color=(0, 0, 0, 0))
+        corners = Image.new("L", card.size)
+        ImageDraw.Draw(corners).rounded_rectangle((0, 0, 253, 370), radius=4, fill=255)
+        card.putalpha(ImageChops.multiply(card.getchannel("A"), corners))
+        card.save(out / filename, compress_level=6)
+        card.close(); corners.close()
+        frames[frame_id] = {"sheet": filename, "region": [0, 0, 254, 371], "source_region": [0, 0, 254, 371],
+                            "logical_size": [254, 371], "original_size": [274, 386], "trim": [10, 8],
+                            "ref_scale": 1.0, "source_group": "generated_heroes", "source_file": source.relative_to(ROOT).as_posix()}
+        lookup[frame_id] = frame_id
+        row.update(portrait=frame_id, portrait_fallback=False)
+        generated[hero_id] = {"frame": frame_id, "resource": f"res://data/heroes/{filename}",
+                              "model": entry["model"], "approved_on": entry["approved_on"],
+                              "source": source.relative_to(ROOT).as_posix(), "source_sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
+                              "prompt": prompt.relative_to(ROOT).as_posix(), "prompt_sha256": hashlib.sha256(prompt.read_bytes()).hexdigest()}
+    data["portrait_fallbacks"] = [row["name"] for row in data["heroes"] if row["portrait_fallback"]]
+    return generated
 
 
 def prepare(source, love):
@@ -67,6 +105,7 @@ def prepare(source, love):
     for i, page in enumerate(pages):
         page.save(out / f"atlas_{i}.png", compress_level=6); page.close()
     lookup = {k: v for k, v in atlas["lookup"].items() if v in frames}
+    generated = apply_approved_portraits(data, out, frames, lookup)
     write(out / "atlas.json", {"schema_version": 1, "group": "heroes", "texture_directory": "res://data/heroes/", "frames": frames, "lookup": lookup, "aliases": {k: v for k, v in lookup.items() if k != v}})
     all_sounds = json.loads((assets / "data/sounds.json").read_text(encoding="utf-8"))
     ids = {"GUIButtonCommon", "GUIQuickMenuOpen", "GUIBuyUpgrade"} | {row["sound"] for row in data["heroes"] if row.get("sound")}
@@ -75,9 +114,10 @@ def prepare(source, love):
     write(out / "definition.json", data)
     write(out / "catalog.json", {"schema_version": 1, "groups": {"heroes": {"path": "res://data/heroes/atlas.json"}}, "static": {"sounds": "res://data/heroes/sounds.json"}, "audio_directory": "res://assets/kingdom_rush/kr1-desktop/sounds/files/"})
     resources = [f"res://data/heroes/atlas_{i}.png" for i in range(len(pages))]
+    resources += [entry["resource"] for entry in generated.values()]
     resources += sorted({"res://assets/kingdom_rush/kr1-desktop/sounds/files/" + f for sound in sounds.values() for f in sound["files"]})
     resources += ["res://scripts/map/hero_room.gd", "res://scripts/services/hero_loader.gd"]
-    write(out / "manifest.json", {"schema_version": 1, "source": data["source"], "resources": resources, "data": [f"res://data/heroes/{p}.json" for p in ["definition", "catalog", "atlas", "sounds"]], "source_texture_hashes": {texture.relative_to(ROOT).as_posix(): hashlib.sha256(texture.read_bytes()).hexdigest()}})
+    write(out / "manifest.json", {"schema_version": 1, "source": data["source"], "resources": resources, "data": [f"res://data/heroes/{p}.json" for p in ["definition", "catalog", "atlas", "sounds"]], "source_texture_hashes": {texture.relative_to(ROOT).as_posix(): hashlib.sha256(texture.read_bytes()).hexdigest()}, "generated_portraits": generated})
     print(json.dumps({"heroes": 79, "skills": sum(len(h["details"]) for h in data["heroes"]), "pages": len(pages), "portrait_fallbacks": data["portrait_fallbacks"]}))
 
 

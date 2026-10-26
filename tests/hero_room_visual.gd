@@ -24,6 +24,9 @@ func _run() -> void:
 		room.show_hero(row.name); await capture("audit", false)
 	for id in app.campaign.hero_definition.portrait_fallbacks:
 		room.show_hero(id); await capture(id)
+	for row: Dictionary in app.campaign.hero_definition.heroes:
+		if row.portrait.begins_with("generated_portrait_"):
+			room.show_hero(row.name); await capture(row.name)
 	app.campaign.record_result({"generation": 1, "level_id": 1, "mode": 1, "difficulty": 2, "lives": 20, "result": "victory"})
 	room.show_hero("hero_eiskalt"); await capture("unlocked")
 	await click_action("select")

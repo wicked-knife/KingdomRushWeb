@@ -1,0 +1,14 @@
+Use case: stylized-concept
+Asset type: a newly drawn vertical hero-selection card illustration, 1024x1536.
+
+Create a completely NEW portrait of Rurin Longbeard, a stocky dwarf earth-warrior. Rebuild the pose and both hands from scratch. Do not reproduce any earlier generated portrait.
+
+Input images: Image 1 is ONLY the dwarf's identity reference: gold crested helmet with tall upward-curving pale horn ornaments, stern broad-nosed face, huge orange-brown mustache and long beard. Images 2 and 3 are ONLY references for the existing game's simple, playful 2D card art, thick dark brown outlines, chunky shapes, bold flat colors, limited cel shading and readable portrait composition. Do not copy the other heroes' equipment or faces.
+
+Composition: Waist-up dwarf, both forearms visible, squared shoulders, calm confident expression, three-quarter view with minimal foreshortening. He holds one large stone-and-iron warhammer UPRIGHT in front of and slightly beside his torso. The full rectangular hammer head is visible next to a shoulder, below the helmet tips. Its single straight wooden shaft runs almost vertically toward the lower edge. His two hands hold separate sections of this same shaft with comfortable space between them, one at chest level and one at waist level. Keep the face, both complete hands and hammer head uncropped. Gold-and-dark-metal armor, brown leather gloves, no finger armor plates.
+
+The main quality priority is BELIEVABLE TWO-HANDED GRIP. Use simple natural leather-gloved human hands with five digits each, four fingers curling coherently around the cylindrical shaft and a single opposed thumb. Fingers wrap together rather than forming disconnected blocks. Only draw portions visible from the chosen view. Each wrist flows directly into its own forearm with a relaxed straight alignment. Make the two grips and the shaft's continuous path visually obvious. Keep the gloves compact, smoothly shaped and deliberately simple; do not make them oversized fists, segmented slabs or ornate mechanical gauntlets. Choose a clear easy-to-draw pose, not a dramatic perspective pose.
+
+Background: simple turquoise/teal radial graphic with a few small floating stone fragments near the bottom, quieter than the character. Match the supplied portrait cards' crisp, economical hand-drawn cartoon style, without realistic textures or dense faceted shading.
+
+Constraints: Exactly one dwarf, two arms, two anatomically coherent hands and one hammer. Preserve the identity reference's gold helmet and orange beard. Keep a small safe margin for a 254x371 portrait crop. No collage, inset references, text, names, logo, frame, watermark, extra fingers, duplicated thumbs, fused hands, disconnected wrists, broken shaft, guns, goggles or lightning.
