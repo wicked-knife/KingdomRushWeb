@@ -62,3 +62,7 @@ __pycache__/
 !/reports/rally_clamp_logic.json
 !/reports/rally_clamp_native.json
 !/reports/rally_clamp_delivery.json
+
+!/reports/level04_assets.json
+!/reports/tier3_upgrade_logic.json
+!/reports/level04_tier3_delivery.json

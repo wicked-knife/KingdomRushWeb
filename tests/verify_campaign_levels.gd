@@ -13,19 +13,24 @@ func check(ok: bool, label: String) -> void:
 	if not ok: failures.append(label); push_error(label)
 
 func _run() -> void:
-	check(Levels.load_definition(4).is_empty() and Levels.load_definition(2, 2).is_empty(), "only three normal campaigns available")
-	for id in [2, 3]:
+	check(Levels.load_definition(5).is_empty() and Levels.load_definition(2, 2).is_empty(), "only four normal campaigns available")
+	for id in [2, 3, 4]:
 		var definition := Levels.load_definition(id)
 		check(not definition.is_empty(), "valid manifest %d" % id)
 		var sim = Sim.new(definition, 42)
-		check(sim.gold == {2: 240, 3: 330}[id] and sim.towers.size() == {2: 7, 3: 12}[id] and not sim.unlocked.fire and not sim.unlocked.reinforcements, "source pre-wave state %d" % id)
+		check(sim.gold == {2: 240, 3: 330, 4: 520}[id] and sim.towers.size() == {2: 7, 3: 12, 4: 15}[id] and not sim.unlocked.fire and not sim.unlocked.reinforcements, "source pre-wave state %d" % id)
+		if id == 4:
+			check(sim.notices == ["TOWER_LEVEL3"], "third tier notification before setup")
+			check(sim.data.locations.entrances.map(func(e): return int(e.path_index)) == [1, 2] and sim.data.locations.entrances.all(func(e): return int(e.source_path_id) == 1), "duplicate source entrance IDs become ordered path indices")
 		Replay.dismiss(sim)
-		for type: String in Sim.TYPES: check(not sim.tower_locked("tower_" + type + "_2") and sim.tower_locked("tower_" + type + "_3"), "source level tower limits " + type)
+		for type: String in Sim.TYPES: check(not sim.tower_locked("tower_" + type + "_2") and sim.tower_locked("tower_" + type + "_3") == (id < 4), "source level tower limits " + type)
 		_timeline(sim)
 		var victory = Replay.play(id)
 		var defeat = Replay.play(id, false)
+		if id == 4:
+			check(Replay.rejected.is_empty(), "all recorded commands accepted with normal funds and cooldowns")
 		check(victory.result == "victory" and not victory.developer_used, "legal full victory %d" % id)
-		check(victory.spawn_log.size() == {2: 154, 3: 329}[id], "all source enemies generated %d" % id)
+		check(victory.spawn_log.size() == {2: 154, 3: 329, 4: 339}[id], "all source enemies generated %d" % id)
 		check(defeat.result == "defeat" and defeat.lives == 0, "empty defense loses %d" % id)
 		report.levels[str(id)] = {"victory": {"result": victory.result, "ticks": victory.tick, "lives": victory.lives, "gold": victory.gold, "kills": victory.kills, "leaks": victory.leaks, "spawned": victory.spawn_log.size()}, "defeat_ticks": defeat.tick}
 		for i in range(3):
@@ -40,17 +45,26 @@ func _run() -> void:
 	_mechanisms()
 	var progress := Progress.new(); var path := "user://levels_progress_%d.json" % Time.get_ticks_usec()
 	progress.initialize(path)
-	for id in [1, 2, 3]:
+	for id in [1, 2, 3, 4]:
 		check(progress.is_playable(id), "campaign sequential entry %d" % id)
 		progress.record_result({"generation": 1, "level_id": id, "mode": 1, "difficulty": 2, "result": "victory", "lives": 20})
-	check(progress.is_unlocked(4) and not progress.is_playable(4) and progress.total_stars() == 9, "fourth flag unlocks as preview")
+		if id == 3:
+			var legacy := Progress.new(); legacy.initialize(path)
+			check(legacy.total_stars() == 9 and legacy.is_playable(4), "existing three-stage save naturally opens fourth")
+	check(progress.is_unlocked(5) and not progress.is_playable(5) and progress.total_stars() == 12, "fifth flag unlocks as preview")
 	var restored := Progress.new(); restored.initialize(path)
-	check(restored.total_stars() == 9 and restored.is_playable(3), "three level progress reloads")
+	check(restored.total_stars() == 12 and restored.is_playable(4), "four level progress reloads")
 	progress.mark_notification_seen("enemy_wolf_small"); restored.initialize(path)
 	check(restored.seen_notifications == ["enemy_wolf_small"], "read enemy notifications persist per save")
 	var known := Levels.load_definition(3); known.seen_notifications = restored.seen_notifications
 	var familiar = Sim.new(known); familiar._spawn_enemy("enemy_wolf_small")
 	check(familiar.alerts.is_empty(), "read enemy does not repeat its alert on later levels")
+	for enemy: String in ["enemy_bandit", "enemy_brigand"]: progress.mark_notification_seen(enemy)
+	restored.initialize(path)
+	var fourth := Levels.load_definition(4); fourth.seen_notifications = restored.seen_notifications
+	var seen = Sim.new(fourth)
+	seen._spawn_enemy("enemy_bandit"); seen._spawn_enemy("enemy_brigand")
+	check(seen.alerts.is_empty(), "fourth enemy notices persist and suppress repeated alerts")
 	report.passed = failures.is_empty(); report.failures = failures; report.checks = checks
 	var file := FileAccess.open("res://reports/campaign_levels_logic.json", FileAccess.WRITE); file.store_string(JSON.stringify(report, "\t")); file.close()
 	print("CAMPAIGN_LEVELS: ", JSON.stringify(report))
@@ -84,7 +98,8 @@ func _timeline(sim) -> void:
 			check(actual[i].tick == expected[i].tick and actual[i].type == expected[i].type and actual[i].path == expected[i].path and actual[i].subpath >= 0 and actual[i].subpath < sim.data.paths.paths[actual[i].path].size() and (expected[i].subpath < 0 or actual[i].subpath == expected[i].subpath), "source ordered spawn tick/type/path/subpath")
 			counts[actual[i].type] = int(counts.get(actual[i].type, 0)) + 1
 		sim.enemies.clear()
-	check(counts == ({"enemy_goblin":106,"enemy_fat_orc":26,"enemy_wolf_small":22} if sim.data.level.id == 2 else {"enemy_goblin":224,"enemy_fat_orc":58,"enemy_wolf_small":32,"enemy_shaman":12,"enemy_ogre":3}), "exact source roster counts")
+	var expected := {2:{"enemy_goblin":106,"enemy_fat_orc":26,"enemy_wolf_small":22}, 3:{"enemy_goblin":224,"enemy_fat_orc":58,"enemy_wolf_small":32,"enemy_shaman":12,"enemy_ogre":3}, 4:{"enemy_goblin":130,"enemy_fat_orc":58,"enemy_wolf_small":18,"enemy_shaman":24,"enemy_ogre":2,"enemy_bandit":77,"enemy_brigand":30}}
+	check(counts == expected[int(sim.data.level.id)], "exact source roster counts")
 
 func _mechanisms() -> void:
 	var sim = Sim.new(Levels.load_definition(3), 42)

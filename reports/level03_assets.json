@@ -7,7 +7,7 @@
   "animations": 123,
   "resources": 64,
   "sha256": {
-    "animations.json": "12358199eca9fb8750c4be6373d0b479902a2faf1930e23f87e49e45cace37de",
+    "animations.json": "b73fdc718ac00c77725d97d9efddf089c18976b8a1a7291b9ba06346460ea2f4",
     "atlas.json": "4cdf295b512c68cf91212b2aa234d737b8e2583dc49e49813ed6db01d34b4239",
     "atlas_0.png": "167b304cfd3b6261c974ff476b0b1c2cc6a6917cdfe99cc93811e2b6a00865ef",
     "atlas_1.png": "6e909f571507fdf73a60c109e2f7b139c43c9d3e0d38f62ab34a3c032639a473",
@@ -17,7 +17,7 @@
     "atlas_5.png": "f3fb336bfa473d8b6728fd83359012123561012225226492da0ddf530ab35870",
     "atlas_6.png": "8560df502c6b24e3d19eb47d972f1bab7243c30c6a2228002ad71d03d425e61d",
     "catalog.json": "1c5bbf2176a2394e0c1c96dcda5ad18b7dec1ba4076f50259b4e5ce4cfe92661",
-    "definition.json": "d7347ac18da4b231e03f20702247254be0cd7d3e9d132315579b87619ed08865",
+    "definition.json": "17bbe3a1bdb9df86cae69fcce5ed15df68b84ed9d8eed4c5af30ed5ff5c97463",
     "manifest.json": "16faa83b5976a35ce9cd9bd4755154d669c7b62948c5d56e477af449a2516165",
     "sounds.json": "72c46d08b9f61f4df6da0fe0f54a406c6d03e6039b7060845fd8af34b80e6b35"
   }

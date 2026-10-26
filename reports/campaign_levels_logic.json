@@ -1,29 +1,41 @@
 {
-	"checks": 577,
+	"checks": 963,
 	"failures": [],
 	"levels": {
 		"2": {
 			"defeat_ticks": 1984,
 			"victory": {
-				"gold": 82,
-				"kills": 139,
-				"leaks": 15,
-				"lives": 5,
+				"gold": 42,
+				"kills": 149,
+				"leaks": 5,
+				"lives": 15,
 				"result": "victory",
 				"spawned": 154,
-				"ticks": 9037
+				"ticks": 9538
 			}
 		},
 		"3": {
 			"defeat_ticks": 2360,
 			"victory": {
 				"gold": 19,
-				"kills": 320,
-				"leaks": 9,
-				"lives": 11,
+				"kills": 318,
+				"leaks": 11,
+				"lives": 9,
 				"result": "victory",
 				"spawned": 329,
-				"ticks": 19175
+				"ticks": 19393
+			}
+		},
+		"4": {
+			"defeat_ticks": 1270,
+			"victory": {
+				"gold": 185,
+				"kills": 326,
+				"leaks": 13,
+				"lives": 3,
+				"result": "victory",
+				"spawned": 339,
+				"ticks": 22101
 			}
 		}
 	},

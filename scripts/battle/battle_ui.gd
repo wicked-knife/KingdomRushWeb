@@ -155,11 +155,11 @@ func _selection(id: String, closing: bool) -> void:
 	else:
 		var target: String = sim.upgrade_target(tower)
 		if target != "" and not sim.tower_locked(target):
-			var item: Dictionary = data.tower_menus[tower.type][0]
+			var item: Dictionary = data.get("upgrade_menus", {}).get(target, data.tower_menus[tower.type][0])
 			var price: int = sim.templates[target].tower.price
 			var pos: Vector2 = view.Simulation.vec(data.tower_menu_button_places[int(item.place) - 1])
 			_menu_icon(item.image, pos, "upgrade", {"id": id, "upgrade_to": target}, price, enabled and sim.gold >= price)
-		elif target != "":
+		elif target != "" or sim.tower_locked(view.Simulation.UPGRADES.get(tower.template, "")):
 			_menu_icon("main_icons_0014", Vector2(74, 6), "locked", {}, -1, false)
 		if tower.type == "barrack": _menu_icon("sub_icons_0001", Vector2(128, 118), "target", {"power": "rally"}, -1, enabled)
 		_menu_icon("ico_sell_0001", Vector2(74, 140), "sell", {"id": id}, -1, enabled)
@@ -189,10 +189,12 @@ func _tower_tooltip(tower: Dictionary) -> void:
 		var type: String = str(item.action_arg).trim_prefix("tower_build_")
 		if view.hovered == "build" + str({"id": tower.id, "type": type}):
 			title = text(item.tt_title); description = text(item.tt_desc)
-	if view.hovered == "locked" + str({}): title = "升级尚未解锁"; description = "本关只能建造一级防御塔。"
+	if view.hovered == "locked" + str({}):
+		title = "升级尚未解锁"
+		description = "本关只能建造一级防御塔。" if int(view.sim.tower_template(tower).tower.level) == 1 else "本关防御塔最高可升至二级。"
 	var target: String = view.sim.upgrade_target(tower)
 	if target != "" and view.hovered == "upgrade" + str({"id": tower.id, "upgrade_to": target}):
-		var item: Dictionary = data.tower_menus[tower.type][0]
+		var item: Dictionary = data.get("upgrade_menus", {}).get(target, data.tower_menus[tower.type][0])
 		title = text(item.tt_title); description = text(item.tt_desc)
 	if view.hovered == "sell" + str({"id": tower.id}):
 		title = "出售防御塔"; description = "返还 %d 金币" % view.sim.sell_refund(tower)
@@ -353,11 +355,12 @@ func notice(id: String) -> void:
 	var dimensions := _size(paper)
 	_panel(id, dimensions + Vector2(0, 48))
 	if notification.get("layout", "") == "upgrade":
-		_title("notifications_tit_towers_bg", "二级防御塔", Vector2(80, 40), false)
+		var tier: String = "三级" if int(notification.get("tier", 2)) == 3 else "二级"
+		_title("notifications_tit_towers_bg", tier + "防御塔", Vector2(80, 40), false)
 		paint.image(paper)
 		paint.label("现在可以升级防御塔！", Rect2(70, 45, 480, 40), 27, Color("181a0f"), "center", "middle")
 		paint.label("选中已建造的防御塔，点击升级图标。升级会增强防御塔；金币不足时按钮不可用。", Rect2(65, 100, 500, 85), 20, Color("181a0f"), "left", "top")
-		paint.label("本关四类防御塔均可升至二级。", Rect2(65, 195, 500, 40), 19, Color("181a0f"), "center", "middle")
+		paint.label("本关四类防御塔均可升至" + tier + "。", Rect2(65, 195, 500, 40), 19, Color("181a0f"), "center", "middle")
 		paint.button("notifications_but_dark_bg_0001", Vector2(400, 254), "知道了", "confirm", {}, true, "notice")
 	elif enemy:
 		_title("notifications_tit_newenemy_bg", "新敌人", Vector2(80, 40), false)

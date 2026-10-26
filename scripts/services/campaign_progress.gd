@@ -6,6 +6,7 @@ const DEFAULT_PATH := "user://campaign_kr1.json"
 const DEFINITION := "res://data/map_kr1/definition.json"
 const HERO_DEFINITION := "res://data/heroes/definition.json"
 const CampaignLevels = preload("res://scripts/services/campaign_levels.gd")
+const ENEMY_NOTICES := ["enemy_wolf_small", "enemy_shaman", "enemy_ogre", "enemy_bandit", "enemy_brigand"]
 var definition: Dictionary
 var hero_definition: Dictionary
 var hero_rows := {}
@@ -53,7 +54,7 @@ func initialize(save_path: String = DEFAULT_PATH) -> void:
 	var seen: Variant = loaded.get("seen_notifications", [])
 	if seen is Array:
 		for id: Variant in seen:
-			if id is String and id in ["enemy_wolf_small", "enemy_shaman", "enemy_ogre"] and not id in seen_notifications: seen_notifications.append(id)
+			if id is String and id in ENEMY_NOTICES and not id in seen_notifications: seen_notifications.append(id)
 	var hero_data: Variant = loaded.get("heroes", {})
 	var selected: Variant = hero_data.get("selected", []) if hero_data is Dictionary else []
 	if selected is Array:
@@ -106,7 +107,7 @@ func is_playable(id: int, mode: int = 1, difficulty: int = 2) -> bool:
 	return is_unlocked(id) and CampaignLevels.supports(id, mode, difficulty)
 func record(id: int) -> Dictionary: return levels.get(str(id), {})
 func mark_notification_seen(id: String) -> void:
-	if id in seen_notifications or not id in ["enemy_wolf_small", "enemy_shaman", "enemy_ogre"]: return
+	if id in seen_notifications or not id in ENEMY_NOTICES: return
 	seen_notifications.append(id); save()
 func total_stars() -> int:
 	var total := 0

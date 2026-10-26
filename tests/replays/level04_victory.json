@@ -1,0 +1,1053 @@
+{
+  "schema_version": 1,
+  "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+  "level_id": 4,
+  "seed": 42,
+  "initial_gold": 520,
+  "description": "Normal campaign, no hero or technology. Accepted player commands only; no developer/state overrides.",
+  "expected": {
+    "result": "victory",
+    "lives": 3,
+    "kills": 326,
+    "spawned": 339,
+    "tick": 22101
+  },
+  "actions": [
+    {
+      "args": {
+        "id": "14",
+        "type": "engineer"
+      },
+      "kind": "build",
+      "tick": 0
+    },
+    {
+      "args": {},
+      "kind": "wave",
+      "tick": 0
+    },
+    {
+      "args": {
+        "id": "14",
+        "upgrade_to": "tower_engineer_2"
+      },
+      "kind": "upgrade",
+      "tick": 25
+    },
+    {
+      "args": {
+        "id": "15",
+        "type": "barrack"
+      },
+      "kind": "build",
+      "tick": 25
+    },
+    {
+      "args": {
+        "id": "15",
+        "pos": {
+          "x": 568.0,
+          "y": 690.0
+        }
+      },
+      "kind": "rally",
+      "tick": 50
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 467.0,
+          "y": -8.36002349853516
+        },
+        "power": "fire"
+      },
+      "kind": "cast",
+      "tick": 525
+    },
+    {
+      "args": {
+        "id": "15",
+        "upgrade_to": "tower_barrack_2"
+      },
+      "kind": "upgrade",
+      "tick": 565
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 397.978363037109,
+          "y": 666.494567871094
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 660
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 549.579406738281,
+          "y": 713.948547363281
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 960
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 596.0,
+          "y": 739.283935546875
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 1260
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 510.767272949219,
+          "y": 639.220886230469
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 1560
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 615.26708984375,
+          "y": 681.73291015625
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 1860
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 390.989318847656,
+          "y": 624.568359375
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 2175
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 609.495910644531,
+          "y": 660.504089355469
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 2475
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 612.179992675781,
+          "y": 685.366760253906
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 2775
+    },
+    {
+      "args": {
+        "id": "15",
+        "upgrade_to": "tower_barrack_3"
+      },
+      "kind": "upgrade",
+      "tick": 2870
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 459.139099121094,
+          "y": 653.0
+        },
+        "power": "fire"
+      },
+      "kind": "cast",
+      "tick": 2925
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 595.728454589844,
+          "y": 645.392944335938
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 3075
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 651.911193847656,
+          "y": 654.059265136719
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 3375
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 479.516174316406,
+          "y": 634.314514160156
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 3675
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 522.082214355469,
+          "y": 641.2705078125
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 3975
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 593.972595214844,
+          "y": 647.027404785156
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 4275
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 582.288146972656,
+          "y": 698.491455078125
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 4575
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 581.628845214844,
+          "y": 700.799072265625
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 4875
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 556.0,
+          "y": 735.800476074219
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 5175
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 591.869750976563,
+          "y": 679.260498046875
+        },
+        "power": "fire"
+      },
+      "kind": "cast",
+      "tick": 5375
+    },
+    {
+      "args": {
+        "id": "14",
+        "upgrade_to": "tower_engineer_3"
+      },
+      "kind": "upgrade",
+      "tick": 5390
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 554.192321777344,
+          "y": 742.346313476563
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 5475
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 614.927307128906,
+          "y": 682.072692871094
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 5775
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 396.543273925781,
+          "y": 626.07763671875
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 6105
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 496.542297363281,
+          "y": 677.257080078125
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 6405
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 615.26708984375,
+          "y": 681.73291015625
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 6705
+    },
+    {
+      "args": {
+        "id": "05",
+        "type": "mage"
+      },
+      "kind": "build",
+      "tick": 6775
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 585.826599121094,
+          "y": 655.173400878906
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 7005
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 556.0,
+          "y": 742.521545410156
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 7305
+    },
+    {
+      "args": {},
+      "kind": "wave",
+      "tick": 7485
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 577.92041015625,
+          "y": 717.636779785156
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 7490
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 443.709350585938,
+          "y": 154.517227172852
+        },
+        "power": "fire"
+      },
+      "kind": "cast",
+      "tick": 7655
+    },
+    {
+      "args": {
+        "id": "08",
+        "type": "mage"
+      },
+      "kind": "build",
+      "tick": 7675
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 394.894073486328,
+          "y": 645.826904296875
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 8130
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 609.495910644531,
+          "y": 660.504089355469
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 8430
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 583.536560058594,
+          "y": 657.463439941406
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 8730
+    },
+    {
+      "args": {
+        "id": "11",
+        "type": "mage"
+      },
+      "kind": "build",
+      "tick": 8760
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 390.989318847656,
+          "y": 624.568359375
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 9095
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 556.0,
+          "y": 743.00048828125
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 9395
+    },
+    {
+      "args": {
+        "id": "13",
+        "type": "mage"
+      },
+      "kind": "build",
+      "tick": 9415
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 553.377746582031,
+          "y": 736.644165039063
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 9695
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 272.505554199219,
+          "y": 371.494445800781
+        },
+        "power": "fire"
+      },
+      "kind": "cast",
+      "tick": 10055
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 392.836395263672,
+          "y": 625.096130371094
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 10375
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 629.684753417969,
+          "y": 644.367980957031
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 10675
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 416.533966064453,
+          "y": 669.566711425781
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 10975
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 550.575866699219,
+          "y": 678.575866699219
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 11275
+    },
+    {
+      "args": {
+        "id": "05",
+        "upgrade_to": "tower_mage_2"
+      },
+      "kind": "upgrade",
+      "tick": 11560
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 557.234924316406,
+          "y": 685.481872558594
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 11575
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 466.285095214844,
+          "y": 653.755004882813
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 11875
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 526.228820800781,
+          "y": 642.460815429688
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 12175
+    },
+    {
+      "args": {
+        "id": "08",
+        "upgrade_to": "tower_mage_2"
+      },
+      "kind": "upgrade",
+      "tick": 12195
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 836.407592773438,
+          "y": 269.259490966797
+        },
+        "power": "fire"
+      },
+      "kind": "cast",
+      "tick": 12455
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 392.836395263672,
+          "y": 625.096130371094
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 12640
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 617.955993652344,
+          "y": 652.703308105469
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 12940
+    },
+    {
+      "args": {},
+      "kind": "wave",
+      "tick": 12960
+    },
+    {
+      "args": {
+        "id": "11",
+        "upgrade_to": "tower_mage_2"
+      },
+      "kind": "upgrade",
+      "tick": 12965
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 454.859222412109,
+          "y": 98.0144729614258
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 13140
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 681.915710449219,
+          "y": 196.739471435547
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 13440
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 240.873077392578,
+          "y": 416.317291259766
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 13740
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 775.232177734375,
+          "y": 539.814270019531
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 14040
+    },
+    {
+      "args": {
+        "id": "13",
+        "upgrade_to": "tower_mage_2"
+      },
+      "kind": "upgrade",
+      "tick": 14310
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 335.97216796875,
+          "y": 611.988098144531
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 14340
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 630.306640625,
+          "y": 668.354675292969
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 14640
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 594.142822265625,
+          "y": 646.857177734375
+        },
+        "power": "fire"
+      },
+      "kind": "cast",
+      "tick": 14760
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 555.502197265625,
+          "y": 678.502014160156
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 14940
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 815.858703613281,
+          "y": 246.572479248047
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 15240
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 779.442626953125,
+          "y": 562.964416503906
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 15540
+    },
+    {
+      "args": {},
+      "kind": "wave",
+      "tick": 15750
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 781.928833007813,
+          "y": 533.685485839844
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 15780
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 613.474548339844,
+          "y": 172.0
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 16080
+    },
+    {
+      "args": {
+        "id": "05",
+        "upgrade_to": "tower_mage_3"
+      },
+      "kind": "upgrade",
+      "tick": 16290
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 195.987945556641,
+          "y": 425.096435546875
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 16380
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 388.037750244141,
+          "y": 664.879699707031
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 16680
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 860.730407714844,
+          "y": 272.460754394531
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 16980
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 843.425170898438,
+          "y": 345.976348876953
+        },
+        "power": "fire"
+      },
+      "kind": "cast",
+      "tick": 17100
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 456.259124755859,
+          "y": 653.0
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 17280
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 590.157592773438,
+          "y": 709.630249023438
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 17580
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 555.502197265625,
+          "y": 678.502014160156
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 17880
+    },
+    {
+      "args": {
+        "id": "08",
+        "upgrade_to": "tower_mage_3"
+      },
+      "kind": "upgrade",
+      "tick": 17890
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 542.485046386719,
+          "y": 214.831680297852
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 18180
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 276.872192382813,
+          "y": 337.273162841797
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 18480
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 310.483459472656,
+          "y": 623.064331054688
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 18780
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 555.502197265625,
+          "y": 678.502014160156
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 19080
+    },
+    {
+      "args": {
+        "id": "11",
+        "upgrade_to": "tower_mage_3"
+      },
+      "kind": "upgrade",
+      "tick": 19165
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 877.008972167969,
+          "y": 425.964019775391
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 19380
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 433.834594726563,
+          "y": 651.0
+        },
+        "power": "fire"
+      },
+      "kind": "cast",
+      "tick": 19500
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 841.10693359375,
+          "y": 404.125793457031
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 19680
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 841.10693359375,
+          "y": 404.125793457031
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 19980
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 873.642211914063,
+          "y": 434.954040527344
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 20280
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 841.10693359375,
+          "y": 404.125793457031
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 20580
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 839.756286621094,
+          "y": 408.731201171875
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 20880
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 873.642211914063,
+          "y": 434.954040527344
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 21180
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 839.756286621094,
+          "y": 408.731201171875
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 21480
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 839.756286621094,
+          "y": 408.731201171875
+        },
+        "power": "reinforcements"
+      },
+      "kind": "cast",
+      "tick": 21780
+    },
+    {
+      "args": {
+        "pos": {
+          "x": 873.642211914063,
+          "y": 434.954040527344
+        },
+        "power": "fire"
+      },
+      "kind": "cast",
+      "tick": 21900
+    }
+  ]
+}

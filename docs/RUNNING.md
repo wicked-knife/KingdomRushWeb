@@ -14,6 +14,19 @@
 
 第二、第三关普通战役已接通。第二关初始 240 金币、7 塔位、7 波 154 个敌人；第三关初始 330 金币、12 塔位、11 波 329 个敌人，支持双路同时出怪。两关均为 20 生命，开放四类二级塔并锁定三级塔，发送第一波后解锁援军与火雨；小狼、萨满与食人魔沿用源属性及技能。实现、验证边界和重新生成命令见 [LEVEL02_03_DELIVERY.md](LEVEL02_03_DELIVERY.md)。
 
+第四关「双子河畔」普通战役已接通，通关第三关后自然开放，已有存档直接兼容。初始 520 金币、20 生命，15 个塔位、双入口、13 波共 339 个敌人，首次开放四类三级塔。盗贼拥有 50% 近战闪避，强盗拥有 50% 物理护甲；沿用源版背景、音乐、动画与通知。第四关胜利保存本关最好星级，并解锁第五关预览。实现和验证见 [LEVEL04_TIER3_DELIVERY.md](LEVEL04_TIER3_DELIVERY.md)。
+
+四类塔二升三费用：兵营 150、箭塔 160、炮塔 320、法师塔 240。兵营更换为三名满血骑士，保留集结点；累计投入分别为 330/340/665/500，开波后退款分别为 198/204/399/300。三级独立测试场 `tests/tier3_upgrade_arena.tscn` 使用第四关地图和 2500 初始金币，不接入战役存档；原二级测试场保留。
+
+```powershell
+& 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --path . res://tests/tier3_upgrade_arena.tscn
+& 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script tests/verify_tier3_upgrades.gd
+& 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --path . --script tests/level04_visual.gd --resolution 1280x720
+# 另两种尺寸只检查新增界面，不重复回放战役
+& 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --path . --script tests/level04_visual.gd --resolution 1920x1080 -- --layout-only
+& 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --path . --script tests/level04_visual.gd --resolution 1024x768 -- --layout-only
+```
+
 弓箭塔一级升二级已在独立测试场接通，正式首关仍锁定二级塔。Godot 打开 `tests/archer_upgrade_arena.tscn` 后按 F6，或运行下方命令。测试场沿用战场与波次，仅解除二级箭塔限制，不接入地图或战役存档。建造箭塔花费 70，升级花费 110；二级伤害 8–13、射程 160、攻击间隔 0.6 秒。四类塔共用源版退款：开波前返还全部投入，开波后返还累计投入的 60%（四舍五入）；升级箭塔分别返还 180/108。详情见 [ARCHER_UPGRADE_DELIVERY.md](ARCHER_UPGRADE_DELIVERY.md)。
 
 四类基础塔现在均支持一级升二级。通用测试场 `tests/tower_upgrade_arena.tscn` 初始 1000 金币，可直接按 F6 运行；兵营/炮塔/法师塔升级费为 110/220/160，累计投入 180/345/260，开波后退款 108/207/156。正式首关仍禁止二级塔，旧箭塔专用测试场保留。详情见 [TOWER_UPGRADES_DELIVERY.md](TOWER_UPGRADES_DELIVERY.md)。
@@ -25,10 +38,10 @@
 & 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --path . --script tests/tower_upgrade_visual.gd --resolution 1280x720
 ```
 
-地图左下角“英雄”可浏览全部 79 名英雄的资料和技能数值，按原版通关条件解锁，最多选择两名并分别保存到当前槽位。首关通关解锁 12 名英雄；满员后选择新英雄替换第二名。Tab 切换已选英雄，完成/Esc/右键关闭。当前选择尚不影响前三关战斗，英雄不会参战。详情和资源兜底说明见 [HERO_SELECTION_DELIVERY.md](HERO_SELECTION_DELIVERY.md)。
+地图左下角“英雄”可浏览全部 79 名英雄的资料和技能数值，按原版通关条件解锁，最多选择两名并分别保存到当前槽位。首关通关解锁 12 名英雄；满员后选择新英雄替换第二名。Tab 切换已选英雄，完成/Esc/右键关闭。当前选择尚不影响前四关战斗，英雄不会参战。详情和资源兜底说明见 [HERO_SELECTION_DELIVERY.md](HERO_SELECTION_DELIVERY.md)。
 读完开场教学后点击出怪口的骷髅图标开始第一波；后续图标以圆环填充显示倒计时，点击可提前开波并获得金币及技能冷却奖励。金币栏下方显示 `+N` 金币动画，正在冷却的技能上方显示 `-Ns` 上浮淡出动画。悬停显示该路的下一波敌人数量与行进路径；双路图标任意点击一个即可启动整波。选塔、施法或暂停时图标暂不可点击。援军、火雨分别在首关第三、七波的教学确认后解锁。生命归零失败；最后一波清场后胜利，均可重开或返回地图。旗帜高亮与士兵寻敌修正详见 [INTERACTION_FIXES.md](INTERACTION_FIXES.md)。
 
-大地图保留一代 27 个节点的数据与 124 个动画实例，按 Dove 逐步解锁。前三关胜利分别保存实际关卡的最好星级并解锁下一面旗；第三关通关后第四面旗可查看，但战斗尚未开放。地图齿轮/Esc 打开设置，可返回主菜单；鼠标边缘与滚轮平移，Shift＋滚轮横移，触屏拖动与捏合缩放。地图基础实现见 [MAP_KR1_DELIVERY.md](MAP_KR1_DELIVERY.md)。三个槽位分别保存于 `user://saves/kr1/slot_1..3/campaign.json`，采用临时写入与有效备份恢复。旧 `user://campaign_kr1.json` 自动迁入槽位 1 并归档，不会在删除后再次迁入；删除槽位需要确认，损坏或较新版本存档不能作为空槽自动覆盖。新敌人的已读通知按槽保存，兼容缺少该字段的旧存档和已有英雄选择。
+大地图保留一代 27 个节点的数据与 124 个动画实例，按 Dove 逐步解锁。前四关胜利分别保存实际关卡的最好星级并解锁下一面旗；第四关通关后第五面旗可查看，战斗尚未开放。地图齿轮/Esc 打开设置，可返回主菜单；鼠标边缘与滚轮平移，Shift＋滚轮横移，触屏拖动与捏合缩放。地图基础实现见 [MAP_KR1_DELIVERY.md](MAP_KR1_DELIVERY.md)。三个槽位分别保存于 `user://saves/kr1/slot_1..3/campaign.json`，采用临时写入与有效备份恢复。旧 `user://campaign_kr1.json` 自动迁入槽位 1 并归档，不会在删除后再次迁入；删除槽位需要确认，损坏或较新版本存档不能作为空槽自动覆盖。新敌人的已读通知按槽保存，兼容缺少该字段的旧存档和已有英雄选择。
 
 | 操作 | 输入 |
 | --- | --- |
@@ -50,7 +63,7 @@
 
 存档统计按原版使用黑色斜体数字，并修正 KView 旋转方向。关卡书页统一首字、正文绕排、标题装饰、挑战规则、模式页签与开战按钮的内容区；短标题按可见字形测量，避免字体内部留白导致过度缩小。模式页签的普通、悬停、选中和锁定状态分别沿用源颜色与锚点。
 
-运行前三关无需 Python、LÖVE 或原游戏安装目录，这些仅供重新生成数据使用。首关历史报告见 [LEVEL01_DELIVERY.md](LEVEL01_DELIVERY.md)，第二、三关见 [LEVEL02_03_DELIVERY.md](LEVEL02_03_DELIVERY.md)。
+运行前四关无需 Python、LÖVE 或原游戏安装目录，这些仅供重新生成数据使用。首关历史报告见 [LEVEL01_DELIVERY.md](LEVEL01_DELIVERY.md)，第二、三关见 [LEVEL02_03_DELIVERY.md](LEVEL02_03_DELIVERY.md)。
 
 音量保存在 Godot 的 `user://settings.json`。设置损坏时恢复默认值，写入失败时保留本次运行中的调整并提示。自动检查使用单独的临时设置文件，不改动玩家设置。
 无显示的 headless 运行不会播放音频；音频检查应使用 Godot 原生渲染窗口。
@@ -61,9 +74,10 @@
 以下命令在项目根目录的 PowerShell 中运行：
 
 ```powershell
-# 第二、三关：源像素、逐 tick 波次与敌人机制、合法通关、原生画面和切关
+# 第二至四关：源像素、逐 tick 波次与敌人机制、合法通关、原生画面和切关
 python tools/verify_level01_assets.py --level 2
 python tools/verify_level01_assets.py --level 3
+python tools/verify_level01_assets.py --level 4
 & 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script tests/verify_campaign_levels.gd
 & 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --path . --script tests/campaign_levels_visual.gd --resolution 1280x720
 # 同样运行 1920x1080、1024x768
@@ -145,12 +159,12 @@ python tools/web_bootstrap.py serve
 浏览器首次点击或按键后启用声音。存储受到限制时会提示设置可能无法保留，不影响主菜单使用。
 浏览器也接受触摸与手柄按钮解锁声音；首次交互后菜单音乐会自动开始，进入地图、备战和开波时切换对应音乐。Web 播放器显式使用 Godot Stream 路径，以避开 4.7 Sample 路径在本项目中的静音输出。
 
-导出由菜单、`data/map_kr1/manifest.json`、`data/heroes/manifest.json` 和 `data/level01..03/manifest.json` 控制，只包含入口、地图、英雄房间和前三关使用的脚本、场景、字体、图集、声音及 JSON。前三关分别使用 6、6、7 张 2048×2048 派生图集，不打包完整素材库。
+导出由菜单、`data/map_kr1/manifest.json`、`data/heroes/manifest.json` 和 `data/level01..04/manifest.json` 控制，只包含入口、地图、英雄房间和前四关使用的脚本、场景、字体、图集、声音及 JSON。前四关分别使用 6、6、7、7 张 2048×2048 派生图集，不打包完整素材库。
 `export_presets.cfg` 由工具生成；修改依赖时先更新对应 manifest，再运行 `python tools/web_bootstrap.py preset`。
-导出默认只生成文件；`export --check-pack` 另执行隔离 PCK 资源与三关初始化检查。最终结果见第二、三关交付报告。未操作浏览器，Web 功能与兼容性由用户手动验收。
+导出默认只生成文件；`export --check-pack` 另执行隔离 PCK 资源与四关初始化检查。最终结果见第四关与三级塔交付报告。未操作浏览器，Web 功能与兼容性由用户手动验收。
 显式 `export --check-pack` 的结果写入 `build/web/pack_files.json`。每次导出先移除旧检查报告，避免沿用上一版结论；`export_receipt.json` 记录本次导出及检查状态。
 
-本轮使用 `build/KingdomRush-KR1-Levels01-03-Web.zip`，为 release 包，开发菜单关闭。解压后运行 `start_server.cmd`，在浏览器打开其中提示的本地地址；保持命令窗口开启。首次点击、声音开启、页面切后台与浏览器兼容性由用户手动检查。
+本轮使用 `build/KingdomRush-KR1-Levels01-04-Web.zip`，为 release 包，开发菜单关闭。解压后运行 `start_server.cmd`，在浏览器打开其中提示的本地地址；保持命令窗口开启。首次点击、声音开启、页面切后台与浏览器兼容性由用户手动检查。
 
 ## 生成文件与版本管理
 

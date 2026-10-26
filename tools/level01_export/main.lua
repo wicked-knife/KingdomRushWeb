@@ -6,7 +6,7 @@ end
 local source = assert(os.getenv("DOVE_SOURCE_DIR"))
 local destination = assert(os.getenv("DOVE_EXPORT_PATH"))
 local level_id = tonumber(os.getenv("DOVE_LEVEL_ID") or "1")
-assert(level_id >= 1 and level_id <= 3)
+assert(level_id >= 1 and level_id <= 4)
 local level_name = string.format("level%02d", level_id)
 package.path = source .. "/?.lua;" .. source .. "/all/?.lua;" .. source .. "/kr1/?.lua;" .. package.path
 local loaded_inputs = {}
@@ -64,6 +64,7 @@ local function run()
   local enemy_ids={"enemy_goblin","enemy_fat_orc"}
   if level_id >= 2 then table.insert(enemy_ids,"enemy_wolf_small") end
   if level_id >= 3 then table.insert(enemy_ids,"enemy_shaman");table.insert(enemy_ids,"enemy_ogre") end
+  if level_id == 4 then table.insert(enemy_ids,"enemy_bandit");table.insert(enemy_ids,"enemy_brigand") end
   for _,id in ipairs(enemy_ids) do
     local start=assert(enemies:find('tt = RT("'..id..'"',1,true))
     local finish=enemies:find("\ntt = ",start+1,true) or #enemies+1
@@ -73,7 +74,7 @@ local function run()
   local start=assert(game:find('tt = RT("re_farmer",',1,true))
   local finish=assert(game:find('tt = RT("re_farmer_well_fed",',start,true))
   chunk("kr1/game_templates.lua","local tt;local image_y;local anchor_y;local scripts=require('game_scripts');local function ady(v) return v-anchor_y*image_y end;"..game:sub(start,finish-1))
-  if level_id == 3 then
+  if level_id >= 3 then
     local a=assert(game:find('tt = RT("mod_shaman_heal",',1,true))
     local b=assert(game:find('\ntt = ',a+1,true))
     chunk("kr1/game_templates.lua","local tt;local scripts=require('game_scripts');"..game:sub(a,b-1))
@@ -99,7 +100,10 @@ local function run()
   for _,id in ipairs(out.layout.required_templates) do chunk("kr1/template_groups/"..id..".lua") end
   local template_ids={"tower_archer_1","tower_archer_2","tower_barrack_1","tower_barrack_2","tower_mage_1","tower_mage_2","tower_engineer_1","tower_engineer_2","tower_holder_grass","tower_build_archer","tower_build_barrack","tower_build_mage","tower_build_engineer","soldier_militia","soldier_footmen","re_farmer","arrow_1","arrow_2","bolt_1","bolt_2","bomb","bomb_dynamite","power_fireball_control","power_fireball","power_reinforcements_control","fx_fireball_explosion","fx_bolt_hit","fx_explosion_small","fx_unit_explode","decal_bomb_crater","fx_blood_splat","fx_tower_buy_dust","fx_tower_sell_dust"}
   for _,id in ipairs(enemy_ids) do table.insert(template_ids,id) end
-  if level_id == 3 then table.insert(template_ids,"mod_shaman_heal") end
+  if level_id >= 3 then table.insert(template_ids,"mod_shaman_heal") end
+  if level_id == 4 then
+    for _,id in ipairs({"tower_archer_3","tower_barrack_3","tower_mage_3","tower_engineer_3","soldier_knight","arrow_3","bolt_3","bomb_black","fx_explosion_water"}) do table.insert(template_ids,id) end
+  end
   for _,entity in ipairs(out.layout.entities_list) do
     if E.entities[entity.template] and entity.template ~= "decal_background" and entity.template ~= "decal_defend_point" and entity.template ~= "editor_wave_flag" then table.insert(template_ids,entity.template) end
   end
@@ -116,7 +120,8 @@ local function run()
   out.ui={notifications={},slides={},balloons={},tower_menu_button_places=clean(gui.tower_menu_button_places),tower_menu_center_x=gui.tower_menu_center_x,tower_menu_center_y=gui.tower_menu_center_y}
   local notification_ids={"TUTORIAL_1","TUTORIAL_2","TUTORIAL_3","TIP_ARMOR","TIP_RALLY","POWER_REINFORCEMENT","POWER_FIREBALL"}
   if level_id >= 2 then table.insert(notification_ids,"TOWER_LEVEL2");table.insert(notification_ids,"TIP_STRATEGY");table.insert(notification_ids,"enemy_wolf_small") end
-  if level_id == 3 then table.insert(notification_ids,"TIP_ARMOR_MAGIC");table.insert(notification_ids,"enemy_shaman");table.insert(notification_ids,"enemy_ogre") end
+  if level_id >= 3 then table.insert(notification_ids,"TIP_ARMOR_MAGIC");table.insert(notification_ids,"enemy_shaman");table.insert(notification_ids,"enemy_ogre") end
+  if level_id == 4 then table.insert(notification_ids,"enemy_bandit");table.insert(notification_ids,"enemy_brigand") end
   for _,id in ipairs(notification_ids) do
     out.ui.notifications[id]=clean(gui.notifications[id]);out.ui.slides[id]=clean(gui.notification_slides[id])
   end
@@ -125,7 +130,14 @@ local function run()
   package.loaded["data.tower_menus_data_templates"]=chunk("kr1/data/tower_menus_data_templates.lua")
   local menus=chunk("kr1/data/tower_menus_data.lua")
   out.ui.tower_menus={holder=clean(menus.holder[1])}
-  for _,kind in ipairs({"archer","barrack","mage","engineer"}) do out.ui.tower_menus[kind]=clean(menus[kind][1]) end
+  out.ui.upgrade_menus={}
+  for _,kind in ipairs({"archer","barrack","mage","engineer"}) do
+    out.ui.tower_menus[kind]=clean(menus[kind][1])
+    for level=1,(level_id == 4 and 2 or 1) do
+      local item=menus[kind][level][1]
+      out.ui.upgrade_menus[item.action_arg]=clean(item)
+    end
+  end
   local strings=chunk("_assets/kr1-desktop/strings/zh-Hans.lua")
   out.ui.strings={}
   local function collect(v)

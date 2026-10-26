@@ -1,0 +1,277 @@
+{
+  "passed": true,
+  "date": "2026-10-26",
+  "source": {
+    "version": "2.1.0.2",
+    "commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2"
+  },
+  "scope": {
+    "playable_levels": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "new_level": 4,
+    "difficulty": 2,
+    "mode": 1,
+    "heroes_in_battle": false,
+    "technology": false,
+    "next_preview": 5
+  },
+  "level04": {
+    "name": "双子河畔",
+    "initial_gold": 520,
+    "initial_lives": 20,
+    "tower_sites": 15,
+    "paths": 2,
+    "waves": 13,
+    "enemies": 339,
+    "roster": {
+      "enemy_goblin": 130,
+      "enemy_fat_orc": 58,
+      "enemy_shaman": 24,
+      "enemy_bandit": 77,
+      "enemy_wolf_small": 18,
+      "enemy_ogre": 2,
+      "enemy_brigand": 30
+    },
+    "entrances": "sorted array index; duplicate source path IDs retained separately",
+    "templates": 78,
+    "atlas_pages": 7,
+    "audio_resources": 61
+  },
+  "towers": {
+    "barrack": {
+      "upgrade_cost": 150,
+      "total_investment": 330,
+      "combat_refund": 198,
+      "garrison": 3,
+      "soldier": "soldier_knight",
+      "hp": 150,
+      "armor": 0.3,
+      "damage": [
+        8,
+        12
+      ],
+      "rally_range": 155,
+      "strict_melee_ticks": 42
+    },
+    "archer": {
+      "upgrade_cost": 160,
+      "total_investment": 340,
+      "combat_refund": 204,
+      "damage": [
+        11,
+        20
+      ],
+      "range": 180,
+      "attack_ticks": 15
+    },
+    "engineer": {
+      "upgrade_cost": 320,
+      "total_investment": 665,
+      "combat_refund": 399,
+      "damage": [
+        36,
+        72
+      ],
+      "range": 180,
+      "attack_ticks": 90,
+      "damage_radius": 67.2
+    },
+    "mage": {
+      "upgrade_cost": 240,
+      "total_investment": 500,
+      "combat_refund": 300,
+      "damage": [
+        47,
+        82
+      ],
+      "range": 180,
+      "nominal_cooldown_seconds": 1.5,
+      "strict_attack_ticks": 46
+    }
+  },
+  "logic": {
+    "tier3_upgrade_logic": {
+      "passed": true,
+      "report": "reports/tier3_upgrade_logic.json",
+      "checks": 314
+    },
+    "campaign_levels_logic": {
+      "passed": true,
+      "report": "reports/campaign_levels_logic.json",
+      "checks": 963
+    },
+    "tower_upgrade_logic": {
+      "passed": true,
+      "report": "reports/tower_upgrade_logic.json",
+      "checks": 267
+    },
+    "archer_upgrade_logic": {
+      "passed": true,
+      "report": "reports/archer_upgrade_logic.json",
+      "checks": 166
+    },
+    "battle_details_logic": {
+      "passed": true,
+      "report": "reports/battle_details_logic.json",
+      "checks": 485
+    },
+    "interaction_fixes_logic": {
+      "passed": true,
+      "report": "reports/interaction_fixes_logic.json",
+      "checks": 448
+    },
+    "map_kr1_logic": {
+      "passed": true,
+      "report": "reports/map_kr1_logic.json",
+      "checks": 36063
+    },
+    "playtest_tools_logic": {
+      "passed": true,
+      "report": "reports/playtest_tools_logic.json",
+      "checks": 69
+    },
+    "level01_logic": {
+      "passed": true,
+      "report": "reports/level01_logic.json"
+    },
+    "campaign_levels_visual_1280x720": {
+      "passed": true,
+      "report": "reports/campaign_levels_visual_1280x720.json"
+    }
+  },
+  "assets": {
+    "1": {
+      "passed": true,
+      "source_inputs": 40,
+      "frames": 1419,
+      "canonical_frames": 708,
+      "animations": 96,
+      "resources": 58
+    },
+    "2": {
+      "passed": true,
+      "source_inputs": 38,
+      "frames": 1470,
+      "canonical_frames": 744,
+      "animations": 101,
+      "resources": 61
+    },
+    "3": {
+      "passed": true,
+      "source_inputs": 45,
+      "frames": 1929,
+      "canonical_frames": 995,
+      "animations": 123,
+      "resources": 64
+    },
+    "4": {
+      "passed": true,
+      "source_inputs": 43,
+      "frames": 2341,
+      "canonical_frames": 1173,
+      "animations": 157,
+      "resources": 68
+    }
+  },
+  "native": {
+    "1280x720": {
+      "passed": true,
+      "checks": 280,
+      "captures": 23,
+      "sampled_frames": 239,
+      "report": "reports/level04_visual_1280x720.json",
+      "scope": "full fourth campaign and tower interaction/animation"
+    },
+    "1920x1080": {
+      "passed": true,
+      "checks": 171,
+      "captures": 11,
+      "sampled_frames": 0,
+      "report": "reports/level04_visual_1920x1080.json",
+      "scope": "new interface layout and input regions"
+    },
+    "1024x768": {
+      "passed": true,
+      "checks": 171,
+      "captures": 11,
+      "sampled_frames": 0,
+      "report": "reports/level04_visual_1024x768.json",
+      "scope": "new interface layout and input regions"
+    }
+  },
+  "campaign_results": {
+    "2": {
+      "defeat_ticks": 1984,
+      "victory": {
+        "gold": 42,
+        "kills": 149,
+        "leaks": 5,
+        "lives": 15,
+        "result": "victory",
+        "spawned": 154,
+        "ticks": 9538
+      }
+    },
+    "3": {
+      "defeat_ticks": 2360,
+      "victory": {
+        "gold": 19,
+        "kills": 318,
+        "leaks": 11,
+        "lives": 9,
+        "result": "victory",
+        "spawned": 329,
+        "ticks": 19393
+      }
+    },
+    "4": {
+      "defeat_ticks": 1270,
+      "victory": {
+        "gold": 185,
+        "kills": 326,
+        "leaks": 13,
+        "lives": 3,
+        "result": "victory",
+        "spawned": 339,
+        "ticks": 22101
+      }
+    }
+  },
+  "fourth_replay": {
+    "fixture": "tests/replays/level04_victory.json",
+    "seed": 42,
+    "accepted_commands": 101,
+    "rejected_commands": 0,
+    "developer_commands": false,
+    "initial_gold_override": false,
+    "damage_override": false,
+    "execution": "normal simulation command interface and accelerated native action handler",
+    "mouse_coverage": "separate real engine input checks for all four tower families",
+    "limitation": "Fire command at tick 525 targets (467, -8.3600235), above the visible area; accepted by source terrain/path rules. Not a complete mouse-only playthrough."
+  },
+  "notification_adaptation": "TOWER_LEVEL3 is referenced by source waves but lacks source GUI data; implemented with existing upgrade notification assets and explanatory text.",
+  "arena": {
+    "scene": "tests/tier3_upgrade_arena.tscn",
+    "initial_gold": 2500,
+    "campaign_save_isolated": true,
+    "original_tier2_arena_preserved": true
+  },
+  "audio_validation": "resource, player and playback-call checks; no per-sound manual listening",
+  "web": {
+    "bundle": "build\\KingdomRush-KR1-Levels01-04-Web.zip",
+    "bytes": 124374590,
+    "sha256": "f33ed48837887030f781ec3ed18c388d6ca89e9b2b85328124f96309cdcc5570",
+    "build_type": "release",
+    "developer_menu": false,
+    "pck_isolated_check": true,
+    "pck_files": 507,
+    "browser_tested": false
+  },
+  "web_archive_crc_passed": true,
+  "browser_acceptance": "manual by user",
+  "documentation": "docs/LEVEL04_TIER3_DELIVERY.md"
+}

@@ -1,4 +1,4 @@
-"""Evaluate frozen Dove data offline and build source-traceable atlases for campaigns 1-3."""
+"""Evaluate frozen Dove data offline and build source-traceable atlases for campaigns 1-4."""
 from pathlib import Path
 import argparse, copy, hashlib, json, math, os, re, subprocess
 from PIL import Image
@@ -11,7 +11,7 @@ def write(path, value):
     path.write_text(json.dumps(value, ensure_ascii=False, separators=(",", ":"), allow_nan=False)+"\n", encoding="utf-8")
 
 def prepare(source, love, level_id=1):
-    assert level_id in (1, 2, 3)
+    assert level_id in (1, 2, 3, 4)
     level_name=f"level{level_id:02d}"
     assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == BASE
     assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain"], text=True).strip(), "Reference must be clean"
@@ -28,7 +28,7 @@ def prepare(source, love, level_id=1):
     inputs.update({"all/gui_utils.lua", "all/game.lua"})
     script=f"kr1/data/levels/{level_name}.lua"
     if (source/script).is_file(): inputs.add(script)
-    if level_id == 3: inputs.update({"kr1/game_scripts.lua","all/seek.lua","all/spatial_index.lua"})
+    if level_id >= 3: inputs.update({"kr1/game_scripts.lua","all/seek.lua","all/spatial_index.lua"})
     data["source"]={"version":"2.1.0.2","commit":BASE,"difficulty":2,"inputs":{p:hashlib.sha256((source/p).read_bytes()).hexdigest() for p in sorted(inputs)}}
     # GGTextLabel slide and TutorialBalloon class defaults are part of the source layout.
     for slide_id, labels in data["ui"]["slides"].items():
@@ -37,10 +37,15 @@ def prepare(source, love, level_id=1):
     data["schema_version"]=1
     data["level"]={"generation":1,"id":level_id,"mode":1,"difficulty":2,"root":f"res://data/{level_name}/","group":level_name,"background":f"stage_{level_id}","music":"BattleMusic","prep_music":"PrepMusic"}
     # all/scripts.lua editor_wave_flag.insert builds entrances from these markers.
-    data["locations"]={"entrances":[{"path_index":int(e["editor.path_id"]),"pos":e["pos"],"r":e.get("editor.r",0)} for e in data["layout"]["entities_list"] if e["template"]=="editor_wave_flag"]}
+    # game_gui.show_wave_flags indexes the sorted entrance array, not editor.path_id.
+    # Level 4 deliberately has two editor markers with the same path ID.
+    entrances=sorted((e for e in data["layout"]["entities_list"] if e["template"]=="editor_wave_flag"),key=lambda e:int(e["editor.path_id"]))
+    data["locations"]={"entrances":[{"path_index":i,"source_path_id":int(e["editor.path_id"]),"pos":e["pos"],"r":e.get("editor.r",0)} for i,e in enumerate(entrances,1)]}
     # The frozen wave references this ID, but its GUI definition is absent.
     if level_id == 2:
-        data["ui"]["notifications"]["TOWER_LEVEL2"]={"layout":"upgrade","paper":"notifications_newenemy","adaptation":"Dove wave ID has no GUI definition in BASE"}
+        data["ui"]["notifications"]["TOWER_LEVEL2"]={"layout":"upgrade","tier":2,"paper":"notifications_newenemy","adaptation":"Dove wave ID has no GUI definition in BASE"}
+    if level_id == 4:
+        data["ui"]["notifications"]["TOWER_LEVEL3"]={"layout":"upgrade","tier":3,"paper":"notifications_newenemy","adaptation":"Dove wave ID has no GUI definition in BASE"}
     # Resolve source layout overrides once, with isolated templates per instance.
     for entity in data["layout"]["entities_list"]:
         original=entity["template"]
@@ -59,7 +64,7 @@ def prepare(source, love, level_id=1):
     def scalar(key): return float(re.search(r"GS\."+key+r"\s*=\s*([\d.]+)",settings)[1])
     def normal(key): return float(re.search(r"GS\."+key+r"\s*=\s*\{([^}]+)",settings)[1].split(",")[1])
     data["rules"]={"enemy_hp_factor":normal("difficulty_enemy_hp_max_factor"),"enemy_speed_factor":normal("difficulty_enemy_speed_factor"),"enemy_gold_factor":normal("difficulty_enemy_gold_factor"),"early_wave_reward_per_second":scalar("early_wave_reward_per_second"),"soldier_regen_factor":scalar("soldier_regen_factor")}
-    assert data["waves"]["lives"]==20 and data["waves"]["cash"]=={1:270,2:240,3:330}[level_id] and len(data["waves"]["groups"])=={1:7,2:7,3:11}[level_id]
+    assert data["waves"]["lives"]==20 and data["waves"]["cash"]=={1:270,2:240,3:330,4:520}[level_id] and len(data["waves"]["groups"])=={1:7,2:7,3:11,4:13}[level_id]
     counts={}
     for group in data["waves"]["groups"]:
         for wave in group["waves"]:
@@ -68,6 +73,7 @@ def prepare(source, love, level_id=1):
                     creep=spawn["creep_aux"] if spawn.get("creep_aux") and spawn.get("max_same",0)>0 and (index//spawn["max_same"])%2 else spawn["creep"]
                     counts[creep]=counts.get(creep,0)+1
     expected={1:{"enemy_goblin":48,"enemy_fat_orc":8},2:{"enemy_goblin":106,"enemy_fat_orc":26,"enemy_wolf_small":22},3:{"enemy_goblin":224,"enemy_fat_orc":58,"enemy_wolf_small":32,"enemy_shaman":12,"enemy_ogre":3}}
+    expected[4]={"enemy_goblin":130,"enemy_fat_orc":58,"enemy_shaman":24,"enemy_bandit":77,"enemy_wolf_small":18,"enemy_ogre":2,"enemy_brigand":30}
     assert counts==expected[level_id],counts
     # Runtime insert chooses one of these three visual variants; numbers remain source values.
     data["templates"]["re_farmer"]["render"]["sprites"][0]["prefix"]="re_farmer_1"
@@ -113,7 +119,7 @@ def prepare(source, love, level_id=1):
             if notification.get(key): wanted.add(notification[key])
     if level_id >= 2:
         for template_id,template in data["templates"].items():
-            if template_id in ["enemy_wolf_small","enemy_shaman","enemy_ogre"]:
+            if template_id in ["enemy_wolf_small","enemy_shaman","enemy_ogre","enemy_bandit","enemy_brigand"]:
                 wanted.add(f"encyclopedia_creeps_{template['info']['enc_icon']:04d}")
     # Source slide text can be shared while a notification supplies its paper.
     order=["tower_holders",f"go_stage{level_id:02d}_bg","go_stage01","go_stages_grass","go_towers_group1","go_towers_group2","go_towers_group3","go_towers_group4","go_towers_group6","go_enemies_grass","go_power_reinforcements","go_decals","go_enemies_common","encyclopedia_creeps",*ui_groups]
@@ -188,4 +194,4 @@ def prepare(source, love, level_id=1):
     print(json.dumps({"templates":len(data["templates"]),"frames":len(aliases),"animations":len(animations),"atlas_pages":len(pages),"audio":len(audio),"enemies":counts},ensure_ascii=False))
 
 if __name__=="__main__":
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument("--source",type=Path,default=Path("D:/projects/KingdomRushDove"));parser.add_argument("--love",type=Path,default=Path("D:/王国保卫战Dove版/love.exe"));parser.add_argument("--level",type=int,choices=[1,2,3],default=1);args=parser.parse_args();prepare(args.source,args.love,args.level)
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument("--source",type=Path,default=Path("D:/projects/KingdomRushDove"));parser.add_argument("--love",type=Path,default=Path("D:/王国保卫战Dove版/love.exe"));parser.add_argument("--level",type=int,choices=[1,2,3,4],default=1);args=parser.parse_args();prepare(args.source,args.love,args.level)

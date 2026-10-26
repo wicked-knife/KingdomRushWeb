@@ -104,7 +104,7 @@ func _run() -> void:
 		await capture("defeat")
 		battle._action("map"); await app.map_ready
 		check(app.battle == null and app.campaign_map != null, "native return releases battle")
-	check(app.campaign.is_unlocked(4) and not app.campaign.is_playable(4), "level four is preview")
+	check(app.campaign.is_playable(4), "level four naturally available")
 	# Repeated cross-level entry releases the previous catalogs and audio players.
 	for i in range(6):
 		app._start_level(2 + i % 2, 1, 2); var old: WeakRef = weakref(app.battle)

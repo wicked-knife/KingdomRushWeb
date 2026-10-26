@@ -4,7 +4,8 @@ signal event(kind: String, payload: Dictionary)
 
 const STEP := 1.0 / 30.0
 const TYPES := ["archer", "barrack", "mage", "engineer"]
-const UPGRADES := {"tower_archer_1": "tower_archer_2", "tower_barrack_1": "tower_barrack_2", "tower_mage_1": "tower_mage_2", "tower_engineer_1": "tower_engineer_2"}
+const UPGRADES := {"tower_archer_1": "tower_archer_2", "tower_barrack_1": "tower_barrack_2", "tower_mage_1": "tower_mage_2", "tower_engineer_1": "tower_engineer_2",
+	"tower_archer_2": "tower_archer_3", "tower_barrack_2": "tower_barrack_3", "tower_mage_2": "tower_mage_3", "tower_engineer_2": "tower_engineer_3"}
 const SpriteAnimation = preload("res://scripts/battle/dove_animation.gd")
 const Projectile = preload("res://scripts/battle/dove_projectile.gd")
 # Frozen Dove path_db:path_width and game_gui POWER_1 / POWER_2 rules.
@@ -116,13 +117,14 @@ func tower_template(tower: Dictionary) -> Dictionary:
 	return templates[tower.template]
 
 func upgrade_target(tower: Dictionary) -> String:
-	return UPGRADES.get(tower.template, "")
+	var target: String = UPGRADES.get(tower.template, "")
+	return target if templates.has(target) else ""
 
 func _tower_period(tower: Dictionary) -> int:
 	return frames(tower_template(tower).attacks.list[0].cooldown) + (1 if tower.type == "mage" else 0)
 
 func _melee_period(template: Dictionary) -> int:
-	return frames(template.melee.attacks[0].cooldown) + (1 if template.template_name in ["soldier_militia", "soldier_footmen"] else 0)
+	return frames(template.melee.attacks[0].cooldown) + (1 if template.template_name in ["soldier_militia", "soldier_footmen", "soldier_knight"] else 0)
 
 func tower_locked(template_name: String) -> bool:
 	return template_name in data.layout.level_mode_overrides[0].get("locked_towers", [])
@@ -316,7 +318,7 @@ func valid_power_point(power: String, point: Vector2) -> bool:
 	if power == "reinforcements": return valid_ground(point)
 	if power != "fire": return false
 	var terrain := _terrain_flags(point)
-	# The first three levels have no fn_can_power override. Fire additionally
+	# The first four levels have no fn_can_power override. Fire additionally
 	# accepts water, and uses a wider path radius than troop deployment.
 	return (terrain & FIRE_EXCLUDED_TERRAINS) == 0 and ((terrain & 2) != 0 or _valid_node_nearby(point, FIRE_PATH_WIDTH_FACTOR, NF_POWER_1))
 
@@ -416,7 +418,7 @@ func _spawn_enemy(type: String, subpath: int = -1, path: int = 0) -> Dictionary:
 	var e := {"id": next_id, "template": type, "hp": float(hp), "max_hp": float(hp), "pos": vec(data.paths.paths[path][subpath][0]), "path": path, "subpath": subpath, "node": 0, "progress": 0.0, "blocker": 0, "blockers": [], "attack_at": tick, "pending": {}, "state": "walkingDown", "state_at": tick, "dead_at": -1, "flip": false, "last_dir": Vector2.ZERO, "heal_at": tick, "casting": {}}
 	next_id += 1; enemies.append(e)
 	spawn_log.append({"tick": tick, "type": type, "path": path, "subpath": subpath, "wave": wave})
-	if type in ["enemy_wolf_small", "enemy_shaman", "enemy_ogre"] and not seen_enemies.has(type):
+	if data.ui.notifications.has(type) and not seen_enemies.has(type):
 		seen_enemies[type] = true; alerts.append(type)
 	return e
 
@@ -825,8 +827,9 @@ func _bullet_step(p: Dictionary) -> void:
 					var ellipse_radius := Vector2(cos(angle), 0.7 * sin(angle)).length() * float(b.damage_radius)
 					amount = lerpf(float(b.damage_max), float(b.damage_min), clampf(delta.length() / ellipse_radius, 0, 1))
 				damage(e, amount, int(b.damage_type))
-		add_effect(str(b.get("hit_fx", "")), p.to)
-		add_effect(str(b.get("hit_decal", "")), p.to)
+		var water: bool = behavior == "scripts.bomb.update" and (_terrain_flags(p.to) & 2) != 0 and templates.has(b.get("hit_fx_water", ""))
+		add_effect(str(b.get("hit_fx_water", "")) if water else str(b.get("hit_fx", "")), p.to)
+		if not water: add_effect(str(b.get("hit_decal", "")), p.to)
 	elif not target.is_empty() and target.hp > 0:
 		var hit: Vector2 = target.pos + vec(templates[target.template].unit.hit_offset)
 		if behavior == "scripts.bolt.update" or p.to.distance_to(hit) < float(b.get("hit_distance", 22)) * 1.2:
@@ -835,7 +838,9 @@ func _bullet_step(p: Dictionary) -> void:
 			add_effect(str(b.get("hit_blood_fx", "")), hit, {"rotation": p.rotation})
 	if behavior == "scripts.bolt.update": add_effect(str(b.get("hit_fx", "")), p.to)
 	var sounds: Dictionary = templates[p.template].get("sound_events", {})
-	if sounds.has("hit"): event.emit("sound", {"id": sounds.hit})
+	var water_impact: bool = behavior == "scripts.bomb.update" and (_terrain_flags(p.to) & 2) != 0 and templates.has(b.get("hit_fx_water", ""))
+	if water_impact and sounds.has("hit_water"): event.emit("sound", {"id": sounds.hit_water})
+	elif sounds.has("hit"): event.emit("sound", {"id": sounds.hit})
 
 func _bolt_step(p: Dictionary, bullet: Dictionary, target: Dictionary) -> bool:
 	# all/scripts.lua bolt.update: test arrival before yielding, then accelerate
