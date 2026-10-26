@@ -36,8 +36,9 @@ var sound_cache := {}
 var sound_last := {}
 var volume_drag := {}
 var outcome := {}
+var return_label := "返回地图"
 
-func initialize(boot: Node, sound: Node) -> void:
+func initialize(boot: Node, sound: Node, definition: Dictionary = {}) -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	name = "Level01"
 	mouse_filter = MOUSE_FILTER_STOP
@@ -46,7 +47,7 @@ func initialize(boot: Node, sound: Node) -> void:
 	audio = sound
 	catalog = Catalog.new("res://data/level01/catalog.json")
 	animations = JSON.parse_string(FileAccess.get_file_as_string("res://data/level01/animations.json")).animations
-	sim = Simulation.new({}, 1, OS.is_debug_build())
+	sim = Simulation.new(definition, 1, OS.is_debug_build())
 	sim.event.connect(_on_event)
 	interface = Interface.new(self)
 	developer = preload("res://scripts/battle/battle_developer.gd").new(self)
@@ -148,7 +149,7 @@ func _draw() -> void:
 	for decal: Dictionary in sim.decals:
 		if not decal.removed: _queue_template(decal.template, decal.pos, decal.state, decal.state_at, decal.flip, false, 1, false, "", decal)
 	for tower: Dictionary in sim.towers:
-		var template_name: String = "tower_holder_grass" if tower.type == "" else "tower_" + tower.type + "_1"
+		var template_name: String = tower.template
 		if tower.ready > sim.tick:
 			template_name = "tower_build_" + tower.type
 		var preview := ""
@@ -159,7 +160,7 @@ func _draw() -> void:
 	for unit: Dictionary in sim.enemies + sim.soldiers:
 		_queue_template(unit.template, unit.pos, unit.state, unit.state_at, unit.flip, false, int(unit.get("variant", 1)), unit.hp <= 0, "", unit)
 	for p: Dictionary in sim.projectiles:
-		_queue_template(p.template, p.pos, "", p.at, false, false, 1, false, "", p)
+		_queue_template(p.template, p.pos, "flying" if sim.templates[p.template].get("behavior", "") == "scripts.bolt.update" else "", p.at, false, false, 1, false, "", p)
 	for effect: Dictionary in sim.effects: _queue_template(effect.template, effect.pos, "", effect.at, false, false, 1, false, "", effect)
 	draw_list.sort_custom(func(a, b):
 		if a.z != b.z: return a.z < b.z
@@ -342,7 +343,7 @@ func _action(action: String, args: Dictionary = {}) -> void:
 		"tip": sim.notices.append(tip); tip = ""
 		_:
 			if not sim.command(action, args): _message("当前操作不可用")
-			elif action == "build" or action == "sell": selected = ""
+			elif action in ["build", "upgrade", "sell"]: selected = ""
 	_sound("GUIButtonCommon")
 	queue_redraw()
 

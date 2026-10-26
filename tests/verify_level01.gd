@@ -52,7 +52,7 @@ func _run() -> void:
 	sim.reset(); dismiss(sim)
 	sim.command("build", {"id": "1", "type": "mage"})
 	for i in range(25): sim.step()
-	check(sim.command("sell", {"id": "1"}) and sim.gold == 230, "60 percent sell refund")
+	check(sim.command("sell", {"id": "1"}) and sim.gold == 270, "full pre-wave sell refund")
 	check(not sim.command("sell", {"id": "1"}), "empty holder sell rejected")
 	for subpath in range(3):
 		sim.reset(); dismiss(sim)

@@ -37,3 +37,5 @@ __pycache__/
 !/reports/heroes_assets.json
 !/reports/heroes_logic.json
 !/reports/heroes_delivery.json
+!/reports/archer_upgrade_report.json
+!/reports/tower_upgrades_report.json

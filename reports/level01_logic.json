@@ -52,11 +52,11 @@
 	],
 	"victory": {
 		"gold": 36,
-		"kills": 55,
-		"leaks": 1,
-		"lives": 19,
+		"kills": 49,
+		"leaks": 7,
+		"lives": 13,
 		"result": "victory",
 		"spawned": 56,
-		"ticks": 8542
+		"ticks": 8846
 	}
 }

@@ -1,0 +1,293 @@
+{
+  "passed": true,
+  "source_version": "2.1.0.2",
+  "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+  "implemented": [
+    "tower_barrack_1 -> tower_barrack_2",
+    "tower_engineer_1 -> tower_engineer_2",
+    "tower_mage_1 -> tower_mage_2"
+  ],
+  "preserved_archer_upgrade": true,
+  "campaign_tier_two_locked": true,
+  "arena_initial_gold": 1000,
+  "arena_saves_campaign": false,
+  "upgrades": {
+    "barrack": {
+      "price": 110,
+      "spent": 180,
+      "refunds": [
+        180,
+        108
+      ]
+    },
+    "engineer": {
+      "price": 220,
+      "spent": 345,
+      "refunds": [
+        345,
+        207
+      ]
+    },
+    "mage": {
+      "price": 160,
+      "spent": 260,
+      "refunds": [
+        260,
+        156
+      ]
+    }
+  },
+  "assets": {
+    "passed": true,
+    "source_inputs": 36,
+    "frames": 1358,
+    "canonical_frames": 647,
+    "animations": 96,
+    "resources": 55
+  },
+  "headless": {
+    "tower_upgrades": {
+      "checks": 267,
+      "failures": [],
+      "passed": true
+    },
+    "archer_upgrade": {
+      "passed": true,
+      "checks": 166
+    },
+    "battle_details": {
+      "checks": 485,
+      "failures": [],
+      "passed": true
+    },
+    "campaign_map": {
+      "passed": true,
+      "checks": 36063
+    },
+    "playtest_tools": {
+      "checks": 69,
+      "failures": [],
+      "passed": true,
+      "web_tested": false
+    },
+    "first_level": {
+      "defeat": {
+        "lives": 0,
+        "result": "defeat",
+        "ticks": 4493
+      },
+      "failures": [],
+      "passed": true,
+      "timeline": [
+        {
+          "count": 3,
+          "end": 153,
+          "start": 0,
+          "wave": 1
+        },
+        {
+          "count": 6,
+          "end": 509,
+          "start": 153,
+          "wave": 2
+        },
+        {
+          "count": 9,
+          "end": 951,
+          "start": 509,
+          "wave": 3
+        },
+        {
+          "count": 5,
+          "end": 1231,
+          "start": 951,
+          "wave": 4
+        },
+        {
+          "count": 3,
+          "end": 1384,
+          "start": 1231,
+          "wave": 5
+        },
+        {
+          "count": 14,
+          "end": 2148,
+          "start": 1384,
+          "wave": 6
+        },
+        {
+          "count": 16,
+          "end": 2356,
+          "start": 2148,
+          "wave": 7
+        }
+      ],
+      "victory": {
+        "gold": 36,
+        "kills": 49,
+        "leaks": 7,
+        "lives": 13,
+        "result": "victory",
+        "spawned": 56,
+        "ticks": 8846
+      }
+    }
+  },
+  "native_upgrade": [
+    {
+      "passed": true,
+      "checks": 784,
+      "resolution": "1280x720",
+      "input": "Input.parse_input_event",
+      "sampled_frames": 100,
+      "captures": 23
+    },
+    {
+      "passed": true,
+      "checks": 784,
+      "resolution": "1920x1080",
+      "input": "Input.parse_input_event",
+      "sampled_frames": 100,
+      "captures": 23
+    },
+    {
+      "passed": true,
+      "checks": 784,
+      "resolution": "1024x768",
+      "input": "Input.parse_input_event",
+      "sampled_frames": 100,
+      "captures": 23
+    }
+  ],
+  "native_archer": [
+    {
+      "passed": true,
+      "checks": 196,
+      "resolution": "1280x720"
+    },
+    {
+      "passed": true,
+      "checks": 196,
+      "resolution": "1920x1080"
+    },
+    {
+      "passed": true,
+      "checks": 196,
+      "resolution": "1024x768"
+    }
+  ],
+  "native_first_level": [
+    {
+      "resolution": "1280x720",
+      "passed": true,
+      "script": "tests/battle_visual_smoke.gd"
+    },
+    {
+      "resolution": "1920x1080",
+      "passed": true,
+      "script": "tests/battle_visual_smoke.gd"
+    },
+    {
+      "resolution": "1024x768",
+      "passed": true,
+      "script": "tests/battle_visual_smoke.gd"
+    }
+  ],
+  "screenshots_inspected": true,
+  "baseline_change": {
+    "previous": {
+      "kills": 55,
+      "leaks": 1,
+      "lives": 19
+    },
+    "current": {
+      "gold": 36,
+      "kills": 49,
+      "leaks": 7,
+      "lives": 13,
+      "result": "victory",
+      "spawned": 56,
+      "ticks": 8846
+    },
+    "reason": "Restored shared source bolt acceleration/tracking/impact, mage windup range handling and strict mage/militia cooldown comparisons; frozen waves, rules and existing template values unchanged."
+  },
+  "web_exported": false,
+  "browser_tested": false,
+  "failures": [],
+  "screenshots": [
+    "reports/towers_barrack_ready_1280x720.png",
+    "reports/towers_barrack_insufficient_1280x720.png",
+    "reports/towers_barrack_refund_180_1280x720.png",
+    "reports/towers_barrack_refund_108_1280x720.png",
+    "reports/towers_footman_information_1280x720.png",
+    "reports/towers_barrack_combat_1280x720.png",
+    "reports/towers_engineer_ready_1280x720.png",
+    "reports/towers_engineer_insufficient_1280x720.png",
+    "reports/towers_engineer_refund_345_1280x720.png",
+    "reports/towers_engineer_refund_207_1280x720.png",
+    "reports/towers_engineer_attack_down_1280x720.png",
+    "reports/towers_engineer_combat_1280x720.png",
+    "reports/towers_mage_ready_1280x720.png",
+    "reports/towers_mage_insufficient_1280x720.png",
+    "reports/towers_mage_refund_260_1280x720.png",
+    "reports/towers_mage_refund_156_1280x720.png",
+    "reports/towers_mage_attack_down_1280x720.png",
+    "reports/towers_mage_attack_up_1280x720.png",
+    "reports/towers_mage_combat_1280x720.png",
+    "reports/towers_barrack_campaign_locked_1280x720.png",
+    "reports/towers_engineer_campaign_locked_1280x720.png",
+    "reports/towers_mage_campaign_locked_1280x720.png",
+    "reports/towers_archer_campaign_locked_1280x720.png",
+    "reports/towers_barrack_ready_1920x1080.png",
+    "reports/towers_barrack_insufficient_1920x1080.png",
+    "reports/towers_barrack_refund_180_1920x1080.png",
+    "reports/towers_barrack_refund_108_1920x1080.png",
+    "reports/towers_footman_information_1920x1080.png",
+    "reports/towers_barrack_combat_1920x1080.png",
+    "reports/towers_engineer_ready_1920x1080.png",
+    "reports/towers_engineer_insufficient_1920x1080.png",
+    "reports/towers_engineer_refund_345_1920x1080.png",
+    "reports/towers_engineer_refund_207_1920x1080.png",
+    "reports/towers_engineer_attack_down_1920x1080.png",
+    "reports/towers_engineer_combat_1920x1080.png",
+    "reports/towers_mage_ready_1920x1080.png",
+    "reports/towers_mage_insufficient_1920x1080.png",
+    "reports/towers_mage_refund_260_1920x1080.png",
+    "reports/towers_mage_refund_156_1920x1080.png",
+    "reports/towers_mage_attack_down_1920x1080.png",
+    "reports/towers_mage_attack_up_1920x1080.png",
+    "reports/towers_mage_combat_1920x1080.png",
+    "reports/towers_barrack_campaign_locked_1920x1080.png",
+    "reports/towers_engineer_campaign_locked_1920x1080.png",
+    "reports/towers_mage_campaign_locked_1920x1080.png",
+    "reports/towers_archer_campaign_locked_1920x1080.png",
+    "reports/towers_barrack_ready_1024x768.png",
+    "reports/towers_barrack_insufficient_1024x768.png",
+    "reports/towers_barrack_refund_180_1024x768.png",
+    "reports/towers_barrack_refund_108_1024x768.png",
+    "reports/towers_footman_information_1024x768.png",
+    "reports/towers_barrack_combat_1024x768.png",
+    "reports/towers_engineer_ready_1024x768.png",
+    "reports/towers_engineer_insufficient_1024x768.png",
+    "reports/towers_engineer_refund_345_1024x768.png",
+    "reports/towers_engineer_refund_207_1024x768.png",
+    "reports/towers_engineer_attack_down_1024x768.png",
+    "reports/towers_engineer_combat_1024x768.png",
+    "reports/towers_mage_ready_1024x768.png",
+    "reports/towers_mage_insufficient_1024x768.png",
+    "reports/towers_mage_refund_260_1024x768.png",
+    "reports/towers_mage_refund_156_1024x768.png",
+    "reports/towers_mage_attack_down_1024x768.png",
+    "reports/towers_mage_attack_up_1024x768.png",
+    "reports/towers_mage_combat_1024x768.png",
+    "reports/towers_barrack_campaign_locked_1024x768.png",
+    "reports/towers_engineer_campaign_locked_1024x768.png",
+    "reports/towers_mage_campaign_locked_1024x768.png",
+    "reports/towers_archer_campaign_locked_1024x768.png"
+  ],
+  "runtime_sha256": {
+    "scripts/battle/level01_sim.gd": "da2a33909c116762c9803d628a0d4ac68df8893d52e542f160b8eb29bfcde1b6",
+    "scripts/battle/battle_ui.gd": "7c94d7b40218ca86e28753c9198a0c6829479fb5659c095e07a87103bde6156b",
+    "scripts/battle/battle_view.gd": "693b0588ba93276d899bb4054587b942b2ad5ef08d2983d04409b976ff2e265f"
+  }
+}

@@ -24,7 +24,7 @@ def verify():
             assert key in animations or name in atlas["lookup"], (template_name,key)
         info=template.get("info",{})
         if info.get("portrait"): assert info["portrait"] in atlas["lookup"],template_name
-    for template_name in ["arrow_1","bomb"]:
+    for template_name in ["arrow_1","arrow_2","bomb","bomb_dynamite","bolt_1","bolt_2"]:
         bullet=data["templates"][template_name]["bullet"]
         for key in ["hit_fx","hit_decal","hit_blood_fx"]:
             if bullet.get(key): assert bullet[key] in data["templates"],(template_name,key)

@@ -4,6 +4,7 @@ signal event(kind: String, payload: Dictionary)
 
 const STEP := 1.0 / 30.0
 const TYPES := ["archer", "barrack", "mage", "engineer"]
+const UPGRADES := {"tower_archer_1": "tower_archer_2", "tower_barrack_1": "tower_barrack_2", "tower_mage_1": "tower_mage_2", "tower_engineer_1": "tower_engineer_2"}
 const SpriteAnimation = preload("res://scripts/battle/dove_animation.gd")
 const Projectile = preload("res://scripts/battle/dove_projectile.gd")
 var data: Dictionary
@@ -39,7 +40,7 @@ var developer_used := false
 
 func _init(definition: Dictionary = {}, seed_value: int = 1, allow_developer: bool = false) -> void:
 	developer_enabled = allow_developer and OS.is_debug_build()
-	data = definition if not definition.is_empty() else JSON.parse_string(FileAccess.get_file_as_string("res://data/level01/definition.json"))
+	data = definition.duplicate(true) if not definition.is_empty() else JSON.parse_string(FileAccess.get_file_as_string("res://data/level01/definition.json"))
 	templates = data.templates
 	animations = JSON.parse_string(FileAccess.get_file_as_string("res://data/level01/animations.json")).animations
 	reset(seed_value)
@@ -57,7 +58,7 @@ func reset(seed_value: int = 1) -> void:
 	for index in range(data.layout.entities_list.size()):
 		var e: Dictionary = data.layout.entities_list[index]
 		if str(e.template).begins_with("tower_holder"):
-			towers.append({"id": str(e["tower.holder_id"]), "pos": vec(e.pos), "rally": vec(e["tower.default_rally_pos"]), "type": "", "ready": 0, "attack_at": 0, "shot_at": -1000, "shot_up": false, "pending": {}, "slots": [0, 0, 0]})
+			towers.append(_holder({"id": str(e["tower.holder_id"]), "pos": vec(e.pos), "rally": vec(e["tower.default_rally_pos"]), "holder": e.template}))
 		elif templates.has(e.template) and templates[e.template].has("delayed_play"):
 			var d: Dictionary = templates[e.template].delayed_play
 			decals.append({"id": index, "template": e.template, "pos": vec(e.pos), "clicks": 0, "clicked_at": -1000, "removed": false,
@@ -83,6 +84,30 @@ func unit_by_id(id: int) -> Dictionary:
 	for u: Dictionary in enemies + soldiers:
 		if u.id == id: return u
 	return {}
+
+func _holder(tower: Dictionary) -> Dictionary:
+	return {"id": tower.id, "pos": tower.pos, "rally": tower.rally, "holder": tower.holder,
+		"template": tower.holder, "spent": 0, "type": "", "ready": 0, "attack_at": 0,
+		"shot_at": -1000, "shot_up": false, "pending": {}, "slots": [0, 0, 0]}
+
+func tower_template(tower: Dictionary) -> Dictionary:
+	return templates[tower.template]
+
+func upgrade_target(tower: Dictionary) -> String:
+	return UPGRADES.get(tower.template, "")
+
+func _tower_period(tower: Dictionary) -> int:
+	return frames(tower_template(tower).attacks.list[0].cooldown) + (1 if tower.type == "mage" else 0)
+
+func _melee_period(template: Dictionary) -> int:
+	return frames(template.melee.attacks[0].cooldown) + (1 if template.template_name in ["soldier_militia", "soldier_footmen"] else 0)
+
+func tower_locked(template_name: String) -> bool:
+	return template_name in data.layout.level_mode_overrides[0].get("locked_towers", [])
+
+func sell_refund(tower: Dictionary) -> int:
+	if tower.type == "": return 0
+	return int(tower.spent) if wave == 0 else roundi(float(tower.spent) * float(tower_template(tower).tower.refund_factor))
 
 func command(kind: String, args: Dictionary = {}) -> bool:
 	if kind == "pause":
@@ -117,28 +142,43 @@ func command(kind: String, args: Dictionary = {}) -> bool:
 			if tower.is_empty() or tower.type != "" or type not in TYPES: return false
 			var price := int(templates["tower_" + type + "_1"].tower.price)
 			if gold < price: return false
+			tower.template = "tower_" + type + "_1"; tower.spent = price
 			gold -= price; tower.type = type; tower.built_at = tick; tower.ready = tick + frames(float(templates["tower_build_" + type].build_duration)); tower.attack_at = tower.ready
 			event.emit("sound", {"id": "GUITowerBuilding"}); return true
+		"upgrade":
+			var tower := tower_by_id(str(args.get("id", "")))
+			var target := str(args.get("upgrade_to", ""))
+			if tower.is_empty() or tower.ready > tick or target == "" or target != upgrade_target(tower) or tower_locked(target): return false
+			var t: Dictionary = templates[target]
+			var price := int(t.tower.price)
+			if gold < price: return false
+			var upgraded := _holder(tower)
+			upgraded.merge({"type": tower.type, "template": target, "spent": int(tower.spent) + price,
+				"ready": tick, "inserted": true}, true)
+			if tower.type == "barrack": _upgrade_garrison(tower, upgraded)
+			else: upgraded.attack_at = tick + _tower_period(upgraded)
+			gold -= price
+			towers[towers.find(tower)] = upgraded
+			add_effect("fx_tower_buy_dust", tower.pos + Vector2(0, 10))
+			event.emit("sound", {"id": t.sound_events.insert}); return true
 		"sell":
 			var tower := tower_by_id(str(args.get("id", "")))
 			if tower.is_empty() or tower.type == "" or tower.ready > tick: return false
-			var t: Dictionary = templates["tower_" + tower.type + "_1"].tower
-			gold += int(floor(t.price * t.refund_factor))
+			gold += sell_refund(tower)
 			for s: Dictionary in soldiers:
 				if s.home == tower.id: _retire(s)
 			add_effect("fx_tower_sell_dust", tower.pos)
-			tower.type = ""; tower.pending = {}; tower.slots = [0, 0, 0]
-			tower.erase("door_state"); tower.erase("layers")
+			towers[towers.find(tower)] = _holder(tower)
 			event.emit("sound", {"id": "GUITowerSell"}); return true
 		"rally":
 			var tower := tower_by_id(str(args.get("id", "")))
 			var point: Vector2 = args.get("pos", Vector2(-999, -999))
 			if tower.is_empty() or tower.type != "barrack" or tower.ready > tick: return false
-			if distance(tower.pos, point) > templates.tower_barrack_1.barrack.rally_range or not valid_ground(point): return false
+			if distance(tower.pos, point) > tower_template(tower).barrack.rally_range or not valid_ground(point): return false
 			tower.rally = point
 			for s: Dictionary in soldiers:
 				if s.home == tower.id and s.hp > 0:
-					_unblock(s); s.dest = _formation(point, s.slot); s.rallying = true; s.pending = {}
+					_unblock(s); s.dest = _formation(point, s.slot, tower); s.rallying = true; s.pending = {}
 			event.emit("sound", {"id": "BarrackTaunt"}); return true
 		"decal_click":
 			for decal: Dictionary in decals:
@@ -173,6 +213,28 @@ func command(kind: String, args: Dictionary = {}) -> bool:
 					_projectile("power_fireball", 0, aim + Vector2(-190, 400), aim, 0.9 + i * 0.2)
 			return true
 	return false
+
+func _upgrade_garrison(old: Dictionary, upgraded: Dictionary) -> void:
+	# tower_utils.upgrade_tower creates fresh, full-health entities, then the new
+	# soldier coroutine follows nav_rally.new (which releases its inherited block).
+	var type: String = tower_template(upgraded).barrack.soldier_type
+	for s: Dictionary in soldiers.duplicate():
+		if s.home != old.id: continue
+		if s.hp > 0:
+			var replacement := _soldier(type, old.id, s.slot, s.pos, old.rally)
+			var started: int = s.get("attack_started_at", int(s.attack_at) - _melee_period(templates[s.template]))
+			for key in ["dest", "flip", "state", "state_at", "target"]: replacement[key] = s[key]
+			replacement.attack_started_at = started
+			replacement.attack_at = started + _melee_period(templates[type])
+			replacement.rally_pending = true
+			replacement.dest = _formation(old.rally, s.slot, upgraded)
+			upgraded.slots[s.slot] = replacement.id
+			for enemy: Dictionary in enemies:
+				var index: int = enemy.blockers.find(s.id)
+				if index >= 0: enemy.blockers[index] = replacement.id
+				if enemy.blocker == s.id: enemy.blocker = replacement.id
+		else: _unblock(s)
+		soldiers.erase(s)
 
 func valid_ground(point: Vector2) -> bool:
 	if point.x < 0 or point.x > 1024 or point.y < 40 or point.y > 735: return false
@@ -272,8 +334,9 @@ func _spawn_enemy(type: String, subpath: int = -1) -> Dictionary:
 
 func _tower_step(tower: Dictionary) -> void:
 	if tower.type == "" or tower.ready > tick: return
-	var t: Dictionary = templates["tower_" + tower.type + "_1"]
-	if tower.ready == tick:
+	var t: Dictionary = tower_template(tower)
+	if tower.ready == tick and not tower.get("inserted", false):
+		tower.inserted = true
 		event.emit("sound", {"id": t.sound_events.insert})
 		add_effect("fx_tower_buy_dust", tower.pos)
 	if tower.type == "barrack":
@@ -282,18 +345,23 @@ func _tower_step(tower: Dictionary) -> void:
 	var attack: Dictionary = t.attacks.list[0]
 	if not tower.pending.is_empty() and tick >= tower.pending.at:
 		var target := unit_by_id(tower.pending.target)
-		if tower.type == "engineer" or (not target.is_empty() and target.hp > 0):
+		if tower.type in ["engineer", "mage"] or (not target.is_empty() and target.hp > 0):
 			var offset := vec(tower.pending.offset)
 			var bullet: Dictionary = templates[attack.bullet].bullet
 			var flight := float(bullet.get("flight_time", 1))
 			var aim: Vector2 = tower.pending.aim
-			if not target.is_empty() and target.hp > 0:
+			var target_id: int = target.get("id", 0)
+			if tower.type == "mage":
+				if not target.is_empty() and distance(tower.pos + vec(t.tower.range_offset), target.pos) <= float(t.attacks.range) * 1.1:
+					aim = target.pos + vec(templates[target.template].unit.hit_offset)
+				else: target_id = 0
+			elif not target.is_empty() and target.hp > 0:
 				if not bullet.has("flight_time"): flight = distance(tower.pos, target.pos) / float(bullet.get("max_speed", 300))
 				if tower.type == "engineer": aim = _predict(target, flight)
 				else:
 					aim = target.pos + vec(templates[target.template].unit.hit_offset)
 					if bullet.get("predict_target_pos", false) and target.blocker == 0: aim += target.last_dir * 30.0 * flight
-			_projectile(attack.bullet, target.get("id", 0), tower.pos + offset, aim, flight)
+			_projectile(attack.bullet, target_id, tower.pos + offset, aim, flight)
 		tower.pending = {}
 	if tick < tower.attack_at or not tower.pending.is_empty(): return
 	var target := _target(tower.pos + vec(t.tower.range_offset), float(t.attacks.range))
@@ -305,8 +373,9 @@ func _tower_step(tower: Dictionary) -> void:
 		shooter = int(tower.shot_count) % offsets.size() if tower.type == "archer" else (0 if target.pos.y > tower.pos.y + float(offsets[0].y) else mini(1, offsets.size() - 1))
 	var offset: Dictionary = offsets[shooter] if offsets is Array else offsets
 	tower.pending = {"at": tick + frames(attack.shoot_time), "target": target.id, "offset": offset, "aim": _predict(target, float(templates[attack.bullet].bullet.get("flight_time", 1)))}
+	if tower.type == "mage": tower.pending.aim = target.pos
 	tower.shot_at = tick; tower.shot_up = target.pos.y > tower.pos.y + float(offset.y)
-	tower.attack_at = tick + frames(attack.cooldown)
+	tower.attack_at = tick + _tower_period(tower)
 	if not tower.has("layers"): tower.layers = {}
 	for sid in range(1, t.render.sprites.size() + 1):
 		var sprite: Dictionary = t.render.sprites[sid - 1]
@@ -315,7 +384,7 @@ func _tower_step(tower: Dictionary) -> void:
 		var state := "shoot"
 		if sprite.has("angles"): state = "shootingUp" if tower.shot_up else "shootingDown"
 		var idle := "idleUp" if tower.shot_up else "idleDown"
-		tower.layers[sid] = {"state": state, "at": tick, "loop": false, "flip": target.pos.x < tower.pos.x + float(offset.x), "idle": idle if sprite.has("angles") else "idle"}
+		tower.layers[sid] = {"state": state, "at": tick, "loop": false, "flip": tower.type == "archer" and target.pos.x < tower.pos.x + float(offset.x), "idle": idle if sprite.has("angles") else "idle"}
 
 func _target(point: Vector2, radius: float, unblocked: bool = false) -> Dictionary:
 	var best := {}; var progress := -1.0
@@ -390,21 +459,26 @@ func _predict(e: Dictionary, seconds: float) -> Vector2:
 
 func _soldier(type: String, home: String, slot: int, point: Vector2, rally: Vector2) -> Dictionary:
 	var t: Dictionary = templates[type]
-	var s := {"id": next_id, "template": type, "home": home, "slot": slot, "pos": point, "dest": _formation(rally, slot), "hp": float(t.health.hp_max), "max_hp": float(t.health.hp_max), "target": 0, "attack_at": tick, "pending": {}, "state": "idle", "state_at": tick, "dead_at": -1, "last_hit": tick, "regen_at": tick, "born_at": tick, "expires": -1, "flip": false, "variant": rng.randi_range(1, 3)}
+	var s := {"id": next_id, "template": type, "home": home, "slot": slot, "pos": point, "dest": _formation(rally, slot, tower_by_id(home)), "hp": float(t.health.hp_max), "max_hp": float(t.health.hp_max), "target": 0, "attack_at": tick, "pending": {}, "state": "idle", "state_at": tick, "dead_at": -1, "last_hit": tick, "regen_at": tick, "born_at": tick, "expires": -1, "flip": false, "variant": rng.randi_range(1, 3)}
+	s.attack_started_at = 0
+	s.attack_at = maxi(tick, _melee_period(t))
 	s.rallying = true
 	var names: Array = data.ui.unit_names.get(type, [])
 	if not names.is_empty(): s.display_name = names[rng.randi_range(0, names.size() - 1)]
 	if type == "re_farmer": s.portrait = "info_portraits_soldiers_%04d" % int(t.info.portrait_idxs[s.variant - 1])
 	next_id += 1; soldiers.append(s); return s
 
-func _formation(point: Vector2, slot: int) -> Vector2:
+func _formation(point: Vector2, slot: int, tower: Dictionary = {}) -> Vector2:
 	var angle := slot * TAU / 3.0 - PI / 2.0
-	return point + Vector2(cos(angle), sin(angle) * 0.7) * float(templates.tower_barrack_1.barrack.rally_radius)
+	var radius: float = tower_template(tower).barrack.rally_radius if not tower.is_empty() and tower.type == "barrack" else 25.0
+	return point + Vector2(cos(angle), sin(angle) * 0.7) * radius
 
 func _soldier_step(s: Dictionary) -> void:
 	if s.hp <= 0: return
 	if s.expires >= 0 and tick >= s.expires: _retire(s); return
 	var t: Dictionary = templates[s.template]
+	if s.get("rally_pending", false):
+		_unblock(s); s.rally_pending = false; s.rallying = true
 	# y_soldier_new_rally moves directly and suppresses interception until arrival.
 	if s.rallying:
 		s.flip = s.dest.x < s.pos.x
@@ -473,7 +547,8 @@ func _melee(attacker: Dictionary, target: Dictionary, template: Dictionary) -> v
 		if target.hp > 0: damage(target, float(rng.randi_range(int(attack.damage_min), int(attack.damage_max))), int(attack.damage_type))
 		attacker.pending = {}
 	if tick >= attacker.attack_at:
-		attacker.attack_at = tick + frames(attack.cooldown)
+		attacker.attack_started_at = tick
+		attacker.attack_at = tick + _melee_period(template)
 		attacker.pending = {"at": tick + frames(attack.hit_time)}
 		_state(attacker, "attack", true)
 		if attack.has("sound"): event.emit("sound", {"id": attack.sound})
@@ -524,6 +599,8 @@ func _projectile(type: String, target: int, from: Vector2, to: Vector2, flight: 
 	var b := {"template": type, "target": target, "from": from, "to": to, "pos": from, "at": tick, "duration": duration, "done": false,
 		"velocity": Projectile.launch(from, to, duration / 30.0, bullet), "initial_rotation": rng.randf_range(-PI / 2, PI / 2) if bullet.has("rotation_speed") else 0.0,
 		"rotation": 0.0, "hidden": float(bullet.get("hide_radius", 0)) > 0}
+	if templates[type].get("behavior", "") == "scripts.bolt.update":
+		b.speed = float(bullet.min_speed); b.last_step = tick; b.target_invalid = false
 	projectiles.append(b)
 	var sounds: Dictionary = templates[type].get("sound_events", {})
 	if sounds.has("insert"): event.emit("sound", {"id": sounds.insert})
@@ -531,20 +608,23 @@ func _projectile(type: String, target: int, from: Vector2, to: Vector2, flight: 
 func _bullet_step(p: Dictionary) -> void:
 	var b: Dictionary = templates[p.template].bullet
 	var target := unit_by_id(p.target)
+	var behavior: String = templates[p.template].get("behavior", "")
 	var ratio := clampf(float(tick - p.at) / p.duration, 0, 1)
-	if p.template == "bolt_1" or p.template == "power_fireball":
-		if p.template == "bolt_1" and not target.is_empty() and target.hp > 0: p.to = target.pos + vec(templates[target.template].unit.hit_offset)
+	if behavior == "scripts.bolt.update":
+		if not _bolt_step(p, b, target): return
+		if p.target_invalid: target = {}
+	elif p.template == "power_fireball":
 		p.pos = p.from.lerp(p.to, ratio)
 		p.rotation = (p.to - p.from).angle()
 	else:
 		p.merge(Projectile.sample(p, b, (tick - p.at) / 30.0), true)
-	if ratio < 1: return
+	if behavior != "scripts.bolt.update" and ratio < 1: return
 	p.done = true
 	if float(b.damage_radius) > 0:
 		for e: Dictionary in enemies:
 			if e.hp > 0 and distance(p.to, e.pos) <= float(b.damage_radius):
 				var amount: float = rng.randi_range(int(b.damage_min), int(b.damage_max))
-				if p.template == "bomb":
+				if behavior == "scripts.bomb.update":
 					var delta: Vector2 = e.pos - p.to
 					var angle := delta.angle()
 					var ellipse_radius := Vector2(cos(angle), 0.7 * sin(angle)).length() * float(b.damage_radius)
@@ -554,9 +634,29 @@ func _bullet_step(p: Dictionary) -> void:
 		add_effect(str(b.get("hit_decal", "")), p.to)
 	elif not target.is_empty() and target.hp > 0:
 		var hit: Vector2 = target.pos + vec(templates[target.template].unit.hit_offset)
-		if p.template == "bolt_1" or p.to.distance_to(hit) < float(b.get("hit_distance", 22)) * 1.2:
+		if behavior == "scripts.bolt.update" or p.to.distance_to(hit) < float(b.get("hit_distance", 22)) * 1.2:
 			damage(target, rng.randi_range(int(b.damage_min), int(b.damage_max)), int(b.damage_type))
-			add_effect(str(b.get("hit_fx", "")), hit)
+			if behavior != "scripts.bolt.update": add_effect(str(b.get("hit_fx", "")), hit)
 			add_effect(str(b.get("hit_blood_fx", "")), hit, {"rotation": p.rotation})
+	if behavior == "scripts.bolt.update": add_effect(str(b.get("hit_fx", "")), p.to)
 	var sounds: Dictionary = templates[p.template].get("sound_events", {})
 	if sounds.has("hit"): event.emit("sound", {"id": sounds.hit})
+
+func _bolt_step(p: Dictionary, bullet: Dictionary, target: Dictionary) -> bool:
+	# all/scripts.lua bolt.update: test arrival before yielding, then accelerate
+	# with the source's quantized speed and stop tracking abrupt target movement.
+	if p.pos.distance_to(p.to) <= float(p.speed) * STEP:
+		p.pos = p.to; return true
+	if tick <= int(p.last_step): return false
+	p.last_step = tick
+	if not p.target_invalid and not target.is_empty():
+		var hit: Vector2 = target.pos + vec(templates[target.template].unit.hit_offset)
+		var delta: Vector2 = hit - p.to
+		if maxf(absf(delta.x), absf(delta.y)) > float(bullet.max_track_distance): p.target_invalid = true
+		elif target.hp > 0: p.to = hit
+	p.speed = clampf(float(p.speed) + 30.0 * ceilf(float(p.speed) / 30.0 * float(bullet.acceleration_factor)), float(bullet.min_speed), float(bullet.max_speed))
+	p.pos += p.pos.direction_to(p.to) * float(p.speed) * STEP
+	p.rotation = (p.to - p.pos).angle()
+	if p.pos.distance_to(p.to) <= float(p.speed) * STEP:
+		p.pos = p.to; return true
+	return false

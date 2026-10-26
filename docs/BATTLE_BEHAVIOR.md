@@ -9,7 +9,12 @@
 | --- | --- | --- |
 | 兵营出兵与门 | `all/scripts.lua` 的 `tower_barrack.update`；`kr1/foundamental_towers.lua` | 缺员后开门，5 帧开门动画结束才出兵，保持 `door_hold_time = 0.5s`，再播 4 帧关门。关门后保持末帧；只有下一次补兵才重开。集结不触发开门。 |
 | 集结移动 | `all/script_utils.lua` 的 `y_soldier_new_rally`；`all/utils.lua` 的 `walk_off__accel__unsnapped`、`rally_formation_position` | 校验落点地形与椭圆范围后，解除原阻挡和待结算近战，直接朝各自阵型点移动。集结移动期间不索敌，到达后恢复战斗。取消此前额外添加的四向网格寻路。 |
-| 箭塔 | `all/scripts.lua` 的 `tower_archer.update`、`arrow.insert/update` | 两名射手轮流播放各自的 8 帧动作，发射点跟随轮值射手；箭使用命中偏移、当前移动速度预判、22 帧飞行与 `g = -900`，沿速度方向旋转，并在距起终点 6 单位内隐藏。 |
+| 箭塔 | `all/scripts.lua` 的 `tower_archer.update`、`arrow.insert/update` | 两名射手轮流播放各自的 8 帧动作，发射点跟随轮值射手；箭使用命中偏移、当前移动速度预判与 `g = -900`，一级飞行 22 帧、二级 21 帧，沿速度方向旋转，并在距起终点 6 单位内隐藏。 |
+| 箭塔升级与出售 | `kr1/foundamental_towers.lua`、`all/tower_utils.lua`、`kr1/data/tower_menus_data.lua` | 一级升二级为 110 金币事务，切换当前模板、保留 holder/位置/地形并累计投入至 180；新塔重新等待 18 帧攻击冷却，旧待发攻击取消，已发箭保留一级数值。开波前全额退款，开波后按累计投入 × refund_factor 四舍五入；提示与事务共用计算。首关命令层读取原二级塔锁定，升级只在独立测试场验证。 |
+| 三类二级塔 | 同上；`all/templates.lua` | 兵营/炮塔/法师塔升级费 110/220/160，累计投入 180/345/260；开波后退款 108/207/156。共用原升级命令，成功关闭菜单，二级无三级入口；首关仍禁止四类升级。 |
+| 兵营换兵 | `all/tower_utils.lua`、`all/systems/health.lua`、`y_soldier_new_rally` | 存活民兵原位替换成满血步兵：100 生命、15% 物甲、4–6 伤害；继承朝向及攻击时间戳，换接阻挡引用，再执行解除阻挡的重新集结。旧未结算近战和尸体移除，缺员经新门动画补齐。集结范围从 145 升至 150。 |
+| 法术弹道 | `tower_mage.update`、`bolt.insert/update` | 两级法术共用加速追踪：初速 30、最高 300、加速因子 0.05，逐 tick 使用源向上取整公式；目标位移任一轴超过 128 后永久停止追踪。目标失效时仍到保存落点播放命中特效，但不造成目标伤害；前摇结束已超出 1.1 倍射程时向起手落点发射无目标法术。 |
+| 冷却与朝向 | `tower_mage.update`、`tower_engineer.update`、`soldier_melee_attacks` | 法师严格超过 1.5 秒，民兵/步兵严格超过 1 秒/41⁄30 秒，分别在 46/31/42 tick 可再次起手；炮塔达到 90 tick 即可。箭塔仍为既有 18 tick 基准。法师、炮塔沿用源固定水平朝向，箭塔保留水平翻转。 |
 | 炮塔 | `all/scripts.lua` 的 `tower_engineer.update`、`bomb.insert/update` | 七个活动图层各自播完整 35 帧射击/复位动作；31 帧抛物线、`g = -900`、随机初始角与 600°/s 自转，起终点 8 单位内隐藏。目标先死时仍射向保存的地面落点。 |
 | 炮弹命中 | `all/templates.lua` 的 `fx_explosion_small`、`decal_bomb_crater`；`bomb.update` | 18 帧单次 `explosion_big`，保留原锚点及 0.9 缩放；弹坑停留 1 秒、于 2.5 秒消失。爆炸伤害按源距离衰减及护甲曲线计算。 |
 | 绵羊 | `kr1/template_groups/decal_sheep.lua`；`all/scripts.lua` 的 `delayed_play.update` | 前 7 次点击叫声与 0 → 0.12 → 0.16 秒的缩放关键帧；第 8 次移除绵羊并只触发一次爆炸。保留 10% 替代爆炸/音效、随机朝向和间歇吃草动作。状态随暂停、倍速、重开统一控制。 |

@@ -82,8 +82,10 @@ local function run()
   end
   local fields={"template_name","render","health","health_bar","motion","unit","enemy","tower","barrack","attacks","melee","bullet","sound_events","reinforcement","cooldown","duration","fireball_count","max_spread","delayed_play","ui","regen","tween","build_duration","info"}
   local out={templates={},inputs=loaded_inputs,constants={FPS=FPS,ASPECT=ASPECT,TERRAIN_LAND=TERRAIN_LAND,TERRAIN_NOWALK=TERRAIN_NOWALK,DAMAGE_PHYSICAL=DAMAGE_PHYSICAL,DAMAGE_MAGICAL=DAMAGE_MAGICAL,DAMAGE_EXPLOSION=DAMAGE_EXPLOSION,DAMAGE_TRUE=DAMAGE_TRUE}}
-  for _,id in ipairs({"tower_archer_1","tower_barrack_1","tower_mage_1","tower_engineer_1","tower_holder_grass","tower_build_archer","tower_build_barrack","tower_build_mage","tower_build_engineer","enemy_goblin","enemy_fat_orc","soldier_militia","re_farmer","arrow_1","bolt_1","bomb","power_fireball_control","power_fireball","power_reinforcements_control","fx_fireball_explosion","fx_explosion_small","fx_unit_explode","decal_bomb_crater","fx_blood_splat","fx_tower_buy_dust","fx_tower_sell_dust","decal_s01_trees","decal_mill_big","decal_mill_small","decal_sheep_big","decal_sheep_small"}) do
-    local t=E:get_template(id);local filtered={};for _,key in ipairs(fields) do if t[key]~=nil then filtered[key]=clean(t[key]) end end;out.templates[id]=filtered
+  for _,id in ipairs({"tower_archer_1","tower_archer_2","tower_barrack_1","tower_barrack_2","tower_mage_1","tower_mage_2","tower_engineer_1","tower_engineer_2","tower_holder_grass","tower_build_archer","tower_build_barrack","tower_build_mage","tower_build_engineer","enemy_goblin","enemy_fat_orc","soldier_militia","soldier_footmen","re_farmer","arrow_1","arrow_2","bolt_1","bolt_2","bomb","bomb_dynamite","power_fireball_control","power_fireball","power_reinforcements_control","fx_fireball_explosion","fx_bolt_hit","fx_explosion_small","fx_unit_explode","decal_bomb_crater","fx_blood_splat","fx_tower_buy_dust","fx_tower_sell_dust","decal_s01_trees","decal_mill_big","decal_mill_small","decal_sheep_big","decal_sheep_small"}) do
+    local t=E:get_template(id);local filtered={};for _,key in ipairs(fields) do if t[key]~=nil then filtered[key]=clean(t[key]) end end
+    if t.bullet then filtered.behavior=clean(t.main_script.update) end
+    out.templates[id]=filtered
   end
   for _,pair in ipairs({{"layout","kr1/data/levels/level01_data.lua"},{"paths","kr1/data/levels/level01_paths.lua"},{"terrain","kr1/data/levels/level01_grid.lua"},{"waves","kr1/data/waves/level01_waves_campaign.lua"}}) do
     local env={v=V.v};local f=assert(loadstring(read(pair[2]),"@"..pair[2]));setfenv(f,env);out[pair[1]]=clean(f());loaded_inputs[pair[2]]=true
@@ -102,6 +104,7 @@ local function run()
   package.loaded["data.tower_menus_data_templates"]=chunk("kr1/data/tower_menus_data_templates.lua")
   local menus=chunk("kr1/data/tower_menus_data.lua")
   out.ui.tower_menus={holder=clean(menus.holder[1])}
+  for _,kind in ipairs({"archer","barrack","mage","engineer"}) do out.ui.tower_menus[kind]=clean(menus[kind][1]) end
   local strings=chunk("_assets/kr1-desktop/strings/zh-Hans.lua")
   out.ui.strings={}
   local function collect(v)

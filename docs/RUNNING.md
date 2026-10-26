@@ -12,6 +12,17 @@
 
 首关固定普通难度、无英雄、零科技、未选第三法术；初始 20 生命、270 金币、8 塔位，7 波共 48 个哥布林、8 个兽人。点击塔位建造四类一级塔；选中已建塔可出售，兵营可调整集结点。二级塔锁定。
 
+弓箭塔一级升二级已在独立测试场接通，正式首关仍锁定二级塔。Godot 打开 `tests/archer_upgrade_arena.tscn` 后按 F6，或运行下方命令。测试场沿用战场与波次，仅解除二级箭塔限制，不接入地图或战役存档。建造箭塔花费 70，升级花费 110；二级伤害 8–13、射程 160、攻击间隔 0.6 秒。四类塔共用源版退款：开波前返还全部投入，开波后返还累计投入的 60%（四舍五入）；升级箭塔分别返还 180/108。详情见 [ARCHER_UPGRADE_DELIVERY.md](ARCHER_UPGRADE_DELIVERY.md)。
+
+四类基础塔现在均支持一级升二级。通用测试场 `tests/tower_upgrade_arena.tscn` 初始 1000 金币，可直接按 F6 运行；兵营/炮塔/法师塔升级费为 110/220/160，累计投入 180/345/260，开波后退款 108/207/156。正式首关仍禁止二级塔，旧箭塔专用测试场保留。详情见 [TOWER_UPGRADES_DELIVERY.md](TOWER_UPGRADES_DELIVERY.md)。
+
+```powershell
+& 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --path . res://tests/tower_upgrade_arena.tscn
+& 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script tests/verify_tower_upgrades.gd
+# 同样检查 1920x1080、1024x768
+& 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --path . --script tests/tower_upgrade_visual.gd --resolution 1280x720
+```
+
 地图左下角“英雄”可浏览全部 79 名英雄的资料和技能数值，按原版通关条件解锁，最多选择两名并分别保存到当前槽位。首关通关解锁 12 名英雄；满员后选择新英雄替换第二名。Tab 切换已选英雄，完成/Esc/右键关闭。当前选择尚不影响首关战斗，英雄不会参战。详情和资源兜底说明见 [HERO_SELECTION_DELIVERY.md](HERO_SELECTION_DELIVERY.md)。
 读完开场教学后手动开始第一波，后续有倒计时，可提前开波获得金币及技能冷却奖励。援军、火雨分别在第三、七波的教学确认后解锁。生命归零失败；最后一波清场后胜利，均可重开或返回地图。
 
@@ -66,6 +77,15 @@ python tests/verify_hero_assets.py
 # 首关数据、源哈希、动画引用与派生图集像素核对
 python tools/verify_level01_assets.py
 
+# 独立箭塔测试场（交互运行，不保存战役进度）
+& 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --path . res://tests/archer_upgrade_arena.tscn
+
+# 箭塔升级事务、数值、攻击时序、首关锁定和累计退款
+& 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script tests/verify_archer_upgrade.gd
+
+# 原生按钮、禁用、退款和逐帧画面；同样运行 1920x1080、1024x768
+& 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --path . --script tests/archer_upgrade_visual.gd --resolution 1280x720
+
 # 一代地图数据、像素、解锁、存档异常、完整战役与三次场景切换
 python tests/verify_map_assets.py
 & 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script tests/verify_campaign_map.gd
@@ -111,7 +131,7 @@ python tools/web_bootstrap.py serve
 导出目录为 `build/web/`，可整体作为静态站点发布。本地服务器已经设置 WASM、PCK、JS 的 MIME 类型，并关闭本地缓存以方便手动验收。
 浏览器首次点击或按键后启用声音。存储受到限制时会提示设置可能无法保留，不影响主菜单使用。
 
-导出由菜单、`data/map_kr1/manifest.json`、`data/heroes/manifest.json` 和首关 manifest 控制，只包含菜单、地图、英雄房间和首关使用的脚本、场景、字体、图集、声音及 JSON。首关使用 5 张、一代地图使用 13 张、英雄房间使用 4 张 2048×2048 派生图集，不打包完整素材库。
+导出由菜单、`data/map_kr1/manifest.json`、`data/heroes/manifest.json` 和首关 manifest 控制，只包含菜单、地图、英雄房间和首关使用的脚本、场景、字体、图集、声音及 JSON。首关使用 6 张、一代地图使用 13 张、英雄房间使用 4 张 2048×2048 派生图集，不打包完整素材库。
 `export_presets.cfg` 由工具生成；修改依赖时先更新对应 manifest，再运行 `python tools/web_bootstrap.py preset`。
 导出默认只生成文件；本次英雄选择交付使用 `export --debug --check-pack`，已通过隔离 PCK 资源完整性检查，共 411 个文件。未操作浏览器，Web 功能与兼容性由用户手动验收。
 显式 `export --check-pack` 的结果写入 `build/web/pack_files.json`。每次导出先移除旧检查报告，避免沿用上一版结论；`export_receipt.json` 记录本次导出及检查状态。

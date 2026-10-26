@@ -9,8 +9,10 @@ var strings: Dictionary
 var selection_id := ""
 var selection_at := 0.0
 var selection_type := ""
+var selection_template := ""
 var closing_id := ""
 var closing_type := ""
+var closing_template := ""
 var closing_at := 0.0
 var panel_id := ""
 var panel_at := 0.0
@@ -26,14 +28,17 @@ func _init(battle: Control) -> void:
 func clock() -> float: return Time.get_ticks_msec() / 1000.0
 func begin() -> void: paint.begin()
 func text(key: String) -> String: return strings.get(key, key)
+func _number(value: float) -> String: return ("%.2f" % value).trim_suffix("0").trim_suffix("0").trim_suffix(".")
 func _size(id: String) -> Vector2: return paint.image_size(id)
 
 func selection() -> void:
 	if selection_id != view.selected:
 		closing_id = selection_id; closing_type = selection_type; closing_at = clock()
+		closing_template = selection_template
 		selection_id = view.selected; selection_at = clock()
 		var tower: Dictionary = view.sim.tower_by_id(selection_id)
 		selection_type = tower.get("type", "")
+		selection_template = tower.get("template", "")
 	if selection_id != "": _selection(selection_id, false)
 	elif closing_id != "" and clock() - closing_at < 0.12: _selection(closing_id, true)
 
@@ -41,8 +46,8 @@ func _selection(id: String, closing: bool) -> void:
 	var sim: RefCounted = view.sim
 	var tower: Dictionary = sim.tower_by_id(id)
 	if tower.is_empty() or (tower.ready > sim.tick and not closing): return
-	if closing: tower = tower.duplicate(); tower.type = closing_type
-	var t: Dictionary = sim.templates["tower_holder_grass" if tower.type == "" else "tower_" + tower.type + "_1"]
+	if closing: tower = tower.duplicate(); tower.type = closing_type; tower.template = closing_template
+	var t: Dictionary = sim.tower_template(tower)
 	var range_pos: Vector2 = view.world(tower.pos + Vector2(0, 12))
 	if tower.type != "" and not closing:
 		var radius: float = t.barrack.rally_range if tower.type == "barrack" else t.attacks.range
@@ -76,7 +81,14 @@ func _selection(id: String, closing: bool) -> void:
 			var pos := Vector2(data.tower_menu_button_places[int(item.place) - 1].x, data.tower_menu_button_places[int(item.place) - 1].y)
 			_menu_icon(item.image, pos, "build", {"id": id, "type": type}, price, sim.gold >= price and enabled)
 	else:
-		_menu_icon("main_icons_0014", Vector2(74, 6), "locked", {}, -1, false)
+		var target: String = sim.upgrade_target(tower)
+		if target != "" and not sim.tower_locked(target):
+			var item: Dictionary = data.tower_menus[tower.type][0]
+			var price: int = sim.templates[target].tower.price
+			var pos: Vector2 = view.Simulation.vec(data.tower_menu_button_places[int(item.place) - 1])
+			_menu_icon(item.image, pos, "upgrade", {"id": id, "upgrade_to": target}, price, enabled and sim.gold >= price)
+		elif target != "":
+			_menu_icon("main_icons_0014", Vector2(74, 6), "locked", {}, -1, false)
 		if tower.type == "barrack": _menu_icon("sub_icons_0001", Vector2(128, 118), "target", {"power": "rally"}, -1, enabled)
 		_menu_icon("ico_sell_0001", Vector2(74, 140), "sell", {"id": id}, -1, enabled)
 	paint.pop(); paint.pop()
@@ -105,9 +117,13 @@ func _tower_tooltip(tower: Dictionary) -> void:
 		var type: String = str(item.action_arg).trim_prefix("tower_build_")
 		if view.hovered == "build" + str({"id": tower.id, "type": type}):
 			title = text(item.tt_title); description = text(item.tt_desc)
-	if view.hovered == "locked{}": title = "升级尚未解锁"; description = "本关只能建造一级防御塔。"
+	if view.hovered == "locked" + str({}): title = "升级尚未解锁"; description = "本关只能建造一级防御塔。"
+	var target: String = view.sim.upgrade_target(tower)
+	if target != "" and view.hovered == "upgrade" + str({"id": tower.id, "upgrade_to": target}):
+		var item: Dictionary = data.tower_menus[tower.type][0]
+		title = text(item.tt_title); description = text(item.tt_desc)
 	if view.hovered == "sell" + str({"id": tower.id}):
-		title = "出售防御塔"; description = "返还 %d 金币" % floori(view.sim.templates["tower_" + tower.type + "_1"].tower.price * 0.6)
+		title = "出售防御塔"; description = "返还 %d 金币" % view.sim.sell_refund(tower)
 	if title == "": return
 	var dimensions := _size("tooltip_bg_standard")
 	var point: Vector2 = view.world(tower.pos) + Vector2(115, -125)
@@ -203,10 +219,10 @@ func _unit_info() -> void:
 	paint.image("base_info_bar", (health_size - foreground) / 2, Vector2.ZERO, Color.WHITE, Vector2(clampf(info.hp / info.hp_max, 0, 1), 1))
 	paint.label("%d / %d" % [int(info.hp), int(info.hp_max)], Rect2(0, 0, health_size.x, 17), 11, Color.WHITE, "center", "middle", 1, 1, "unit:hp", "infobar_stats")
 	var columns := [
-		["base_info_icons_sword", "%d–%d / %s秒" % [int(info.damage_min), int(info.damage_max), str(info.cooldown)], 112.0],
+		["base_info_icons_sword", "%d–%d / %s秒" % [int(info.damage_min), int(info.damage_max), _number(info.cooldown)], 112.0],
 		["base_info_icons_armor", "%d%%" % roundi(info.armor * 100), 60.0],
 		["base_info_icons_magic_armor", "%d%%" % roundi(info.magic_armor * 100), 60.0],
-		["base_info_icons_cost" if info.enemy else "base_info_icons_lifetime", str(info.lives) if info.enemy else "%s秒" % str(info.respawn), 60.0]]
+		["base_info_icons_cost" if info.enemy else "base_info_icons_lifetime", str(info.lives) if info.enemy else "%s秒" % _number(info.respawn), 60.0]]
 	var x := 145.0
 	for column: Array in columns:
 		paint.image(column[0], Vector2(x, 0))
@@ -300,7 +316,7 @@ func pause() -> void:
 	_volume("音效", 100, "sfx", settings.sfx_volume, 4)
 	_volume("音乐", 184, "music", settings.music_volume, 1)
 	var button_size := _size("options_button_bg_0001")
-	for item in [["返回地图", "map", 45 + button_size.x / 2], ["重新开始", "restart", ceil(dimensions.x / 2)], ["继续战斗", "pause", dimensions.x - 45 - button_size.x / 2]]:
+	for item in [[view.return_label, "map", 45 + button_size.x / 2], ["重新开始", "restart", ceil(dimensions.x / 2)], ["继续战斗", "pause", dimensions.x - 45 - button_size.x / 2]]:
 		paint.button("options_button_bg_0001", Vector2(item[2] - button_size.x / 2, 338 - button_size.y / 2), item[0], item[1])
 	_end_panel()
 
@@ -328,7 +344,7 @@ func result() -> void:
 		paint.image("victoryStars_%04d" % maxi(1, frame), Vector2(dimensions.x / 2, 230), Vector2(0.5, 0))
 		paint.label(("调试局 · " if view.sim.developer_used else "") + "生命 %d · 击杀 %d · 7/7 波" % [view.sim.lives, view.sim.kills], Rect2(60, 347, dimensions.x - 120, 28), 17, Color("ffe9b0"), "center", "middle", 1, 1)
 		var button := _size("button_border_large_0001")
-		paint.button("button_border_large_0001", Vector2((dimensions.x - button.x) / 2, 389), "返回地图", "map")
+		paint.button("button_border_large_0001", Vector2((dimensions.x - button.x) / 2, 389), view.return_label, "map")
 		paint.push(Vector2(dimensions.x / 2, 448), 0.85)
 		paint.button("button_border_0001", Vector2(-_size("button_border_0001").x / 2, 0), "重新开始", "restart")
 		paint.pop()
@@ -339,7 +355,7 @@ func result() -> void:
 		paint.label("生命已经耗尽\n调整防御塔搭配，再试一次。", Rect2(104, 155, 246, 90), 15, Color.WHITE, "center", "middle", 3, 1)
 		var dimensions := _size("options_button_bg_0001")
 		paint.button("options_button_bg_0001", Vector2(84, 266), "重新开始", "restart")
-		paint.button("options_button_bg_0001", Vector2(455 - 84 - dimensions.x, 266), "返回地图", "map")
+		paint.button("options_button_bg_0001", Vector2(455 - 84 - dimensions.x, 266), view.return_label, "map")
 	_end_panel()
 
 func confirmed(id: String) -> void:

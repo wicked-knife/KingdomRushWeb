@@ -20,6 +20,8 @@ def prepare(source, love):
     if run.returncode: raise RuntimeError(evaluated.with_suffix(".json.error").read_text(encoding="utf-8"))
     data=json.loads(evaluated.read_text(encoding="utf-8"))
     inputs=set(data.pop("inputs"))|{"all-desktop/game_gui.lua","all-desktop/gg_views_custom.lua","kr1/data/tower_menus_data_scripts.lua","all/constants.lua","lib/klua/table.lua","lib/klua/vector.lua","all/entity_db.lua","all/utils.lua","all/script_utils.lua","all/wave_utils.lua","all/systems/wave_spawn.lua","all/systems/enemy.lua","kr1/game_settings.lua","all/difficulty.lua","all/scripts.lua","kr1/tower_scripts.lua","kr1/data/levels/level01.lua"}
+    inputs.add("all/tower_utils.lua")
+    inputs.add("all/systems/health.lua")
     data["source"]={"version":"2.1.0.2","commit":BASE,"difficulty":2,"inputs":{p:hashlib.sha256((source/p).read_bytes()).hexdigest() for p in sorted(inputs)}}
     # GGTextLabel slide and TutorialBalloon class defaults are part of the source layout.
     for slide_id, labels in data["ui"]["slides"].items():
@@ -41,7 +43,7 @@ def prepare(source, love):
     assets=ROOT/"assets/kingdom_rush"
     all_anims=json.loads((assets/"data/animations.json").read_text(encoding="utf-8"))["animations"]
     wanted={"stage_1"};animations={}
-    states=["idle","idleUp","idleDown","shoot","shootingUp","shootingDown","walkingRightLeft","walkingUp","walkingDown","running","attack","death","open","close","play"]
+    states=["idle","idleUp","idleDown","shoot","shootingUp","shootingDown","walkingRightLeft","walkingUp","walkingDown","running","attack","death","open","close","play","flying"]
     for template in data["templates"].values():
         for sprite in template.get("render",{}).get("sprites",[]):
             name=sprite.get("name","");prefix=sprite.get("prefix","")
@@ -64,7 +66,7 @@ def prepare(source, love):
     # UI uses the exact source layers, not substitutes stretched into arbitrary boxes.
     ui_prefixes=["fire_","fire_ready_","reinforcements_","reinforcement_ready_","power_nbrs_","pause_btn_","victoryStars_","options_","tutorial_but_gotcha_bg_long_","notifications_but_","balloon_"]
     ui_names={"main_icons_0000","main_icons_0001","main_icons_0002","main_icons_0003","main_icons_0004","main_icons_0014","ico_sell_0001","sub_icons_0001","glow_ico_main","glow_ico_sell","glow_ico_sub","price_tag","bg_bottom_bar","bg_bottom_left","tutorial_tit_instructions_bg","notifications_tit_generics_bg_0001","notifications_tit_newpower_bg","notifications_polaroid_overlay","victoryBadges_notxt_0002","button_border_0001","button_border_0002","button_border_large_0001","button_border_large_0002","button_continue_chains","button_restart_chains","tooltip_bg_standard"}
-    ui_names.update({"base","base_info_bar","base_info_bar_bg","info_portraits_0000"})
+    ui_names.update({"main_icons_0005","base","base_info_bar","base_info_bar_bg","info_portraits_0000"})
     ui_prefixes += ["base_info_icons_"]
     for template in data["templates"].values():
         if template.get("info",{}).get("portrait"):

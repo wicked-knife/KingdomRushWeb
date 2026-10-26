@@ -1,0 +1,168 @@
+{
+  "date": "2026-10-26",
+  "passed": true,
+  "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+  "implemented": {
+    "upgrade": "tower_archer_1 -> tower_archer_2",
+    "price": 110,
+    "investment": 180,
+    "physical_damage": [
+      8,
+      13
+    ],
+    "range": 160,
+    "cooldown_frames": 18,
+    "shoot_frame": 5,
+    "flight_frames": 21,
+    "refund_before_wave": 180,
+    "refund_after_wave": 108,
+    "shared_refund_rule": "full investment before first wave; round(investment * refund_factor) after wave start"
+  },
+  "assets": {
+    "passed": true,
+    "source_inputs": 35,
+    "frames": 1058,
+    "canonical_frames": 577,
+    "animations": 72
+  },
+  "logic": {
+    "checks": 166,
+    "cooldown_frames": 18,
+    "damage": [
+      8,
+      13
+    ],
+    "failures": [],
+    "flight_frames": 21,
+    "investment": 180,
+    "passed": true,
+    "range": 160,
+    "refunds": [
+      180,
+      108
+    ],
+    "shoot_frame": 5,
+    "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+    "upgrade_price": 110
+  },
+  "native": {
+    "1280x720": {
+      "passed": true,
+      "checks": 196,
+      "attack_frames": 36,
+      "failures": [],
+      "screenshots": 10,
+      "screenshots_reviewed": true
+    },
+    "1920x1080": {
+      "passed": true,
+      "checks": 196,
+      "attack_frames": 36,
+      "failures": [],
+      "screenshots": 10,
+      "screenshots_reviewed": true
+    },
+    "1024x768": {
+      "passed": true,
+      "checks": 196,
+      "attack_frames": 36,
+      "failures": [],
+      "screenshots": 10,
+      "screenshots_reviewed": true
+    }
+  },
+  "regressions": {
+    "first_level_logic": {
+      "passed": true,
+      "victory": {
+        "gold": 36,
+        "kills": 55,
+        "leaks": 1,
+        "lives": 19,
+        "result": "victory",
+        "spawned": 56,
+        "ticks": 8542
+      },
+      "defeat": {
+        "lives": 0,
+        "result": "defeat",
+        "ticks": 4493
+      }
+    },
+    "battle_details": {
+      "checks": 485,
+      "failures": [],
+      "passed": true
+    },
+    "campaign_map": {
+      "passed": true,
+      "checks": 36063
+    },
+    "playtest_tools": {
+      "checks": 69,
+      "failures": [],
+      "passed": true,
+      "web_tested": false
+    },
+    "first_level_native": {
+      "1280x720": {
+        "passed": true,
+        "script": "tests/battle_visual_smoke.gd",
+        "covers": [
+          "tutorial",
+          "build",
+          "combat",
+          "rally",
+          "powers",
+          "pause",
+          "speed",
+          "defeat",
+          "victory",
+          "map",
+          "three restarts"
+        ]
+      },
+      "1920x1080": {
+        "passed": true,
+        "script": "tests/battle_visual_smoke.gd",
+        "covers": [
+          "tutorial",
+          "build",
+          "combat",
+          "rally",
+          "powers",
+          "pause",
+          "speed",
+          "defeat",
+          "victory",
+          "map",
+          "three restarts"
+        ]
+      },
+      "1024x768": {
+        "passed": true,
+        "script": "tests/battle_visual_smoke.gd",
+        "covers": [
+          "tutorial",
+          "build",
+          "combat",
+          "rally",
+          "powers",
+          "pause",
+          "speed",
+          "defeat",
+          "victory",
+          "map",
+          "three restarts"
+        ]
+      }
+    },
+    "first_level_definition_and_existing_templates_preserved": true,
+    "first_level_tier_two_lock_preserved": true,
+    "arena_has_no_campaign_save_connection": true
+  },
+  "native_method": "Godot native GUI input handler and rendering replay; screenshots opened for review; not a real-time human playthrough or per-sound listening test",
+  "failed_scenarios": [],
+  "web_exported": false,
+  "browser_tested": false
+}
