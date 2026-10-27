@@ -42,7 +42,7 @@ func apply(sim: RefCounted, template: String, target: Dictionary, level: int, so
 				duplicates += 1
 				# BASE counts *other* copies; max_duplicates=3 admits four in total.
 				if duplicates > int(rule.max_duplicates): return false
-			else:
+			elif not rule.get("allows_duplicates",false):
 				m.expires = sim.tick + sim.frames(duration if duration >= 0 else float(rule.duration))
 				return false
 	for m: Dictionary in active.duplicate():
@@ -64,8 +64,8 @@ func apply(sim: RefCounted, template: String, target: Dictionary, level: int, so
 		target.stun_count = int(target.get("stun_count", 0)) + 1
 		target.pending = {}; target.casting = {}; target.last_dir = Vector2.ZERO
 		sim._state(target, "idle", true)
-	else:
-		m.state = t.render.sprites[0].size_names[size_index]
+	elif t.has("render"):
+		m.state = t.render.sprites[0].get("size_names",["","",""])[size_index]
 	active.append(m)
 	sim.event.emit("modifier_applied", {"template":template,"target":target.id,"level":level})
 	return true
@@ -91,10 +91,14 @@ func step(sim: RefCounted) -> void:
 				sim.damage(target, float(t.damage_min), int(t.damage_type))
 		else:
 			if sim.tick >= m.expires: active.erase(m); continue
-			if sim.tick >= m.next_hit:
+			if t.has("dps") and sim.tick >= m.next_hit:
 				m.next_hit += sim.frames(t.dps.damage_every)
 				var amount := float(t.dps.damage_min) + float(t.dps.damage_inc) * int(m.level)
 				sim.damage(target, amount, int(t.dps.damage_type))
+				if t.dps.get("fx","") != "":
+					var unit: Dictionary = sim.templates[target.template].unit
+					var size: String = "small" if int(unit.size) == 1 else "big"
+					sim.add_effect(t.dps.fx,target.pos,{"target":target.id,"state":size + "_" + str(unit.blood_color),"flip":target.flip if t.dps.get("fx_target_flip",false) else false})
 		if target.hp <= 0: _release(sim, m); active.erase(m)
 
 func remaining(target_id: int, sim: RefCounted) -> float:

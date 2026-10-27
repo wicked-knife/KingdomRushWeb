@@ -325,7 +325,7 @@ func _refresh_slots() -> void:
 		stats.mouse_filter = Control.MOUSE_FILTER_IGNORE; button.add_child(stats)
 		# slot_view.lua uses plain black KLabels at 12 px, aligned to the top
 		# of the rotated group; menu-title centering and outlines do not apply.
-		for item in [["%d/135" % int(row.stars), 14, 2], [str(row.heroic), 108, 4], [str(row.iron), 154, 4]]:
+		for item in [["%d/%d" % [int(row.stars), int(row.max_stars)], 14, 2], [str(row.heroic), 108, 4], [str(row.iron), 154, 4]]:
 			var label := _label(item[0], Vector2(item[1], item[2]), Vector2(64, 27), 12, "numbers_italic")
 			label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 			label.vertical_alignment = VERTICAL_ALIGNMENT_TOP

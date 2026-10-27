@@ -9,13 +9,14 @@
     1,
     2,
     3,
-    4
+    4,
+    5
   ],
   "pck_isolated_check": true,
-  "pck_files": 507,
-  "bundle": "build\\KingdomRush-KR1-Levels01-04-Web.zip",
-  "bytes": 124374590,
-  "sha256": "f33ed48837887030f781ec3ed18c388d6ca89e9b2b85328124f96309cdcc5570",
+  "pck_files": 560,
+  "bundle": "build\\KingdomRush-KR1-Levels01-05-Web.zip",
+  "bytes": 140772360,
+  "sha256": "4d22aa62702c644b67c016e10eabc6d9d08b5a45b316be17ce3e0c03ba14eb71",
   "web_files": {
     "index.apple-touch-icon.png": {
       "bytes": 11939,
@@ -31,7 +32,7 @@
     },
     "index.html": {
       "bytes": 3146,
-      "sha256": "950420df89e1bfe916f7b632b541109d9490d3f2bde4cacbb90c09f372435ee5"
+      "sha256": "a7bbae2c3299c163daeffa7affcee7b99fee0f421ff19e32535c6b039f58d780"
     },
     "index.icon.png": {
       "bytes": 5765,
@@ -42,8 +43,8 @@
       "sha256": "33c94cb3175f3333b82e2a3be5e8e86f77986f0aa2042b1631f6367a4e5bb6ba"
     },
     "index.pck": {
-      "bytes": 120366284,
-      "sha256": "4018c2b8143e26b80d95948c43c31e3dda0bb195737e6a89b16f6d2d25c1bca3"
+      "bytes": 137855012,
+      "sha256": "d26c9d60b54a451d5757b8b3a847066b7881465c2d87516a786b9791879542c0"
     },
     "index.png": {
       "bytes": 21443,
@@ -54,20 +55,20 @@
       "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
     },
     "export_receipt.json": {
-      "bytes": 355,
-      "sha256": "67b68eb2b7f0138ccb498b5820dc4d3e1195e337660b9a3bc505aa20ba60b2d3"
+      "bytes": 363,
+      "sha256": "1a03ed1987fa7c364318adcf445bfd3ca4c83f9efd283af547021aa1016133c9"
     },
     "README.txt": {
-      "bytes": 2487,
-      "sha256": "f4110f01c39e490b8b28bfbc38e97a61ee533df615428f2266bed60e6892209b"
+      "bytes": 2983,
+      "sha256": "bebc8ce280f9d3f206109574d238b9991b8e17d46cacddbec6051cd3bb68dfad"
     },
     "start_server.cmd": {
       "bytes": 180,
       "sha256": "8f021ad5511504a288354fec02c4bf8514f054a2457cc229710e1d6069558b32"
     },
     "pack_files.json": {
-      "bytes": 38507,
-      "sha256": "ba542cde3604fc758a4b106613461d6f1999fc2fb1f7ab867f306c74275d1992"
+      "bytes": 41847,
+      "sha256": "fc968bdb431b7b5850bb5080ed5537240da7054dcc789eee5e0005ee3ef09461"
     }
   }
 }

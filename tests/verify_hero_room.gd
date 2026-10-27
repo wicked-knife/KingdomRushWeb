@@ -1,4 +1,5 @@
 extends SceneTree
+const Fixture = preload("res://tests/slot_fixture.gd")
 const Progress = preload("res://scripts/services/campaign_progress.gd")
 const Slots = preload("res://scripts/services/save_slots.gd")
 const Loader = preload("res://scripts/services/hero_loader.gd")
@@ -19,7 +20,7 @@ func _run() -> void:
 	var p := Progress.new(); p.initialize(temporary + "/campaign.json")
 	check(p.hero_rows.size() == 79 and p.selected_hero_ids().is_empty(), "new save has the full roster and no selected hero")
 	check(not p.select_hero("hero_gerald") and not p.select_hero("unknown"), "locked and unknown heroes cannot be selected")
-	p.record_result(victory())
+	Fixture.complete(p, victory())
 	var available: Array = p.hero_rows.keys().filter(func(id): return p.is_hero_unlocked(id))
 	check(available.size() == 12 and not p.is_hero_unlocked("hero_malik"), "source stage-one completion unlocks exactly twelve heroes")
 	var a: String = available[0]; var b: String = available[1]; var c: String = available[2]
@@ -31,18 +32,17 @@ func _run() -> void:
 	check(restored.selected_hero_ids() == [c] and restored.total_stars() == 3, "selection and campaign reload together")
 	check(restored.deselect_hero(c) and restored.selected_hero_ids().is_empty(), "last selected hero can be removed")
 	restored.select_hero(c)
-	var improved := victory(); improved.difficulty = 3; p.record_result(improved)
+	var improved := victory(); improved.difficulty = 3; Fixture.complete(p, improved)
 	restored.initialize(p.path); check(restored.selected_hero_ids() == [c], "battle result preserves hero configuration")
-	write(p.path, {"schema_version": 1, "generation": 1, "levels": p.levels, "heroes": {"selected": [a, a, "invalid", "hero_gerald", b, c, 1]}})
+	var malformed: Dictionary = p.data.duplicate(true); malformed.heroes.selected = [a, a, "invalid", "hero_gerald", b, c, 1]
+	write(p.path, malformed)
 	restored.initialize(p.path); check(restored.selected_hero_ids() == [a, b], "malformed selections are deduplicated filtered and capped")
 	write(p.path, "broken"); restored.initialize(p.path)
 	check(restored.selected_hero_ids() == [c] and not restored.notice.is_empty(), "valid backup restores heroes with progress")
-	write(p.path, {"schema_version": 1, "generation": 1, "levels": p.levels})
-	restored.initialize(p.path); check(restored.selected_hero_ids().is_empty(), "pre-feature schema-one save loads with empty selection")
-	write(p.path, {"schema_version": 1, "generation": 1, "levels": p.levels, "heroes": "bad"})
-	restored.initialize(p.path); check(restored.selected_hero_ids().is_empty() and restored.total_stars() == 3, "bad hero data does not destroy campaign")
-	var slots := Slots.new(); slots.initialize(temporary + "/slots", temporary + "/absent.json")
-	var first: RefCounted = slots.select_slot(1); first.record_result(victory()); first.select_hero(a)
+	malformed = p.data.duplicate(true); malformed.heroes = "bad"; write(p.path, malformed)
+	restored.initialize(p.path); check(restored.selected_hero_ids() == [c] and restored.total_stars() == 3, "invalid mandatory hero table restores complete backup")
+	var slots := Slots.new(); slots.initialize(temporary + "/slots")
+	var first: RefCounted = slots.select_slot(1); Fixture.complete(first, victory()); first.select_hero(a)
 	var second: RefCounted = slots.select_slot(2)
 	check(second.selected_hero_ids().is_empty() and not second.is_hero_unlocked(a), "new slot has independent unlocks and selection")
 	check(slots.select_slot(1).selected_hero_ids() == [a], "returning to first slot restores its selection")
@@ -60,7 +60,7 @@ func _run() -> void:
 		var portrait: Dictionary = loader.catalog.get_frame("heroes", hero.portrait)
 		check(not portrait.is_empty() and portrait.logical_size == Vector2(254, 371), "approved portrait loads through the hero manifest and catalog: " + hero_id)
 	loader.queue_free(); await process_frame
-	var app := App.instantiate(); app.settings_path = temporary + "/settings.json"; app.progress_path = temporary + "/route.json"
+	var app := App.instantiate(); app.settings_path = temporary + "/settings.json"; app.slots_path = temporary + "/route.json"
 	root.add_child(app); await app.menu_ready
 	app.menu.start_button.pressed.emit(); app.menu._select_slot(1); await app.map_ready
 	var map: Control = app.campaign_map
@@ -71,7 +71,7 @@ func _run() -> void:
 	check(map.overlay == "heroes" and room.visible and room.shown == "hero_gerald", "map opens room with source default preview")
 	var camera: Dictionary = map.snapshot(); map.pan(Vector2(-100, -100)); map.set_map_zoom(2, Vector2.ZERO)
 	check(map.snapshot() == camera, "hero modal prevents map movement")
-	app.campaign.record_result(victory()); room.show_hero(a); room._action("select"); room.show_hero(b); room._action("select")
+	Fixture.complete(app.campaign, victory()); room.show_hero(a); room._action("select"); room.show_hero(b); room._action("select")
 	check(app.campaign.selected_hero_ids() == [a, b], "hero room actions persist two heroes")
 	room.tab_focus(); check(room.shown == a and room.scroll.scroll_vertical > 0, "Tab cycles selected heroes and brings their row into view")
 	room._action("toggle"); room._action("skill", {"index": 0})

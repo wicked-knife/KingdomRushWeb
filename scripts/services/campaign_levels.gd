@@ -1,6 +1,6 @@
 extends RefCounted
 ## Availability and resource identity are independent of saved campaign unlocks.
-const IDS := [1, 2, 3, 4]
+const IDS := [1, 2, 3, 4, 5]
 static var last_error := ""
 
 static func supports(id: int, mode: int = 1, difficulty: int = 2) -> bool:

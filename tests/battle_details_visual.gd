@@ -26,7 +26,7 @@ func capture(id: String) -> void:
 
 func _run() -> void:
 	create_timer(90).timeout.connect(func(): quit(1))
-	var app = App.instantiate(); app.settings_path = "user://details_visual.json"; app.progress_path = "user://details_visual_" + str(Time.get_ticks_usec()) + ".progress"; root.add_child(app)
+	var app = App.instantiate(); app.settings_path = "user://details_visual.json"; app.slots_path = "user://details_visual_" + str(Time.get_ticks_usec()) + ".progress"; root.add_child(app)
 	await app.menu_ready
 	app.menu.start_button.pressed.emit(); app.menu._select_slot(1); await app.map_ready
 	app.campaign_map._action("level", {"id": 1}); app.campaign_map._action("battle")

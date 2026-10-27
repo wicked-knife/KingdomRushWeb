@@ -1,0 +1,172 @@
+{
+  "passed": true,
+  "date": "2026-10-27",
+  "source_version": "2.1.0.2",
+  "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+  "scope": {
+    "normal_campaign": 5,
+    "playable_levels": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "preview": 6,
+    "heroes_in_combat": false,
+    "technology": false,
+    "challenges": false,
+    "save_schema_changed": true,
+    "preexisting_project_godot_changes_preserved": true
+  },
+  "implemented": [
+    "fifth campaign and source-filtered placements",
+    "three mapped entrances and source foreground",
+    "wolves/spiders/marauders",
+    "independent egg scheduler and zero-gold offspring",
+    "campaign ranger unlock",
+    "elf repair/paid slots/automatic refill/four-person formation",
+    "elf melee/ranged/cripple missile particles",
+    "bleed/cripple skill levels and inherited powers",
+    "refunds excluding hires and independent old arrows/effects",
+    "best stars, old fourth save, sixth preview"
+  ],
+  "source_behavior_notes": {
+    "bleed": "Frozen allows_duplicate singular is ignored by the source lifecycle; same-level bleed refreshes, does not stack.",
+    "poison_same_level_cap": 4,
+    "preplaced_archer_spent": 0,
+    "fully_skilled_camp_spent": 940,
+    "camp_combat_refund": 564,
+    "unhatched_eggs_count_for_victory": false
+  },
+  "assets": {
+    "source_inputs": 45,
+    "frames": 3030,
+    "canonical_frames": 1654,
+    "animations": 217,
+    "resources": 79
+  },
+  "logic": {
+    "checks": 424,
+    "report": "reports/level05_logic.json",
+    "sha256": "86dafcb5579d2b353a02a76284ca4a2e146d76a748dba7cae44457bcba618506"
+  },
+  "replay": {
+    "path": "tests/replays/level05_victory.json",
+    "sha256": "c7c62e06bf2469a11b172217bdd06de3c2466f9b44f08ea72f421b14b838b804",
+    "seed": 42,
+    "accepted_player_commands": 106,
+    "command_counts": {
+      "confirm": 1,
+      "build": 2,
+      "wave": 9,
+      "upgrade": 7,
+      "rally": 2,
+      "buy_soldier": 4,
+      "cast": 76,
+      "upgrade_power": 5
+    },
+    "developer_commands": false,
+    "economy_overrides": false,
+    "outcome": {
+      "defeat_tick": 4467,
+      "gold": 588,
+      "hatched": 156,
+      "kills": 387,
+      "leaks": 11,
+      "lives": 8,
+      "result": "victory",
+      "tick": 19015,
+      "wave_enemies": 242
+    }
+  },
+  "native": {
+    "1280x720": {
+      "passed": true,
+      "checks": 253,
+      "captures": 17,
+      "sampled_frames": 26,
+      "audio_event_count": 24,
+      "report": "reports/level05_visual_1280x720.json",
+      "sha256": "ffcf8fa3a698f8503648dd8d8a4a97ec6ff79a72d741edcff2e22c370a3cdb9f"
+    },
+    "1024x768": {
+      "passed": true,
+      "checks": 103,
+      "captures": 6,
+      "sampled_frames": 0,
+      "audio_event_count": 4,
+      "report": "reports/level05_visual_1024x768.json",
+      "sha256": "6941913bd83ba19b2934803267159239fbf664bdb79087a698fb7640256e6076"
+    }
+  },
+  "regression_checks": {
+    "ranger": 215,
+    "tier3": 314,
+    "tower_upgrades": 267,
+    "battle_details": 485,
+    "campaigns_2_4": 963
+  },
+  "validation_boundaries": [
+    "Full campaign uses public-command replay; camp mouse operations use native InputEvent pipeline.",
+    "Animation fixture uses isolated high-health targets and extra funds, then resets before normal-economy playback.",
+    "Replay contains source-valid offscreen cast coordinates; individual replay mouse reachability is not claimed.",
+    "Audio resources/player state/events checked; no per-sound human listening audit.",
+    "Independent deterministic RNG does not promise Lua-identical random sequence.",
+    "Browser functionality and compatibility are manual acceptance."
+  ],
+  "web": {
+    "bundle": "build\\KingdomRush-KR1-Levels01-05-Web.zip",
+    "bytes": 140772360,
+    "sha256": "4d22aa62702c644b67c016e10eabc6d9d08b5a45b316be17ce3e0c03ba14eb71",
+    "build_type": "release",
+    "developer_menu": false,
+    "playable_levels": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "pck_isolated_check": true,
+    "pck_files": 560,
+    "browser_tested": false,
+    "zip_integrity_check": true,
+    "archive_entries": 13
+  },
+  "final_web_export_count": 1,
+  "pck_dependencies": [
+    "data/level05/manifest.json",
+    "scripts/battle/dove_elf.gd",
+    "scripts/battle/dove_spider.gd",
+    "scripts/battle/dove_arrow_missile.gd",
+    "scripts/battle/dove_ranger.gd",
+    "scripts/battle/dove_modifiers.gd"
+  ],
+  "export_receipt_sha256": "2a3f4fce56ca0750c2d2c2380e7c7dc5c2aae452c4c779797721790496acb4d0",
+  "pck_sha256": "26a11ccbb067cd9ce3cf504be2d094b7929c21df08deff0fbe48e83d2950d135",
+  "resource_artifacts_1_4_changed": false,
+  "regression_reports": {
+    "ranger": {
+      "path": "reports/ranger_logic.json",
+      "sha256": "c1562b25b782539666667e3fcb2ee73963040dc56a9358b58a288b94e67d2c75"
+    },
+    "tier3": {
+      "path": "reports/tier3_upgrade_logic.json",
+      "sha256": "5acaadefb8bff679b9db97dfaff8807da9d3c8ee09cfebc15170689b23e8b3ae"
+    },
+    "tower_upgrades": {
+      "path": "reports/tower_upgrade_logic.json",
+      "sha256": "82828b5f4c6bc1014aedd5184ab4c7d85334666fa6e6930d7d6c7d06dad04db1"
+    },
+    "battle_details": {
+      "path": "reports/battle_details_report.json",
+      "sha256": "9d30b7f22c920fbecd2751e9edf7bb846c165aa34918bcba0295b7d331a17446"
+    },
+    "campaigns_2_4": {
+      "path": "reports/campaign_levels_logic.json",
+      "sha256": "3791d9cbd376c2aea4e4f74c99cf3e63401e78bee57109d10e68c88063744d37"
+    }
+  },
+  "storage_followup": "reports/dove_saves_delivery.json"
+}

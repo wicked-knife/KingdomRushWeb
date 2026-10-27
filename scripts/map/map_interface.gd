@@ -15,7 +15,7 @@ func draw() -> void:
 	paint.image("mapStarsContainerIcons_0001", Vector2(sw - 287, 30))
 	# map_counters_view.lua uses numbers_bold (TOONISH), a 110 x 36 box,
 	# capital-height centering and a 2 px shadow, rather than italic numbers.
-	paint.label("%d/%d" % [view.progress.total_stars(), int(view.definition.max_stars)], Rect2(sw - 232, 40, 110, 36), 30, Color("e4bc72"), "left", "middle-caps", 1, 0, "map_stars", "numbers_bold", Vector2(2, 2), Color("25241e"))
+	paint.label("%d/%d" % [view.progress.total_stars(), view.progress.max_stars], Rect2(sw - 232, 40, 110, 36), 30, Color("e4bc72"), "left", "middle-caps", 1, 0, "map_stars", "numbers_bold", Vector2(2, 2), Color("25241e"))
 	var buttons := [["mapButtons_notxt_0001", "mapButtons_notxt_0002", "英雄", 95.0], ["mapButtons_notxt_0010", "mapButtons_notxt_0011", "科技", sw - 440], ["mapButtons_notxt_0007", "mapButtons_notxt_0008", "图鉴", sw - 270], ["mapButtons_notxt_0004", "mapButtons_notxt_0005", "成就", sw - 100]]
 	for item: Array in buttons:
 		var at := Vector2(float(item[3]) - 113, 898)
@@ -121,7 +121,7 @@ func _level() -> void:
 				var value: int = 2 * index + (2 if ["archers", "barracks", "mages", "artillery"][index] in locked else 1)
 				paint.image("levelSelect_modeRules_%04d" % value, Vector2(770 + index * 50, 400))
 	paint.image("levelSelect_difficulty_0003", Vector2(982, 522))
-	if int(record.get("campaign", 0)) > 0 and view.mode == 1: paint.image("levelSelect_difficultyCompleted_0002", Vector2(690, 520))
+	if record.has(1) and view.mode == 1: paint.image("levelSelect_difficultyCompleted_0002", Vector2(690, 520))
 	var playable: bool = view.progress.is_playable(view.selected_level, view.mode, 2)
 	var battle_args := {"reason": "尚未实现" if view.mode == 1 else "此挑战玩法暂未开放"}
 	_button("levelSelect_startMode_notxt_%04d" % (2 * view.mode - 1), "levelSelect_startMode_notxt_%04d" % (2 * view.mode), Vector2(805, 470), "battle", battle_args, playable)

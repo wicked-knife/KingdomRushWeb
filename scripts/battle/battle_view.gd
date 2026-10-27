@@ -2,7 +2,7 @@ extends Control
 ## Native canvas view. Simulation owns all rules; this class submits player commands.
 signal returned_to_map
 signal finished(outcome: Dictionary)
-signal notification_seen(id: String)
+signal seen_flushed(seen: Dictionary)
 const CampaignProgress = preload("res://scripts/services/campaign_progress.gd")
 const Simulation = preload("res://scripts/battle/level01_sim.gd")
 const Interface = preload("res://scripts/battle/battle_ui.gd")
@@ -100,6 +100,7 @@ func _on_event(kind: String, payload: Dictionary) -> void:
 			selected = ""; selected_unit = 0; targeting = ""
 			if outcome.is_empty():
 				outcome = {"generation": 1, "level_id": sim.data.get("level", {}).get("id", 1), "mode": 1, "difficulty": 2, "result": sim.result, "lives": sim.lives, "stars": CampaignProgress.stars_for(sim.lives) if sim.result == "victory" else 0, "developer_used": sim.developer_used}
+				outcome.unlock_towers = sim.data.layout.get("unlock_towers", []).duplicate()
 				if sim.result == "victory": _begin_victory_audio()
 				finished.emit(outcome.duplicate())
 
@@ -141,6 +142,7 @@ func _sound(id: String, limit_repeats: bool = true) -> void:
 			player.volume_db = linear_to_db(float(sound.gain)); player.play(); return
 
 func _exit_tree() -> void:
+	flush_seen()
 	for player: AudioStreamPlayer in fx_players: player.stop(); player.stream = null
 	if is_instance_valid(audio) and is_instance_valid(audio.music_player):
 		audio.stop_music()
@@ -179,11 +181,14 @@ func _draw() -> void:
 	for i in range(sim.data.layout.entities_list.size()):
 		var e: Dictionary = sim.data.layout.entities_list[i]
 		if not sim.templates.has(e.template): continue
-		if str(e.template).begins_with("tower_holder"): continue
+		if e.has("tower.holder_id"): continue
+		if e.get("render.sprites[1].name","") == sim.data.level.background: continue
 		if sim.templates[e.template].has("delayed_play") or sim.templates[e.template].template_name == "decal_fish": continue
 		_queue_template(e.template, Simulation.vec(e.pos))
 	for decal: Dictionary in sim.decals:
 		if not decal.removed: _queue_template(decal.template, decal.pos, decal.state, decal.state_at, decal.flip, false, 1, false, "", decal)
+	for egg: Dictionary in sim.eggs:
+		_queue_template(egg.template,egg.pos,egg.state,egg.at,false,false,1,false,"",{"alpha":clampf(1 - float(sim.tick - int(egg.get("fade_at",sim.tick))) / 120.0,0,1)})
 	for tower: Dictionary in sim.towers:
 		var template_name: String = tower.template
 		if tower.ready > sim.tick:
@@ -202,12 +207,12 @@ func _draw() -> void:
 			var target: Dictionary = sim.unit_by_id(effect.target)
 			if target.is_empty() or target.hp <= 0: continue
 			effect.pos = target.pos + Simulation.vec(sim.templates[target.template].unit.mod_offset)
-		_queue_template(effect.template, effect.pos, effect.get("state", ""), effect.at, false, false, 1, false, "", effect)
+		_queue_template(effect.template, effect.pos, effect.get("state", ""), effect.at, effect.get("flip",false), false, 1, false, "", effect)
 	for modifier: Dictionary in sim.modifiers.active:
 		var target: Dictionary = sim.unit_by_id(modifier.target)
 		if target.is_empty() or target.hp <= 0: continue
 		# The original lifecycle hides older duplicate poison sprites.
-		if not modifier.get("visible",true): continue
+		if not modifier.get("visible",true) or not sim.templates[modifier.template].has("render"): continue
 		_queue_template(modifier.template, target.pos + (Vector2.ZERO if modifier.template == "mod_thorn" else Simulation.vec(sim.templates[target.template].unit.mod_offset)), modifier.state, modifier.at, target.flip, false, 1, false, "", {"prefix":modifier.prefix,"sprite_scale":modifier.scale,"playback_loop":modifier.phase == "loop"})
 	draw_list.sort_custom(func(a, b):
 		if a.z != b.z: return a.z < b.z
@@ -243,6 +248,11 @@ func _draw() -> void:
 func _queue_template(template_name: String, point: Vector2, state: String = "", at: int = 0, flip: bool = false, up: bool = false, variant: int = 1, dead: bool = false, preview: String = "", runtime: Dictionary = {}) -> void:
 	if runtime.get("hidden", false): return
 	var template: Dictionary = sim.templates[template_name]
+	if template.has("particle_system"):
+		var ps: Dictionary = template.particle_system
+		var alpha: float = lerpf(float(ps.alphas[0]),float(ps.alphas[1]),clampf(float(sim.tick - at) / int(runtime.duration),0,1)) / 255.0
+		draw_list.append({"scale":Vector2.ONE,"frame":ps.name,"pos":point,"sort_y":point.y,"anchor":Vector2(0.5,0.5),"z":int(ps.z),"order":draw_list.size(),"flip":false,"rotation":runtime.rotation,"tint":Color(1,1,1,alpha)})
+		return
 	var order := 0
 	for sprite: Dictionary in template.get("render", {}).get("sprites", []):
 		order += 1
@@ -265,6 +275,7 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 		var frame_name := SpriteAnimation.frame(sprite, animations, playback)
 		var offset := Simulation.vec(sprite.get("offset", {"x": 0, "y": 0}))
 		var alpha := float(sprite.get("alpha", 255)) / 255.0
+		alpha *= float(runtime.get("alpha",1.0))
 		if dead: alpha *= clampf(1 - float(sim.tick - at - 24) / 36, 0, 1)
 		var sprite_scale: Vector2 = runtime.get("sprite_scale", Simulation.vec(sprite.get("scale", {"x": 1, "y": 1})))
 		var tween: Dictionary = template.get("tween", {})
@@ -275,7 +286,7 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 				if int(property.get("sprite_id", 1)) != order: continue
 				if property.name == "scale": sprite_scale *= SpriteAnimation.vector_track(property.keys, seconds)
 				elif property.name == "alpha": alpha *= SpriteAnimation.scalar_track(property.keys, seconds) / 255.0
-		draw_list.append({"scale": sprite_scale, "frame": frame_name, "pos": point + offset, "sort_y": point.y + float(sprite.get("sort_y_offset", 0)), "anchor": Simulation.vec(sprite.get("anchor", {"x": 0.5, "y": 0.5})), "z": int(sprite.get("z", 3000)), "order": draw_list.size(), "flip": layer.get("flip", flip), "rotation": float(runtime.get("rotation", sprite.get("r", 0))), "tint": Color(1, 1, 1, alpha)})
+		draw_list.append({"scale": sprite_scale, "frame": frame_name, "pos": point + offset, "sort_y": float(sprite.get("sort_y",point.y + float(sprite.get("sort_y_offset", 0)))), "anchor": Simulation.vec(sprite.get("anchor", {"x": 0.5, "y": 0.5})), "z": int(sprite.get("z", 3000)), "order": draw_list.size(), "flip": layer.get("flip", flip), "rotation": float(runtime.get("rotation", sprite.get("r", 0))), "tint": Color(1, 1, 1, alpha)})
 
 func unit_info() -> Dictionary:
 	return UnitInfo.snapshot(sim.unit_by_id(selected_unit), sim.templates, sim.data.ui.strings) if selected_unit != 0 else {}
@@ -400,25 +411,28 @@ func _action(action: String, args: Dictionary = {}) -> void:
 			if power == "rally" or (sim.unlocked.get(power, false) and sim.cooldowns.get(power, 0) == 0): targeting = power
 			interface.power_hint_hidden = true
 		"restart":
+			flush_seen()
 			developer.close()
 			outcome.clear()
 			victory_elapsed = -1; victory_star_sounds = 0
 			sim.reset(); interface.reset(); selected = ""; selected_unit = 0; targeting = ""; invalid_point_time = 0; tip = ""
 			_music(sim.data.get("level", {}).get("prep_music", "Level01PrepMusic"))
 			for player: AudioStreamPlayer in fx_players: player.stop()
-		"map": returned_to_map.emit(); return
+		"map": flush_seen(); returned_to_map.emit(); return
 		"tip": sim.notices.append(tip); tip = ""
 		"enemy_notice":
 			if sim.alerts.has(str(args.id)):
 				sim.alerts.erase(str(args.id)); sim.notices.append(str(args.id))
-				if not sim.data.has("seen_notifications"): sim.data.seen_notifications = []
-				if not str(args.id) in sim.data.seen_notifications: sim.data.seen_notifications.append(str(args.id))
-				notification_seen.emit(str(args.id))
 		_:
 			if not sim.command(action, args): _message("当前操作不可用")
-			elif action in ["build", "upgrade", "sell"]: selected = ""
+			elif action in ["build", "upgrade", "sell", "buy_soldier"]: selected = ""
 	_sound("GUIButtonCommon")
 	queue_redraw()
+
+func flush_seen() -> void:
+	if sim == null: return
+	sim.data.seen = sim.seen_enemies.duplicate()
+	seen_flushed.emit(sim.data.seen)
 
 func _message(value: String) -> void:
 	message = value; message_time = 3.0

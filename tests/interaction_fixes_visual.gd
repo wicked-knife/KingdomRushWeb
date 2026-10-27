@@ -1,4 +1,5 @@
 extends SceneTree
+const Fixture = preload("res://tests/slot_fixture.gd")
 const App = preload("res://scenes/app_root.tscn")
 var app: Control
 var battle: Control
@@ -48,10 +49,10 @@ func _run() -> void:
 	create_timer(150).timeout.connect(func(): push_error("Interaction visual timeout"); quit(1))
 	suffix = "%dx%d" % [root.size.x, root.size.y]
 	app = App.instantiate(); var token := str(Time.get_ticks_usec())
-	app.settings_path = "user://interaction_visual_settings_" + token + ".json"; app.progress_path = "user://interaction_visual_progress_" + token + ".json"
+	app.settings_path = "user://interaction_visual_settings_" + token + ".json"; app.slots_path = "user://interaction_visual_progress_" + token + ".json"
 	root.add_child(app); await app.menu_ready
 	app.menu.start_button.pressed.emit(); app.menu._select_slot(1); await app.map_ready
-	for id in [1, 2, 3]: app.campaign.record_result({"generation":1,"level_id":id,"mode":1,"difficulty":2,"result":"victory","lives":20})
+	for id in [1, 2, 3]: Fixture.complete(app.campaign, {"generation":1,"level_id":id,"mode":1,"difficulty":2,"result":"victory","lives":20})
 	var map: Control = app.campaign_map
 	map.set_process(false); map.set_process_input(false); map.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	await capture(map, "map_normal")

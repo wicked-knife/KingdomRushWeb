@@ -36,7 +36,7 @@ func capture(label: String) -> void:
 
 func _run() -> void:
 	create_timer(95).timeout.connect(func(): quit(1))
-	app = App.instantiate(); app.settings_path = "user://battle_smoke.json"; app.progress_path = "user://battle_smoke_" + str(Time.get_ticks_usec()) + ".progress"; root.add_child(app)
+	app = App.instantiate(); app.settings_path = "user://battle_smoke.json"; app.slots_path = "user://battle_smoke_" + str(Time.get_ticks_usec()) + ".progress"; root.add_child(app)
 	await app.menu_ready
 	app.menu.start_button.pressed.emit(); app.menu._select_slot(1)
 	await app.map_ready

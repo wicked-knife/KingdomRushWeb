@@ -30,7 +30,7 @@ func progress() -> float:
 	return -1
 func _run() -> void:
 	create_timer(45).timeout.connect(func(): quit(1))
-	app = App.instantiate(); app.settings_path = "user://ui_gallery.json"; app.progress_path = "user://ui_gallery_" + str(Time.get_ticks_usec()) + ".progress"; root.add_child(app)
+	app = App.instantiate(); app.settings_path = "user://ui_gallery.json"; app.slots_path = "user://ui_gallery_" + str(Time.get_ticks_usec()) + ".progress"; root.add_child(app)
 	await app.menu_ready
 	app.menu.start_button.pressed.emit(); app.menu._select_slot(1); await app.map_ready
 	app.campaign_map._action("level", {"id": 1}); app.campaign_map._action("battle")
@@ -88,7 +88,7 @@ func _run() -> void:
 	battle.outcome.clear(); battle.sim.result = ""; battle.sim.lives = 20; battle.sim.kills = 56; battle.sim._finish("victory"); await capture("victory", 2)
 	var file := FileAccess.open("res://reports/ui_layout_" + suffix + ".json", FileAccess.WRITE)
 	file.store_string(JSON.stringify({"passed": failures.is_empty(), "failures": failures, "layouts": audit}, "\t")); file.close()
-	var progress_file: String = app.progress_path
+	var progress_file: String = app.slots_path
 	app.queue_free(); await process_frame; await process_frame
 	for ending in ["", ".bak", ".tmp"]: if FileAccess.file_exists(progress_file + ending): DirAccess.remove_absolute(progress_file + ending)
 	print("BATTLE_UI_GALLERY: ", "PASS" if failures.is_empty() else str(failures), " ", suffix)

@@ -1,4 +1,5 @@
 extends "res://tests/tower_upgrade_visual.gd"
+const Fixture = preload("res://tests/slot_fixture.gd")
 const ThirdScene = preload("res://tests/tier3_upgrade_arena.tscn")
 const AppScene = preload("res://scenes/app_root.tscn")
 const Replay = preload("res://tests/campaign_playback.gd")
@@ -87,10 +88,10 @@ func drive(kind: String, args: Dictionary = {}) -> void:
 
 func campaign() -> void:
 	arena.queue_free(); await process_frame; await process_frame
-	app = AppScene.instantiate(); app.settings_path = "user://level04_visual_settings.json"; app.progress_path = "user://level04_visual_%d.progress" % Time.get_ticks_usec(); root.add_child(app)
+	app = AppScene.instantiate(); app.settings_path = "user://level04_visual_settings.json"; app.slots_path = "user://level04_visual_%d.progress" % Time.get_ticks_usec(); root.add_child(app)
 	await app.menu_ready
 	app.menu.start_button.pressed.emit(); app.menu._select_slot(1); await app.map_ready
-	for id in [1, 2, 3]: app.campaign.record_result({"generation":1,"level_id":id,"mode":1,"difficulty":2,"result":"victory","lives":20})
+	for id in [1, 2, 3]: Fixture.complete(app.campaign, {"generation":1,"level_id":id,"mode":1,"difficulty":2,"result":"victory","lives":20})
 	check(app.campaign.is_playable(4), "existing three-stage save gains fourth campaign")
 	app.campaign_map._action("level", {"id":4}); app.campaign_map._action("battle")
 	battle = app.battle; battle.set_process(false)
@@ -115,7 +116,7 @@ func campaign() -> void:
 		battle.sim.step()
 		if battle.sim.result != "": break
 	check(battle.sim.result == "victory" and battle.sim.spawn_log.size() == 339 and not battle.sim.developer_used, "native legal fourth campaign victory")
-	check(app.campaign.record(4).get("stars", 0) > 0 and app.campaign.is_unlocked(5) and not app.campaign.is_playable(5), "fourth result saved, fifth preview")
+	check(app.campaign.record(4).get("stars", 0) > 0 and app.campaign.is_unlocked(5) and app.campaign.is_playable(5), "fourth result saved, fifth playable")
 	await capture("level04_victory")
 	for i in range(3):
 		battle._action("restart"); check(battle.sim.gold == 520 and battle.sim.lives == 20 and battle.sim.enemies.is_empty(), "native fourth restart"); await dismiss()

@@ -1,4 +1,4 @@
-"""Build source-traceable atlases for campaigns 1-4 or the independent ranger arena."""
+"""Build source-traceable atlases for campaigns 1-5 or the independent ranger arena."""
 from pathlib import Path
 import argparse, copy, hashlib, json, math, os, re, subprocess
 from PIL import Image
@@ -11,7 +11,8 @@ def write(path, value):
     path.write_text(json.dumps(value, ensure_ascii=False, separators=(",", ":"), allow_nan=False)+"\n", encoding="utf-8")
 
 def prepare(source, love, level_id=1, ranger_arena=False):
-    assert level_id in (1, 2, 3, 4)
+    assert level_id in (1, 2, 3, 4, 5)
+    advanced = ranger_arena or level_id == 5
     source_level=f"level{level_id:02d}"
     level_name="ranger_arena" if ranger_arena else source_level
     assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == BASE
@@ -32,13 +33,16 @@ def prepare(source, love, level_id=1, ranger_arena=False):
     script=f"kr1/data/levels/{source_level}.lua"
     if (source/script).is_file(): inputs.add(script)
     if level_id >= 3: inputs.update({"kr1/game_scripts.lua","all/seek.lua","all/spatial_index.lua"})
-    if ranger_arena: inputs.update({"all/systems/mod_lifecycle.lua","all/systems/last_hook.lua"})
+    if advanced: inputs.update({"all/systems/mod_lifecycle.lua","all/systems/last_hook.lua"})
     data["source"]={"version":"2.1.0.2","commit":BASE,"difficulty":2,"inputs":{p:hashlib.sha256((source/p).read_bytes()).hexdigest() for p in sorted(inputs)}}
     # GGTextLabel slide and TutorialBalloon class defaults are part of the source layout.
     for slide_id, labels in data["ui"]["slides"].items():
         for label in labels:
             label.setdefault("font_name", "body" if slide_id.startswith("TB_") else "body_slides")
     data["schema_version"]=1
+    # Level layouts contain mutually exclusive campaign/heroic/iron placements.
+    if level_id == 5:
+        data["layout"]["entities_list"]=[e for e in data["layout"]["entities_list"] if e.get("editor.game_mode",0) in (0,1)]
     data["level"]={"generation":1,"id":level_id,"mode":1,"difficulty":2,"root":f"res://data/{level_name}/","group":level_name,"background":f"stage_{level_id}","music":"BattleMusic","prep_music":"PrepMusic"}
     # all/scripts.lua editor_wave_flag.insert builds entrances from these markers.
     # game_gui.show_wave_flags indexes the sorted entrance array, not editor.path_id.
@@ -64,11 +68,12 @@ def prepare(source, love, level_id=1, ranger_arena=False):
                 target[parts[-1]]=value
             name=f"{original}__{len(data['templates'])}"
             data["templates"][name]=instance;entity["template"]=name
+    if level_id == 5: data["templates"].pop("decal_background",None)
     settings=(source/"kr1/game_settings.lua").read_text(encoding="utf-8")
     def scalar(key): return float(re.search(r"GS\."+key+r"\s*=\s*([\d.]+)",settings)[1])
     def normal(key): return float(re.search(r"GS\."+key+r"\s*=\s*\{([^}]+)",settings)[1].split(",")[1])
     data["rules"]={"enemy_hp_factor":normal("difficulty_enemy_hp_max_factor"),"enemy_speed_factor":normal("difficulty_enemy_speed_factor"),"enemy_gold_factor":normal("difficulty_enemy_gold_factor"),"early_wave_reward_per_second":scalar("early_wave_reward_per_second"),"soldier_regen_factor":scalar("soldier_regen_factor")}
-    assert data["waves"]["lives"]==20 and data["waves"]["cash"]=={1:270,2:240,3:330,4:520}[level_id] and len(data["waves"]["groups"])=={1:7,2:7,3:11,4:13}[level_id]
+    assert data["waves"]["lives"]==20 and data["waves"]["cash"]=={1:270,2:240,3:330,4:520,5:700}[level_id] and len(data["waves"]["groups"])=={1:7,2:7,3:11,4:13,5:15}[level_id]
     counts={}
     for group in data["waves"]["groups"]:
         for wave in group["waves"]:
@@ -78,7 +83,12 @@ def prepare(source, love, level_id=1, ranger_arena=False):
                     counts[creep]=counts.get(creep,0)+1
     expected={1:{"enemy_goblin":48,"enemy_fat_orc":8},2:{"enemy_goblin":106,"enemy_fat_orc":26,"enemy_wolf_small":22},3:{"enemy_goblin":224,"enemy_fat_orc":58,"enemy_wolf_small":32,"enemy_shaman":12,"enemy_ogre":3}}
     expected[4]={"enemy_goblin":130,"enemy_fat_orc":58,"enemy_shaman":24,"enemy_bandit":77,"enemy_wolf_small":18,"enemy_ogre":2,"enemy_brigand":30}
+    expected[5]={"enemy_brigand":39,"enemy_bandit":59,"enemy_spider_small":35,"enemy_wolf_small":55,"enemy_wolf":32,"enemy_spider_big":19,"enemy_marauder":3}
     assert counts==expected[level_id],counts
+    if advanced:
+        data["upgrade_targets"]={"tower_archer_3":"tower_ranger"}
+        data["ui"]["power_descriptions"]["poison"]=[s.replace("减速0.1%","减速10%").replace("可叠加3层","同级毒素最多叠加4层") for s in data["ui"]["power_descriptions"]["poison"]]
+    if level_id == 5: data["upgrade_targets"]["tower_elf_holder"]="tower_elf"
     if ranger_arena:
         data["upgrade_targets"]={"tower_archer_3":"tower_ranger"}
         data["waves"]={"cash":10000,"lives":100,"groups":[{"interval":0,"waves":[]}]}
@@ -92,15 +102,17 @@ def prepare(source, love, level_id=1, ranger_arena=False):
     all_anims=json.loads((assets/"data/animations.json").read_text(encoding="utf-8"))["animations"]
     wanted={f"stage_{level_id}"};animations={}
     states=["idle","idleUp","idleDown","shoot","shootingUp","shootingDown","walkingRightLeft","walkingUp","walkingDown","running","attack","death","open","close","play","flying","heal","jump","small","medium","large"]
-    if ranger_arena: states += ["start","loop","end"]
+    if advanced: states += ["start","loop","end"]
+    if level_id == 5: states += [s+"_"+c for s in ("small","big") for c in ("red","green","gray","orange","violet")]
     for template in data["templates"].values():
+        if template.get("particle_system",{}).get("name"): wanted.add(template["particle_system"]["name"])
         for sprite in template.get("render",{}).get("sprites",[]):
             name=sprite.get("name","");prefix=sprite.get("prefix","")
             if prefix:
-                for suffix in set(states + [name] + (sprite.get("size_names",[]) if ranger_arena else [])):
+                for suffix in set(states + [name] + (sprite.get("size_names",[]) if advanced else [])):
                     key=prefix+"_"+suffix
                     if key in all_anims: animations[key]=all_anims[key]
-                if ranger_arena:
+                if advanced:
                     for variant in sprite.get("size_prefixes",[]):
                         for suffix in states:
                             key=variant+"_"+suffix
@@ -121,8 +133,9 @@ def prepare(source, love, level_id=1, ranger_arena=False):
     ui_prefixes=["fire_","fire_ready_","reinforcements_","reinforcement_ready_","power_nbrs_","pause_btn_","victoryStars_","options_","tutorial_but_gotcha_bg_long_","notifications_but_","balloon_"]
     ui_names={"main_icons_0000","main_icons_0001","main_icons_0002","main_icons_0003","main_icons_0004","main_icons_0014","ico_sell_0001","sub_icons_0001","glow_ico_main","glow_ico_sell","glow_ico_sub","price_tag","bg_bottom_bar","bg_bottom_left","tutorial_tit_instructions_bg","notifications_tit_generics_bg_0001","notifications_tit_newpower_bg","notifications_polaroid_overlay","victoryBadges_notxt_0002","button_border_0001","button_border_0002","button_border_large_0001","button_border_large_0002","button_continue_chains","button_restart_chains","tooltip_bg_standard"}
     ui_names.update({"main_icons_0005","base","base_info_bar","base_info_bar_bg","info_portraits_0000"})
-    if ranger_arena:
+    if advanced:
         ui_names.update({"main_icons_0011","special_icons_0008","special_icons_0002","power_rank_0001","power_rank_0002"})
+    if level_id == 5: ui_names.update({"main_icons_0015","main_icons_0016","special_icons_0014","special_icons_0024"})
     if level_id >= 2: ui_names.update({"notifications_tit_newenemy_bg","notifications_tit_towers_bg"})
     ui_prefixes += ["base_info_icons_", "nextwaveTimer_", "nextwave_coin_", "waveReward_", "waveRewardTimer_", "error_feedback_"]
     for template in data["templates"].values():
@@ -134,14 +147,17 @@ def prepare(source, love, level_id=1, ranger_arena=False):
         wanted.update(n for n in names if n in ui_names or any(n.startswith(p) for p in ui_prefixes))
     # Notification images and all labels come from this batch's source UI data.
     for notification in data["ui"]["notifications"].values():
+        wanted.update(notification.get("images",[]))
         for key in ["image","paper","icon"]:
             if notification.get(key): wanted.add(notification[key])
     if level_id >= 2:
         for template_id,template in data["templates"].items():
-            if template_id in ["enemy_wolf_small","enemy_shaman","enemy_ogre","enemy_bandit","enemy_brigand"]:
+            if template.get("enemy") and template.get("info",{}).get("enc_icon"):
                 wanted.add(f"encyclopedia_creeps_{template['info']['enc_icon']:04d}")
     # Source slide text can be shared while a notification supplies its paper.
     order=["tower_holders",f"go_stage{level_id:02d}_bg","go_stage01","go_stages_grass","go_towers_group1","go_towers_group2","go_towers_group3","go_towers_group4","go_towers_group6","go_enemies_grass","go_power_reinforcements","go_decals","go_enemies_common","encyclopedia_creeps",*ui_groups]
+    if level_id == 5: order=["go_stage05","go_hero_alleria",*order]
+    if level_id == 5: wanted.add("stage_5_trees")
     lookup={}
     for group in order:
         atlas=groups[group]
@@ -191,8 +207,9 @@ def prepare(source, love, level_id=1, ranger_arena=False):
         for attack in t.get("melee",{}).get("attacks",[]):
             if attack.get("sound"): sound_ids.add(attack["sound"])
         if t.get("aura",{}).get("hit_sound"): sound_ids.add(t["aura"]["hit_sound"])
-    if ranger_arena:
-        for item in data["ui"]["tower_menus"]["ranger"]: sound_ids.update(item.get("sounds",[]))
+    if advanced:
+        for menu in data["ui"]["tower_menus"].values():
+            for item in menu: sound_ids.update(item.get("sounds",[]))
     sound_ids.update(k for k in sound_data if k.lower() in {"musicbattle","musicstage01","music_stage01","musicvictory","musicdefeat"})
     sounds={k:sound_data[k] for k in sorted(sound_ids) if k in sound_data}
     # The stage bundle names its battle music as a group, not a sound ID.
@@ -216,4 +233,4 @@ def prepare(source, love, level_id=1, ranger_arena=False):
     print(json.dumps({"templates":len(data["templates"]),"frames":len(aliases),"animations":len(animations),"atlas_pages":len(pages),"audio":len(audio),"enemies":counts},ensure_ascii=False))
 
 if __name__=="__main__":
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument("--source",type=Path,default=Path("D:/projects/KingdomRushDove"));parser.add_argument("--love",type=Path,default=Path("D:/王国保卫战Dove版/love.exe"));parser.add_argument("--level",type=int,choices=[1,2,3,4],default=1);parser.add_argument("--ranger-arena",action="store_true");args=parser.parse_args();prepare(args.source,args.love,4 if args.ranger_arena else args.level,args.ranger_arena)
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument("--source",type=Path,default=Path("D:/projects/KingdomRushDove"));parser.add_argument("--love",type=Path,default=Path("D:/王国保卫战Dove版/love.exe"));parser.add_argument("--level",type=int,choices=[1,2,3,4,5],default=1);parser.add_argument("--ranger-arena",action="store_true");args=parser.parse_args();prepare(args.source,args.love,4 if args.ranger_arena else args.level,args.ranger_arena)

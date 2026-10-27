@@ -28,7 +28,7 @@ func _run() -> void:
 	create_timer(45).timeout.connect(func(): push_error("Wave reward test timeout"); quit(1))
 	var app := App.instantiate(); var token := str(Time.get_ticks_usec())
 	app.settings_path = "user://wave_reward_settings_" + token + ".json"
-	app.progress_path = "user://wave_reward_progress_" + token + ".json"
+	app.slots_path = "user://wave_reward_progress_" + token + ".json"
 	root.add_child(app); await app.menu_ready
 	app.menu.hide(); app.menu.set_process_input(false)
 	battle = Battle.new(); app.add_child(battle)

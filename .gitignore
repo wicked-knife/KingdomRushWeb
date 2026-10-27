@@ -69,3 +69,8 @@ __pycache__/
 !/reports/ranger_arena_assets.json
 !/reports/ranger_logic.json
 !/reports/ranger_delivery.json
+!/reports/level05_assets.json
+!/reports/level05_logic.json
+!/reports/level05_delivery.json
+!/reports/dove_saves_logic.json
+!/reports/dove_saves_delivery.json

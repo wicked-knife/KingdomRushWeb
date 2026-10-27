@@ -7,7 +7,8 @@ local source = assert(os.getenv("DOVE_SOURCE_DIR"))
 local destination = assert(os.getenv("DOVE_EXPORT_PATH"))
 local level_id = tonumber(os.getenv("DOVE_LEVEL_ID") or "1")
 local ranger_arena = os.getenv("DOVE_RANGER_ARENA") == "1"
-assert(level_id >= 1 and level_id <= 4)
+assert(level_id >= 1 and level_id <= 5)
+local advanced = ranger_arena or level_id == 5
 local level_name = string.format("level%02d", level_id)
 package.path = source .. "/?.lua;" .. source .. "/all/?.lua;" .. source .. "/kr1/?.lua;" .. package.path
 local loaded_inputs = {}
@@ -65,8 +66,11 @@ local function run()
   local enemy_ids={"enemy_goblin","enemy_fat_orc"}
   if level_id >= 2 then table.insert(enemy_ids,"enemy_wolf_small") end
   if level_id >= 3 then table.insert(enemy_ids,"enemy_shaman");table.insert(enemy_ids,"enemy_ogre") end
-  if level_id == 4 then table.insert(enemy_ids,"enemy_bandit");table.insert(enemy_ids,"enemy_brigand") end
+  if level_id >= 4 then table.insert(enemy_ids,"enemy_bandit");table.insert(enemy_ids,"enemy_brigand") end
   if ranger_arena then table.insert(enemy_ids,"enemy_spider_small") end
+  if level_id == 5 then
+    for _,id in ipairs({"enemy_wolf","enemy_spider_tiny","enemy_spider_small","enemy_spider_big","enemy_spider_egg","enemy_marauder"}) do table.insert(enemy_ids,id) end
+  end
   for _,id in ipairs(enemy_ids) do
     local start=assert(enemies:find('tt = RT("'..id..'"',1,true))
     local finish=enemies:find("\ntt = ",start+1,true) or #enemies+1
@@ -81,9 +85,20 @@ local function run()
     local b=assert(game:find('\ntt = ',a+1,true))
     chunk("kr1/game_templates.lua","local tt;local scripts=require('game_scripts');"..game:sub(a,b-1))
   end
-  if ranger_arena then
+  if advanced then
     local archers=read("kr1/archer_towers.lua")
     chunk("kr1/archer_towers.lua",archers:sub(1,assert(archers:find('local tower_crossbow = RT(',1,true))-1))
+  end
+  if level_id == 5 then
+    local barracks=read("kr1/barrack_towers.lua")
+    local header=barracks:sub(1,assert(barracks:find('tt = RT(',1,true))-1)
+    local a=assert(barracks:find('tt = RT("tower_elf_holder")',1,true))
+    local b=assert(barracks:find('tt = RT("tower_barrack_amazonas"',a,true))
+    chunk("kr1/barrack_towers.lua",header..barracks:sub(a,b-1))
+    local heroes=read("kr1/heroes.lua")
+    local a=assert(heroes:find('tt = RT("ps_arrow_multishot_hero_alleria")',1,true))
+    local b=assert(heroes:find('\ntt = ',a+1,true))
+    chunk("kr1/heroes.lua","local tt;"..heroes:sub(a,b-1))
   end
   local function clean(v)
     local kind=type(v)
@@ -97,27 +112,32 @@ local function run()
     local out={};for k,value in pairs(v) do out[k]=clean(value) end;return out
   end
   local fields={"template_name","render","health","health_bar","motion","unit","enemy","soldier","tower","barrack","attacks","melee","bullet","sound_events","reinforcement","cooldown","duration","fireball_count","max_spread","delayed_play","ui","regen","tween","build_duration","info","dodge","timed_attacks","modifier","hps","vis"}
-  if ranger_arena then
+  if advanced then
     for _,name in ipairs({"powers","dps","slow","aura","damage_min","damage_max","damage_type","damage_every"}) do table.insert(fields,name) end
   end
+  if level_id == 5 then for _,name in ipairs({"ranged","mercenary","spawner","particle_system"}) do table.insert(fields,name) end end
   local out={templates={},inputs=loaded_inputs,constants={FPS=FPS,ASPECT=ASPECT,TERRAIN_LAND=TERRAIN_LAND,TERRAIN_NOWALK=TERRAIN_NOWALK,DAMAGE_PHYSICAL=DAMAGE_PHYSICAL,DAMAGE_MAGICAL=DAMAGE_MAGICAL,DAMAGE_EXPLOSION=DAMAGE_EXPLOSION,DAMAGE_TRUE=DAMAGE_TRUE}}
   out.constants.spatial_cell_size=SPATIAL_HASH_CELL_SIZE
   out.constants.spatial_origin={x=IN_GAME_X_MIN,y=IN_GAME_Y_MIN}
-  if ranger_arena then
+  if advanced then
     for _,name in ipairs({"DAMAGE_POISON","F_POISON","F_FLYING","F_BOSS","F_CLIFF"}) do out.constants[name]=_G[name] end
   end
+  if level_id == 5 then out.constants.DAMAGE_NO_DODGE=DAMAGE_NO_DODGE;out.constants.F_BLOOD=F_BLOOD end
   for _,pair in ipairs({{"layout","kr1/data/levels/"..level_name.."_data.lua"},{"paths","kr1/data/levels/"..level_name.."_paths.lua"},{"terrain","kr1/data/levels/"..level_name.."_grid.lua"},{"waves","kr1/data/waves/"..level_name.."_waves_campaign.lua"}}) do
     local env={v=V.v};local f=assert(loadstring(read(pair[2]),"@"..pair[2]));setfenv(f,env);out[pair[1]]=clean(f());loaded_inputs[pair[2]]=true
   end
-  for _,id in ipairs(out.layout.required_templates) do chunk("kr1/template_groups/"..id..".lua") end
+  for _,id in ipairs(out.layout.required_templates or {}) do chunk("kr1/template_groups/"..id..".lua") end
   local template_ids={"tower_archer_1","tower_archer_2","tower_barrack_1","tower_barrack_2","tower_mage_1","tower_mage_2","tower_engineer_1","tower_engineer_2","tower_holder_grass","tower_build_archer","tower_build_barrack","tower_build_mage","tower_build_engineer","soldier_militia","soldier_footmen","re_farmer","arrow_1","arrow_2","bolt_1","bolt_2","bomb","bomb_dynamite","power_fireball_control","power_fireball","power_reinforcements_control","fx_fireball_explosion","fx_bolt_hit","fx_explosion_small","fx_unit_explode","decal_bomb_crater","fx_blood_splat","fx_tower_buy_dust","fx_tower_sell_dust"}
   for _,id in ipairs(enemy_ids) do table.insert(template_ids,id) end
   if level_id >= 3 then table.insert(template_ids,"mod_shaman_heal") end
-  if level_id == 4 then
+  if level_id >= 4 then
     for _,id in ipairs({"tower_archer_3","tower_barrack_3","tower_mage_3","tower_engineer_3","soldier_knight","arrow_3","bolt_3","bomb_black","fx_explosion_water"}) do table.insert(template_ids,id) end
   end
-  if ranger_arena then
+  if advanced then
     for _,id in ipairs({"tower_ranger","arrow_ranger","aura_ranger_thorn","mod_ranger_poison","mod_thorn","fx_spider_explode"}) do table.insert(template_ids,id) end
+  end
+  if level_id == 5 then
+    for _,id in ipairs({"tower_elf_holder","tower_elf","soldier_elf","arrow_elf","arrow_elf_cripple","mod_elf_bleed","mod_elf_cripple","fx_bleeding","decal_background","ps_arrow_multishot_hero_alleria"}) do table.insert(template_ids,id) end
   end
   for _,entity in ipairs(out.layout.entities_list) do
     if E.entities[entity.template] and entity.template ~= "decal_background" and entity.template ~= "decal_defend_point" and entity.template ~= "editor_wave_flag" then table.insert(template_ids,entity.template) end
@@ -136,7 +156,8 @@ local function run()
   local notification_ids={"TUTORIAL_1","TUTORIAL_2","TUTORIAL_3","TIP_ARMOR","TIP_RALLY","POWER_REINFORCEMENT","POWER_FIREBALL"}
   if level_id >= 2 then table.insert(notification_ids,"TOWER_LEVEL2");table.insert(notification_ids,"TIP_STRATEGY");table.insert(notification_ids,"enemy_wolf_small") end
   if level_id >= 3 then table.insert(notification_ids,"TIP_ARMOR_MAGIC");table.insert(notification_ids,"enemy_shaman");table.insert(notification_ids,"enemy_ogre") end
-  if level_id == 4 then table.insert(notification_ids,"enemy_bandit");table.insert(notification_ids,"enemy_brigand") end
+  if level_id >= 4 then table.insert(notification_ids,"enemy_bandit");table.insert(notification_ids,"enemy_brigand") end
+  if level_id == 5 then for _,id in ipairs({"TOWER_RANGER","enemy_wolf","enemy_spider_small","enemy_spider_big","enemy_marauder"}) do table.insert(notification_ids,id) end end
   for _,id in ipairs(notification_ids) do
     out.ui.notifications[id]=clean(gui.notifications[id]);out.ui.slides[id]=clean(gui.notification_slides[id])
   end
@@ -148,14 +169,18 @@ local function run()
   out.ui.upgrade_menus={}
   for _,kind in ipairs({"archer","barrack","mage","engineer"}) do
     out.ui.tower_menus[kind]=clean(menus[kind][1])
-    for level=1,(level_id == 4 and 2 or 1) do
+    for level=1,(level_id >= 4 and 2 or 1) do
       local item=menus[kind][level][1]
       out.ui.upgrade_menus[item.action_arg]=clean(item)
     end
   end
-  if ranger_arena then
+  if advanced then
     out.ui.tower_menus.ranger=clean(menus.ranger[1])
     out.ui.upgrade_menus.tower_ranger=clean(menus.archer[3][1])
+  end
+  if level_id == 5 then
+    out.ui.tower_menus.holder_elf=clean(menus.holder_elf[1]);out.ui.tower_menus.elf=clean(menus.elf[1])
+    out.ui.upgrade_menus.tower_elf=clean(menus.holder_elf[1][1])
   end
   local strings=chunk("_assets/kr1-desktop/strings/zh-Hans.lua")
   out.ui.strings={}
@@ -164,13 +189,18 @@ local function run()
     elseif type(v)=="table" then for _,value in pairs(v) do collect(value) end end
   end
   collect(out.ui)
-  if ranger_arena then
+  if level_id == 5 then
+    for _,prefix in ipairs({"TOWER_RANGER","TOWER_ELF"}) do
+      for _,suffix in ipairs({"_NAME","_EXTRA"}) do out.ui.strings[prefix..suffix]=assert(strings[prefix..suffix]) end
+    end
+  end
+  if advanced then
     -- Evaluate only the selected frozen arithmetic expressions, without gameplay.
     out.ui.power_descriptions={}
-    for _,power in ipairs({"poison","thorn"}) do
+    for _,power in ipairs(level_id == 5 and {"poison","thorn","bleed","cripple"} or {"poison","thorn"}) do
       local descriptions={}
       for level=1,3 do
-        local key="TOWER_RANGER_"..string.upper(power).."_DESCRIPTION_"..level
+        local key="TOWER_"..((power == "bleed" or power == "cripple") and "ELF_" or "RANGER_")..string.upper(power).."_DESCRIPTION_"..level
         local text=assert(strings[key])
         text=text:gsub("%%%$(.-)%%%$",function(expr)
           local f=assert(loadstring("return "..expr,"@ranger_description"))

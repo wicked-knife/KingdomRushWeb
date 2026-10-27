@@ -1,4 +1,6 @@
 extends SceneTree
+const Fixture = preload("res://tests/slot_fixture.gd")
+const Settings = preload("res://scripts/services/menu_settings.gd")
 const Slots = preload("res://scripts/services/save_slots.gd")
 const Progress = preload("res://scripts/services/campaign_progress.gd")
 const Sim = preload("res://scripts/battle/level01_sim.gd")
@@ -32,48 +34,45 @@ func _run() -> void:
 	quit(0 if failures.is_empty() else 1)
 
 func _test_saves() -> void:
-	var legacy := temporary + "/old.json"
-	var old := Progress.new(); old.initialize(legacy); old.record_result(win(17))
-	var slots := Slots.new(); slots.initialize(temporary + "/slots", legacy)
-	check(slots.status(1) == "used" and slots.status(2) == "empty" and slots.status(3) == "empty", "legacy migrates only to first slot")
-	check(FileAccess.file_exists(legacy + ".migrated") and not FileAccess.file_exists(legacy), "legacy archived after successful migration")
-	var first := slots.select_slot(1)
-	check(first.total_stars() == 2 and first.is_unlocked(2), "migration preserves stars and unlocks")
+	var preferences := Settings.new(); preferences.initialize(temporary + "/preferences.json")
+	var slots := Slots.new(); slots.initialize(temporary + "/slots", preferences)
+	check(slots.status(1) == "empty" and slots.status(2) == "empty" and slots.status(3) == "empty", "new storage has three empty slots")
+	var first := slots.select_slot(1); Fixture.complete(first, win(17))
 	var second := slots.select_slot(2)
 	check(second.total_stars() == 0 and second.unlocked == [1], "new second slot starts clean")
-	second.record_result(win(20))
+	Fixture.complete(second, win(20))
 	check(first.total_stars() == 2 and second.total_stars() == 3, "slot scores isolated")
-	var third := slots.select_slot(3); third.record_result(win(5))
-	var reloaded := Slots.new(); reloaded.initialize(slots.directory, legacy)
+	var third := slots.select_slot(3); Fixture.complete(third, win(5))
+	var reloaded := Slots.new(); reloaded.initialize(slots.directory, preferences)
 	check(reloaded.last_slot == 3, "last selected slot persists")
 	check(reloaded.select_slot(1).total_stars() == 2 and reloaded.select_slot(2).total_stars() == 3 and reloaded.select_slot(3).total_stars() == 1, "all three campaigns reload independently")
 	check(reloaded.delete_slot(1) and reloaded.status(1) == "empty", "delete clears campaign and backup together")
-	reloaded.initialize(slots.directory, legacy)
-	check(reloaded.status(1) == "empty", "deleted migrated save stays deleted after reload")
+	reloaded.initialize(slots.directory, preferences)
+	check(reloaded.status(1) == "empty", "deleted slot stays deleted after reload")
 	check(reloaded.select_slot(1).total_stars() == 0, "deleted slot can start a fresh campaign")
 	check(reloaded.select_slot(0) == null and not reloaded.delete_slot(4), "invalid slot identifiers rejected")
 	var path := reloaded.slot_path(2)
 	var second_again := reloaded.select_slot(2); second_again.save()
 	write(path, "corrupt")
-	reloaded.initialize(slots.directory, legacy)
+	reloaded.initialize(slots.directory, preferences)
 	check(reloaded.status(2) == "used" and reloaded.select_slot(2).total_stars() == 3, "corrupt primary recovers a valid backup")
 	DirAccess.remove_absolute(path)
-	reloaded.initialize(slots.directory, legacy)
+	reloaded.initialize(slots.directory, preferences)
 	check(reloaded.select_slot(2).total_stars() == 3, "missing primary also recovers backup")
 	write(path, "corrupt"); write(path + ".bak", "corrupt")
-	reloaded.initialize(slots.directory, legacy)
+	reloaded.initialize(slots.directory, preferences)
 	check(reloaded.status(2) == "corrupt" and reloaded.select_slot(2) == null, "unrecoverable slot cannot be overwritten as empty")
-	write(path, {"schema_version": 99}); reloaded.initialize(slots.directory, legacy)
+	write(path, {"schema_version": 99}); reloaded.initialize(slots.directory, preferences)
 	check(reloaded.status(2) == "future" and reloaded.select_slot(2) == null, "future schema protected")
 	check(reloaded.delete_slot(2) and reloaded.status(2) == "empty", "corrupt/future slot can be explicitly deleted")
 	var readonly := Slots.new()
 	write(temporary + "/not_a_directory", "file")
-	readonly.initialize(temporary + "/not_a_directory/slots", temporary + "/absent.json")
-	var session := readonly.select_slot(1); session.record_result(win())
+	readonly.initialize(temporary + "/not_a_directory/slots")
+	var session := readonly.select_slot(1); Fixture.complete(session, win())
 	check(session.total_stars() == 3 and not session.notice.is_empty(), "write failure preserves session progress")
 	check(readonly.select_slot(1) == session, "unsaved session survives selection round trip")
-	var failure := Slots.new(); failure.initialize(temporary + "/delete_failure", temporary + "/absent.json")
-	failure.select_slot(1).record_result(win())
+	var failure := Slots.new(); failure.initialize(temporary + "/delete_failure")
+	Fixture.complete(failure.select_slot(1), win())
 	var before: String = FileAccess.get_file_as_string(failure.slot_path(1))
 	# Holding an open file denies directory removal on Windows.
 	if OS.get_name() == "Windows":
@@ -81,6 +80,8 @@ func _test_saves() -> void:
 		check(not failure.delete_slot(1) and failure.status(1) == "used", "failed delete retains the slot")
 		check(FileAccess.get_file_as_string(failure.slot_path(1)) == before, "failed delete preserves bytes")
 		held.close()
+
+	preferences.free()
 
 func _test_developer() -> void:
 	var production := Sim.new()
@@ -124,7 +125,7 @@ func _test_developer() -> void:
 	check(not sim.developer_used and sim.lives == 20 and sim.gold == 270 and sim.speed == 1 and sim.wave == 0, "restart clears debug state")
 
 func _test_route() -> void:
-	var app := App.instantiate(); app.settings_path = temporary + "/settings.json"; app.progress_path = temporary + "/route.json"
+	var app := App.instantiate(); app.settings_path = temporary + "/settings.json"; app.slots_path = temporary + "/route.json"
 	root.add_child(app); await app.menu_ready
 	var fonts: RefCounted = app.loader.fonts
 	for entry in [["h", "JIMOJW"], ["button", "JIMOJW"], ["body", "Microsoft YaHei"], ["numbers", "Comic Book"], ["numbers_bold", "Toonish"]]:
@@ -151,7 +152,7 @@ func _test_route() -> void:
 	battle.sim.paused = false; clear_notices(battle.sim); battle._action("wave")
 	for wave in range(7):
 		clear_notices(battle.sim); battle.developer.toggle(); battle._action("dev_skip_wave")
-	check(battle.outcome.get("developer_used", false) and app.campaign.total_stars() == 3 and app.campaign.is_unlocked(2), "debug victory persists through normal result path")
+	check(battle.outcome.get("developer_used", false) and app.campaign.summary().stars == 3 and not app.campaign.is_unlocked(2), "debug victory follows pending-result path")
 	app._return_to_map(); await app.map_ready
 	check(app.campaign_map.progress.total_stars() == 3, "return map shows same saved score")
 	app.campaign_map.set_map_zoom(2, app.campaign_map.view_size / 2)

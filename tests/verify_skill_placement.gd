@@ -79,7 +79,7 @@ func _run() -> void:
 	check(not boundary.valid_power_point("fire", Vector2(NAN,0)) and not boundary.valid_ground(Vector2(INF,0)), "nonfinite positions rejected")
 	var app := App.instantiate(); var token := str(Time.get_ticks_usec())
 	app.settings_path = "user://skill_placement_settings_" + token + ".json"
-	app.progress_path = "user://skill_placement_progress_" + token + ".json"
+	app.slots_path = "user://skill_placement_progress_" + token + ".json"
 	root.add_child(app); await app.menu_ready; app.menu.hide(); app.menu.set_process_input(false)
 	for level in [1,2,3]:
 		var battle := Battle.new(); app.add_child(battle)

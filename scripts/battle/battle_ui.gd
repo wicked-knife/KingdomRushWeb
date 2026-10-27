@@ -121,7 +121,7 @@ func _selection(id: String, closing: bool) -> void:
 	if closing: tower = tower.duplicate(); tower.type = closing_type; tower.template = closing_template
 	var t: Dictionary = sim.tower_template(tower)
 	var range_pos: Vector2 = view.world(tower.pos + Vector2(0, 12))
-	if tower.type != "" and not closing:
+	if tower.type not in ["","holder_elf"] and not closing:
 		var radius: float = t.barrack.rally_range if tower.type == "barrack" else t.attacks.range
 		var ellipse := PackedVector2Array()
 		for i in range(65): ellipse.append(range_pos + Vector2(cos(i * TAU / 64), sin(i * TAU / 64) * 0.7) * radius)
@@ -155,7 +155,7 @@ func _selection(id: String, closing: bool) -> void:
 	else:
 		var target: String = sim.upgrade_target(tower)
 		if target != "" and not sim.tower_locked(target):
-			var item: Dictionary = data.get("upgrade_menus", {}).get(target, data.tower_menus[tower.type][0])
+			var item: Dictionary = data.get("upgrade_menus", {}).get(target, {})
 			var price: int = sim.templates[target].tower.price
 			var pos: Vector2 = view.Simulation.vec(data.tower_menu_button_places[int(item.place) - 1])
 			_menu_icon(item.image, pos, "upgrade", {"id": id, "upgrade_to": target}, price, enabled and sim.gold >= price)
@@ -171,6 +171,9 @@ func _selection(id: String, closing: bool) -> void:
 				for rank in range(3):
 					paint.image("power_rank_0001" if rank < int(tower.powers[power]) else "power_rank_0002", pos + Vector2((rank - 1) * 9, 17), Vector2(0.5,0.5))
 		if tower.type == "barrack": _menu_icon("sub_icons_0001", Vector2(128, 118), "target", {"power": "rally"}, -1, enabled)
+		if t.get("mercenary",false):
+			var price: int = sim.Elf.price(sim,tower,"soldier_elf")
+			_menu_icon("main_icons_0016",Vector2(74,6),"buy_soldier",{"id":id,"type":"soldier_elf"},int(sim.templates.soldier_elf.unit.price),enabled and price >= 0 and sim.gold >= price)
 		_menu_icon("ico_sell_0001", Vector2(74, 140), "sell", {"id": id}, -1, enabled)
 	paint.pop(); paint.pop()
 	if not closing and enabled: _tower_tooltip(tower)
@@ -203,10 +206,12 @@ func _tower_tooltip(tower: Dictionary) -> void:
 		description = "本关只能建造一级防御塔。" if int(view.sim.tower_template(tower).tower.level) == 1 else "本关防御塔最高可升至二级。"
 	var target: String = view.sim.upgrade_target(tower)
 	if target != "" and view.hovered == "upgrade" + str({"id": tower.id, "upgrade_to": target}):
-		var item: Dictionary = data.get("upgrade_menus", {}).get(target, data.tower_menus[tower.type][0])
+		var item: Dictionary = data.get("upgrade_menus", {}).get(target, {})
 		title = text(item.tt_title); description = text(item.tt_desc)
 	if view.hovered == "sell" + str({"id": tower.id}):
 		title = "出售防御塔"; description = "返还 %d 金币" % view.sim.sell_refund(tower)
+	if view.hovered == "buy_soldier" + str({"id":tower.id,"type":"soldier_elf"}):
+		title = text("TOWER_ELF_NAME"); description = text("TOWER_ELF_DESCRIPTION") + "\n已招募 %d/4 个兵位；阵亡后自动补员。" % int(tower.get("hired",0))
 	for item: Dictionary in data.tower_menus.get(str(view.sim.tower_template(tower).tower.type), []):
 		var power: String = item.get("action_arg", "")
 		if not tower.get("powers",{}).has(power) or view.hovered != "upgrade_power" + str({"id":tower.id,"power":power}): continue
@@ -366,10 +371,27 @@ func notice(id: String) -> void:
 	var notification: Dictionary = data.notifications[id]
 	var power := id.begins_with("POWER_")
 	var enemy := id.begins_with("enemy_")
-	var paper: String = "notifications_newenemy" if power or enemy else notification.paper
+	var paper: String = "notifications_newenemy" if power or enemy else notification.get("paper","notifications_newenemy")
 	var dimensions := _size(paper)
-	_panel(id, dimensions + Vector2(0, 48))
-	if notification.get("layout", "") == "upgrade":
+	var dual_tower: bool = notification.get("layout", "") == "N_TOWER_2"
+	_panel(id, Vector2(dimensions.x, dimensions.y * 2 + 34) if dual_tower else dimensions + Vector2(0, 48))
+	if notification.get("layout", "") == "N_TOWER_2":
+		# Include the title above the source cards in the viewport fitting bounds.
+		paint.push(Vector2(0,64))
+		for i in range(2):
+			var y := i * (dimensions.y - 30)
+			paint.image(paper,Vector2(0,y))
+			paint.push(Vector2(134,160 + y),1,1,PI / 24)
+			paint.image(notification.images[i],Vector2.ZERO,Vector2(0.5,0.5))
+			paint.image("notifications_polaroid_overlay",Vector2.ZERO,Vector2(0.5,0.5))
+			paint.pop()
+			paint.label(text(notification.subs[i]),Rect2(257,70 + y,320,20),15,Color("181a0f"),"left","top")
+			paint.label(text(notification.prefixes[i] + "_NAME"),Rect2(255,90 + y,320,40),28,Color("181a0f"),"left","top",1,0,"","body_slides")
+			paint.label(text(notification.prefixes[i] + "_EXTRA"),Rect2(255,130 + y,320,100),17,Color("181a0f"),"left","top")
+		_title("notifications_tit_towers_bg","新防御塔",Vector2.ZERO,false)
+		paint.button("notifications_but_dark_bg_0001",Vector2(450,dimensions.y * 2 - 70),"知道了","confirm",{},true,"notice")
+		paint.pop()
+	elif notification.get("layout", "") == "upgrade":
 		var tier: String = "三级" if int(notification.get("tier", 2)) == 3 else "二级"
 		_title("notifications_tit_towers_bg", tier + "防御塔", Vector2(80, 40), false)
 		paint.image(paper)

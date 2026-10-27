@@ -1,4 +1,5 @@
 extends SceneTree
+const Fixture = preload("res://tests/slot_fixture.gd")
 ## Run with a rendering driver, e.g. --path . --script tests/menu_visual_smoke.gd --resolution 1280x720
 
 const App = preload("res://scenes/app_root.tscn")
@@ -17,7 +18,7 @@ func _run() -> void:
 	)
 	var app := App.instantiate()
 	app.settings_path = "user://menu_visual_test_" + str(Time.get_ticks_usec()) + ".json"
-	app.progress_path = app.settings_path + ".progress"
+	app.slots_path = app.settings_path + ".progress"
 	root.add_child(app)
 	await app.menu_ready
 	var menu: Control = app.menu
@@ -34,12 +35,12 @@ func _run() -> void:
 	app._return_to_menu(); await process_frame
 	await _capture("menu_slots_zero_" + suffix)
 	menu._select_slot(1); await app.map_ready
-	app.campaign.record_result({"level_id": 1, "mode": 1, "difficulty": 2, "result": "victory", "lives": 20})
+	Fixture.complete(app.campaign, {"level_id": 1, "mode": 1, "difficulty": 2, "result": "victory", "lives": 20})
 	# Native presentation fixtures cover multi-digit counters beside all three
 	# painted icons. No player-facing progress shortcut is introduced.
 	var full: RefCounted = app.slots.select_slot(2)
 	for stage: Dictionary in full.definition.levels:
-		full.levels[str(int(stage.id))] = {"campaign": 2, "stars": 3, "heroic": 2, "iron": 2}
+		full.levels[int(stage.id)] = {1: 2, "stars": 3, 2: 2, 3: 2}
 	full.save(); full.changed.emit()
 	app.slots.select_slot(1)
 	app._return_to_menu()

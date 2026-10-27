@@ -1,4 +1,5 @@
 extends SceneTree
+const Fixture = preload("res://tests/slot_fixture.gd")
 const App = preload("res://scenes/app_root.tscn")
 var app: Control
 var room: Control
@@ -12,7 +13,7 @@ func _run() -> void:
 	create_timer(100).timeout.connect(func(): push_error("Hero visual timeout"); quit(1))
 	var temporary := "user://hero_visual_" + str(Time.get_ticks_usec())
 	DirAccess.make_dir_recursive_absolute(temporary)
-	app = App.instantiate(); app.settings_path = temporary + "/settings.json"; app.progress_path = temporary + "/campaign.json"
+	app = App.instantiate(); app.settings_path = temporary + "/settings.json"; app.slots_path = temporary + "/campaign.json"
 	root.add_child(app); await app.menu_ready
 	app.menu.start_button.pressed.emit(); app.menu._select_slot(1); await app.map_ready
 	app.campaign_map._action("heroes"); room = app.campaign_map.hero_room
@@ -27,7 +28,7 @@ func _run() -> void:
 	for row: Dictionary in app.campaign.hero_definition.heroes:
 		if row.portrait.begins_with("generated_portrait_"):
 			room.show_hero(row.name); await capture(row.name)
-	app.campaign.record_result({"generation": 1, "level_id": 1, "mode": 1, "difficulty": 2, "lives": 20, "result": "victory"})
+	Fixture.complete(app.campaign, {"generation": 1, "level_id": 1, "mode": 1, "difficulty": 2, "lives": 20, "result": "victory"})
 	room.show_hero("hero_eiskalt"); await capture("unlocked")
 	await click_action("select")
 	await create_timer(0.15).timeout

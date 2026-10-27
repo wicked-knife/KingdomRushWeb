@@ -1,0 +1,1064 @@
+{
+	"actions": [
+		{
+			"args": {},
+			"kind": "confirm",
+			"tick": 0
+		},
+		{
+			"args": {
+				"id": "6",
+				"type": "barrack"
+			},
+			"kind": "build",
+			"tick": 0
+		},
+		{
+			"args": {},
+			"kind": "wave",
+			"tick": 0
+		},
+		{
+			"args": {
+				"id": "6",
+				"upgrade_to": "tower_barrack_2"
+			},
+			"kind": "upgrade",
+			"tick": 25
+		},
+		{
+			"args": {
+				"id": "6",
+				"pos": {
+					"x": 650.0,
+					"y": 590.0
+				}
+			},
+			"kind": "rally",
+			"tick": 25
+		},
+		{
+			"args": {
+				"id": "4",
+				"upgrade_to": "tower_ranger"
+			},
+			"kind": "upgrade",
+			"tick": 30
+		},
+		{
+			"args": {
+				"id": "5",
+				"upgrade_to": "tower_elf"
+			},
+			"kind": "upgrade",
+			"tick": 35
+		},
+		{
+			"args": {
+				"id": "5",
+				"pos": {
+					"x": 450.0,
+					"y": 565.0
+				}
+			},
+			"kind": "rally",
+			"tick": 35
+		},
+		{
+			"args": {
+				"id": "5",
+				"type": "soldier_elf"
+			},
+			"kind": "buy_soldier",
+			"tick": 40
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 565.761840820313,
+					"y": -40.0948257446289
+				},
+				"power": "fire"
+			},
+			"kind": "cast",
+			"tick": 65
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 566.0,
+					"y": 17.2668037414551
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 105
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 401.0,
+					"y": 289.573699951172
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 405
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 622.633544921875,
+					"y": 464.267120361328
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 705
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 356.165496826172,
+					"y": 517.582763671875
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 1005
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 447.410186767578,
+					"y": 562.630004882813
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 1305
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 653.357177734375,
+					"y": 438.142852783203
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 1605
+		},
+		{
+			"args": {
+				"id": "5",
+				"type": "soldier_elf"
+			},
+			"kind": "buy_soldier",
+			"tick": 1755
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 665.070068359375,
+					"y": 467.315368652344
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 1905
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 397.123413085938,
+					"y": 571.606689453125
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 2205
+		},
+		{
+			"args": {},
+			"kind": "wave",
+			"tick": 2425
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 352.889526367188,
+					"y": 558.825561523438
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 2425
+		},
+		{
+			"args": {
+				"id": "5",
+				"power": "bleed"
+			},
+			"kind": "upgrade_power",
+			"tick": 2715
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 1115.26867675781,
+					"y": 187.0
+				},
+				"power": "fire"
+			},
+			"kind": "cast",
+			"tick": 2715
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 775.424438476563,
+					"y": 249.122207641602
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 2725
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 675.994079589844,
+					"y": 552.979248046875
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 3025
+		},
+		{
+			"args": {},
+			"kind": "wave",
+			"tick": 3230
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 672.310852050781,
+					"y": 540.9326171875
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 3230
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 781.920776367188,
+					"y": 265.841522216797
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 3530
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 672.880065917969,
+					"y": 542.640258789063
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 3830
+		},
+		{
+			"args": {
+				"id": "12",
+				"type": "archer"
+			},
+			"kind": "build",
+			"tick": 3870
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 653.152770996094,
+					"y": 549.03466796875
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 4130
+		},
+		{
+			"args": {},
+			"kind": "wave",
+			"tick": 4135
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 565.0,
+					"y": 48.875659942627
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 4280
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 450.372802734375,
+					"y": 193.322052001953
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 4580
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 487.677154541016,
+					"y": 200.13835144043
+				},
+				"power": "fire"
+			},
+			"kind": "cast",
+			"tick": 4635
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 466.788879394531,
+					"y": 379.525909423828
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 4880
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 593.123046875,
+					"y": 443.5205078125
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 5180
+		},
+		{
+			"args": {
+				"id": "12",
+				"upgrade_to": "tower_archer_2"
+			},
+			"kind": "upgrade",
+			"tick": 5315
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 609.435729980469,
+					"y": 561.35888671875
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 5480
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 546.149108886719,
+					"y": 149.239059448242
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 5780
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 459.312286376953,
+					"y": 398.656127929688
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 6080
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 666.966857910156,
+					"y": 518.80126953125
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 6380
+		},
+		{
+			"args": {
+				"id": "12",
+				"upgrade_to": "tower_archer_3"
+			},
+			"kind": "upgrade",
+			"tick": 6645
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 364.682586669922,
+					"y": 562.880981445313
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 6680
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 513.383361816406,
+					"y": 566.626159667969
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 6980
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 447.113616943359,
+					"y": 215.962127685547
+				},
+				"power": "fire"
+			},
+			"kind": "cast",
+			"tick": 7035
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 631.676330566406,
+					"y": 550.3671875
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 7280
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 732.568786621094,
+					"y": 750.549926757813
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 7580
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 472.2783203125,
+					"y": 382.966979980469
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 7880
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 674.639770507813,
+					"y": 554.239196777344
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 8180
+		},
+		{
+			"args": {
+				"id": "12",
+				"upgrade_to": "tower_ranger"
+			},
+			"kind": "upgrade",
+			"tick": 8215
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 443.544403076172,
+					"y": 387.362945556641
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 8480
+		},
+		{
+			"args": {},
+			"kind": "wave",
+			"tick": 8485
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 420.227020263672,
+					"y": 364.272430419922
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 8485
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 413.544128417969,
+					"y": 352.269653320313
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 8785
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 668.944030761719,
+					"y": 531.608032226563
+				},
+				"power": "fire"
+			},
+			"kind": "cast",
+			"tick": 9045
+		},
+		{
+			"args": {
+				"id": "6",
+				"upgrade_to": "tower_barrack_3"
+			},
+			"kind": "upgrade",
+			"tick": 9075
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 681.0009765625,
+					"y": 575.503479003906
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 9085
+		},
+		{
+			"args": {},
+			"kind": "wave",
+			"tick": 9090
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 585.0,
+					"y": 49.9245376586914
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 9145
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 645.715393066406,
+					"y": 470.003784179688
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 9445
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 646.907470703125,
+					"y": 626.907470703125
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 9745
+		},
+		{
+			"args": {
+				"id": "4",
+				"power": "thorn"
+			},
+			"kind": "upgrade_power",
+			"tick": 10030
+		},
+		{
+			"args": {},
+			"kind": "wave",
+			"tick": 10030
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 1034.33801269531,
+					"y": 146.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 10165
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 785.0,
+					"y": 327.779266357422
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 10465
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 695.610717773438,
+					"y": 610.832092285156
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 10765
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 777.200866699219,
+					"y": 188.199447631836
+				},
+				"power": "fire"
+			},
+			"kind": "cast",
+			"tick": 10905
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 633.26025390625,
+					"y": 550.040954589844
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 11065
+		},
+		{
+			"args": {},
+			"kind": "wave",
+			"tick": 11300
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 626.0,
+					"y": 509.413146972656
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 11300
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 951.213012695313,
+					"y": 169.969573974609
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 11600
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 667.193359375,
+					"y": 450.008331298828
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 11900
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 676.366394042969,
+					"y": 554.282348632813
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 12200
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 652.9853515625,
+					"y": 548.448852539063
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 12500
+		},
+		{
+			"args": {
+				"id": "4",
+				"power": "thorn"
+			},
+			"kind": "upgrade_power",
+			"tick": 12525
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 767.238037109375,
+					"y": 198.514312744141
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 12800
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 780.081787109375,
+					"y": 186.278793334961
+				},
+				"power": "fire"
+			},
+			"kind": "cast",
+			"tick": 13005
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 674.149291992188,
+					"y": 441.850708007813
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 13100
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 654.304016113281,
+					"y": 553.064086914063
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 13400
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 629.248107910156,
+					"y": 415.915588378906
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 13700
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 574.935852050781,
+					"y": 401.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 14000
+		},
+		{
+			"args": {
+				"id": "4",
+				"power": "thorn"
+			},
+			"kind": "upgrade_power",
+			"tick": 14040
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 675.990966796875,
+					"y": 552.968444824219
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 14300
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 675.990966796875,
+					"y": 552.968444824219
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 14600
+		},
+		{
+			"args": {
+				"id": "5",
+				"type": "soldier_elf"
+			},
+			"kind": "buy_soldier",
+			"tick": 14615
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 628.408386230469,
+					"y": 528.429382324219
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 14900
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 585.0,
+					"y": 39.3645401000977
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 15200
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 542.69677734375,
+					"y": 151.530639648438
+				},
+				"power": "fire"
+			},
+			"kind": "cast",
+			"tick": 15405
+		},
+		{
+			"args": {
+				"id": "5",
+				"type": "soldier_elf"
+			},
+			"kind": "buy_soldier",
+			"tick": 15440
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 386.975891113281,
+					"y": 339.391479492188
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 15500
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 646.879211425781,
+					"y": 515.154541015625
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 15800
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 661.519897460938,
+					"y": 580.559692382813
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 16100
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 650.296691894531,
+					"y": 535.186706542969
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 16400
+		},
+		{
+			"args": {
+				"id": "4",
+				"power": "poison"
+			},
+			"kind": "upgrade_power",
+			"tick": 16510
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 686.522216796875,
+					"y": 590.044494628906
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 16700
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 664.214965820313,
+					"y": 583.834899902344
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 17000
+		},
+		{
+			"args": {},
+			"kind": "wave",
+			"tick": 17025
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 391.426696777344,
+					"y": 549.550476074219
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 17025
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 564.0,
+					"y": 72.8134002685547
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 17325
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 549.0,
+					"y": -33.5110816955566
+				},
+				"power": "fire"
+			},
+			"kind": "cast",
+			"tick": 17450
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 427.783782958984,
+					"y": 227.216217041016
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 17625
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 473.85009765625,
+					"y": 405.221466064453
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 17925
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 627.0,
+					"y": 480.013153076172
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 18225
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 549.5478515625,
+					"y": 569.5068359375
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 18525
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 652.241943359375,
+					"y": 548.346801757813
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 18825
+		}
+	],
+	"level_id": 5,
+	"outcome": {
+		"gold": 588,
+		"lives": 8,
+		"spawned": 398,
+		"tick": 19015
+	},
+	"seed": 42
+}

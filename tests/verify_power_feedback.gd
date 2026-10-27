@@ -30,7 +30,7 @@ func _run() -> void:
 	create_timer(30).timeout.connect(func(): push_error("Power feedback timeout"); quit(1))
 	var app := App.instantiate(); var token := str(Time.get_ticks_usec())
 	app.settings_path = "user://power_feedback_settings_" + token + ".json"
-	app.progress_path = "user://power_feedback_progress_" + token + ".json"
+	app.slots_path = "user://power_feedback_progress_" + token + ".json"
 	root.add_child(app); await app.menu_ready; app.menu.hide(); app.menu.set_process_input(false)
 	var battle := ObservedBattle.new(); app.add_child(battle)
 	battle.initialize(app.loader, app.audio, Levels.load_definition(2))

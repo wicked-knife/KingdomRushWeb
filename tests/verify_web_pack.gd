@@ -29,6 +29,7 @@ func _init() -> void:
 		return
 	var manifest: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/menu_manifest.json"))
 	var expected: Array = [manifest.catalog, manifest.locale, manifest.sounds, manifest.font, manifest.background]
+	expected.append("res://data/save/definition.json")
 	expected.append_array(manifest.get("fonts", [manifest.font]))
 	expected.append(manifest.font_roles)
 	expected.append_array(manifest.scenes)
@@ -36,7 +37,7 @@ func _init() -> void:
 	expected.append_array(manifest.textures)
 	expected.append_array(manifest.audio.values())
 	expected.append_array(manifest.atlases.values())
-	for id in [1, 2, 3, 4]:
+	for id in [1, 2, 3, 4, 5]:
 		var base := "res://data/level%02d/" % id
 		var level: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(base + "manifest.json"))
 		expected.append_array(level.resources)
@@ -49,6 +50,7 @@ func _init() -> void:
 	expected.append("res://scripts/battle/dove_ui_layout.gd")
 	expected.append("res://scripts/battle/dove_animation.gd")
 	expected.append("res://scripts/battle/dove_projectile.gd")
+	for script in ["dove_ranger","dove_modifiers","dove_elf","dove_spider","dove_arrow_missile"]: expected.append("res://scripts/battle/" + script + ".gd")
 	expected.append("res://scripts/battle/dove_unit_info.gd")
 	expected.append("res://scripts/battle/battle_wave_flags.gd")
 	expected.append("res://scripts/map/dove_map_flag.gd")
@@ -71,6 +73,17 @@ func _init() -> void:
 			failures.append("Missing resource: " + path)
 	if load("res://scenes/app_root.tscn") == null:
 		failures.append("Exported main scene or script dependencies failed to load")
+	var progress_script = load("res://scripts/services/campaign_progress.gd")
+	var smoke_path := args[0].get_base_dir() + "/slot_smoke.json"
+	var session = progress_script.new(); session.initialize(smoke_path)
+	if not progress_script.valid(progress_script.read_json("res://data/save/definition.json").template) or session.max_stars != 645:
+		failures.append("Unified slot template or source star total missing")
+	session.data.last_victory = {"level_idx": 1, "level_mode": 1, "level_difficulty": 2, "stars": 3, "unlock_towers": ["tower_ranger"]}
+	var settlement: Dictionary = session.enter_map()
+	if session.record(1).get(1, 0) != 2 or settlement.unlocked != [2] or session.data.has("last_victory") or "tower_ranger" in session.data.locked_towers:
+		failures.append("Exported unified slot settlement failed")
+	for suffix in ["", ".tmp", ".bak"]:
+		if FileAccess.file_exists(smoke_path + suffix): DirAccess.remove_absolute(smoke_path + suffix)
 	var definition: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/level01/definition.json"))
 	var hero_definition: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/heroes/definition.json"))
 	if hero_definition.get("heroes", []).size() != 79: failures.append("Hero roster incomplete")
@@ -83,9 +96,9 @@ func _init() -> void:
 	var sim_script = load("res://scripts/battle/level01_sim.gd")
 	for script: String in ["res://scripts/map/dove_map_flag.gd", "res://scripts/battle/battle_wave_flags.gd"]:
 		if not ResourceLoader.exists(script) or load(script) == null: failures.append("Interaction script missing: " + script)
-	for id in [1, 2, 3, 4]:
+	for id in [1, 2, 3, 4, 5]:
 		var stage: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/level%02d/definition.json" % id))
-		if stage.get("locations", {}).get("entrances", []).size() != {1:1, 2:1, 3:2, 4:2}[id]: failures.append("Exported entrances incomplete %d" % id)
+		if stage.get("locations", {}).get("entrances", []).size() != {1:1, 2:1, 3:2, 4:2, 5:3}[id]: failures.append("Exported entrances incomplete %d" % id)
 		var art = load("res://scripts/dove_asset_catalog.gd").new(stage.level.root + "catalog.json")
 		for image: String in ["nextwaveTimer_Full", "nextwaveTimer_0001", "nextwaveTimer_0002", "nextwaveTimer_0020", "nextwaveTimer_glow_0001"]:
 			if art.get_frame(stage.level.group, image).is_empty(): failures.append("Exported wave flag art missing: " + image)
@@ -94,7 +107,7 @@ func _init() -> void:
 		for frame in range(1,15):
 			if art.get_frame(stage.level.group, "error_feedback_%04d" % frame).is_empty(): failures.append("Exported invalid-point feedback missing %d/%d" % [id,frame])
 		var placement = sim_script.new(stage)
-		var grass: Vector2 = {1:Vector2(256,424), 2:Vector2(256,328), 3:Vector2(256,376), 4:Vector2(100,100)}[id]
+		var grass: Vector2 = {1:Vector2(256,424), 2:Vector2(256,328), 3:Vector2(256,376), 4:Vector2(100,100), 5:Vector2(100,100)}[id]
 		if placement.valid_power_point("reinforcements", grass) or not placement.valid_power_point("reinforcements", placement.towers[0].rally): failures.append("Exported troop placement rules invalid %d" % id)
 		if id == 2:
 			placement.notices.clear(); placement.command("build", {"id":"5", "type":"barrack"})
@@ -123,11 +136,19 @@ func _init() -> void:
 		var simulation = sim_script.new(definition)
 		if simulation.towers.size() != 8: failures.append("Exported simulation initialization failed")
 		var levels = load("res://scripts/services/campaign_levels.gd")
-		for id in [2, 3, 4]:
+		for id in [2, 3, 4, 5]:
 			var stage: Dictionary = levels.load_definition(id)
 			if stage.is_empty(): failures.append("Exported campaign dependencies invalid %d" % id); continue
 			var campaign = sim_script.new(stage)
-			if campaign.towers.size() != {2: 7, 3: 12, 4: 15}[id] or campaign.data.waves.groups.size() != {2: 7, 3: 11, 4: 13}[id]: failures.append("Exported campaign initialization invalid %d" % id)
+			if campaign.towers.size() != {2: 7, 3: 12, 4: 15, 5:14}[id] or campaign.data.waves.groups.size() != {2: 7, 3: 11, 4: 13, 5:15}[id]: failures.append("Exported campaign initialization invalid %d" % id)
+			if id == 5:
+				campaign.notices.clear()
+				if campaign.gold != 700 or not campaign.command("upgrade",{"id":"5","upgrade_to":"tower_elf"}) or not campaign.command("buy_soldier",{"id":"5","type":"soldier_elf"}) or not campaign.command("upgrade",{"id":"4","upgrade_to":"tower_ranger"}): failures.append("Pack fifth camp/ranger transactions failed")
+				for tick in range(90): campaign.step()
+				if campaign.soldiers.size() != 1 or campaign.gold != 180: failures.append("Pack fifth recruitment failed")
+				var mother: Dictionary = campaign._spawn_enemy("enemy_spider_big",0,0)
+				mother.egg_at = campaign.tick-1; campaign.Spider.lay(campaign,mother)
+				if campaign.eggs.size() != 1: failures.append("Pack fifth egg dependency failed")
 			if id == 4:
 				campaign.notices.clear(); campaign.gold = 2500
 				for kind: String in sim_script.TYPES:

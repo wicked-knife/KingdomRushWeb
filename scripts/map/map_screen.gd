@@ -54,7 +54,7 @@ func initialize(loader: Node, boot: Node, sound: Node, preferences: Node, campai
 	paint = Layout.new(self, fonts, 1080)
 	interface = Interface.new(self)
 	animation_player = Animations.new(definition.animations)
-	changes = progress.consume_changes()
+	changes = progress.enter_map()
 	for id in changes.get("unlocked", []):
 		var duration := 0.0
 		for deco: Dictionary in definition.decos:
@@ -171,7 +171,7 @@ func _draw() -> void:
 		if layer == 2:
 			for stage: Dictionary in definition.levels:
 				if progress.is_unlocked(int(stage.id)): _flag(stage)
-	if not progress.record(1).has("campaign"):
+	if not progress.record(1).has(1):
 		paint.push(Vector2(292, 775), 0.98 + sin(animation_player.time * 5) * 0.02)
 		paint.image("mapBalloon_starthere_notxt", Vector2.ZERO, Vector2(0.5, 1))
 		paint.label("从这里开始！", Rect2(-82, -60, 164, 32), 18, Color("2e2927"), "center", "middle", 1)

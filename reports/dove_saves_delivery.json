@@ -1,0 +1,118 @@
+{
+  "date": "2026-10-27",
+  "implementation_verified": true,
+  "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+  "slot_format": "Dove semantics / JSON schema 1",
+  "slot_paths": [
+    "user://saves/slot_1.json",
+    "user://saves/slot_2.json",
+    "user://saves/slot_3.json"
+  ],
+  "generation_rules": [
+    1,
+    2,
+    3,
+    5,
+    6
+  ],
+  "source_inputs": 8,
+  "source_max_stars": 645,
+  "definition_sha256": "723807d8dbb3afb6712d3d5ee928fd6b44aa3977e49e309ff536eabb2000eedc",
+  "logic": {
+    "browser_tested": false,
+    "checks": 113,
+    "failures": [],
+    "generations": [
+      1,
+      2,
+      3,
+      5,
+      6
+    ],
+    "passed": true
+  },
+  "native": {
+    "captures": [
+      "res://reports/dove_saves_fifth_map.png",
+      "res://reports/dove_saves_pending_victory.png",
+      "res://reports/dove_saves_discarded_victory.png",
+      "res://reports/dove_saves_settled_map.png",
+      "res://reports/dove_saves_sixth_preview.png"
+    ],
+    "checks": 10,
+    "empty_defense": true,
+    "failures": [],
+    "legal_fifth_replays": 2,
+    "passed": true,
+    "physical_mouse": true,
+    "resolution": [
+      1280,
+      720
+    ]
+  },
+  "regressions": {
+    "map_checks": 36066,
+    "hero_checks": 35,
+    "slot_and_developer_checks": 67,
+    "campaign_2_to_4_checks": 963,
+    "level05_checks": 424,
+    "interaction_checks": 448,
+    "tower_upgrades_checks": 267,
+    "menu_bootstrap_passed": true
+  },
+  "source_export_reproducible": true,
+  "web": {
+    "package_created": true,
+    "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+    "browser_tested": false,
+    "build_type": "release",
+    "developer_menu": false,
+    "includes_hero_room": true,
+    "playable_levels": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "pck_isolated_check": true,
+    "pck_files": 560,
+    "bundle": "build\\KingdomRush-KR1-Levels01-05-Web.zip",
+    "bytes": 140772360,
+    "sha256": "4d22aa62702c644b67c016e10eabc6d9d08b5a45b316be17ce3e0c03ba14eb71"
+  },
+  "zip_integrity_check": true,
+  "archive_entries": 13,
+  "browser_tested": false,
+  "old_save_code_and_tests_removed": true,
+  "local_old_file_cleanup": {
+    "completed": true,
+    "location": "%APPDATA%/Godot/app_userdata/Kingdom Rush Dove Web",
+    "old_targets": [
+      "campaign_kr1.json.migrated",
+      "saves/kr1/",
+      "earlier test *.slots directories"
+    ],
+    "preserve": [
+      "saves/slot_1.json",
+      "saves/slot_2.json",
+      "saves/slot_3.json",
+      "settings.json"
+    ],
+    "result": "Retried successfully; obsolete local saves and temporary artifacts removed.",
+    "cleanup": {
+      "removed_files": 1080,
+      "removed_directories": 347,
+      "freed_bytes": 774614525,
+      "freed_MiB": 738.73,
+      "old_save_files_removed": true,
+      "old_kr1_directory_exists": false,
+      "settings_preserved": true,
+      "current_web_preserved": true,
+      "background_candidates_preserved": true,
+      "qa_screenshots_removed": 474
+    }
+  },
+  "preexisting_project_godot_changes_preserved": true,
+  "git_diff_check_passed": true
+}

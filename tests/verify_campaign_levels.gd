@@ -1,4 +1,5 @@
 extends SceneTree
+const Fixture = preload("res://tests/slot_fixture.gd")
 const Sim = preload("res://scripts/battle/level01_sim.gd")
 const Levels = preload("res://scripts/services/campaign_levels.gd")
 const Replay = preload("res://tests/campaign_playback.gd")
@@ -13,7 +14,7 @@ func check(ok: bool, label: String) -> void:
 	if not ok: failures.append(label); push_error(label)
 
 func _run() -> void:
-	check(Levels.load_definition(5).is_empty() and Levels.load_definition(2, 2).is_empty(), "only four normal campaigns available")
+	check(Levels.load_definition(6).is_empty() and Levels.load_definition(2, 2).is_empty(), "sixth campaign and challenges remain previews")
 	for id in [2, 3, 4]:
 		var definition := Levels.load_definition(id)
 		check(not definition.is_empty(), "valid manifest %d" % id)
@@ -47,21 +48,21 @@ func _run() -> void:
 	progress.initialize(path)
 	for id in [1, 2, 3, 4]:
 		check(progress.is_playable(id), "campaign sequential entry %d" % id)
-		progress.record_result({"generation": 1, "level_id": id, "mode": 1, "difficulty": 2, "result": "victory", "lives": 20})
+		Fixture.complete(progress, {"generation": 1, "level_id": id, "mode": 1, "difficulty": 2, "result": "victory", "lives": 20})
 		if id == 3:
-			var legacy := Progress.new(); legacy.initialize(path)
-			check(legacy.total_stars() == 9 and legacy.is_playable(4), "existing three-stage save naturally opens fourth")
-	check(progress.is_unlocked(5) and not progress.is_playable(5) and progress.total_stars() == 12, "fifth flag unlocks as preview")
+			var settled := Progress.new(); settled.initialize(path)
+			check(settled.total_stars() == 9 and settled.is_playable(4), "settled three-stage slot opens fourth")
+	check(progress.is_unlocked(5) and progress.is_playable(5) and progress.total_stars() == 12, "fifth campaign unlocks after fourth")
 	var restored := Progress.new(); restored.initialize(path)
 	check(restored.total_stars() == 12 and restored.is_playable(4), "four level progress reloads")
-	progress.mark_notification_seen("enemy_wolf_small"); restored.initialize(path)
-	check(restored.seen_notifications == ["enemy_wolf_small"], "read enemy notifications persist per save")
-	var known := Levels.load_definition(3); known.seen_notifications = restored.seen_notifications
+	progress.flush_seen({"enemy_wolf_small": true}); restored.initialize(path)
+	check(restored.data.seen.get("enemy_wolf_small", false), "encountered enemies persist per slot")
+	var known := Levels.load_definition(3); known.seen = restored.data.seen
 	var familiar = Sim.new(known); familiar._spawn_enemy("enemy_wolf_small")
 	check(familiar.alerts.is_empty(), "read enemy does not repeat its alert on later levels")
-	for enemy: String in ["enemy_bandit", "enemy_brigand"]: progress.mark_notification_seen(enemy)
+	progress.flush_seen({"enemy_bandit": true, "enemy_brigand": true})
 	restored.initialize(path)
-	var fourth := Levels.load_definition(4); fourth.seen_notifications = restored.seen_notifications
+	var fourth := Levels.load_definition(4); fourth.seen = restored.data.seen
 	var seen = Sim.new(fourth)
 	seen._spawn_enemy("enemy_bandit"); seen._spawn_enemy("enemy_brigand")
 	check(seen.alerts.is_empty(), "fourth enemy notices persist and suppress repeated alerts")

@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+  "source_inputs": 45,
+  "frames": 3030,
+  "canonical_frames": 1654,
+  "animations": 217,
+  "resources": 79,
+  "sha256": {
+    "animations.json": "ab6aba68712ebffcbb49aa67d51a1cc242c5e86128a6b3300419a4573ef9cce1",
+    "atlas.json": "ad7ff7687c7268030a4893a88c4bd544ac5b804a6db269da6e72e3a13f3ace2d",
+    "atlas_0.png": "9ce11fc15d0a0ca108cb87be330e3a90c5bce91c2b6012fedb402b5bbfea49bd",
+    "atlas_1.png": "39bb86ae0af506709d1f7610b0adc39662263b27175b1012fd174db2d75a3265",
+    "atlas_2.png": "97ee944578b4e7164e69a803e5b3532c5d0f734d22673e823533be940fc201ee",
+    "atlas_3.png": "8b7f66eaca5f40f652ba68698c276b613ca50e078aa0e689d5ca5484a84ef75f",
+    "atlas_4.png": "1ca95f5ee0949c07a050480e9c982c85da967ae27fc2b7613d8e7cf37ae7a77d",
+    "atlas_5.png": "b1288a0bd5b521bdbb6a9adf2d7a08c1a37f53f556f1b256876eded3a491b214",
+    "atlas_6.png": "807a2b6ba9e383e8ab8377cfa54cc498f3378fdfe58baf40710d156446e140fa",
+    "atlas_7.png": "202558f19fa27456a6b911d9694bf316b66dc30167a462e1bb17d00f60681d63",
+    "atlas_8.png": "8560df502c6b24e3d19eb47d972f1bab7243c30c6a2228002ad71d03d425e61d",
+    "catalog.json": "e730d96782e3a48e05e5ea05be030b6294ce8cb753254a13cd0387dc1d922f33",
+    "definition.json": "d44fbb352a579e9bcf0bae95a608cffbc364f48ddd02fa60d2d66df18f562411",
+    "manifest.json": "6c5d292becc157f2834ef64c032b20f7dad68c7c52faff62c3f47b07157ff213",
+    "sounds.json": "86dcf0d8b68ca12a3d7a5db76b3b863e4e7daecc979b4d466ff4042d049dd44d"
+  }
+}

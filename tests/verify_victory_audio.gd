@@ -19,7 +19,7 @@ func _run() -> void:
 	create_timer(30).timeout.connect(func(): push_error("Victory audio timeout"); quit(1))
 	var app := App.instantiate(); var token := str(Time.get_ticks_usec())
 	app.settings_path = "user://victory_audio_settings_" + token + ".json"
-	app.progress_path = "user://victory_audio_progress_" + token + ".json"
+	app.slots_path = "user://victory_audio_progress_" + token + ".json"
 	root.add_child(app); await app.menu_ready
 	app.menu.hide(); app.menu.set_process_input(false)
 	var battle := ObservedBattle.new(); app.add_child(battle)

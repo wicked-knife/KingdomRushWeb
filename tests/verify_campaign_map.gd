@@ -1,4 +1,5 @@
 extends SceneTree
+const Fixture = preload("res://tests/slot_fixture.gd")
 const Progress = preload("res://scripts/services/campaign_progress.gd")
 const Animations = preload("res://scripts/map/map_animations.gd")
 const App = preload("res://scenes/app_root.tscn")
@@ -28,35 +29,35 @@ func _run() -> void:
 	var p := Progress.new(); p.initialize(temporary + "/progress.json")
 	check(p.unlocked == [1] and p.total_stars() == 0, "new progress exposes only flag one")
 	for lives in [0, 1, 5, 6, 17, 18, 20]: check(Progress.stars_for(lives) == {0: 0, 1: 1, 5: 1, 6: 2, 17: 2, 18: 3, 20: 3}[lives], "source star threshold %d" % lives)
-	check(not p.record_result(outcome(2, 20)), "locked result rejected")
-	check(p.record_result(outcome(1, 5)) and p.is_unlocked(2), "first win unlocks second flag")
+	check(not Fixture.complete(p, outcome(2, 20)), "locked result rejected")
+	check(Fixture.complete(p, outcome(1, 5)) and p.is_unlocked(2), "first win unlocks second flag")
 	check(p.total_stars() == 1 and p.is_playable(2) and not p.is_playable(3) and not p.is_playable(2, 2), "availability requires unlock and implemented mode")
-	check(p.record_result(outcome(1, 17)) and p.total_stars() == 2, "best score improves")
-	check(not p.record_result(outcome(1, 1)) and p.total_stars() == 2, "lower score does not reduce progress")
-	check(not p.record_result(outcome(1, 17)), "duplicate result is idempotent")
+	check(Fixture.complete(p, outcome(1, 17)) and p.total_stars() == 2, "best score improves")
+	check(not Fixture.complete(p, outcome(1, 1)) and p.total_stars() == 2, "lower score does not reduce progress")
+	check(not Fixture.complete(p, outcome(1, 17)), "duplicate result is idempotent")
 	var restored := Progress.new(); restored.initialize(p.path)
 	check(restored.total_stars() == 2 and restored.is_unlocked(2), "progress survives reload")
 	var defeated := outcome(1, 0); defeated.result = "defeat"
-	check(not p.record_result(defeated), "defeat gives no progress")
+	check(not Fixture.complete(p, defeated), "defeat gives no progress")
 	var invalid := outcome(1, 20); invalid.mode = 2
-	check(not p.record_result(invalid), "unimplemented challenge gives no progress")
-	check(p.record_result(outcome(1, 20)) and p.total_stars() == 3, "three star best")
-	var changes: Dictionary = p.consume_changes()
-	check(changes.stars["1"].before == 0 and changes.stars["1"].after == 3 and changes.unlocked == [2], "changes coalesce for map animation")
-	check(p.consume_changes().stars.is_empty(), "map consumes presentation once")
+	check(not Fixture.complete(p, invalid), "unimplemented challenge gives no progress")
+	check(p.record_result(outcome(1, 20)) and p.total_stars() == 2, "victory first persists pending result")
+	var changes: Dictionary = p.enter_map()
+	check(changes.stars["1"].before == 2 and changes.stars["1"].after == 3 and changes.unlocked.is_empty(), "map animates only this settlement")
+	check(p.enter_map().stars.is_empty(), "map consumes presentation once")
 	write(p.path, "broken")
 	restored.initialize(p.path)
 	check(restored.total_stars() == 2 and not restored.notice.is_empty(), "corrupt primary recovers backup")
 	write(temporary + "/future.json", {"schema_version": 99, "generation": 1})
-	restored.initialize(temporary + "/future.json"); restored.record_result(outcome(1, 20))
+	restored.initialize(temporary + "/future.json"); Fixture.complete(restored, outcome(1, 20))
 	check(not restored.save_allowed and JSON.parse_string(FileAccess.get_file_as_string(restored.path)).schema_version == 99, "future save remains intact")
-	restored.initialize(temporary + "/absent_parent/progress.json"); restored.record_result(outcome(1, 20))
+	restored.initialize(temporary + "/absent_parent/progress.json"); Fixture.complete(restored, outcome(1, 20))
 	check(restored.total_stars() == 3 and not restored.notice.is_empty(), "save failure retains session progress")
 	# Fixtures exercise source branch heads without exposing a player unlock shortcut.
-	for id in range(2, 13): check(p.record_result(outcome(id, 20)), "campaign progression %d" % id)
+	for id in range(2, 13): check(Fixture.complete(p, outcome(id, 20)), "campaign progression %d" % id)
 	for id in [13, 14, 15, 16, 18, 20, 22, 23, 1000]: check(p.is_unlocked(id), "post campaign branch %d" % id)
 	for id in [17, 19, 21, 24, 25, 26]: check(not p.is_unlocked(id), "branch continuation stays locked %d" % id)
-	for id in [13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 1000]: p.record_result(outcome(id, 20))
+	for id in [13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 1000]: Fixture.complete(p, outcome(id, 20))
 	check(p.unlocked.size() == 27 and p.total_stars() == 81, "all 27 source nodes supported")
 	var definition: Dictionary = p.definition
 	var atlas: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/map_kr1/atlas.json"))
@@ -67,7 +68,7 @@ func _run() -> void:
 		for layer in range(1, 4):
 			for item: Dictionary in player.items(layer): check(atlas.lookup.has(item.image), "sampled frame resolves " + item.image)
 	# Full app route, legitimate victory, empty-defense defeat, and repeated scene disposal.
-	var app := App.instantiate(); app.settings_path = temporary + "/settings.json"; app.progress_path = temporary + "/route.json"
+	var app := App.instantiate(); app.settings_path = temporary + "/settings.json"; app.slots_path = temporary + "/route.json"
 	root.add_child(app); await app.menu_ready
 	app.menu.start_button.pressed.emit(); app.menu._select_slot(1); await app.map_ready
 	check(app.campaign_map != null and app.battle == null and not app.menu.visible, "menu enters map")
@@ -95,12 +96,13 @@ func _run() -> void:
 	await process_frame
 	check(app.battle != null and app.campaign_map == null and app.map_loader == null, "map enters battle and releases map")
 	play(app.battle.sim, true)
-	check(app.battle.outcome.result == "victory" and app.campaign.total_stars() == app.battle.outcome.stars, "legal full battle records victory immediately")
+	check(app.battle.outcome.result == "victory" and app.campaign.total_stars() == 0 and app.campaign.data.has("last_victory"), "legal full battle persists pending victory")
 	var won: Dictionary = app.battle.outcome.duplicate()
 	app.battle._action("restart")
-	check(app.battle.outcome.is_empty() and app.battle.sim.speed == 1 and app.campaign.total_stars() == won.stars, "restart retains best score and resets battle")
+	check(app.battle.outcome.is_empty() and app.battle.sim.speed == 1 and app.campaign.data.has("last_victory"), "restart retains pending victory without settling")
 	play(app.battle.sim, false)
-	check(app.battle.outcome.result == "defeat" and app.campaign.total_stars() == won.stars, "empty defense defeat retains progress")
+	check(app.battle.outcome.result == "defeat" and app.campaign.total_stars() == 0 and not app.campaign.data.has("last_victory"), "defeat clears unsettled victory")
+	app.battle._action("restart"); play(app.battle.sim, true)
 	app.battle._action("map"); await app.map_ready
 	check(app.campaign.is_unlocked(2) and app.campaign_map.changes.unlocked == [2], "return animates newly unlocked level")
 	var counts := app.get_child_count()

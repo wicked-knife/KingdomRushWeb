@@ -1,4 +1,5 @@
 extends SceneTree
+const Fixture = preload("res://tests/slot_fixture.gd")
 const App = preload("res://scenes/app_root.tscn")
 const Replay = preload("res://tests/campaign_playback.gd")
 var app: Control
@@ -39,10 +40,10 @@ func pointer_action(kind: String, args: Dictionary = {}) -> void:
 func _run() -> void:
 	create_timer(240).timeout.connect(func(): push_error("Native campaign check exceeded 240 seconds"); quit(1))
 	suffix = "%dx%d" % [root.size.x, root.size.y]
-	app = App.instantiate(); app.settings_path = "user://campaign_visual_settings.json"; app.progress_path = "user://campaign_visual_%d.progress" % Time.get_ticks_usec(); root.add_child(app)
+	app = App.instantiate(); app.settings_path = "user://campaign_visual_settings.json"; app.slots_path = "user://campaign_visual_%d.progress" % Time.get_ticks_usec(); root.add_child(app)
 	await app.menu_ready
 	app.menu.start_button.pressed.emit(); app.menu._select_slot(1); await app.map_ready
-	app.campaign.record_result({"generation":1,"level_id":1,"mode":1,"difficulty":2,"result":"victory","lives":20})
+	Fixture.complete(app.campaign, {"generation":1,"level_id":1,"mode":1,"difficulty":2,"result":"victory","lives":20})
 	for id in [2, 3]:
 		app.campaign_map._action("level", {"id":id}); app.campaign_map._action("battle")
 		battle = app.battle

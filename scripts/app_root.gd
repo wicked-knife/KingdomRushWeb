@@ -11,7 +11,6 @@ const Battle = preload("res://scripts/battle/battle_view.gd")
 const MapScreen = preload("res://scripts/map/map_screen.gd")
 const MapLoader = preload("res://scripts/services/map_loader.gd")
 const SaveSlots = preload("res://scripts/services/save_slots.gd")
-const CampaignProgress = preload("res://scripts/services/campaign_progress.gd")
 var battle: Control
 var campaign_map: Control
 var map_loader: Node
@@ -33,7 +32,6 @@ var progress: ProgressBar
 var retry: Button
 var _font_ready := false
 var settings_path := MenuSettings.DEFAULT_PATH
-var progress_path := CampaignProgress.DEFAULT_PATH
 
 
 func _ready() -> void:
@@ -42,7 +40,6 @@ func _ready() -> void:
 	settings.name = "Settings"
 	add_child(settings)
 	slots = SaveSlots.new()
-	slots.initialize(slots_path if slots_path != "" else (SaveSlots.DEFAULT_ROOT if progress_path == CampaignProgress.DEFAULT_PATH else progress_path + ".slots"), progress_path)
 	audio = MenuAudio.new()
 	audio.name = "Audio"
 	add_child(audio)
@@ -106,6 +103,7 @@ func _build_loading() -> void:
 func _start() -> void:
 	retry.hide()
 	settings.initialize(settings_path)
+	slots.initialize(slots_path if slots_path != "" else SaveSlots.DEFAULT_ROOT, settings)
 	loader.initialize()
 
 
@@ -183,13 +181,14 @@ func _start_level(level_id: int, mode: int, difficulty: int) -> void:
 	if definition.is_empty():
 		if campaign_map != null: campaign_map.show_message(preload("res://scripts/services/campaign_levels.gd").last_error)
 		return
-	definition["seen_notifications"] = campaign.seen_notifications.duplicate()
+	definition["seen"] = campaign.data.seen.duplicate()
+	definition["slot_locked_towers"] = campaign.data.locked_towers.duplicate()
 	_release_map()
 	battle = Battle.new()
 	add_child(battle)
 	battle.initialize(loader, audio, definition)
 	battle.finished.connect(campaign.record_result)
-	battle.notification_seen.connect(campaign.mark_notification_seen)
+	battle.seen_flushed.connect(campaign.flush_seen)
 	battle.returned_to_map.connect(_return_to_map)
 
 

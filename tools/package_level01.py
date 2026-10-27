@@ -1,4 +1,4 @@
-"""Package the menu, KR1 map and campaigns 1-4 for manual Web acceptance."""
+"""Package the menu, KR1 map and campaigns 1-5 for manual Web acceptance."""
 from pathlib import Path
 import hashlib
 import json
@@ -27,24 +27,29 @@ def package():
         encoding="ascii",
     )
     (folder / "README.txt").write_text(
-        "Kingdom Rush Web - KR1 campaigns 1-4 playtest\n"
+        "Kingdom Rush Web - KR1 campaigns 1-5 playtest\n"
         "Source: Dove 2.1.0.2 / e29ece82\n\n"
         "1. Extract this whole folder.\n"
         "2. Run start_server.cmd (Python 3 required), or serve this folder with any HTTP server.\n"
         "3. Open http://127.0.0.1:8060/ . Do not open index.html with file:// .\n"
         "4. Click Start, choose one of three save slots, select the first flag, then enter battle.\n"
         "5. Confirm tutorials, build towers and click the skull at the entrance to start wave 1.\n"
-        "6. Victory saves best stars and unlocks the next flag. Complete levels 1, 2, 3, then 4.\n"
-        "Levels 1-4 normal campaign are playable; other stages and challenges are previews.\n"
+        "6. Victory saves last_victory; return to the map to commit best stars and unlock the next flag.\n"
+        "Levels 1-5 normal campaign are playable; level 6 and challenges are previews.\n"
         "Level 2: 240 gold, 7 waves, 7 tower sites. Level 3: 330 gold, 11 waves, 12 sites, two lanes.\n"
         "All four tower types can upgrade to level 2 in campaigns 2 and 3, and level 3 in campaign 4.\n"
         "Level 4: 520 gold, 13 waves, 15 tower sites, two lanes, bandits and brigands.\n"
+        "Level 5: 700 gold, 15 waves, 14 sites (free tier-3 archer and elf ruins), 242 wave enemies plus hatched spiders.\n"
+        "Level 5 opens Rangers (230 from tier-3 archers), Poison Arrows and Wrath of the Forest.\n"
+        "Elf camp: repair for 190; recruit up to 4 paid slots at 100 each. Fallen elves refill automatically.\n"
+        "Bleed: 100/100/100; Cripple: 200/125/125. Hiring costs are excluded from sale refunds.\n"
         "Three independent local save slots; volume settings remain global.\n"
         "Hero room: browse 79 heroes, view computed skills, select up to two unlocked heroes.\n"
         "Completing level 1 unlocks 12 heroes; selecting a third replaces slot two.\n"
         "Selections save per slot. Heroes do not enter battle in this playtest.\n"
         "Tab cycles selected heroes; Done, Esc or right click closes the hero room.\n"
-        "The earlier single campaign save migrates into slot 1 automatically.\n\n"
+        "Three unified Dove JSON slots are created from the source template.\n"
+        "A defeat after restarting from victory discards that unsettled victory; settled best scores remain.\n\n"
         "Map: screen edges/wheel = pan, Shift+wheel = horizontal pan; touch drag/pinch = pan/zoom.\n"
         "Controls: left click to select/build/cast; right click to cancel; Esc to close/pause.\n"
         "Wave icons appear at active entrances; hover for enemy counts and the route, click to start early.\n"
@@ -52,7 +57,7 @@ def package():
         "Early-wave rewards animate +gold at the gold counter and -seconds above cooling skills.\n"
         "Click a soldier/enemy to inspect live stats. Click a sheep 8 times to pop it.\n"
         "1 = fire rain, 2 = reinforcements, Space = next wave. Skills unlock after wave 3/7 tutorials in level 1.\n"
-        "In levels 2-4 both skills unlock when wave 1 is sent; neither can be used during setup.\n"
+        "In levels 2-5 both skills unlock when wave 1 is sent; neither can be used during setup.\n"
         "Click enemy alerts for information.\n\n"
         "Normal difficulty, no hero or technology, 20 initial lives. Level 1: 270 gold, 7 waves.\n"
         + ("Debug build: click DEV or press F8 in battle. +10000 gold / +100 lives / skip current wave.\n"
@@ -68,7 +73,7 @@ def package():
     files += [folder / name for name in ("export_receipt.json", "README.txt", "start_server.cmd")]
     if checked:
         files.append(folder / "pack_files.json")
-    output = ROOT / ("build/KingdomRush-KR1-Playtest-Debug-Web.zip" if debug else "build/KingdomRush-KR1-Levels01-04-Web.zip")
+    output = ROOT / ("build/KingdomRush-KR1-Playtest-Debug-Web.zip" if debug else "build/KingdomRush-KR1-Levels01-05-Web.zip")
     with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
         for path in files:
             archive.write(path, path.name)

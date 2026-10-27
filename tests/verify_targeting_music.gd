@@ -16,7 +16,7 @@ func _run() -> void:
 	create_timer(30).timeout.connect(func(): push_error("Targeting/music timeout"); quit(1))
 	var app := App.instantiate(); var token := str(Time.get_ticks_usec())
 	app.settings_path = "user://targeting_music_settings_" + token + ".json"
-	app.progress_path = "user://targeting_music_progress_" + token + ".json"
+	app.slots_path = "user://targeting_music_progress_" + token + ".json"
 	root.add_child(app); await app.menu_ready
 	app.menu.hide(); app.menu.set_process_input(false)
 	for level in [2, 3]:

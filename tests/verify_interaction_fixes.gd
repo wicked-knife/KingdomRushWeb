@@ -1,4 +1,5 @@
 extends SceneTree
+const Fixture = preload("res://tests/slot_fixture.gd")
 const Flag = preload("res://scripts/map/dove_map_flag.gd")
 const Sim = preload("res://scripts/battle/level01_sim.gd")
 const Levels = preload("res://scripts/services/campaign_levels.gd")
@@ -137,10 +138,10 @@ func _waves(app: Control) -> void:
 func _run() -> void:
 	_flags(); _soldiers()
 	var app := App.instantiate(); var token := str(Time.get_ticks_usec())
-	app.settings_path = "user://interaction_settings_" + token + ".json"; app.progress_path = "user://interaction_progress_" + token + ".json"
+	app.settings_path = "user://interaction_settings_" + token + ".json"; app.slots_path = "user://interaction_progress_" + token + ".json"
 	root.add_child(app); await app.menu_ready
 	app.menu.start_button.pressed.emit(); app.menu._select_slot(1); await app.map_ready
-	for id in [1, 2, 3]: app.campaign.record_result({"generation":1, "level_id":id, "mode":1, "difficulty":2, "result":"victory", "lives":20})
+	for id in [1, 2, 3]: Fixture.complete(app.campaign, {"generation":1, "level_id":id, "mode":1, "difficulty":2, "result":"victory", "lives":20})
 	await _waves(app)
 	app.queue_free(); await process_frame; await process_frame
 	var report := {"passed":failures.is_empty(), "checks":checks, "failures":failures}

@@ -1,4 +1,5 @@
 extends SceneTree
+const Fixture = preload("res://tests/slot_fixture.gd")
 const App = preload("res://scenes/app_root.tscn")
 var failures: Array[String] = []
 var label_checks := 0
@@ -12,7 +13,7 @@ func check(value: bool, description: String) -> void:
 	if not value: failures.append(description); push_error(description)
 func _run() -> void:
 	DirAccess.make_dir_recursive_absolute(temporary)
-	app = App.instantiate(); app.settings_path = temporary + "/settings.json"; app.progress_path = temporary + "/campaign.json"
+	app = App.instantiate(); app.settings_path = temporary + "/settings.json"; app.slots_path = temporary + "/campaign.json"
 	root.add_child(app); await app.menu_ready
 	if "--interactive" in OS.get_cmdline_user_args(): return
 	create_timer(60).timeout.connect(func(): push_error("Map visual timeout"); quit(1))
@@ -43,7 +44,7 @@ func _run() -> void:
 	check(app.settings.music_volume > 0.1 and app.settings.music_volume < 0.6, "native slider input applies inherited volume")
 	map.close_overlay()
 	# Presentation fixtures unlock later panels without adding game-facing shortcuts.
-	for id in range(1, 13): app.campaign.record_result({"level_id": id, "mode": 1, "difficulty": 2, "result": "victory", "lives": 20})
+	for id in range(1, 13): Fixture.complete(app.campaign, {"level_id": id, "mode": 1, "difficulty": 2, "result": "victory", "lives": 20})
 	map._action("level", {"id": 2}); await capture("map_level02_unavailable")
 	check(map.hits.any(func(row): return row.action == "battle" and not row.enabled), "second battle disabled")
 	await click(map.view_size / 2, MOUSE_BUTTON_RIGHT)
@@ -64,7 +65,7 @@ func _run() -> void:
 	check(map.camera_offset.x <= 0 and map.camera_offset.y <= 0, "camera bounded")
 	# Cover the widest valid star count with this test's isolated campaign only.
 	for stage: Dictionary in map.definition.levels:
-		map.progress.levels[str(int(stage.id))] = {"campaign": 2, "stars": 3, "heroic": 2, "iron": 2}
+		map.progress.levels[int(stage.id)] = {1: 2, "stars": 3, 2: 2, 3: 2}
 	await capture("map_stars_maximum")
 	await click(map.view_size / 2, MOUSE_BUTTON_RIGHT)
 	app._return_to_menu(); await process_frame
