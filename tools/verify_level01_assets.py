@@ -8,8 +8,9 @@ ROOT = Path(__file__).resolve().parents[1]
 def read(path): return json.loads(path.read_text(encoding="utf-8"))
 def sha(path): return hashlib.sha256(path.read_bytes()).hexdigest()
 
-def verify(level_id=1):
-    level_name=f"level{level_id:02d}"
+def verify(level_id=1, ranger_arena=False):
+    if ranger_arena: level_id=4
+    level_name="ranger_arena" if ranger_arena else f"level{level_id:02d}"
     folder=ROOT/f"data/{level_name}"; manifest=read(folder/"manifest.json"); data=read(folder/"definition.json")
     source=Path("D:/projects/KingdomRushDove")
     for name,digest in data["source"]["inputs"].items(): assert sha(source/name)==digest, name
@@ -23,6 +24,11 @@ def verify(level_id=1):
             name=sprite.get("name", "").replace("%04i","0001")
             key=sprite.get("prefix", "")+"_"+name if sprite.get("prefix") else name
             assert key in animations or name in atlas["lookup"], (template_name,key)
+            if ranger_arena:
+                for prefix in sprite.get("size_prefixes",[]):
+                    for state in ("start","loop","end"): assert prefix+"_"+state in animations,(template_name,prefix,state)
+                for state in sprite.get("size_names",[]):
+                    assert sprite.get("prefix","")+"_"+state in animations,(template_name,state)
         info=template.get("info",{})
         if info.get("portrait"): assert info["portrait"] in atlas["lookup"],template_name
     for template_name,template in data["templates"].items():
@@ -56,4 +62,6 @@ def verify(level_id=1):
 if __name__=="__main__":
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--level",type=int,choices=[1,2,3,4],default=1)
-    verify(parser.parse_args().level)
+    parser.add_argument("--ranger-arena",action="store_true")
+    args=parser.parse_args()
+    verify(args.level,args.ranger_arena)

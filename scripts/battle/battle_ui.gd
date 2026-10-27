@@ -161,6 +161,15 @@ func _selection(id: String, closing: bool) -> void:
 			_menu_icon(item.image, pos, "upgrade", {"id": id, "upgrade_to": target}, price, enabled and sim.gold >= price)
 		elif target != "" or sim.tower_locked(view.Simulation.UPGRADES.get(tower.template, "")):
 			_menu_icon("main_icons_0014", Vector2(74, 6), "locked", {}, -1, false)
+		if tower.has("powers"):
+			for item: Dictionary in data.tower_menus.get(str(t.tower.type), []):
+				var power: String = item.get("action_arg", "")
+				if not tower.powers.has(power): continue
+				var pos: Vector2 = view.Simulation.vec(data.tower_menu_button_places[int(item.place) - 1])
+				var price: int = sim.power_price(tower, power)
+				_menu_icon(item.image, pos, "upgrade_power", {"id":id,"power":power}, price, enabled and price >= 0 and sim.gold >= price)
+				for rank in range(3):
+					paint.image("power_rank_0001" if rank < int(tower.powers[power]) else "power_rank_0002", pos + Vector2((rank - 1) * 9, 17), Vector2(0.5,0.5))
 		if tower.type == "barrack": _menu_icon("sub_icons_0001", Vector2(128, 118), "target", {"power": "rally"}, -1, enabled)
 		_menu_icon("ico_sell_0001", Vector2(74, 140), "sell", {"id": id}, -1, enabled)
 	paint.pop(); paint.pop()
@@ -198,6 +207,12 @@ func _tower_tooltip(tower: Dictionary) -> void:
 		title = text(item.tt_title); description = text(item.tt_desc)
 	if view.hovered == "sell" + str({"id": tower.id}):
 		title = "出售防御塔"; description = "返还 %d 金币" % view.sim.sell_refund(tower)
+	for item: Dictionary in data.tower_menus.get(str(view.sim.tower_template(tower).tower.type), []):
+		var power: String = item.get("action_arg", "")
+		if not tower.get("powers",{}).has(power) or view.hovered != "upgrade_power" + str({"id":tower.id,"power":power}): continue
+		var level := mini(3, int(tower.powers[power]) + 1)
+		title = text(item.tt_list[level - 1].tt_title)
+		description = data.power_descriptions[power][level - 1]
 	if title == "": return
 	var dimensions := _size("tooltip_bg_standard")
 	var point: Vector2 = view.world(tower.pos) + Vector2(115, -125)
@@ -215,7 +230,7 @@ func hud() -> void:
 	paint.image("top_left")
 	paint.label(str(sim.lives), Rect2(78, 33, 31, 35), 18, Color.WHITE, "center", "middle", 1, 1, "hud:lives", "numbers_bold")
 	paint.label(str(sim.gold), Rect2(135, 33, 58, 35), 18, Color.WHITE, "center", "middle", 1, 1, "hud:gold", "numbers_bold")
-	paint.label("%d/%d 波" % [sim.wave, sim.data.waves.groups.size()], Rect2(234, 31, 82, 35), 16, Color.WHITE, "center", "middle", 1, 1, "hud:wave", "numbers_bold")
+	paint.label("专项测试" if sim.data.get("arena",false) else "%d/%d 波" % [sim.wave, sim.data.waves.groups.size()], Rect2(234, 31, 82, 35), 16, Color.WHITE, "center", "middle", 1, 1, "hud:wave", "numbers_bold")
 	paint.pop()
 	paint.push(Vector2(view.view_width - 37, -21), 0.9)
 	var base := _size("pause_base")

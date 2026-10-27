@@ -18,6 +18,14 @@
 
 四类塔二升三费用：兵营 150、箭塔 160、炮塔 320、法师塔 240。兵营更换为三名满血骑士，保留集结点；累计投入分别为 330/340/665/500，开波后退款分别为 198/204/399/300。三级独立测试场 `tests/tier3_upgrade_arena.tscn` 使用第四关地图和 2500 初始金币，不接入战役存档；原二级测试场保留。
 
+游侠塔与两项三级技能已在独立场地实现。打开 `tests/ranger_arena.tscn` 按 **F6**：初始 10000 金币，箭塔升至三级后花 230 升游侠，再选中购买毒箭／森林之怒；顶部可选敌人、数量与路线，手动出怪、补钱、清场及完整重置。场地不保存战役进度，前四关塔级限制保持原状。行为差异、来源与验证范围见 [RANGER_DELIVERY.md](RANGER_DELIVERY.md)。本轮未更新 Web 包。
+
+```powershell
+& 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --path . res://tests/ranger_arena.tscn --resolution 1280x720
+& 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script tests/verify_ranger.gd
+python tools/verify_level01_assets.py --ranger-arena
+```
+
 ```powershell
 & 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --path . res://tests/tier3_upgrade_arena.tscn
 & 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script tests/verify_tier3_upgrades.gd

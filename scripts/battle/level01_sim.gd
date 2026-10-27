@@ -8,6 +8,9 @@ const UPGRADES := {"tower_archer_1": "tower_archer_2", "tower_barrack_1": "tower
 	"tower_archer_2": "tower_archer_3", "tower_barrack_2": "tower_barrack_3", "tower_mage_2": "tower_mage_3", "tower_engineer_2": "tower_engineer_3"}
 const SpriteAnimation = preload("res://scripts/battle/dove_animation.gd")
 const Projectile = preload("res://scripts/battle/dove_projectile.gd")
+const Ranger = preload("res://scripts/battle/dove_ranger.gd")
+const Modifiers = preload("res://scripts/battle/dove_modifiers.gd")
+var modifiers := Modifiers.new()
 # Frozen Dove path_db:path_width and game_gui POWER_1 / POWER_2 rules.
 const PATH_WIDTH := 42.0
 const FIRE_PATH_WIDTH_FACTOR := 1.4285714285714286
@@ -59,6 +62,7 @@ func _init(definition: Dictionary = {}, seed_value: int = 1, allow_developer: bo
 	reset(seed_value)
 
 func reset(seed_value: int = 1) -> void:
+	modifiers.clear(self)
 	rng.seed = seed_value
 	tick = 0; gold = int(data.waves.cash); lives = int(data.waves.lives)
 	wave = 0; next_wave_tick = -1; wave_end_tick = -1; result = ""
@@ -117,7 +121,7 @@ func tower_template(tower: Dictionary) -> Dictionary:
 	return templates[tower.template]
 
 func upgrade_target(tower: Dictionary) -> String:
-	var target: String = UPGRADES.get(tower.template, "")
+	var target: String = data.get("upgrade_targets", {}).get(tower.template, UPGRADES.get(tower.template, ""))
 	return target if templates.has(target) else ""
 
 func _tower_period(tower: Dictionary) -> int:
@@ -132,6 +136,11 @@ func tower_locked(template_name: String) -> bool:
 func sell_refund(tower: Dictionary) -> int:
 	if tower.type == "": return 0
 	return int(tower.spent) if wave == 0 else roundi(float(tower.spent) * float(tower_template(tower).tower.refund_factor))
+
+func power_price(tower: Dictionary, power: String) -> int:
+	if tower.is_empty() or not tower.get("powers", {}).has(power): return -1
+	var spec: Dictionary = tower_template(tower).powers[power]
+	return -1 if int(tower.powers[power]) >= int(spec.max_level) else int(spec.price_base if int(tower.powers[power]) == 0 else spec.price_inc)
 
 func command(kind: String, args: Dictionary = {}) -> bool:
 	if kind == "pause":
@@ -181,10 +190,24 @@ func command(kind: String, args: Dictionary = {}) -> bool:
 				"ready": tick, "inserted": true}, true)
 			if tower.type == "barrack": _upgrade_garrison(tower, upgraded)
 			else: upgraded.attack_at = tick + _tower_period(upgraded)
+			if target == "tower_ranger": Ranger.initialize(self, upgraded)
 			gold -= price
 			towers[towers.find(tower)] = upgraded
 			add_effect("fx_tower_buy_dust", tower.pos + Vector2(0, 10))
 			event.emit("sound", {"id": t.sound_events.insert}); return true
+		"upgrade_power":
+			var tower := tower_by_id(str(args.get("id", "")))
+			var power := str(args.get("power", ""))
+			var price := power_price(tower, power)
+			if tower.is_empty() or tower.ready > tick or price < 0 or gold < price: return false
+			gold -= price; tower.spent += price; tower.powers[power] += 1
+			if power == "thorn" and int(tower.powers.thorn) == 1:
+				tower.ranger.aura = true; tower.ranger.thorn_ts = float(tick)
+				tower.layers[5] = {"state":"idle","at":tick,"loop":true,"flip":false,"visible":true}
+			for item: Dictionary in data.ui.tower_menus.get("ranger", []):
+				if item.get("action_arg", "") == power:
+					for sound: String in item.get("sounds", []): event.emit("sound", {"id":sound})
+			return true
 		"sell":
 			var tower := tower_by_id(str(args.get("id", "")))
 			if tower.is_empty() or tower.type == "" or tower.ready > tick: return false
@@ -373,6 +396,7 @@ func _start_wave(manual: bool) -> void:
 func step() -> void:
 	if paused or not notices.is_empty() or result != "": return
 	tick += 1
+	modifiers.step(self)
 	for power: String in cooldowns: cooldowns[power] = maxi(0, cooldowns[power] - 1)
 	while not spawn_queue.is_empty() and spawn_queue[0].tick <= tick:
 		var spawn: Dictionary = spawn_queue.pop_front()
@@ -424,6 +448,7 @@ func _spawn_enemy(type: String, subpath: int = -1, path: int = 0) -> Dictionary:
 
 func _tower_step(tower: Dictionary) -> void:
 	if tower.type == "" or tower.ready > tick: return
+	if tower.template == "tower_ranger": Ranger.step(self, tower); return
 	var t: Dictionary = tower_template(tower)
 	if tower.ready == tick and not tower.get("inserted", false):
 		tower.inserted = true
@@ -540,7 +565,8 @@ func add_effect(template_name: String, point: Vector2, extra: Dictionary = {}) -
 func _predict(e: Dictionary, seconds: float) -> Vector2:
 	if e.blocker != 0: return e.pos
 	var points: Array = data.paths.paths[e.get("path", 0)][e.subpath]
-	var remaining := seconds * float(templates[e.template].motion.max_speed) * float(data.rules.enemy_speed_factor)
+	var remaining := seconds * float(templates[e.template].motion.max_speed) * float(data.rules.enemy_speed_factor) * modifiers.speed(e.id, self)
+	if int(e.get("stun_count",0)) > 0: return e.pos
 	var point: Vector2 = e.pos
 	for node in range(int(e.node) + 1, points.size()):
 		var dest := vec(points[node]); var length := point.distance_to(dest)
@@ -631,6 +657,7 @@ func _soldier_step(s: Dictionary) -> void:
 
 func _enemy_step(e: Dictionary) -> void:
 	if e.hp <= 0: return
+	if int(e.get("stun_count",0)) > 0: e.last_dir = Vector2.ZERO; return
 	var t: Dictionary = templates[e.template]
 	if t.has("timed_attacks") and _healer_step(e, t): return
 	if e.blocker != 0:
@@ -642,7 +669,7 @@ func _enemy_step(e: Dictionary) -> void:
 			else: _state(e, "idle")
 			return
 	var points: Array = data.paths.paths[e.get("path", 0)][e.subpath]
-	var remaining := float(t.motion.max_speed) * float(data.rules.enemy_speed_factor) * STEP
+	var remaining := float(t.motion.max_speed) * float(data.rules.enemy_speed_factor) * STEP * modifiers.speed(e.id, self)
 	var previous: Vector2 = e.pos
 	while remaining > 0 and e.node + 1 < points.size():
 		var dest := vec(points[e.node + 1]); var length: float = e.pos.distance_to(dest)
@@ -774,9 +801,14 @@ func _retire(s: Dictionary) -> void:
 func damage(unit: Dictionary, amount: float, type: int) -> float:
 	if unit.is_empty() or unit.hp <= 0: return 0
 	var t: Dictionary = templates[unit.template]
-	var armor: float = t.health.magic_armor if type == 4 else (t.health.armor if type == 2 or type == 8 else 0.0)
+	var armor := 0.0
+	if (type & 65536) != 0: armor = float(t.health.get("poison_armor",0))
+	elif (type & 1) != 0: armor = 0.0
+	elif (type & 2) != 0: armor = float(t.health.armor)
+	elif (type & 4) != 0: armor = float(t.health.magic_armor)
+	elif (type & 8) != 0: armor = float(t.health.armor)
 	# Frozen Dove all/utils.lua U.calc_protection, including its explosion curve.
-	if type == 8: armor *= 0.2 * armor + 0.4
+	if (type & 8) != 0 and (type & (65536 | 1 | 2 | 4)) == 0: armor *= 0.2 * armor + 0.4
 	var actual := amount * (1.0 - armor)
 	unit.hp = maxf(0, unit.hp - actual)
 	if unit.has("last_hit"): unit.last_hit = tick
@@ -834,6 +866,8 @@ func _bullet_step(p: Dictionary) -> void:
 		var hit: Vector2 = target.pos + vec(templates[target.template].unit.hit_offset)
 		if behavior == "scripts.bolt.update" or p.to.distance_to(hit) < float(b.get("hit_distance", 22)) * 1.2:
 			damage(target, rng.randi_range(int(b.damage_min), int(b.damage_max)), int(b.damage_type))
+			if int(p.get("poison_level",0)) > 0 and target.hp > 0:
+				modifiers.apply(self,"mod_ranger_poison",target,int(p.poison_level),str(p.source))
 			if behavior != "scripts.bolt.update": add_effect(str(b.get("hit_fx", "")), hit)
 			add_effect(str(b.get("hit_blood_fx", "")), hit, {"rotation": p.rotation})
 	if behavior == "scripts.bolt.update": add_effect(str(b.get("hit_fx", "")), p.to)

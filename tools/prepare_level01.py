@@ -1,4 +1,4 @@
-"""Evaluate frozen Dove data offline and build source-traceable atlases for campaigns 1-4."""
+"""Build source-traceable atlases for campaigns 1-4 or the independent ranger arena."""
 from pathlib import Path
 import argparse, copy, hashlib, json, math, os, re, subprocess
 from PIL import Image
@@ -10,25 +10,29 @@ def write(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, ensure_ascii=False, separators=(",", ":"), allow_nan=False)+"\n", encoding="utf-8")
 
-def prepare(source, love, level_id=1):
+def prepare(source, love, level_id=1, ranger_arena=False):
     assert level_id in (1, 2, 3, 4)
-    level_name=f"level{level_id:02d}"
+    source_level=f"level{level_id:02d}"
+    level_name="ranger_arena" if ranger_arena else source_level
     assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == BASE
     assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain"], text=True).strip(), "Reference must be clean"
     folder=ROOT/f"output/{level_name}_export";folder.mkdir(parents=True,exist_ok=True)
     evaluated=folder/"evaluated.json"
-    env=os.environ.copy();env.update(DOVE_SOURCE_DIR=str(source),DOVE_EXPORT_PATH=str(evaluated),DOVE_LEVEL_ID=str(level_id))
+    env=os.environ.copy();env.update(DOVE_SOURCE_DIR=str(source),DOVE_EXPORT_PATH=str(evaluated),DOVE_LEVEL_ID=str(level_id),DOVE_RANGER_ARENA="1" if ranger_arena else "0")
     run=subprocess.run([str(love),str(ROOT/"tools/level01_export")],env=env,capture_output=True,timeout=60)
-    if run.returncode: raise RuntimeError(evaluated.with_suffix(".json.error").read_text(encoding="utf-8"))
+    if run.returncode:
+        error=evaluated.with_suffix(".json.error")
+        raise RuntimeError(error.read_text(encoding="utf-8") if error.exists() else (run.stderr+run.stdout).decode("utf-8",errors="replace"))
     data=json.loads(evaluated.read_text(encoding="utf-8"))
     inputs=set(data.pop("inputs"))|{"all-desktop/game_gui.lua","all-desktop/gg_views_custom.lua","kr1/data/tower_menus_data_scripts.lua","all/constants.lua","lib/klua/table.lua","lib/klua/vector.lua","all/entity_db.lua","all/utils.lua","all/script_utils.lua","all/wave_utils.lua","all/systems/wave_spawn.lua","all/systems/enemy.lua","kr1/game_settings.lua","all/difficulty.lua","all/scripts.lua","kr1/tower_scripts.lua"}
     inputs.add("all/tower_utils.lua")
     inputs.add("all/systems/health.lua")
     inputs.update({"all/path_db.lua", "all/grid_db.lua"})
     inputs.update({"all/gui_utils.lua", "all/game.lua"})
-    script=f"kr1/data/levels/{level_name}.lua"
+    script=f"kr1/data/levels/{source_level}.lua"
     if (source/script).is_file(): inputs.add(script)
     if level_id >= 3: inputs.update({"kr1/game_scripts.lua","all/seek.lua","all/spatial_index.lua"})
+    if ranger_arena: inputs.update({"all/systems/mod_lifecycle.lua","all/systems/last_hook.lua"})
     data["source"]={"version":"2.1.0.2","commit":BASE,"difficulty":2,"inputs":{p:hashlib.sha256((source/p).read_bytes()).hexdigest() for p in sorted(inputs)}}
     # GGTextLabel slide and TutorialBalloon class defaults are part of the source layout.
     for slide_id, labels in data["ui"]["slides"].items():
@@ -75,19 +79,32 @@ def prepare(source, love, level_id=1):
     expected={1:{"enemy_goblin":48,"enemy_fat_orc":8},2:{"enemy_goblin":106,"enemy_fat_orc":26,"enemy_wolf_small":22},3:{"enemy_goblin":224,"enemy_fat_orc":58,"enemy_wolf_small":32,"enemy_shaman":12,"enemy_ogre":3}}
     expected[4]={"enemy_goblin":130,"enemy_fat_orc":58,"enemy_shaman":24,"enemy_bandit":77,"enemy_wolf_small":18,"enemy_ogre":2,"enemy_brigand":30}
     assert counts==expected[level_id],counts
+    if ranger_arena:
+        data["upgrade_targets"]={"tower_archer_3":"tower_ranger"}
+        data["waves"]={"cash":10000,"lives":100,"groups":[{"interval":0,"waves":[]}]}
+        data["seen_notifications"]=list(data["templates"])
+        data["ui"]["notifications"]={}
+        data["ui"]["slides"]={}
+        data["ui"]["power_descriptions"]["poison"]=[s.replace("减速0.1%","减速10%").replace("可叠加3层","同级毒素最多叠加4层") for s in data["ui"]["power_descriptions"]["poison"]]
     # Runtime insert chooses one of these three visual variants; numbers remain source values.
     data["templates"]["re_farmer"]["render"]["sprites"][0]["prefix"]="re_farmer_1"
     assets=ROOT/"assets/kingdom_rush"
     all_anims=json.loads((assets/"data/animations.json").read_text(encoding="utf-8"))["animations"]
     wanted={f"stage_{level_id}"};animations={}
     states=["idle","idleUp","idleDown","shoot","shootingUp","shootingDown","walkingRightLeft","walkingUp","walkingDown","running","attack","death","open","close","play","flying","heal","jump","small","medium","large"]
+    if ranger_arena: states += ["start","loop","end"]
     for template in data["templates"].values():
         for sprite in template.get("render",{}).get("sprites",[]):
             name=sprite.get("name","");prefix=sprite.get("prefix","")
             if prefix:
-                for suffix in set(states + [name]):
+                for suffix in set(states + [name] + (sprite.get("size_names",[]) if ranger_arena else [])):
                     key=prefix+"_"+suffix
                     if key in all_anims: animations[key]=all_anims[key]
+                if ranger_arena:
+                    for variant in sprite.get("size_prefixes",[]):
+                        for suffix in states:
+                            key=variant+"_"+suffix
+                            if key in all_anims: animations[key]=all_anims[key]
             elif name:
                 name=name.replace("%04i","0001")
                 if name in all_anims: animations[name]=all_anims[name]
@@ -104,6 +121,8 @@ def prepare(source, love, level_id=1):
     ui_prefixes=["fire_","fire_ready_","reinforcements_","reinforcement_ready_","power_nbrs_","pause_btn_","victoryStars_","options_","tutorial_but_gotcha_bg_long_","notifications_but_","balloon_"]
     ui_names={"main_icons_0000","main_icons_0001","main_icons_0002","main_icons_0003","main_icons_0004","main_icons_0014","ico_sell_0001","sub_icons_0001","glow_ico_main","glow_ico_sell","glow_ico_sub","price_tag","bg_bottom_bar","bg_bottom_left","tutorial_tit_instructions_bg","notifications_tit_generics_bg_0001","notifications_tit_newpower_bg","notifications_polaroid_overlay","victoryBadges_notxt_0002","button_border_0001","button_border_0002","button_border_large_0001","button_border_large_0002","button_continue_chains","button_restart_chains","tooltip_bg_standard"}
     ui_names.update({"main_icons_0005","base","base_info_bar","base_info_bar_bg","info_portraits_0000"})
+    if ranger_arena:
+        ui_names.update({"main_icons_0011","special_icons_0008","special_icons_0002","power_rank_0001","power_rank_0002"})
     if level_id >= 2: ui_names.update({"notifications_tit_newenemy_bg","notifications_tit_towers_bg"})
     ui_prefixes += ["base_info_icons_", "nextwaveTimer_", "nextwave_coin_", "waveReward_", "waveRewardTimer_", "error_feedback_"]
     for template in data["templates"].values():
@@ -171,6 +190,9 @@ def prepare(source, love, level_id=1):
             if attack.get("sound"): sound_ids.add(attack["sound"])
         for attack in t.get("melee",{}).get("attacks",[]):
             if attack.get("sound"): sound_ids.add(attack["sound"])
+        if t.get("aura",{}).get("hit_sound"): sound_ids.add(t["aura"]["hit_sound"])
+    if ranger_arena:
+        for item in data["ui"]["tower_menus"]["ranger"]: sound_ids.update(item.get("sounds",[]))
     sound_ids.update(k for k in sound_data if k.lower() in {"musicbattle","musicstage01","music_stage01","musicvictory","musicdefeat"})
     sounds={k:sound_data[k] for k in sorted(sound_ids) if k in sound_data}
     # The stage bundle names its battle music as a group, not a sound ID.
@@ -194,4 +216,4 @@ def prepare(source, love, level_id=1):
     print(json.dumps({"templates":len(data["templates"]),"frames":len(aliases),"animations":len(animations),"atlas_pages":len(pages),"audio":len(audio),"enemies":counts},ensure_ascii=False))
 
 if __name__=="__main__":
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument("--source",type=Path,default=Path("D:/projects/KingdomRushDove"));parser.add_argument("--love",type=Path,default=Path("D:/王国保卫战Dove版/love.exe"));parser.add_argument("--level",type=int,choices=[1,2,3,4],default=1);args=parser.parse_args();prepare(args.source,args.love,args.level)
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument("--source",type=Path,default=Path("D:/projects/KingdomRushDove"));parser.add_argument("--love",type=Path,default=Path("D:/王国保卫战Dove版/love.exe"));parser.add_argument("--level",type=int,choices=[1,2,3,4],default=1);parser.add_argument("--ranger-arena",action="store_true");args=parser.parse_args();prepare(args.source,args.love,4 if args.ranger_arena else args.level,args.ranger_arena)

@@ -66,3 +66,6 @@ __pycache__/
 !/reports/level04_assets.json
 !/reports/tier3_upgrade_logic.json
 !/reports/level04_tier3_delivery.json
+!/reports/ranger_arena_assets.json
+!/reports/ranger_logic.json
+!/reports/ranger_delivery.json

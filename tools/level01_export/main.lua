@@ -6,6 +6,7 @@ end
 local source = assert(os.getenv("DOVE_SOURCE_DIR"))
 local destination = assert(os.getenv("DOVE_EXPORT_PATH"))
 local level_id = tonumber(os.getenv("DOVE_LEVEL_ID") or "1")
+local ranger_arena = os.getenv("DOVE_RANGER_ARENA") == "1"
 assert(level_id >= 1 and level_id <= 4)
 local level_name = string.format("level%02d", level_id)
 package.path = source .. "/?.lua;" .. source .. "/all/?.lua;" .. source .. "/kr1/?.lua;" .. package.path
@@ -65,6 +66,7 @@ local function run()
   if level_id >= 2 then table.insert(enemy_ids,"enemy_wolf_small") end
   if level_id >= 3 then table.insert(enemy_ids,"enemy_shaman");table.insert(enemy_ids,"enemy_ogre") end
   if level_id == 4 then table.insert(enemy_ids,"enemy_bandit");table.insert(enemy_ids,"enemy_brigand") end
+  if ranger_arena then table.insert(enemy_ids,"enemy_spider_small") end
   for _,id in ipairs(enemy_ids) do
     local start=assert(enemies:find('tt = RT("'..id..'"',1,true))
     local finish=enemies:find("\ntt = ",start+1,true) or #enemies+1
@@ -79,6 +81,10 @@ local function run()
     local b=assert(game:find('\ntt = ',a+1,true))
     chunk("kr1/game_templates.lua","local tt;local scripts=require('game_scripts');"..game:sub(a,b-1))
   end
+  if ranger_arena then
+    local archers=read("kr1/archer_towers.lua")
+    chunk("kr1/archer_towers.lua",archers:sub(1,assert(archers:find('local tower_crossbow = RT(',1,true))-1))
+  end
   local function clean(v)
     local kind=type(v)
     if kind=="function" then return behavior_names[v] or "local_source_function" end
@@ -91,9 +97,15 @@ local function run()
     local out={};for k,value in pairs(v) do out[k]=clean(value) end;return out
   end
   local fields={"template_name","render","health","health_bar","motion","unit","enemy","soldier","tower","barrack","attacks","melee","bullet","sound_events","reinforcement","cooldown","duration","fireball_count","max_spread","delayed_play","ui","regen","tween","build_duration","info","dodge","timed_attacks","modifier","hps","vis"}
+  if ranger_arena then
+    for _,name in ipairs({"powers","dps","slow","aura","damage_min","damage_max","damage_type","damage_every"}) do table.insert(fields,name) end
+  end
   local out={templates={},inputs=loaded_inputs,constants={FPS=FPS,ASPECT=ASPECT,TERRAIN_LAND=TERRAIN_LAND,TERRAIN_NOWALK=TERRAIN_NOWALK,DAMAGE_PHYSICAL=DAMAGE_PHYSICAL,DAMAGE_MAGICAL=DAMAGE_MAGICAL,DAMAGE_EXPLOSION=DAMAGE_EXPLOSION,DAMAGE_TRUE=DAMAGE_TRUE}}
   out.constants.spatial_cell_size=SPATIAL_HASH_CELL_SIZE
   out.constants.spatial_origin={x=IN_GAME_X_MIN,y=IN_GAME_Y_MIN}
+  if ranger_arena then
+    for _,name in ipairs({"DAMAGE_POISON","F_POISON","F_FLYING","F_BOSS","F_CLIFF"}) do out.constants[name]=_G[name] end
+  end
   for _,pair in ipairs({{"layout","kr1/data/levels/"..level_name.."_data.lua"},{"paths","kr1/data/levels/"..level_name.."_paths.lua"},{"terrain","kr1/data/levels/"..level_name.."_grid.lua"},{"waves","kr1/data/waves/"..level_name.."_waves_campaign.lua"}}) do
     local env={v=V.v};local f=assert(loadstring(read(pair[2]),"@"..pair[2]));setfenv(f,env);out[pair[1]]=clean(f());loaded_inputs[pair[2]]=true
   end
@@ -103,6 +115,9 @@ local function run()
   if level_id >= 3 then table.insert(template_ids,"mod_shaman_heal") end
   if level_id == 4 then
     for _,id in ipairs({"tower_archer_3","tower_barrack_3","tower_mage_3","tower_engineer_3","soldier_knight","arrow_3","bolt_3","bomb_black","fx_explosion_water"}) do table.insert(template_ids,id) end
+  end
+  if ranger_arena then
+    for _,id in ipairs({"tower_ranger","arrow_ranger","aura_ranger_thorn","mod_ranger_poison","mod_thorn","fx_spider_explode"}) do table.insert(template_ids,id) end
   end
   for _,entity in ipairs(out.layout.entities_list) do
     if E.entities[entity.template] and entity.template ~= "decal_background" and entity.template ~= "decal_defend_point" and entity.template ~= "editor_wave_flag" then table.insert(template_ids,entity.template) end
@@ -138,6 +153,10 @@ local function run()
       out.ui.upgrade_menus[item.action_arg]=clean(item)
     end
   end
+  if ranger_arena then
+    out.ui.tower_menus.ranger=clean(menus.ranger[1])
+    out.ui.upgrade_menus.tower_ranger=clean(menus.archer[3][1])
+  end
   local strings=chunk("_assets/kr1-desktop/strings/zh-Hans.lua")
   out.ui.strings={}
   local function collect(v)
@@ -145,6 +164,24 @@ local function run()
     elseif type(v)=="table" then for _,value in pairs(v) do collect(value) end end
   end
   collect(out.ui)
+  if ranger_arena then
+    -- Evaluate only the selected frozen arithmetic expressions, without gameplay.
+    out.ui.power_descriptions={}
+    for _,power in ipairs({"poison","thorn"}) do
+      local descriptions={}
+      for level=1,3 do
+        local key="TOWER_RANGER_"..string.upper(power).."_DESCRIPTION_"..level
+        local text=assert(strings[key])
+        text=text:gsub("%%%$(.-)%%%$",function(expr)
+          local f=assert(loadstring("return "..expr,"@ranger_description"))
+          setfenv(f,{T=function(id) return E:get_template(id) end,level=level,tdmg=1,tcd=1})
+          return string.format("%g",f())
+        end)
+        descriptions[level]=text
+      end
+      out.ui.power_descriptions[power]=descriptions
+    end
+  end
   for _,id in ipairs(enemy_ids) do
     local prefix=string.upper(id)
     for _,suffix in ipairs({"_NAME","_DESCRIPTION","_EXTRA"}) do out.ui.strings[prefix..suffix]=strings[prefix..suffix] or "" end

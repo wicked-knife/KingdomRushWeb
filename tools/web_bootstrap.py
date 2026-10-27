@@ -25,6 +25,7 @@ def resource_paths():
         data += level["data"] + [f"res://data/{level_name}/manifest.json"]
     resources += ["res://scripts/services/campaign_levels.gd", "res://scripts/battle/level01_sim.gd", "res://scripts/battle/battle_view.gd", "res://scripts/battle/battle_ui.gd", "res://scripts/battle/dove_ui_layout.gd", "res://scripts/battle/dove_animation.gd", "res://scripts/battle/dove_projectile.gd", "res://scripts/battle/dove_unit_info.gd", "res://scripts/battle/battle_developer.gd"]
     resources += ["res://scripts/battle/battle_wave_flags.gd", "res://scripts/map/dove_map_flag.gd"]
+    resources += ["res://scripts/battle/dove_ranger.gd", "res://scripts/battle/dove_modifiers.gd"]
     campaign_map = json.loads((ROOT / "data/map_kr1/manifest.json").read_text(encoding="utf-8"))
     resources += campaign_map["resources"]
     data += campaign_map["data"] + ["res://data/map_kr1/manifest.json"]

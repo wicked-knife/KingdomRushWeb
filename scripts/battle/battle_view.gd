@@ -46,14 +46,14 @@ var return_label := "返回地图"
 var victory_elapsed := -1.0
 var victory_star_sounds := 0
 
-func initialize(boot: Node, sound: Node, definition: Dictionary = {}) -> void:
+func initialize(boot: Node, sound: Node, definition: Dictionary = {}, simulation_override: RefCounted = null) -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	name = "Battle"
 	mouse_filter = MOUSE_FILTER_STOP
 	fonts = boot.fonts
 	font = fonts.font_for("body")
 	audio = sound
-	sim = Simulation.new(definition, 1, OS.is_debug_build())
+	sim = simulation_override if simulation_override != null else Simulation.new(definition, 1, OS.is_debug_build())
 	var base: String = sim.data.get("level", {}).get("root", "res://data/level01/")
 	catalog = Catalog.new(base + "catalog.json")
 	animations = sim.animations
@@ -203,6 +203,12 @@ func _draw() -> void:
 			if target.is_empty() or target.hp <= 0: continue
 			effect.pos = target.pos + Simulation.vec(sim.templates[target.template].unit.mod_offset)
 		_queue_template(effect.template, effect.pos, effect.get("state", ""), effect.at, false, false, 1, false, "", effect)
+	for modifier: Dictionary in sim.modifiers.active:
+		var target: Dictionary = sim.unit_by_id(modifier.target)
+		if target.is_empty() or target.hp <= 0: continue
+		# The original lifecycle hides older duplicate poison sprites.
+		if not modifier.get("visible",true): continue
+		_queue_template(modifier.template, target.pos + (Vector2.ZERO if modifier.template == "mod_thorn" else Simulation.vec(sim.templates[target.template].unit.mod_offset)), modifier.state, modifier.at, target.flip, false, 1, false, "", {"prefix":modifier.prefix,"sprite_scale":modifier.scale,"playback_loop":modifier.phase == "loop"})
 	draw_list.sort_custom(func(a, b):
 		if a.z != b.z: return a.z < b.z
 		if a.sort_y != b.sort_y: return a.sort_y > b.sort_y
@@ -240,8 +246,9 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 	var order := 0
 	for sprite: Dictionary in template.get("render", {}).get("sprites", []):
 		order += 1
-		if sprite.get("hidden", false) and sprite.get("name", "") != preview and not runtime.get("fish", false): continue
+		if sprite.get("hidden", false) and sprite.get("name", "") != preview and not runtime.get("fish", false) and not runtime.get("layers",{}).get(order,{}).get("visible",false): continue
 		var playback := {"state": state, "elapsed": maxi(0, sim.tick - at)}
+		if runtime.get("prefix", "") != "": playback.prefix = runtime.prefix
 		var layer: Dictionary = runtime.get("layers", {}).get(order, {})
 		if not layer.is_empty():
 			playback.state = layer.state; playback.elapsed = maxi(0, sim.tick - int(layer.at)); playback.loop = layer.loop
@@ -253,12 +260,13 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 			if sprite.has("angles") and state == "shoot": playback.state = "shootingUp" if up else "shootingDown"
 			if state == "attack" and int(playback.elapsed) >= SpriteAnimation.duration(animations, SpriteAnimation.key(sprite, state)):
 				playback.state = "idle"; playback.loop = true
+		if runtime.has("playback_loop"): playback.loop = runtime.playback_loop
 		if template_name == "re_farmer": playback.prefix = "re_farmer_%d" % variant
 		var frame_name := SpriteAnimation.frame(sprite, animations, playback)
 		var offset := Simulation.vec(sprite.get("offset", {"x": 0, "y": 0}))
 		var alpha := float(sprite.get("alpha", 255)) / 255.0
 		if dead: alpha *= clampf(1 - float(sim.tick - at - 24) / 36, 0, 1)
-		var sprite_scale := Simulation.vec(sprite.get("scale", {"x": 1, "y": 1}))
+		var sprite_scale: Vector2 = runtime.get("sprite_scale", Simulation.vec(sprite.get("scale", {"x": 1, "y": 1})))
 		var tween: Dictionary = template.get("tween", {})
 		var clicked: bool = runtime.has("clicked_at") and sim.tick - int(runtime.clicked_at) <= 6
 		if not tween.get("disabled", false) or clicked:

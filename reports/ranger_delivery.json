@@ -1,0 +1,93 @@
+{
+  "date": "2026-10-27",
+  "passed": true,
+  "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+  "scope": {
+    "tower": "tower_ranger",
+    "skills": {
+      "poison": 3,
+      "thorn": 3
+    },
+    "scene": "res://tests/ranger_arena.tscn",
+    "campaign_resources_unchanged": true,
+    "campaign_progress_saved": false,
+    "campaign_5_implemented": false,
+    "web_exported": false,
+    "browser_automated": false
+  },
+  "behavior": {
+    "ranger_price": 230,
+    "skill_prices": [
+      225,
+      175,
+      175
+    ],
+    "max_investment": 1720,
+    "combat_refund": 1032,
+    "poison_same_level_total_cap": 4,
+    "poison_speed_factor_per_copy": 0.9,
+    "thorn_shared_protection_seconds": 7.2,
+    "reset_seed": 42
+  },
+  "logic": {
+    "checks": 215,
+    "failures": [],
+    "passed": true,
+    "poison_same_level_total_cap": 4
+  },
+  "native": {
+    "1280x720": {
+      "checks": 7862,
+      "failures": [],
+      "input": "Input.parse_input_event",
+      "passed": true,
+      "resolution": "1280x720",
+      "sampled_frames": 33
+    },
+    "1024x768": {
+      "checks": 132,
+      "failures": [],
+      "input": "Input.parse_input_event",
+      "passed": true,
+      "resolution": "1024x768",
+      "sampled_frames": 0
+    }
+  },
+  "regression": {
+    "tier3": {
+      "passed": true,
+      "checks": 314,
+      "failures": []
+    },
+    "archer_upgrade": {
+      "passed": true,
+      "checks": 166,
+      "failures": []
+    },
+    "battle_details": {
+      "passed": true,
+      "checks": 485,
+      "failures": []
+    }
+  },
+  "assets": {
+    "passed": true,
+    "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+    "source_inputs": 46,
+    "frames": 2561,
+    "canonical_frames": 1290,
+    "animations": 180,
+    "resources": 73
+  },
+  "reports": {
+    "assets": "reports/ranger_arena_assets.json",
+    "logic": "reports/ranger_logic.json",
+    "documentation": "docs/RANGER_DELIVERY.md"
+  },
+  "limits": [
+    "Native fixture only; no new Web artifact.",
+    "Animation sampling uses stationary high-HP targets, not a campaign victory replay.",
+    "Audio assets and events integrated; no per-sound human listening check.",
+    "Independent RNG and existing projectile sampling do not guarantee identical Lua random outcomes."
+  ]
+}
