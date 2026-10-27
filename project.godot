@@ -11,18 +11,13 @@ config_version=5
 [application]
 
 config/name="Kingdom Rush Web"
-; Keep existing saves and volume settings when changing the display name.
+run/main_scene="res://scenes/app_root.tscn"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="godot/app_userdata/Kingdom Rush Dove Web"
-config/custom_user_dir_name.windows="Godot/app_userdata/Kingdom Rush Dove Web"
-config/custom_user_dir_name.macos="Godot/app_userdata/Kingdom Rush Dove Web"
-run/main_scene="res://scenes/app_root.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
-
-[audio]
-
-general/default_playback_type.web=1
+config/custom_user_dir_name.windows="Godot/app_userdata/Kingdom Rush Dove Web"
+config/custom_user_dir_name.macos="Godot/app_userdata/Kingdom Rush Dove Web"
 
 [display]
 
