@@ -43,16 +43,14 @@ func _run() -> void:
 	var changes: Dictionary = p.enter_map()
 	check(p.record(1) == {"stars": 1, 1: 2} and p.record(2).is_empty() and p.is_unlocked(2), "map commits mode record and empty next level")
 	check(changes.stars["1"] == {"before": 0, "after": 1} and changes.unlocked == [2] and not p.data.has("last_victory"), "map returns changes and clears pending data")
-	check(p.enter_map() == {"stars": {}, "unlocked": []}, "re-entering map never repeats settlement")
+	check(p.enter_map() == {"stars": {}, "unlocked": [], "heroic": [], "iron": []}, "re-entering map never repeats settlement")
 	var disk := Progress.read_json(p.path)
 	check(disk.levels["1"]["1"] == 2 and disk.levels["2"] is Dictionary and disk.levels["2"].is_empty(), "JSON serializes numeric mode keys and empty objects")
 	for id in range(2, 5): complete(p, win(id))
 	check(p.is_playable(5) and p.record(5).is_empty(), "settled fourth victory opens fifth generically")
 	var fifth := win(5); fifth.unlock_towers = ["tower_ranger", "tower_elf"]
 	check(p.record_result(fifth) and "tower_ranger" in p.data.locked_towers, "tower unlock waits for map")
-	var before: int = p.total_stars(); var pending: Dictionary = p.data.last_victory.duplicate(true)
-	# Restart is a battle reset, so storage is intentionally not called here.
-	check(p.data.last_victory == pending, "pending result stays until next battle outcome or map")
+	var before: int = p.total_stars()
 	check(p.record_result({"result": "defeat"}) and not p.data.has("last_victory") and p.total_stars() == before, "defeat clears pending victory without changing committed best")
 	check(not p.is_unlocked(6) and "tower_ranger" in p.data.locked_towers, "discarded fifth victory grants no unlock")
 	complete(p, fifth)
@@ -62,7 +60,7 @@ func _run() -> void:
 	var harder := win(5, 6); harder.difficulty = 4; complete(p, harder)
 	check(p.record(5).stars == 3 and p.record(5)[1] == 4, "difficulty and stars improve independently")
 	var challenge := win(5); challenge.mode = 2
-	check(not p.record_result(challenge) and not Levels.supports(5, 2), "challenge gameplay stays unavailable")
+	check(p.record_result(challenge) and Levels.supports(5, 2), "challenge victory uses unified pending result")
 	# The shared slot can already retain and settle the source's mode records.
 	p.data.last_victory = {"level_idx": 5, "level_mode": 2, "level_difficulty": 3, "stars": 1, "unlock_towers": []}
 	check(p.summary().heroic == 1 and p.summary().stars == p.total_stars() + 1, "pending heroic summary counts one extra star")

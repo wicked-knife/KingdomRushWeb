@@ -4,7 +4,7 @@ const IDS := [1, 2, 3, 4, 5]
 static var last_error := ""
 
 static func supports(id: int, mode: int = 1, difficulty: int = 2) -> bool:
-	return id in IDS and mode == 1 and difficulty == 2
+	return id in IDS and mode in [1, 2, 3] and difficulty == 2
 
 static func folder(id: int) -> String:
 	return "res://data/level%02d/" % id
@@ -23,6 +23,12 @@ static func load_definition(id: int, mode: int = 1, difficulty: int = 2) -> Dict
 	if manifest.get("schema_version", 0) != 1 or not manifest.get("data") is Array or not manifest.get("resources") is Array: return _fail("资源清单缺失或格式不兼容。")
 	var identity: Variant = definition.get("level", {})
 	if not identity is Dictionary or identity.get("id", 0) != id: return _fail("关卡定义缺失或与所选关卡不匹配。")
+	if mode != 1:
+		var variant: Dictionary = definition.get("modes", {}).get(str(mode), {})
+		if not variant.get("waves") is Dictionary or not variant.get("layout") is Dictionary: return _fail("挑战模式数据缺失。")
+		definition.waves = variant.waves.duplicate(true)
+		definition.layout = variant.layout.duplicate(true)
+		identity.mode = mode
 	for path: String in manifest.get("data", []):
 		if read_json(path).is_empty(): return _fail("无法读取关卡数据：" + path.get_file())
 	for path: String in manifest.get("resources", []):

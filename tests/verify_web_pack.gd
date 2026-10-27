@@ -136,6 +136,26 @@ func _init() -> void:
 		var simulation = sim_script.new(definition)
 		if simulation.towers.size() != 8: failures.append("Exported simulation initialization failed")
 		var levels = load("res://scripts/services/campaign_levels.gd")
+		for id in range(1,6):
+			for mode in [1,2,3]:
+				var active: Dictionary=levels.load_definition(id,mode,2)
+				if active.is_empty():failures.append("Exported mode dependencies invalid %d/%d" % [id,mode]);continue
+				var challenge=sim_script.new(active,42)
+				if challenge.data.level.id!=id or challenge.data.level.mode!=mode:failures.append("Exported mode identity invalid %d/%d" % [id,mode])
+				var art=load("res://scripts/dove_asset_catalog.gd").new(active.level.root+"catalog.json")
+				if art.get_frame(active.level.group,"victoryBadges_notxt_%04d" % {1:2,2:3,3:1}[mode]).is_empty():failures.append("Exported mode victory badge missing %d/%d" % [id,mode])
+				if mode==1:continue
+				if challenge.lives!=1 or challenge.gold!={2:[230,310,400,750,1000],3:[360,275,660,1500,1500]}[mode][id-1] or active.waves.groups.size()!=(6 if mode==2 else 1):failures.append("Exported challenge initial state invalid %d/%d" % [id,mode])
+				while not challenge.notices.is_empty():challenge.command("confirm")
+				for kind: String in sim_script.TYPES:
+					if not challenge.tower_locked("tower_build_"+kind):continue
+					var empty: Dictionary=challenge.towers.filter(func(t):return t.type=="")[0]
+					var gold: int=challenge.gold
+					if challenge.command("build",{"id":empty.id,"type":kind}) or challenge.gold!=gold:failures.append("Exported forbidden build accepted %d/%d" % [id,mode])
+				if id==5 and mode==3:
+					if challenge.towers.filter(func(t):return t.template=="tower_archer_3" and t.spent==0).size()!=3:failures.append("Pack fifth iron free archers invalid")
+					for site in ["5","7"]:
+						if not challenge.command("upgrade",{"id":site,"upgrade_to":"tower_elf"}) or not challenge.command("buy_soldier",{"id":site,"type":"soldier_elf"}):failures.append("Pack fifth iron camp transaction failed "+site)
 		for id in [2, 3, 4, 5]:
 			var stage: Dictionary = levels.load_definition(id)
 			if stage.is_empty(): failures.append("Exported campaign dependencies invalid %d" % id); continue
@@ -172,7 +192,7 @@ func _init() -> void:
 		for excluded: String in ["source_assets", "reports", "tests", "tools", "docs"]:
 			if path.begins_with("res://" + excluded + "/"):
 				failures.append("Excluded directory found: " + path)
-	var report := {"passed": failures.is_empty(), "failures": failures, "files": files}
+	var report := {"passed": failures.is_empty(), "failures": failures, "mode_combinations_checked":15, "files": files}
 	var report_path := args[0].get_base_dir().path_join("pack_files.json")
 	var report_file := FileAccess.open(report_path, FileAccess.WRITE)
 	report_file.store_string(JSON.stringify(report, "\t"))

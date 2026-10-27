@@ -14,7 +14,7 @@ func check(ok: bool, label: String) -> void:
 	if not ok: failures.append(label); push_error(label)
 
 func _run() -> void:
-	check(Levels.load_definition(6).is_empty() and Levels.load_definition(2, 2).is_empty(), "sixth campaign and challenges remain previews")
+	check(Levels.load_definition(6).is_empty() and not Levels.load_definition(2, 2).is_empty(), "sixth campaign remains preview and challenges load")
 	for id in [2, 3, 4]:
 		var definition := Levels.load_definition(id)
 		check(not definition.is_empty(), "valid manifest %d" % id)

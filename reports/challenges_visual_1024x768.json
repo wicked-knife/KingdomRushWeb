@@ -1,0 +1,89 @@
+{
+	"captures": [
+		{
+			"path": "res://reports/challenges_level1_mode2_1024x768.png",
+			"state": "level1_mode2"
+		},
+		{
+			"gold": 230,
+			"path": "res://reports/towers_challenge1_mode2_build_1024x768.png",
+			"state": "challenge1_mode2_build",
+			"tick": 3
+		},
+		{
+			"gold": 230,
+			"path": "res://reports/towers_challenge1_mode2_victory_1024x768.png",
+			"state": "challenge1_mode2_victory",
+			"tick": 3
+		},
+		{
+			"path": "res://reports/challenges_mode2_completed_panel_1024x768.png",
+			"state": "mode2_completed_panel"
+		},
+		{
+			"path": "res://reports/challenges_level1_mode3_1024x768.png",
+			"state": "level1_mode3"
+		},
+		{
+			"gold": 360,
+			"path": "res://reports/towers_challenge1_mode3_build_1024x768.png",
+			"state": "challenge1_mode3_build",
+			"tick": 3
+		},
+		{
+			"gold": 360,
+			"path": "res://reports/towers_challenge1_mode3_victory_1024x768.png",
+			"state": "challenge1_mode3_victory",
+			"tick": 3
+		},
+		{
+			"path": "res://reports/challenges_mode3_completed_panel_1024x768.png",
+			"state": "mode3_completed_panel"
+		},
+		{
+			"path": "res://reports/challenges_level5_mode3_1024x768.png",
+			"state": "level5_mode3"
+		},
+		{
+			"gold": 1500,
+			"path": "res://reports/towers_challenge5_iron_opening_1024x768.png",
+			"state": "challenge5_iron_opening",
+			"tick": 3
+		},
+		{
+			"gold": 1500,
+			"path": "res://reports/towers_challenge5_iron_camp5_ruins_1024x768.png",
+			"state": "challenge5_iron_camp5_ruins",
+			"tick": 3
+		},
+		{
+			"gold": 1110,
+			"path": "res://reports/towers_challenge5_iron_camp5_repaired_1024x768.png",
+			"state": "challenge5_iron_camp5_repaired",
+			"tick": 3
+		},
+		{
+			"gold": 1110,
+			"path": "res://reports/towers_challenge5_iron_camp7_ruins_1024x768.png",
+			"state": "challenge5_iron_camp7_ruins",
+			"tick": 3
+		},
+		{
+			"gold": 720,
+			"path": "res://reports/towers_challenge5_iron_camp7_repaired_1024x768.png",
+			"state": "challenge5_iron_camp7_repaired",
+			"tick": 3
+		},
+		{
+			"gold": 720,
+			"path": "res://reports/towers_challenge5_iron_build_restriction_1024x768.png",
+			"state": "challenge5_iron_build_restriction",
+			"tick": 3
+		}
+	],
+	"checks": 69,
+	"combat_replays_run": false,
+	"failures": [],
+	"passed": true,
+	"scope": "new interface layout only"
+}

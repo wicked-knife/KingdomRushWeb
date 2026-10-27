@@ -99,7 +99,9 @@ func _on_event(kind: String, payload: Dictionary) -> void:
 		"finished":
 			selected = ""; selected_unit = 0; targeting = ""
 			if outcome.is_empty():
-				outcome = {"generation": 1, "level_id": sim.data.get("level", {}).get("id", 1), "mode": 1, "difficulty": 2, "result": sim.result, "lives": sim.lives, "stars": CampaignProgress.stars_for(sim.lives) if sim.result == "victory" else 0, "developer_used": sim.developer_used}
+				var identity: Dictionary = sim.data.get("level", {})
+				var stars := CampaignProgress.stars_for(sim.lives) if int(identity.get("mode", 1)) == 1 else (1 if sim.lives > 0 else 0)
+				outcome = {"generation": identity.get("generation", 1), "level_id": identity.get("id", 1), "mode": identity.get("mode", 1), "difficulty": identity.get("difficulty", 2), "result": sim.result, "lives": sim.lives, "stars": stars if sim.result == "victory" else 0, "developer_used": sim.developer_used}
 				outcome.unlock_towers = sim.data.layout.get("unlock_towers", []).duplicate()
 				if sim.result == "victory": _begin_victory_audio()
 				finished.emit(outcome.duplicate())

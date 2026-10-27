@@ -32,9 +32,11 @@ func _run() -> void:
 	var close_at: int = tower.layers[3].at
 	var sprite: Dictionary = sim.templates.tower_barrack_1.render.sprites[2]
 	var closed_frame := Sprites.frame(sprite, sim.animations, {"state": "close", "loop": false, "elapsed": 4})
+	var first_door_error := -1
 	for i in range(200):
 		sim.step()
-		check(tower.layers[3].at == close_at and Sprites.frame(sprite, sim.animations, {"state": "close", "loop": false, "elapsed": sim.tick - close_at}) == closed_frame, "closed door remains still %d" % i)
+		if first_door_error<0 and (tower.layers[3].at!=close_at or Sprites.frame(sprite, sim.animations, {"state":"close","loop":false,"elapsed":sim.tick-close_at})!=closed_frame): first_door_error=i
+	check(first_door_error<0,"closed door stays still for 200 ticks; first deviation %d" % first_door_error)
 	check(int(get_meta("opened", 0)) == 1, "no repeated opening without casualties")
 	var soldier: Dictionary = sim.soldiers[0]
 	sim.damage(soldier, 999, 1)
@@ -46,9 +48,11 @@ func _run() -> void:
 		var origin: Vector2 = s.pos
 		var end: Vector2 = s.dest
 		var delta := end - origin
+		var first_rally_error := -1
 		for i in range(80):
 			sim._soldier_step(s)
-			check(absf(delta.cross(s.pos - origin)) < 0.02, "rally follows a straight segment")
+			if first_rally_error<0 and absf(delta.cross(s.pos-origin))>=0.02:first_rally_error=i
+		check(first_rally_error<0,"rally follows straight segment for 80 steps; first deviation %d" % first_rally_error)
 		check(s.pos.distance_to(end) < 0.01 and not s.rallying, "rally arrives at source formation")
 	# Changing rally during engagement releases both sides and suppresses reacquisition.
 	var alive: Dictionary = sim.soldiers.filter(func(s): return s.hp > 0)[0]

@@ -1,6 +1,7 @@
 extends RefCounted
 ## Dove LevelFlagView: only hover uses 180/181; normal animations stop at 64/134.
 var completed := false
+var iron := false
 var hovered := false
 var elapsed := 1000000000.0
 var wait := 0.0
@@ -28,7 +29,7 @@ func advance(delta: float) -> void:
 		elapsed = 0
 
 func frame() -> String:
-	if hovered: return "map_flag_0181" if completed else "map_flag_0180"
-	var first := 90 if completed else 24
-	var last := 134 if completed else 64
+	if hovered: return "map_flag_0182" if iron else ("map_flag_0181" if completed else "map_flag_0180")
+	var first := 160 if iron else (90 if completed else 24)
+	var last := 179 if iron else (134 if completed else 64)
 	return "map_flag_%04d" % mini(last, first + int(elapsed * 30))

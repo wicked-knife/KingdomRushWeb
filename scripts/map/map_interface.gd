@@ -83,7 +83,7 @@ func _level() -> void:
 	paint.image(stage.thumbnail, Vector2(215, 190))
 	paint.image("levelSelect_thumbFrame", Vector2(202, 175))
 	for i in range(5):
-		var badge := (1 if i < stars else 2) if i < 3 else (4 if i == 3 else 6)
+		var badge := (1 if i < stars else 2) if i < 3 else ((3 if record.has(2) else 4) if i == 3 else (5 if record.has(3) else 6))
 		paint.push(Vector2(310 + i * 35, 490), 0.8)
 		paint.image("levelSelect_badges_%04d" % badge); paint.pop()
 	var titles := [view.definition.strings.Campaign, view.definition.strings.Heroic, view.definition.strings.Iron]
@@ -93,7 +93,7 @@ func _level() -> void:
 		var base: int = [1, 5, 9][index] if enabled else [1, 4, 8][index]
 		if mode == view.mode: base = [3, 7, 11][index]
 		var at := Vector2(1105, 175 + index * 85)
-		var args := {"mode": mode, "reason": "战役获得三星后开放查看"}
+		var args := {"mode": mode, "reason": "战役获得三星后开放挑战"}
 		var over: bool = enabled and mode != view.mode and view.hovered == "mode" + str(args)
 		# Locked tabs already have their own artwork; do not gray-tint them again.
 		paint.image("levelSelect_Mode_notxt_%04d" % (base + 1 if over else base), at)
@@ -121,9 +121,9 @@ func _level() -> void:
 				var value: int = 2 * index + (2 if ["archers", "barracks", "mages", "artillery"][index] in locked else 1)
 				paint.image("levelSelect_modeRules_%04d" % value, Vector2(770 + index * 50, 400))
 	paint.image("levelSelect_difficulty_0003", Vector2(982, 522))
-	if record.has(1) and view.mode == 1: paint.image("levelSelect_difficultyCompleted_0002", Vector2(690, 520))
+	if record.has(view.mode): paint.image("levelSelect_difficultyCompleted_%04d" % int(record[view.mode]), Vector2(690, 520))
 	var playable: bool = view.progress.is_playable(view.selected_level, view.mode, 2)
-	var battle_args := {"reason": "尚未实现" if view.mode == 1 else "此挑战玩法暂未开放"}
+	var battle_args := {"reason": "战役获得三星后开放挑战" if view.mode != 1 and stars < 3 else "此关卡玩法暂未开放"}
 	_button("levelSelect_startMode_notxt_%04d" % (2 * view.mode - 1), "levelSelect_startMode_notxt_%04d" % (2 * view.mode), Vector2(805, 470), "battle", battle_args, playable)
 	var over: bool = playable and view.hovered == "battle" + str(battle_args)
 	var ink := Color.WHITE if over else Color("f3c698")
@@ -132,7 +132,7 @@ func _level() -> void:
 	paint.display_label("进入", Rect2(805, 537, 122, 26), 15, ink, "h_noti", "battle_caption_top", 3, edge)
 	paint.display_label("战斗", Rect2(805, 557, 122, 36), 22, ink, "h_noti", "battle_caption_bottom", 3, edge)
 	if not playable:
-		paint.label("尚未实现" if view.mode == 1 else "暂未开放", Rect2(784, 593, 164, 30), 20, Color("a04423"), "center", "middle", 1, 0, "", "button")
+		paint.label("需要战役三星" if view.mode != 1 and stars < 3 else "暂未开放", Rect2(784, 593, 164, 30), 20, Color("a04423"), "center", "middle", 1, 0, "", "button")
 	paint.pop()
 
 func _title(value: String, at: Vector2, width: float, font_size: int, lines: int = 1, ink: Color = Color("645934")) -> void:

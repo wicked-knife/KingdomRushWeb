@@ -149,6 +149,7 @@ func _selection(id: String, closing: bool) -> void:
 	if tower.type == "":
 		for item: Dictionary in data.tower_menus.holder:
 			var type: String = str(item.action_arg).trim_prefix("tower_build_")
+			if sim.tower_locked("tower_build_" + type) or sim.tower_locked("tower_" + type + "_1"): continue
 			var price: int = sim.templates["tower_" + type + "_1"].tower.price
 			var pos := Vector2(data.tower_menu_button_places[int(item.place) - 1].x, data.tower_menu_button_places[int(item.place) - 1].y)
 			_menu_icon(item.image, pos, "build", {"id": id, "type": type}, price, sim.gold >= price and enabled)
@@ -325,7 +326,7 @@ func _unit_info() -> void:
 
 func _balloons() -> void:
 	var sim: RefCounted = view.sim
-	if int(sim.data.get("level", {}).get("id", 1)) != 1: return
+	if int(sim.data.get("level", {}).get("id", 1)) != 1 or int(sim.data.get("level", {}).get("mode", 1)) != 1: return
 	if view.targeting == "" and view.selected != "": return
 	var built := false
 	for t: Dictionary in sim.towers:
@@ -469,16 +470,17 @@ func _volume(caption: String, y: float, bus: String, value: float, index: int) -
 func result() -> void:
 	view._dim()
 	if view.sim.result == "victory":
-		var dimensions := _size("victoryBadges_notxt_0002")
+		var badge := "victoryBadges_notxt_%04d" % {1: 2, 2: 3, 3: 1}[int(view.sim.data.get("level", {}).get("mode", 1))]
+		var dimensions := _size(badge)
 		_panel("victory", Vector2(dimensions.x, 480), 1.15)
-		paint.image("victoryBadges_notxt_0002")
+		paint.image(badge)
 		paint.label("胜 利", Rect2(dimensions.x / 2 - 160, 165, 320, 78), 64, Color("4c3817"), "center", "middle", 1, 0, "", "h_popup")
 		var stars: int = view.outcome.get("stars", 1)
 		var end_frame: int = [19, 38, 54][stars - 1]
 		var elapsed: float = clock() - panel_at - view.VICTORY_STAR_DELAY
 		var frame := mini(int(maxf(0, elapsed) * 30), end_frame)
 		if elapsed >= 0:
-			paint.image("victoryStars_%04d" % maxi(1, frame), Vector2(dimensions.x / 2, 230), Vector2(0.5, 0))
+			paint.image("victoryStars_%04d" % maxi(1, frame), Vector2(dimensions.x / 2, 270 if int(view.outcome.get("mode", 1)) == 3 else 230), Vector2(0.5, 0))
 		paint.label(("调试局 · " if view.sim.developer_used else "") + "生命 %d · 击杀 %d · %d/%d 波" % [view.sim.lives, view.sim.kills, view.sim.wave, view.sim.data.waves.groups.size()], Rect2(60, 347, dimensions.x - 120, 28), 17, Color("ffe9b0"), "center", "middle", 1, 1)
 		var button := _size("button_border_large_0001")
 		paint.button("button_border_large_0001", Vector2((dimensions.x - button.x) / 2, 389), view.return_label, "map")

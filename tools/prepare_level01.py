@@ -40,9 +40,7 @@ def prepare(source, love, level_id=1, ranger_arena=False):
         for label in labels:
             label.setdefault("font_name", "body" if slide_id.startswith("TB_") else "body_slides")
     data["schema_version"]=1
-    # Level layouts contain mutually exclusive campaign/heroic/iron placements.
-    if level_id == 5:
-        data["layout"]["entities_list"]=[e for e in data["layout"]["entities_list"] if e.get("editor.game_mode",0) in (0,1)]
+    # Resolve the union of all mode placements before filtering into independent layouts.
     data["level"]={"generation":1,"id":level_id,"mode":1,"difficulty":2,"root":f"res://data/{level_name}/","group":level_name,"background":f"stage_{level_id}","music":"BattleMusic","prep_music":"PrepMusic"}
     # all/scripts.lua editor_wave_flag.insert builds entrances from these markers.
     # game_gui.show_wave_flags indexes the sorted entrance array, not editor.path_id.
@@ -69,6 +67,14 @@ def prepare(source, love, level_id=1, ranger_arena=False):
             name=f"{original}__{len(data['templates'])}"
             data["templates"][name]=instance;entity["template"]=name
     if level_id == 5: data["templates"].pop("decal_background",None)
+    if not ranger_arena:
+        for mode, variant in data["modes"].items():
+            variant["layout"]=copy.deepcopy(data["layout"])
+            variant["layout"]["entities_list"]=[e for e in variant["layout"]["entities_list"] if e.get("editor.game_mode",0) in (0,int(mode))]
+            assert variant["waves"]["lives"] == 1
+            assert len(variant["waves"]["groups"]) == (6 if mode == "2" else 1)
+            assert variant["waves"]["cash"] == {"2":[230,310,400,750,1000],"3":[360,275,660,1500,1500]}[mode][level_id-1]
+        data["layout"]["entities_list"]=[e for e in data["layout"]["entities_list"] if e.get("editor.game_mode",0) in (0,1)]
     settings=(source/"kr1/game_settings.lua").read_text(encoding="utf-8")
     def scalar(key): return float(re.search(r"GS\."+key+r"\s*=\s*([\d.]+)",settings)[1])
     def normal(key): return float(re.search(r"GS\."+key+r"\s*=\s*\{([^}]+)",settings)[1].split(",")[1])
@@ -132,7 +138,7 @@ def prepare(source, love, level_id=1, ranger_arena=False):
     # UI uses the exact source layers, not substitutes stretched into arbitrary boxes.
     ui_prefixes=["fire_","fire_ready_","reinforcements_","reinforcement_ready_","power_nbrs_","pause_btn_","victoryStars_","options_","tutorial_but_gotcha_bg_long_","notifications_but_","balloon_"]
     ui_names={"main_icons_0000","main_icons_0001","main_icons_0002","main_icons_0003","main_icons_0004","main_icons_0014","ico_sell_0001","sub_icons_0001","glow_ico_main","glow_ico_sell","glow_ico_sub","price_tag","bg_bottom_bar","bg_bottom_left","tutorial_tit_instructions_bg","notifications_tit_generics_bg_0001","notifications_tit_newpower_bg","notifications_polaroid_overlay","victoryBadges_notxt_0002","button_border_0001","button_border_0002","button_border_large_0001","button_border_large_0002","button_continue_chains","button_restart_chains","tooltip_bg_standard"}
-    ui_names.update({"main_icons_0005","base","base_info_bar","base_info_bar_bg","info_portraits_0000"})
+    ui_names.update({"main_icons_0005","base","base_info_bar","base_info_bar_bg","info_portraits_0000","victoryBadges_notxt_0003"})
     if advanced:
         ui_names.update({"main_icons_0011","special_icons_0008","special_icons_0002","power_rank_0001","power_rank_0002"})
     if level_id == 5: ui_names.update({"main_icons_0015","main_icons_0016","special_icons_0014","special_icons_0024"})

@@ -74,3 +74,7 @@ __pycache__/
 !/reports/level05_delivery.json
 !/reports/dove_saves_logic.json
 !/reports/dove_saves_delivery.json
+!/reports/challenges_logic.json
+!/reports/challenges_visual_1280x720.json
+!/reports/challenges_visual_1024x768.json
+!/reports/challenges_delivery.json

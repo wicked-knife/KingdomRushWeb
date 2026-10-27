@@ -126,6 +126,14 @@ local function run()
   for _,pair in ipairs({{"layout","kr1/data/levels/"..level_name.."_data.lua"},{"paths","kr1/data/levels/"..level_name.."_paths.lua"},{"terrain","kr1/data/levels/"..level_name.."_grid.lua"},{"waves","kr1/data/waves/"..level_name.."_waves_campaign.lua"}}) do
     local env={v=V.v};local f=assert(loadstring(read(pair[2]),"@"..pair[2]));setfenv(f,env);out[pair[1]]=clean(f());loaded_inputs[pair[2]]=true
   end
+  if not ranger_arena then
+    out.modes={}
+    for mode,name in ipairs({"heroic","iron"}) do
+      local path="kr1/data/waves/"..level_name.."_waves_"..name..".lua"
+      local f=assert(loadstring(read(path),"@"..path));setfenv(f,{v=V.v})
+      out.modes[tostring(mode+1)]={waves=clean(f())};loaded_inputs[path]=true
+    end
+  end
   for _,id in ipairs(out.layout.required_templates or {}) do chunk("kr1/template_groups/"..id..".lua") end
   local template_ids={"tower_archer_1","tower_archer_2","tower_barrack_1","tower_barrack_2","tower_mage_1","tower_mage_2","tower_engineer_1","tower_engineer_2","tower_holder_grass","tower_build_archer","tower_build_barrack","tower_build_mage","tower_build_engineer","soldier_militia","soldier_footmen","re_farmer","arrow_1","arrow_2","bolt_1","bolt_2","bomb","bomb_dynamite","power_fireball_control","power_fireball","power_reinforcements_control","fx_fireball_explosion","fx_bolt_hit","fx_explosion_small","fx_unit_explode","decal_bomb_crater","fx_blood_splat","fx_tower_buy_dust","fx_tower_sell_dust"}
   for _,id in ipairs(enemy_ids) do table.insert(template_ids,id) end

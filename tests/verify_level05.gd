@@ -94,7 +94,7 @@ func combat() -> void:
 	var e := enemy(s); e.pos = u.pos + Vector2(100,0)
 	u.rallying = false; u.ranged_at = s.tick; s._soldier_step(u)
 	check(u.pending.get("ranged",false),"elf acquires ranged target")
-	var started: int = s.tick; s.tick += 7; s._soldier_step(u)
+	s.tick += 7; s._soldier_step(u)
 	check(s.projectiles.size() == 1 and s.projectiles[0].template == "arrow_elf","arrow after seven tick windup")
 	var p: Dictionary = s.projectiles[0]; e.pos += Vector2(100,0); s.tick += p.duration; s._bullet_step(p)
 	check(e.hp < 10000,"elf arrow tracks source reset position")
@@ -110,7 +110,6 @@ func combat() -> void:
 	check(u.pending.get("ranged",false) and e.blockers.has(u.id),"elf may shoot while retaining blocker")
 	u.powers.bleed = 3; s.tick += 7; s._soldier_step(u)
 	check(s.projectiles[-1].bleed_level == 3,"skill purchase during windup inherited at launch")
-	check(started >= 0,"combat fixture advanced")
 	# Fired projectiles and their levels outlive the source camp and its soldiers.
 	for rank in range(1,4):
 		var shot = fresh(); var home := camp(shot); shot.gold = 1000
@@ -177,7 +176,7 @@ func progress() -> void:
 	old.initialize(path); check(old.total_stars() == 15 and old.is_unlocked(6) and not old.is_playable(6),"fifth persists and sixth preview")
 	Fixture.complete(p, {"generation":1,"level_id":5,"mode":1,"difficulty":2,"result":"victory","lives":1})
 	old.initialize(path); check(old.record(5).stars == 3,"fifth lower replay preserves best stars")
-	check(not Levels.supports(5,2) and not Levels.supports(5,3),"challenge modes unavailable")
+	check(Levels.supports(5,2) and Levels.supports(5,3),"challenge modes supported")
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(path)); DirAccess.remove_absolute(ProjectSettings.globalize_path(path+".bak"))
 func campaign() -> void:
 	var s = Sim.new(Levels.load_definition(5),42)

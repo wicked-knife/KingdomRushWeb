@@ -1,0 +1,404 @@
+{
+	"actions": [
+		{
+			"args": {
+				"id": "4",
+				"type": "engineer"
+			},
+			"kind": "build",
+			"tick": 0
+		},
+		{
+			"args": {},
+			"kind": "wave",
+			"tick": 0
+		},
+		{
+			"args": {
+				"id": "7",
+				"type": "barrack"
+			},
+			"kind": "build",
+			"tick": 5
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 486.0,
+					"y": 726.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 35
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 486.0,
+					"y": 738.999938964844
+				},
+				"power": "fire"
+			},
+			"kind": "cast",
+			"tick": 195
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 308.0,
+					"y": 436.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 335
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 412.0,
+					"y": 241.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 635
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 453.0,
+					"y": 244.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 935
+		},
+		{
+			"args": {
+				"id": "5",
+				"type": "archer"
+			},
+			"kind": "build",
+			"tick": 1200
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 631.0,
+					"y": 194.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 1235
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 308.0,
+					"y": 436.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 1535
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 498.0,
+					"y": 251.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 1835
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 419.0,
+					"y": 201.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 2135
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 635.0,
+					"y": 234.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 2435
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 447.389251708984,
+					"y": 243.198455810547
+				},
+				"power": "fire"
+			},
+			"kind": "cast",
+			"tick": 2595
+		},
+		{
+			"args": {
+				"id": "3",
+				"type": "archer"
+			},
+			"kind": "build",
+			"tick": 2665
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 622.0,
+					"y": 218.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 2735
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 631.0,
+					"y": 194.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 3035
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 631.0,
+					"y": 194.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 3335
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 595.0,
+					"y": 207.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 3635
+		},
+		{
+			"args": {
+				"id": "2",
+				"type": "archer"
+			},
+			"kind": "build",
+			"tick": 3675
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 631.0,
+					"y": 194.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 3935
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 351.0,
+					"y": 458.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 4235
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 389.0,
+					"y": 223.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 4535
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 595.0,
+					"y": 228.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 4835
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 403.874633789063,
+					"y": 241.160766601563
+				},
+				"power": "fire"
+			},
+			"kind": "cast",
+			"tick": 4995
+		},
+		{
+			"args": {
+				"id": "8",
+				"type": "archer"
+			},
+			"kind": "build",
+			"tick": 5030
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 622.0,
+					"y": 196.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 5135
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 631.0,
+					"y": 194.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 5435
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 266.0,
+					"y": 288.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 5735
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 396.0,
+					"y": 222.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 6035
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 622.0,
+					"y": 196.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 6335
+		},
+		{
+			"args": {
+				"id": "6",
+				"type": "archer"
+			},
+			"kind": "build",
+			"tick": 6550
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 635.0,
+					"y": 234.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 6635
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 460.0,
+					"y": 245.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 6935
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 671.0,
+					"y": 230.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 7235
+		},
+		{
+			"args": {
+				"id": "1",
+				"type": "archer"
+			},
+			"kind": "build",
+			"tick": 7365
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 637.882934570313,
+					"y": 212.731002807617
+				},
+				"power": "fire"
+			},
+			"kind": "cast",
+			"tick": 7395
+		}
+	],
+	"difficulty": 2,
+	"level_id": 1,
+	"mode": 2,
+	"outcome": {
+		"gold": 53,
+		"kills": 106,
+		"lives": 1,
+		"spawned": 106,
+		"ticks": 7491
+	},
+	"seed": 42,
+	"trial": 12
+}

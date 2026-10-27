@@ -115,6 +115,8 @@ def main():
         subprocess.run([engine, "--headless", "--path", str(ROOT), "--export-debug" if args.debug else "--export-release", "Web Bootstrap", str(output)], check=True)
         if args.check_pack:
             subprocess.run([engine, "--headless", "--path", str(ROOT), "--script", "res://tests/verify_web_pack.gd", "--", str(output.with_suffix(".pck"))], check=True)
+        challenge_report_path = ROOT / "reports/challenges_logic.json"
+        challenge_report = json.loads(challenge_report_path.read_text(encoding="utf-8")) if challenge_report_path.exists() else {}
         receipt = {
             "export_succeeded": True,
             "build_type": "debug" if args.debug else "release",
@@ -122,6 +124,16 @@ def main():
             "includes_kr1_map": True,
             "includes_hero_room": True,
             "playable_levels": [1, 2, 3, 4, 5],
+            "playable_modes": [1, 2, 3],
+            "playable_combinations": [{"level": level, "mode": mode, "difficulty": 2} for level in range(1, 6) for mode in (1, 2, 3)],
+            "challenge_validation_passed": challenge_report.get("passed", False),
+            "challenge_checks": challenge_report.get("checks", 0),
+            "challenge_acceptance_basis": challenge_report.get("acceptance_basis", "dove_configuration_and_functionality"),
+            "challenge_victory_replays_required": False,
+            "challenge_replays_run": challenge_report.get("replays_run", False),
+            "challenge_replay_files": [key for key, value in challenge_report.get("modes", {}).items() if value.get("replay_available", False)],
+            "challenge_pending_replays": [f"{level}/{mode}" for level in range(1, 6) for mode in (2, 3) if not challenge_report.get("modes", {}).get(f"{level}/{mode}", {}).get("replay_available", False)],
+            "challenge_replays_verified": [key for key, value in challenge_report.get("modes", {}).items() if value.get("replay_verified", False)],
             "pck_sha256": hashlib.sha256(output.with_suffix(".pck").read_bytes()).hexdigest(),
             "pck_isolated_check": args.check_pack,
             "browser_tested": False,

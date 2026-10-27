@@ -16,7 +16,13 @@
 
 第四关「双子河畔」普通战役已接通，第三关胜利返回地图结算后开放。初始 520 金币、20 生命，15 个塔位、双入口、13 波共 339 个敌人，首次开放四类三级塔。盗贼拥有 50% 近战闪避，强盗拥有 50% 物理护甲；沿用源版背景、音乐、动画与通知。第四关胜利先保存待结算结果，返回地图后更新最好星级并开放第五关。历史实现和验证见 [LEVEL04_TIER3_DELIVERY.md](LEVEL04_TIER3_DELIVERY.md)。
 
-第五关「银橡森林」普通战役已接通，第四关胜利返回地图结算后开放。初始 700 金币、20 生命，14 个塔位包含免费三级箭塔和精灵营地废墟，15 波共 242 名敌人，另统计母蛛孵化的小蜘蛛。三级箭塔可花 230 升游侠并购买毒箭／森林之怒。精灵营地修复费 190，初始为空；每花 100 招募一个永久兵位，上限四个，阵亡后待尸体消失自动补员。流血价格 100／100／100，致残 200／125／125；招募费不参与出售退款。第五关胜利返回地图后保存最好星级并解锁第六关预览，英雄不参战、零科技，英雄／钢铁挑战未开放。完整说明见 [LEVEL05_ELF_DELIVERY.md](LEVEL05_ELF_DELIVERY.md)。
+第五关「银橡森林」普通战役已接通，第四关胜利返回地图结算后开放。初始 700 金币、20 生命，14 个塔位包含免费三级箭塔和精灵营地废墟，15 波共 242 名敌人，另统计母蛛孵化的小蜘蛛。三级箭塔可花 230 升游侠并购买毒箭／森林之怒。精灵营地修复费 190，初始为空；每花 100 招募一个永久兵位，上限四个，阵亡后待尸体消失自动补员。流血价格 100／100／100，致残 200／125／125；招募费不参与出售退款。第五关胜利返回地图后保存最好星级并解锁第六关预览，英雄不参战、零科技，前五关英雄／钢铁挑战已接入，配置和功能验收状态见下方。战役历史说明见 [LEVEL05_ELF_DELIVERY.md](LEVEL05_ELF_DELIVERY.md)。
+
+前五关现在各有战役、英雄挑战、钢铁挑战三个入口，共 15 个关卡／模式组合，固定普通难度 `2`、无英雄参战、零科技。对应战役三星后开放挑战；英雄挑战 6 波、钢铁挑战 1 波，均为 1 生命。英雄／钢铁初始金币依次为 `230/360、310/275、400/660、750/1500、1000/1500`。钢铁依次禁止新建箭塔＋法师塔、兵营、炮塔、法师塔＋炮塔、兵营；第五关钢铁的三个免费三级箭塔与两处精灵废墟使用独立布局，营地修复、招募和技能仍允许。
+
+挑战胜利通过 `last_victory → 返回地图` 结算数字模式成绩；首次通过各奖励一星，重复通过只保留最高难度，战役最好星级不变。前五关战役三星加十个挑战应为 25 星。地图有英雄翅膀、钢铁旗帜、首次完成动画、面板完成徽章及难度印章；重开保留当前模式。
+
+**验收口径：** 按 Dove 配置和功能一致性验收，不要求 AI 打通挑战。首关双挑战和第四关钢铁的 3 份回放保留作补充回归，其余 7 份无需补齐，不阻塞交付。1280×720 原生交互与 1024×768 新界面布局检查通过。详情和复现命令见 [CHALLENGES_DELIVERY.md](CHALLENGES_DELIVERY.md)。
 
 四类塔二升三费用：兵营 150、箭塔 160、炮塔 320、法师塔 240。兵营更换为三名满血骑士，保留集结点；累计投入分别为 330/340/665/500，开波后退款分别为 198/204/399/300。三级独立测试场 `tests/tier3_upgrade_arena.tscn` 使用第四关地图和 2500 初始金币，不接入战役存档；原二级测试场保留。
 
@@ -91,6 +97,12 @@ python tools/verify_level01_assets.py --level 5
 & 'D:/godot/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script tests/verify_level05.gd
 & 'D:/godot/Godot_v4.7.2-stable_win64_console.exe' --path . --script tests/level05_visual.gd --resolution 1280x720
 & 'D:/godot/Godot_v4.7.2-stable_win64_console.exe' --path . --script tests/level05_visual.gd --resolution 1024x768 -- --layout-only
+
+# 挑战：默认只查配置、功能与代表场景，不运行完整通关回放
+& 'D:/godot/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script tests/verify_challenges.gd
+# 仅需复现历史战斗或用户明确要求时，才在上述命令后加 -- --with-replays
+& 'D:/godot/Godot_v4.7.2-stable_win64_console.exe' --path . --script tests/challenges_visual.gd --resolution 1280x720
+& 'D:/godot/Godot_v4.7.2-stable_win64_console.exe' --path . --script tests/challenges_visual.gd --resolution 1024x768 -- --layout-only
 
 # 第二至四关：源像素、逐 tick 波次与敌人机制、合法通关、原生画面和切关
 python tools/verify_level01_assets.py --level 2
@@ -181,9 +193,9 @@ python tools/web_bootstrap.py serve
 浏览器首次点击或按键后启用声音。存储受到限制时会提示设置可能无法保留，不影响主菜单使用。
 浏览器也接受触摸与手柄按钮解锁声音；首次交互后菜单音乐会自动开始，进入地图、备战和开波时切换对应音乐。Web 播放器显式使用 Godot Stream 路径，以避开 4.7 Sample 路径在本项目中的静音输出。
 
-导出由菜单、`data/map_kr1/manifest.json`、`data/heroes/manifest.json` 和 `data/level01..05/manifest.json` 控制，只包含入口、地图、英雄房间和前五关使用的脚本、场景、字体、图集、声音及 JSON。前五关分别使用 6、6、7、7、9 张 2048×2048 派生图集，不打包完整素材库。
+导出由菜单、`data/map_kr1/manifest.json`、`data/heroes/manifest.json` 和 `data/level01..05/manifest.json` 控制，只包含入口、地图、英雄房间和前五关使用的脚本、场景、字体、图集、声音及 JSON。三个模式按资源依赖并集裁剪，前五关分别使用 6、6、7、8、9 张 2048×2048 派生图集，不打包完整素材库。
 `export_presets.cfg` 由工具生成；修改依赖时先更新对应 manifest，再运行 `python tools/web_bootstrap.py preset`。
-导出默认只生成文件；`export --check-pack` 另执行隔离 PCK 资源与五关初始化及第五关营地／游侠检查。最终结果见第五关与精灵营地交付报告。未操作浏览器，Web 功能与兼容性由用户手动验收。
+导出默认只生成文件；`export --check-pack` 另执行隔离 PCK 资源与全部 15 个关卡／模式组合初始化、禁塔、胜利徽章及第五关双营地检查。PCK 通过不代表十个挑战的完整通关检查通过；以本次导出回执和挑战交付报告分别记录。未操作浏览器，Web 功能与兼容性由用户手动验收。
 显式 `export --check-pack` 的结果写入 `build/web/pack_files.json`。每次导出先移除旧检查报告，避免沿用上一版结论；`export_receipt.json` 记录本次导出及检查状态。
 
 本轮使用 `build/KingdomRush-KR1-Levels01-05-Web.zip`，为 release 包，开发菜单关闭。解压后运行 `start_server.cmd`，在浏览器打开其中提示的本地地址；保持命令窗口开启。首次点击、声音开启、页面切后台与浏览器兼容性由用户手动检查。
@@ -193,3 +205,5 @@ python tools/web_bootstrap.py serve
 版本库只保留源码、运行资源、来源清单和少量验证汇总。`reports/` 中的截图、逐帧动画、原始日志和逐状态审计，`output/` 中的中间导出，以及 `build/` 中的试玩包均由工具生成，不提交 Git。临时验证产物清理后，可按上面的命令重新生成。
 
 `reports/assets_migration_state.jsonl` 是增量搬运检查点，保留在本地并忽略；首次克隆时导入器会自行创建。最终 Web 包保留在本地，重新制作调试包使用 `python tools/web_bootstrap.py export --debug` 和 `python tools/package_level01.py`。
+
+专项检查已按 [冗余审查实施记录](TEST_REDUNDANCY_REVIEW.md) 精简：挑战 290、地图 81、战斗细节 49 次断言。命令清单是按改动选择的工具，不要求每次全部执行；默认挑战验收不重跑完整回放。

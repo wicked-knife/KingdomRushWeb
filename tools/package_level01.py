@@ -1,4 +1,4 @@
-"""Package the menu, KR1 map and campaigns 1-5 for manual Web acceptance."""
+"""Package the menu, KR1 map and all 15 level/mode entries for manual Web acceptance."""
 from pathlib import Path
 import hashlib
 import json
@@ -27,7 +27,7 @@ def package():
         encoding="ascii",
     )
     (folder / "README.txt").write_text(
-        "Kingdom Rush Web - KR1 campaigns 1-5 playtest\n"
+        "Kingdom Rush Web - KR1 levels 1-5 campaign and challenges playtest\n"
         "Source: Dove 2.1.0.2 / e29ece82\n\n"
         "1. Extract this whole folder.\n"
         "2. Run start_server.cmd (Python 3 required), or serve this folder with any HTTP server.\n"
@@ -35,7 +35,13 @@ def package():
         "4. Click Start, choose one of three save slots, select the first flag, then enter battle.\n"
         "5. Confirm tutorials, build towers and click the skull at the entrance to start wave 1.\n"
         "6. Victory saves last_victory; return to the map to commit best stars and unlock the next flag.\n"
-        "Levels 1-5 normal campaign are playable; level 6 and challenges are previews.\n"
+        "Levels 1-5 campaign, Heroic and Iron entries are enabled on normal difficulty (15 combinations).\n"
+        "Earn three campaign stars on a level to enter its challenges. Each challenge starts with one life.\n"
+        "Heroic: 6 waves; Iron: 1 wave. First completion of each challenge grants one star.\n"
+        "Campaign three stars plus both challenges on all five levels total 25 stars. Level 6 is a preview.\n"
+        "Heroic gold (levels 1-5): 230/310/400/750/1000. Iron: 360/275/660/1500/1500.\n"
+        "Iron tower bans: L1 archer+mage; L2 barracks; L3 artillery; L4 mage+artillery; L5 barracks.\n"
+        "L5 Iron has 3 free tier-3 archers and 2 elf ruins; camp repair/recruit/skills remain available.\n"
         "Level 2: 240 gold, 7 waves, 7 tower sites. Level 3: 330 gold, 11 waves, 12 sites, two lanes.\n"
         "All four tower types can upgrade to level 2 in campaigns 2 and 3, and level 3 in campaign 4.\n"
         "Level 4: 520 gold, 13 waves, 15 tower sites, two lanes, bandits and brigands.\n"
@@ -57,13 +63,20 @@ def package():
         "Early-wave rewards animate +gold at the gold counter and -seconds above cooling skills.\n"
         "Click a soldier/enemy to inspect live stats. Click a sheep 8 times to pop it.\n"
         "1 = fire rain, 2 = reinforcements, Space = next wave. Skills unlock after wave 3/7 tutorials in level 1.\n"
-        "In levels 2-5 both skills unlock when wave 1 is sent; neither can be used during setup.\n"
+        "In all challenges and campaigns 2-5 both skills unlock when wave 1 is sent; neither can be used during setup.\n"
         "Click enemy alerts for information.\n\n"
-        "Normal difficulty, no hero or technology, 20 initial lives. Level 1: 270 gold, 7 waves.\n"
+        "Normal difficulty, no hero combat or technology. Campaigns start with 20 lives, challenges with 1.\n"
+        "Campaign level 1: 270 gold, 7 waves.\n"
         + ("Debug build: click DEV or press F8 in battle. +10000 gold / +100 lives / skip current wave.\n"
            "Debug victories save normally; skip preserves wave 3/7 teaching confirmations.\n" if debug else "Release build: developer commands are disabled.\n")
         + ("The isolated PCK check passed; browser acceptance is manual.\n" if checked else
            "Web validation was not run for this delivery; browser acceptance is manual.\n")
+        + "Challenge acceptance: Dove configuration and functionality; complete victory recordings are optional.\n"
+        + (f"Supplementary verified challenge victory recordings: {len(receipt.get('challenge_replays_verified', []))}/10.\n" if receipt.get("challenge_replays_run", False) else
+           "Complete victory recordings were not run by the default configuration/functionality check.\n")
+        + ("All challenge logic acceptance checks passed.\n" if receipt.get("challenge_validation_passed", False) else
+           "Challenge configuration/functionality checks have not passed; see the report.\n")
+        + f"Unrecorded modes (optional, non-blocking; 2=Heroic, 3=Iron): {', '.join(receipt.get('challenge_pending_replays', [])) or 'none'}.\n"
         + "Check gameplay, audio unlocking, background-tab behavior and persistence in your browser.\n"
         "Compatibility renderer / single-thread Web / no COOP or COEP required.\n",
         encoding="utf-8",
@@ -85,6 +98,15 @@ def package():
         "developer_menu": debug,
         "includes_hero_room": receipt.get("includes_hero_room", False),
         "playable_levels": receipt.get("playable_levels", []),
+        "playable_modes": receipt.get("playable_modes", []),
+        "playable_combinations": receipt.get("playable_combinations", []),
+        "challenge_validation_passed": receipt.get("challenge_validation_passed", False),
+        "challenge_acceptance_basis": receipt.get("challenge_acceptance_basis"),
+        "challenge_victory_replays_required": False,
+        "challenge_replays_run": receipt.get("challenge_replays_run", False),
+        "challenge_replay_files": receipt.get("challenge_replay_files", []),
+        "challenge_pending_replays": receipt.get("challenge_pending_replays", []),
+        "challenge_replays_verified": receipt.get("challenge_replays_verified", []),
         "pck_isolated_check": checked,
         "pck_files": len(report["files"]) if checked else None,
         "bundle": str(output.relative_to(ROOT)),

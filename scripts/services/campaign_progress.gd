@@ -111,7 +111,7 @@ func deselect_hero(id: String) -> bool:
 	heroes.selected.erase(id); save(); changed.emit(); return true
 func is_unlocked(id: int) -> bool: return levels.has(id)
 func is_playable(id: int, mode: int = 1, difficulty: int = 2) -> bool:
-	return is_unlocked(id) and CampaignLevels.supports(id, mode, difficulty)
+	return is_unlocked(id) and CampaignLevels.supports(id, mode, difficulty) and (mode == 1 or int(record(id).get("stars", 0)) >= 3)
 func record(id: int) -> Dictionary: return levels.get(id, {})
 func mark_seen(id: String) -> bool:
 	if id.is_empty() or data.seen.get(id, false): return false
@@ -148,15 +148,16 @@ func record_result(outcome: Dictionary) -> bool:
 		var had := data.has("last_victory")
 		data.erase("last_victory"); save(); changed.emit(); return had
 	var id := int(outcome.get("level_id", 0))
-	if outcome.get("result", "") != "victory" or int(outcome.get("mode", 0)) != 1 or not is_unlocked(id) or not _in_generation(id, int(outcome.get("generation", 1))): return false
-	var stars := stars_for(int(outcome.get("lives", 0)))
+	var mode := int(outcome.get("mode", 0))
+	if outcome.get("result", "") != "victory" or mode not in [1, 2, 3] or not is_unlocked(id) or not _in_generation(id, int(outcome.get("generation", 1))): return false
+	var stars := stars_for(int(outcome.get("lives", 0))) if mode == 1 else (1 if int(outcome.get("lives", 0)) > 0 else 0)
 	if stars == 0: return false
 	var victory := {"level_idx": id, "level_mode": int(outcome.mode), "level_difficulty": clampi(int(outcome.get("difficulty", 2)), 1, 4), "stars": stars, "unlock_towers": outcome.get("unlock_towers", []).duplicate()}
 	if data.get("last_victory", {}) == victory: return false
 	data.last_victory = victory; save(); changed.emit(); return true
 
 func enter_map() -> Dictionary:
-	var changes := {"stars": {}, "unlocked": []}
+	var changes := {"stars": {}, "unlocked": [], "heroic": [], "iron": []}
 	var dirty := data.has("last_victory")
 	var victory: Dictionary = data.get("last_victory", {})
 	if _valid_victory(victory):
@@ -165,6 +166,7 @@ func enter_map() -> Dictionary:
 		if mode == 1 and int(victory.stars) > before:
 			row.stars = int(victory.stars)
 			changes.stars[str(id)] = {"before": before, "after": int(victory.stars)}
+		if mode != 1 and not row.has(mode): changes["heroic" if mode == 2 else "iron"].append(id)
 		row[mode] = maxi(int(row.get(mode, 0)), int(victory.level_difficulty))
 		for tower: String in victory.unlock_towers: data.locked_towers.erase(tower)
 	data.erase("last_victory")

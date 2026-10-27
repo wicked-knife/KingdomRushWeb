@@ -1,0 +1,367 @@
+{
+	"actions": [
+		{
+			"args": {
+				"id": "04",
+				"type": "archer"
+			},
+			"kind": "build",
+			"tick": 0
+		},
+		{
+			"args": {
+				"id": "04",
+				"upgrade_to": "tower_archer_2"
+			},
+			"kind": "upgrade",
+			"tick": 25
+		},
+		{
+			"args": {
+				"id": "04",
+				"upgrade_to": "tower_archer_3"
+			},
+			"kind": "upgrade",
+			"tick": 30
+		},
+		{
+			"args": {
+				"id": "03",
+				"type": "archer"
+			},
+			"kind": "build",
+			"tick": 35
+		},
+		{
+			"args": {
+				"id": "03",
+				"upgrade_to": "tower_archer_2"
+			},
+			"kind": "upgrade",
+			"tick": 60
+		},
+		{
+			"args": {
+				"id": "03",
+				"upgrade_to": "tower_archer_3"
+			},
+			"kind": "upgrade",
+			"tick": 65
+		},
+		{
+			"args": {
+				"id": "05",
+				"type": "archer"
+			},
+			"kind": "build",
+			"tick": 70
+		},
+		{
+			"args": {
+				"id": "05",
+				"upgrade_to": "tower_archer_2"
+			},
+			"kind": "upgrade",
+			"tick": 95
+		},
+		{
+			"args": {
+				"id": "05",
+				"upgrade_to": "tower_archer_3"
+			},
+			"kind": "upgrade",
+			"tick": 100
+		},
+		{
+			"args": {
+				"id": "06",
+				"type": "archer"
+			},
+			"kind": "build",
+			"tick": 105
+		},
+		{
+			"args": {
+				"id": "06",
+				"upgrade_to": "tower_archer_2"
+			},
+			"kind": "upgrade",
+			"tick": 130
+		},
+		{
+			"args": {
+				"id": "06",
+				"upgrade_to": "tower_archer_3"
+			},
+			"kind": "upgrade",
+			"tick": 135
+		},
+		{
+			"args": {
+				"id": "08",
+				"type": "barrack"
+			},
+			"kind": "build",
+			"tick": 140
+		},
+		{
+			"args": {
+				"id": "11",
+				"type": "barrack"
+			},
+			"kind": "build",
+			"tick": 145
+		},
+		{
+			"args": {},
+			"kind": "wave",
+			"tick": 400
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 493.0,
+					"y": 204.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 490
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 754.0,
+					"y": 235.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 790
+		},
+		{
+			"args": {
+				"id": "01",
+				"type": "archer"
+			},
+			"kind": "build",
+			"tick": 1010
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 860.0,
+					"y": 325.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 1090
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 800.0,
+					"y": 485.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 1390
+		},
+		{
+			"args": {
+				"id": "01",
+				"upgrade_to": "tower_archer_2"
+			},
+			"kind": "upgrade",
+			"tick": 1455
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 775.0,
+					"y": 540.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 1690
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 840.552917480469,
+					"y": 498.536499023438
+				},
+				"power": "fire"
+			},
+			"kind": "cast",
+			"tick": 1815
+		},
+		{
+			"args": {
+				"id": "01",
+				"upgrade_to": "tower_archer_3"
+			},
+			"kind": "upgrade",
+			"tick": 1850
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 836.0,
+					"y": 504.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 1990
+		},
+		{
+			"args": {
+				"id": "07",
+				"type": "archer"
+			},
+			"kind": "build",
+			"tick": 2075
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 571.0,
+					"y": 671.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 2290
+		},
+		{
+			"args": {
+				"id": "07",
+				"upgrade_to": "tower_archer_2"
+			},
+			"kind": "upgrade",
+			"tick": 2400
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 538.0,
+					"y": 693.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 2590
+		},
+		{
+			"args": {
+				"id": "07",
+				"upgrade_to": "tower_archer_3"
+			},
+			"kind": "upgrade",
+			"tick": 2760
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 622.0,
+					"y": 675.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 2905
+		},
+		{
+			"args": {
+				"id": "14",
+				"type": "archer"
+			},
+			"kind": "build",
+			"tick": 2970
+		},
+		{
+			"args": {
+				"id": "14",
+				"upgrade_to": "tower_archer_2"
+			},
+			"kind": "upgrade",
+			"tick": 3240
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 407.0,
+					"y": 648.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 3295
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 556.0,
+					"y": 763.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 3595
+		},
+		{
+			"args": {
+				"id": "14",
+				"upgrade_to": "tower_archer_3"
+			},
+			"kind": "upgrade",
+			"tick": 3650
+		},
+		{
+			"args": {
+				"id": "15",
+				"type": "archer"
+			},
+			"kind": "build",
+			"tick": 3835
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 597.0,
+					"y": 774.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 3895
+		},
+		{
+			"args": {
+				"pos": {
+					"x": 556.0,
+					"y": 763.0
+				},
+				"power": "reinforcements"
+			},
+			"kind": "cast",
+			"tick": 4195
+		}
+	],
+	"difficulty": 2,
+	"level_id": 4,
+	"mode": 3,
+	"outcome": {
+		"gold": 35,
+		"kills": 285,
+		"lives": 1,
+		"spawned": 285,
+		"ticks": 4203
+	},
+	"seed": 42,
+	"trial": 507
+}

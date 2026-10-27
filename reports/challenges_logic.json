@@ -1,0 +1,50 @@
+{
+	"acceptance_basis": "dove_configuration_and_functionality",
+	"checks": 290,
+	"failures": [],
+	"modes": {
+		"1/2": {
+			"replay_available": true,
+			"replay_verified": null
+		},
+		"1/3": {
+			"replay_available": true,
+			"replay_verified": null
+		},
+		"2/2": {
+			"replay_available": false,
+			"replay_verified": null
+		},
+		"2/3": {
+			"replay_available": false,
+			"replay_verified": null
+		},
+		"3/2": {
+			"replay_available": false,
+			"replay_verified": null
+		},
+		"3/3": {
+			"replay_available": false,
+			"replay_verified": null
+		},
+		"4/2": {
+			"replay_available": false,
+			"replay_verified": null
+		},
+		"4/3": {
+			"replay_available": true,
+			"replay_verified": null
+		},
+		"5/2": {
+			"replay_available": false,
+			"replay_verified": null
+		},
+		"5/3": {
+			"replay_available": false,
+			"replay_verified": null
+		}
+	},
+	"passed": true,
+	"replays_run": false,
+	"victory_replays_required": false
+}

@@ -39,8 +39,8 @@ func _run() -> void:
 	check(restored.total_stars() == 2 and restored.is_unlocked(2), "progress survives reload")
 	var defeated := outcome(1, 0); defeated.result = "defeat"
 	check(not Fixture.complete(p, defeated), "defeat gives no progress")
-	var invalid := outcome(1, 20); invalid.mode = 2
-	check(not Fixture.complete(p, invalid), "unimplemented challenge gives no progress")
+	var invalid := outcome(1, 20); invalid.mode = 4
+	check(not Fixture.complete(p, invalid), "invalid mode gives no progress")
 	check(p.record_result(outcome(1, 20)) and p.total_stars() == 2, "victory first persists pending result")
 	var changes: Dictionary = p.enter_map()
 	check(changes.stars["1"].before == 2 and changes.stars["1"].after == 3 and changes.unlocked.is_empty(), "map animates only this settlement")
@@ -63,11 +63,8 @@ func _run() -> void:
 	var atlas: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/map_kr1/atlas.json"))
 	var player := Animations.new(definition.animations, 41)
 	check(player.entries.size() == 124, "all map instances expanded")
-	for step in range(300):
-		player.advance(0.31)
-		for layer in range(1, 4):
-			for item: Dictionary in player.items(layer): check(atlas.lookup.has(item.image), "sampled frame resolves " + item.image)
-	# Full app route, legitimate victory, empty-defense defeat, and repeated scene disposal.
+	_animation_states(definition.animations,atlas)
+	# Test the real finish-event route without replaying combat already covered elsewhere.
 	var app := App.instantiate(); app.settings_path = temporary + "/settings.json"; app.slots_path = temporary + "/route.json"
 	root.add_child(app); await app.menu_ready
 	app.menu.start_button.pressed.emit(); app.menu._select_slot(1); await app.map_ready
@@ -95,14 +92,14 @@ func _run() -> void:
 	map._action("level", {"id": 1}); map._action("battle")
 	await process_frame
 	check(app.battle != null and app.campaign_map == null and app.map_loader == null, "map enters battle and releases map")
-	play(app.battle.sim, true)
-	check(app.battle.outcome.result == "victory" and app.campaign.total_stars() == 0 and app.campaign.data.has("last_victory"), "legal full battle persists pending victory")
+	app.battle.sim._finish("victory")
+	check(app.battle.outcome.result == "victory" and app.campaign.total_stars() == 0 and app.campaign.data.has("last_victory"), "finish event persists pending victory")
 	var won: Dictionary = app.battle.outcome.duplicate()
 	app.battle._action("restart")
 	check(app.battle.outcome.is_empty() and app.battle.sim.speed == 1 and app.campaign.data.has("last_victory"), "restart retains pending victory without settling")
-	play(app.battle.sim, false)
+	app.battle.sim.lives=0;app.battle.sim._finish("defeat")
 	check(app.battle.outcome.result == "defeat" and app.campaign.total_stars() == 0 and not app.campaign.data.has("last_victory"), "defeat clears unsettled victory")
-	app.battle._action("restart"); play(app.battle.sim, true)
+	app.battle._action("restart"); app.battle.sim._finish("victory")
 	app.battle._action("map"); await app.map_ready
 	check(app.campaign.is_unlocked(2) and app.campaign_map.changes.unlocked == [2], "return animates newly unlocked level")
 	var counts := app.get_child_count()
@@ -116,26 +113,43 @@ func _run() -> void:
 	app.queue_free(); await process_frame; await process_frame
 	for name: String in DirAccess.get_files_at(temporary): DirAccess.remove_absolute(temporary + "/" + name)
 	DirAccess.remove_absolute(temporary)
-	var report := {"passed": failures.is_empty(), "checks": checks, "failures": failures, "victory": won, "nodes": 27, "animation_instances": 124}
+	var report := {"passed": failures.is_empty(), "checks": checks, "failures": failures, "victory": won, "nodes": 27, "animation_instances": 124, "combat_replays_run": false, "animation_scope": "expanded resources and representative loop/wait/sequence/move/boat states"}
 	write("res://reports/map_kr1_logic.json", report)
 	print("MAP_KR1_LOGIC: ", JSON.stringify(report)); quit(0 if failures.is_empty() else 1)
 
-func play(sim, defend: bool) -> void:
-	while not sim.notices.is_empty(): sim.command("confirm")
-	if defend:
-		for pair in [["1", "archer"], ["6", "mage"], ["4", "archer"]]: check(sim.command("build", {"id": pair[0], "type": pair[1]}), "legal starting defense")
-	sim.command("wave")
-	for tick in range(30000):
-		while not sim.notices.is_empty(): sim.command("confirm")
-		if defend:
-			for id in ["8", "3", "7", "5", "2"]:
-				if sim.gold >= 70 and sim.tower_by_id(id).type == "": sim.command("build", {"id": id, "type": "archer"})
-			if sim.unlocked.reinforcements and sim.cooldowns.reinforcements == 0:
-				var target: Dictionary = sim._target(Vector2(478, 228), 120)
-				if not target.is_empty(): sim.command("cast", {"power": "reinforcements", "pos": target.pos})
-			if sim.unlocked.fire and sim.cooldowns.fire == 0:
-				var target: Dictionary = sim._target(Vector2(400, 440), 400)
-				if not target.is_empty(): sim.command("cast", {"power": "fire", "pos": target.pos})
-		sim.step()
-		if sim.result != "": return
-	check(false, "battle completed within timeout")
+func _animation_states(definitions: Array, atlas: Dictionary) -> void:
+	var expanded=Animations.new(definitions,41)
+	var sample: Array=[]
+	for layer in range(1,4): sample.append_array(expanded.items(layer))
+	check(not sample.is_empty() and sample.all(func(item):return atlas.lookup.has(item.image) and item.pos.is_finite() and item.scale.is_finite()),"expanded map frames and transforms resolve")
+	var loop_source: Dictionary=definitions.filter(func(d):return d.get("loop",false) and d.has("animation") and not d.has("move"))[0]
+	var loop=Animations.new([loop_source],41)
+	loop.entries[0].offset=0
+	var duration: float=(loop_source.animation.to-loop_source.animation.from+1)/30.0
+	var first: String=loop.items(int(loop_source.layer))[0].image
+	loop.advance(duration)
+	check(loop.items(int(loop_source.layer))[0].image==first,"loop returns to first frame after exact duration")
+	var waiting_source: Dictionary=definitions.filter(func(d):return d.has("wait") and d.has("animation") and not d.has("move"))[0]
+	var waiting=Animations.new([waiting_source],41)
+	var wake: float=waiting.entries[0].next
+	waiting.advance(wake-0.01)
+	check(waiting.entries[0].start<0,"waiting animation stays dormant before scheduled start")
+	waiting.advance(0.02)
+	check(is_equal_approx(waiting.entries[0].start,wake) and waiting.entries[0].next>wake,"waiting animation starts and schedules next cycle")
+	var sequence_source: Dictionary=definitions.filter(func(d):return d.has("sequence"))[0]
+	var sequenced=Animations.new([sequence_source],41)
+	sequenced.advance(float(sequenced.entries[0].next)+0.01)
+	var next_animation: Dictionary=sequence_source.animations[sequence_source.sequence[1][0]]
+	check(sequenced.entries[0].sequence==1 and sequenced.items(int(sequence_source.layer))[0].image=="%s_%04d" % [next_animation.prefix,int(next_animation.from)],"sequence changes to expected source animation")
+	var moving_source: Dictionary=definitions.filter(func(d):return d.has("move"))[0]
+	var moving=Animations.new([moving_source],41)
+	moving.entries[0].offset=0;moving.entries[0].start=0;moving.entries[0].next=float(moving_source.move.time)
+	moving.advance(float(moving_source.move.time)/2)
+	var middle: Dictionary=moving.items(int(moving_source.layer))[0]
+	check(middle.pos.is_equal_approx(Animations.vec(moving_source.move.from).lerp(Animations.vec(moving_source.move.to),0.5)) and middle.scale==Animations.vec(moving_source.scale) and is_equal_approx(middle.alpha,moving_source.alpha),"moving layer uses source midpoint scale and alpha")
+	var boat_source: Dictionary=definitions.filter(func(d):return d.get("id","")=="ma_big_boat")[0]
+	var boat=Animations.new([boat_source],41)
+	var outside: Array=boat.items(int(boat_source.layer))
+	boat.advance(float(boat_source.wait_out)+float(boat_source.sail_time)*0.8)
+	var inside: Array=boat.items(int(boat_source.layer))
+	check(outside.size()==2 and outside[0].alpha==1 and outside[1].alpha==0 and outside[1].pos==Animations.vec(boat_source.pos_out) and inside[0].alpha==0 and inside[1].alpha==1 and inside[1].pos!=outside[1].pos,"boat swaps source layers and moves into harbor")

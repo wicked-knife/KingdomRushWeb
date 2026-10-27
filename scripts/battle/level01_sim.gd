@@ -74,7 +74,7 @@ func reset(seed_value: int = 1) -> void:
 	developer_used = false
 	towers.clear(); enemies.clear(); soldiers.clear(); projectiles.clear(); effects.clear(); decals.clear(); spawn_queue.clear(); spawn_log.clear()
 	eggs.clear()
-	var first: bool = int(data.get("level", {}).get("id", 1)) == 1
+	var first: bool = int(data.get("level", {}).get("id", 1)) == 1 and int(data.get("level", {}).get("mode", 1)) == 1
 	notices = ["TUTORIAL_1", "TUTORIAL_2", "TUTORIAL_3"] if first else []
 	# Dove enables the non-tutorial powers from the first next-wave-sent event,
 	# not while the battlefield is still in its pre-wave setup state.
@@ -142,7 +142,7 @@ func _melee_period(template: Dictionary) -> int:
 
 func tower_locked(template_name: String) -> bool:
 	if template_name in data.layout.get("unlock_towers", []): return false
-	return template_name in data.get("slot_locked_towers", []) or template_name in data.layout.level_mode_overrides[0].get("locked_towers", [])
+	return template_name in data.get("slot_locked_towers", []) or template_name in data.layout.level_mode_overrides[int(data.get("level", {}).get("mode", 1)) - 1].get("locked_towers", [])
 
 func sell_refund(tower: Dictionary) -> int:
 	if tower.type == "": return 0
@@ -184,6 +184,7 @@ func command(kind: String, args: Dictionary = {}) -> bool:
 			var tower := tower_by_id(str(args.get("id", "")))
 			var type: String = str(args.get("type", ""))
 			if tower.is_empty() or tower.type != "" or type not in TYPES: return false
+			if tower_locked("tower_build_" + type) or tower_locked("tower_" + type + "_1"): return false
 			var price := int(templates["tower_" + type + "_1"].tower.price)
 			if gold < price: return false
 			tower.template = "tower_" + type + "_1"; tower.spent = price
@@ -389,9 +390,10 @@ func _start_wave(manual: bool) -> void:
 			cooldowns[power] = maxi(0, cooldowns[power] - remaining * 30)
 		event.emit("reward", {"gold": reward, "seconds": remaining, "powers": cooling_powers})
 	wave += 1; next_wave_tick = -1
-	if wave == 1 and int(data.get("level", {}).get("id", 1)) != 1:
-		unlocked.reinforcements = true
-		unlocked.fire = true
+	if wave == 1:
+		var locks: Variant = data.layout.level_mode_overrides[int(data.get("level", {}).get("mode", 1)) - 1].get("locked_powers", [])
+		unlocked.reinforcements = locks.is_empty() or not locks[0]
+		unlocked.fire = locks.is_empty() or not locks[1]
 	var group: Dictionary = data.waves.groups[wave - 1]
 	var end_tick := tick
 	for w: Dictionary in group.waves:

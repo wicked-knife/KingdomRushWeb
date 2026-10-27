@@ -141,6 +141,10 @@ func _process(delta: float) -> void:
 		for star in delta_stars:
 			var key := "star%s:%d" % [id, star]
 			if animation_player.time >= 0.3 + star * 0.25 and not announced.has(key): announced[key] = true; _sound("GUIWinStars")
+	for kind: String in ["heroic", "iron"]:
+		for id in changes.get(kind, []):
+			var key := kind + str(id)
+			if animation_player.time >= 0.5 and not announced.has(key): announced[key] = true; _sound("GUIWinStars")
 	queue_redraw()
 
 func _frame(id: String) -> Dictionary:
@@ -192,6 +196,7 @@ func _flag(stage: Dictionary) -> void:
 	if not flag_states.has(id): flag_states[id] = FlagAnimation.new(stars > 0)
 	var state: RefCounted = flag_states[id]
 	state.completed = stars > 0
+	state.iron = progress.record(id).has(3)
 	state.set_hovered(hovered == "level" + str({"id": id}))
 	var frame: String = state.frame()
 	if born >= 0 and elapsed < 0.8: frame = "map_flag_%04d" % (1 + mini(23, int(elapsed * 30)))
@@ -199,6 +204,12 @@ func _flag(stage: Dictionary) -> void:
 		frame = "map_flag_%04d" % (65 + mini(24, int((animation_player.time - 0.3) * 30)))
 	var at := Animations.vec(stage.flag.pos)
 	paint.push(at - Vector2(44, 60))
+	if progress.record(id).has(2) and (not id in changes.get("heroic", []) or animation_player.time >= 0.5):
+		var wing_frame := clampi(1 + int((animation_player.time - 0.5) * 30), 1, 15) if id in changes.get("heroic", []) else 15
+		var wing := "map_flag_heroic_%04d" % wing_frame
+		paint.image(wing, Vector2(41, 60), Vector2(0.5, 0.5))
+	if id in changes.get("iron", []) and animation_player.time < 4.5:
+		frame = "map_flag_%04d" % (clampi(135 + int((animation_player.time - 0.5) * 30), 135, 150) if animation_player.time >= 0.5 else 134)
 	if state.hovered: frame = state.frame()
 	paint.image(frame)
 	var visible_stars := stars

@@ -12,11 +12,110 @@
     4,
     5
   ],
+  "playable_modes": [
+    1,
+    2,
+    3
+  ],
+  "playable_combinations": [
+    {
+      "level": 1,
+      "mode": 1,
+      "difficulty": 2
+    },
+    {
+      "level": 1,
+      "mode": 2,
+      "difficulty": 2
+    },
+    {
+      "level": 1,
+      "mode": 3,
+      "difficulty": 2
+    },
+    {
+      "level": 2,
+      "mode": 1,
+      "difficulty": 2
+    },
+    {
+      "level": 2,
+      "mode": 2,
+      "difficulty": 2
+    },
+    {
+      "level": 2,
+      "mode": 3,
+      "difficulty": 2
+    },
+    {
+      "level": 3,
+      "mode": 1,
+      "difficulty": 2
+    },
+    {
+      "level": 3,
+      "mode": 2,
+      "difficulty": 2
+    },
+    {
+      "level": 3,
+      "mode": 3,
+      "difficulty": 2
+    },
+    {
+      "level": 4,
+      "mode": 1,
+      "difficulty": 2
+    },
+    {
+      "level": 4,
+      "mode": 2,
+      "difficulty": 2
+    },
+    {
+      "level": 4,
+      "mode": 3,
+      "difficulty": 2
+    },
+    {
+      "level": 5,
+      "mode": 1,
+      "difficulty": 2
+    },
+    {
+      "level": 5,
+      "mode": 2,
+      "difficulty": 2
+    },
+    {
+      "level": 5,
+      "mode": 3,
+      "difficulty": 2
+    }
+  ],
+  "challenge_validation_passed": true,
+  "challenge_acceptance_basis": "dove_configuration_and_functionality",
+  "challenge_victory_replays_required": false,
+  "challenge_pending_replays": [
+    "2/2",
+    "2/3",
+    "3/2",
+    "3/3",
+    "4/2",
+    "5/2",
+    "5/3"
+  ],
+  "challenge_replays_verified": [
+    "1/2",
+    "1/3",
+    "4/3"
+  ],
   "pck_isolated_check": true,
-  "pck_files": 560,
+  "pck_files": 562,
   "bundle": "build\\KingdomRush-KR1-Levels01-05-Web.zip",
-  "bytes": 140772360,
-  "sha256": "4d22aa62702c644b67c016e10eabc6d9d08b5a45b316be17ce3e0c03ba14eb71",
+  "bytes": 141563173,
+  "sha256": "295286b4bcba9a7cc374aba206c89ebdde35a9c863187c31b3b71402998bef16",
   "web_files": {
     "index.apple-touch-icon.png": {
       "bytes": 11939,
@@ -32,7 +131,7 @@
     },
     "index.html": {
       "bytes": 3146,
-      "sha256": "a7bbae2c3299c163daeffa7affcee7b99fee0f421ff19e32535c6b039f58d780"
+      "sha256": "687e6da3ab9ad08e95074a03f6ed476794964cfb6a5134dbcf1031c9409a60a1"
     },
     "index.icon.png": {
       "bytes": 5765,
@@ -43,8 +142,8 @@
       "sha256": "33c94cb3175f3333b82e2a3be5e8e86f77986f0aa2042b1631f6367a4e5bb6ba"
     },
     "index.pck": {
-      "bytes": 137855012,
-      "sha256": "d26c9d60b54a451d5757b8b3a847066b7881465c2d87516a786b9791879542c0"
+      "bytes": 138751544,
+      "sha256": "c60c4e81e2f4160e115ce5db24abf3c6626676527a373414b2886cf91c6ac356"
     },
     "index.png": {
       "bytes": 21443,
@@ -55,20 +154,20 @@
       "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
     },
     "export_receipt.json": {
-      "bytes": 363,
-      "sha256": "1a03ed1987fa7c364318adcf445bfd3ca4c83f9efd283af547021aa1016133c9"
+      "bytes": 2044,
+      "sha256": "2cb6f125e31beb1516afed63dd2fcfe855cff36ba9703a70b18dad0933e54e9c"
     },
     "README.txt": {
-      "bytes": 2983,
-      "sha256": "bebc8ce280f9d3f206109574d238b9991b8e17d46cacddbec6051cd3bb68dfad"
+      "bytes": 3953,
+      "sha256": "1c019a4c3136de801f393feab6ce26b5525a532b4dd8a0d0d5f1f30367b583d7"
     },
     "start_server.cmd": {
       "bytes": 180,
       "sha256": "8f021ad5511504a288354fec02c4bf8514f054a2457cc229710e1d6069558b32"
     },
     "pack_files.json": {
-      "bytes": 41847,
-      "sha256": "fc968bdb431b7b5850bb5080ed5537240da7054dcc789eee5e0005ee3ef09461"
+      "bytes": 42001,
+      "sha256": "908b0a9b612f2afaf3d4fc95dabdca281bdaf836fa8955d5111b5e47b87b52ab"
     }
   }
 }

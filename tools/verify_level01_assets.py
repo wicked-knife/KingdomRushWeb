@@ -16,6 +16,26 @@ def verify(level_id=1, ranger_arena=False):
     for name,digest in data["source"]["inputs"].items(): assert sha(source/name)==digest, name
     for name,digest in manifest["source_texture_hashes"].items(): assert sha(ROOT/name)==digest, name
     for resource in manifest["data"]+manifest["resources"]: assert (ROOT/resource.removeprefix("res://")).is_file(),resource
+    if not ranger_arena:
+        assert set(data["modes"]) == {"2", "3"}
+        for mode in (2, 3):
+            selected=data["modes"][str(mode)]
+            assert selected["waves"]["cash"] == {2:[230,310,400,750,1000],3:[360,275,660,1500,1500]}[mode][level_id-1]
+            assert selected["waves"]["lives"] == 1 and len(selected["waves"]["groups"]) == (6 if mode==2 else 1)
+            assert all(e.get("editor.game_mode",0) in (0,mode) for e in selected["layout"]["entities_list"])
+            assert f"kr1/data/waves/level{level_id:02d}_waves_{'heroic' if mode==2 else 'iron'}.lua" in data["source"]["inputs"]
+            for e in selected["layout"]["entities_list"]:
+                if "tower.holder_id" in e: assert e["template"] in data["templates"]
+            for group in selected["waves"]["groups"]:
+                for wave in group["waves"]:
+                    assert 1 <= wave["path_index"] <= len(data["paths"]["paths"])
+                    for spawn in wave["spawns"]:
+                        for key in ("creep","creep_aux"):
+                            if spawn.get(key): assert spawn[key] in data["templates"]
+        if level_id==5:
+            towers={str(e["tower.holder_id"]):e["template"] for e in data["modes"]["3"]["layout"]["entities_list"] if "tower.holder_id" in e}
+            assert {site for site,t in towers.items() if t=="tower_archer_3"}=={"1","3","4"}
+            assert {site for site,t in towers.items() if t=="tower_elf_holder"}=={"5","7"}
     atlas=read(folder/"atlas.json"); animations=read(folder/"animations.json")["animations"]
     # Every default sprite must resolve, including suffixes such as explosion_big
     # and explode_small. Merely validating already-selected animations misses them.

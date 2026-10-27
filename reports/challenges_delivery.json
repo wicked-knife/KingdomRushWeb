@@ -1,0 +1,130 @@
+{
+  "source": {
+    "version": "2.1.0.2",
+    "commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2"
+  },
+  "implementation": {
+    "levels": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "modes": [
+      1,
+      2,
+      3
+    ],
+    "difficulty": 2,
+    "hero_combat": false,
+    "technology": 0,
+    "challenges_enabled": 10,
+    "requires_campaign_stars": 3,
+    "layout_and_source_data_checked": true,
+    "battle_rules_and_progression_connected": true,
+    "map_and_victory_ui_connected": true,
+    "project_godot_user_changes_preserved": true
+  },
+  "acceptance_complete": true,
+  "status": "dove_configuration_and_functionality_checks_passed_browser_acceptance_manual",
+  "challenge_logic": {
+    "passed": true,
+    "checks": 290,
+    "passed_checks": 290,
+    "failures": [],
+    "report": "reports/challenges_logic.json",
+    "replays_run": false
+  },
+  "legal_victory_replays": {
+    "verified": [
+      "1/2",
+      "1/3",
+      "4/3"
+    ],
+    "required": 0,
+    "verified_count": 3,
+    "normal_economy": true,
+    "public_commands_only": true,
+    "developer_commands_used": false,
+    "unrecorded_optional": [
+      "2/2",
+      "2/3",
+      "3/2",
+      "3/3",
+      "4/2",
+      "5/2",
+      "5/3"
+    ],
+    "required_for_acceptance": false,
+    "total_modes": 10,
+    "evidence_scope": "historical successful recordings; preserved, not rerun during test cleanup"
+  },
+  "native": {
+    "1280x720": {
+      "passed": true,
+      "checks": 110,
+      "report": "reports/challenges_visual_1280x720.json",
+      "scope": "challenge input, finish-event settlement and interface",
+      "combat_replays_run": false
+    },
+    "1024x768": {
+      "passed": true,
+      "checks": 69,
+      "scope": "new interface layout only",
+      "report": "reports/challenges_visual_1024x768.json",
+      "combat_replays_run": false
+    }
+  },
+  "shared_regressions": {
+    "campaign_levels": 963,
+    "campaign_map": 81,
+    "dove_saves": 112,
+    "tower_upgrades": 267,
+    "tier3_upgrades": 314,
+    "ranger": 215,
+    "level05": 424,
+    "interaction_fixes": 448,
+    "battle_details": 49,
+    "playtest_tools": 67,
+    "all_passed": true
+  },
+  "release_web": {
+    "export_succeeded": true,
+    "export_count_this_task": 1,
+    "build_type": "release",
+    "developer_menu": false,
+    "pck_isolated_check_passed": true,
+    "mode_combinations_checked": 15,
+    "pck_files": 562,
+    "pck_sha256": "c60c4e81e2f4160e115ce5db24abf3c6626676527a373414b2886cf91c6ac356",
+    "browser_tested": false,
+    "browser_acceptance": "manual by user",
+    "bundle": "build/KingdomRush-KR1-Levels01-05-Web.zip",
+    "bytes": 141563173,
+    "sha256": "295286b4bcba9a7cc374aba206c89ebdde35a9c863187c31b3b71402998bef16",
+    "acceptance_disclosed_in_readme_and_receipt": true,
+    "metadata_only_repack": true
+  },
+  "remaining_work": [
+    "User manual browser acceptance."
+  ],
+  "acceptance_basis": "dove_configuration_and_functionality",
+  "acceptance_rule_updated": "2026-10-27: User removed complete victory recordings as an acceptance requirement; configuration and functionality parity with Dove remain required.",
+  "test_cleanup": {
+    "approved_by_user": true,
+    "review": "docs/TEST_REDUNDANCY_REVIEW.md",
+    "challenge_before": 2035,
+    "challenge_after": 290,
+    "map_before": 36066,
+    "map_after": 81,
+    "battle_details_before": 485,
+    "battle_details_after": 49,
+    "complete_replays_run": false,
+    "level05_check": "syntax only after removing tautological assertion; previous full-regression result retained as historical",
+    "other_regressions": "Historical results retained; unrelated suites were not rerun.",
+    "web_export_or_repack": false,
+    "current_zip_receipt": "Unchanged historical delivery evidence; repository reports contain updated check counts.",
+    "project_and_recording_hashes_unchanged": true
+  }
+}
