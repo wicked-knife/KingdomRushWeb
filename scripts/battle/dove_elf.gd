@@ -2,6 +2,10 @@ extends RefCounted
 ## Frozen tower_barrack_mercenaries and soldier_barrack ranged behavior.
 const Anim = preload("res://scripts/battle/dove_animation.gd")
 
+static func power_upgraded(sim, tower: Dictionary) -> void:
+	for soldier: Dictionary in sim.soldiers:
+		if soldier.home == tower.id and soldier.hp > 0: soldier.powers = tower.powers.duplicate()
+
 static func initialize(tower: Dictionary) -> void:
 	tower.type = "barrack"; tower.slots = [0,0,0,0]; tower.hired = 0
 	tower.powers = {"bleed":0,"cripple":0}

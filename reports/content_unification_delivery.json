@@ -1,0 +1,60 @@
+{
+  "passed": true,
+  "date": "2026-10-28",
+  "source": {
+    "version": "2.1.0.2",
+    "commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2"
+  },
+  "scope": "first five levels, campaign/heroic/iron, normal difficulty; ranger arena exporter",
+  "combinations": 15,
+  "level6": "preview",
+  "original_trial_archive": "output/content_unification_trial_20261028",
+  "gameplay_definitions_unchanged": 6,
+  "source_inputs_unchanged": true,
+  "resource_files_unchanged": 74,
+  "timeline": {
+    "waves": 88,
+    "births": 2794,
+    "first_difference": null,
+    "complete_lists": "reports/content_timelines.json",
+    "random_subpaths": "validated source range; fixed subpaths compared exactly"
+  },
+  "combat": {
+    "scenarios": 3,
+    "ticks": 3600,
+    "checkpoints": 36,
+    "identical_to_pre_migration": true,
+    "seed": 42,
+    "engine": "4.7.2.stable"
+  },
+  "logic_checks": {
+    "content_unification": 302,
+    "ranger": 215,
+    "level05_mechanisms": 140,
+    "challenges": 290
+  },
+  "native": {
+    "resolution": "1280x720",
+    "tutorial_checks": 43,
+    "challenge_and_camp_checks": 110,
+    "visuals_inspected": true,
+    "teaching_boundary_setup": "developer wave skip; no full combat replay"
+  },
+  "web": {
+    "build_type": "release",
+    "developer_menu": false,
+    "exports_this_delivery": 1,
+    "isolated_pck_passed": true,
+    "pck_files": 571,
+    "mode_combinations_checked": 15,
+    "pck_sha256": "9e1f3d5a03104ca7d126ca4b02902d171f2ec8fe48e4d551331e1a61f00d6427",
+    "content_catalog_sha256": "4a1752b24e35e767b6aaa69b795ac2a588fa19c0178f42dddc68be0a8ed80a0b",
+    "zip_integrity": true,
+    "bundle": "build/KingdomRush-KR1-Levels01-05-Web.zip",
+    "bundle_bytes": 141574570,
+    "bundle_sha256": "94082cc545f0f38fd030db59c2e3bae4057cbe0e35cb85ba9a5442bee32c2260"
+  },
+  "full_victory_replays_run": false,
+  "browser_tested": false,
+  "failures": []
+}

@@ -1,6 +1,7 @@
 {
   "package_created": true,
   "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+  "content_catalog_sha256": "4a1752b24e35e767b6aaa69b795ac2a588fa19c0178f42dddc68be0a8ed80a0b",
   "browser_tested": false,
   "build_type": "release",
   "developer_menu": false,
@@ -97,6 +98,12 @@
   "challenge_validation_passed": true,
   "challenge_acceptance_basis": "dove_configuration_and_functionality",
   "challenge_victory_replays_required": false,
+  "challenge_replays_run": false,
+  "challenge_replay_files": [
+    "1/2",
+    "1/3",
+    "4/3"
+  ],
   "challenge_pending_replays": [
     "2/2",
     "2/3",
@@ -106,16 +113,12 @@
     "5/2",
     "5/3"
   ],
-  "challenge_replays_verified": [
-    "1/2",
-    "1/3",
-    "4/3"
-  ],
+  "challenge_replays_verified": [],
   "pck_isolated_check": true,
-  "pck_files": 562,
+  "pck_files": 571,
   "bundle": "build\\KingdomRush-KR1-Levels01-05-Web.zip",
-  "bytes": 141563173,
-  "sha256": "295286b4bcba9a7cc374aba206c89ebdde35a9c863187c31b3b71402998bef16",
+  "bytes": 141574570,
+  "sha256": "94082cc545f0f38fd030db59c2e3bae4057cbe0e35cb85ba9a5442bee32c2260",
   "web_files": {
     "index.apple-touch-icon.png": {
       "bytes": 11939,
@@ -131,7 +134,7 @@
     },
     "index.html": {
       "bytes": 3146,
-      "sha256": "687e6da3ab9ad08e95074a03f6ed476794964cfb6a5134dbcf1031c9409a60a1"
+      "sha256": "eb3f49db31dc0eee426301728c210b646a8ab72307fbc84a9a7e2159c5221b13"
     },
     "index.icon.png": {
       "bytes": 5765,
@@ -142,8 +145,8 @@
       "sha256": "33c94cb3175f3333b82e2a3be5e8e86f77986f0aa2042b1631f6367a4e5bb6ba"
     },
     "index.pck": {
-      "bytes": 138751544,
-      "sha256": "c60c4e81e2f4160e115ce5db24abf3c6626676527a373414b2886cf91c6ac356"
+      "bytes": 138787764,
+      "sha256": "9e1f3d5a03104ca7d126ca4b02902d171f2ec8fe48e4d551331e1a61f00d6427"
     },
     "index.png": {
       "bytes": 21443,
@@ -154,20 +157,20 @@
       "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
     },
     "export_receipt.json": {
-      "bytes": 2044,
-      "sha256": "2cb6f125e31beb1516afed63dd2fcfe855cff36ba9703a70b18dad0933e54e9c"
+      "bytes": 2128,
+      "sha256": "4ba60eedf89f98974a1219a1507003d3e5face1149f58d4d6435256cd1ea867a"
     },
     "README.txt": {
-      "bytes": 3953,
-      "sha256": "1c019a4c3136de801f393feab6ce26b5525a532b4dd8a0d0d5f1f30367b583d7"
+      "bytes": 3985,
+      "sha256": "fff4739ec789774d16f1e62946f64cf3e432e6f66d61e233aceec35c08587e0c"
     },
     "start_server.cmd": {
       "bytes": 180,
       "sha256": "8f021ad5511504a288354fec02c4bf8514f054a2457cc229710e1d6069558b32"
     },
     "pack_files.json": {
-      "bytes": 42001,
-      "sha256": "908b0a9b612f2afaf3d4fc95dabdca281bdaf836fa8955d5111b5e47b87b52ab"
+      "bytes": 42465,
+      "sha256": "6cd0dd75579b14c4ba2c58ef2b12e841c86b197fd20dc2e91265565838a1ff04"
     }
   }
 }

@@ -1,0 +1,81 @@
+{
+  "passed": true,
+  "content_combinations": 15,
+  "definitions": {
+    "level01": {
+      "gameplay_unchanged": true,
+      "changed_sections": [],
+      "source_unchanged": true,
+      "controller": "level01",
+      "behaviors": 25,
+      "dependency_owners": 40
+    },
+    "level02": {
+      "gameplay_unchanged": true,
+      "changed_sections": [],
+      "source_unchanged": true,
+      "controller": "default",
+      "behaviors": 26,
+      "dependency_owners": 39
+    },
+    "level03": {
+      "gameplay_unchanged": true,
+      "changed_sections": [],
+      "source_unchanged": true,
+      "controller": "default",
+      "behaviors": 29,
+      "dependency_owners": 66
+    },
+    "level04": {
+      "gameplay_unchanged": true,
+      "changed_sections": [],
+      "source_unchanged": true,
+      "controller": "default",
+      "behaviors": 39,
+      "dependency_owners": 78
+    },
+    "level05": {
+      "gameplay_unchanged": true,
+      "changed_sections": [],
+      "source_unchanged": true,
+      "controller": "default",
+      "behaviors": 56,
+      "dependency_owners": 73
+    },
+    "ranger_arena": {
+      "gameplay_unchanged": true,
+      "changed_sections": [],
+      "source_unchanged": true,
+      "controller": "default",
+      "behaviors": 45,
+      "dependency_owners": 85
+    }
+  },
+  "failure_probes": [
+    {
+      "case": "unknown_behavior",
+      "rejected": true,
+      "reason": "level05: enemy_goblin -> unknown.enemy.update: Unsupported Dove behavior: unknown.enemy.update"
+    },
+    {
+      "case": "missing_dependency",
+      "rejected": true,
+      "reason": "level05: missing template dependency: soldier_elf -> arrow_elf"
+    },
+    {
+      "case": "missing_mode",
+      "rejected": true,
+      "reason": "level05: missing registered mode 3"
+    },
+    {
+      "case": "wrong_controller",
+      "rejected": true,
+      "reason": "level05: controller differs from content registration"
+    }
+  ],
+  "publication_resources": 259,
+  "publication_data": 49,
+  "unchanged_resource_files": 74,
+  "changed_resource_files": [],
+  "failures": []
+}

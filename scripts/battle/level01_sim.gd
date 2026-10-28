@@ -13,6 +13,11 @@ const Ranger = preload("res://scripts/battle/dove_ranger.gd")
 const Modifiers = preload("res://scripts/battle/dove_modifiers.gd")
 const Elf = preload("res://scripts/battle/dove_elf.gd")
 const Spider = preload("res://scripts/battle/dove_spider.gd")
+const Content = preload("res://scripts/services/campaign_levels.gd")
+const Controller = preload("res://scripts/battle/dove_level_controller.gd")
+const Behaviors = preload("res://scripts/battle/dove_behaviors.gd")
+var controller: RefCounted
+var behaviors: RefCounted
 var modifiers := Modifiers.new()
 # Frozen Dove path_db:path_width and game_gui POWER_1 / POWER_2 rules.
 const PATH_WIDTH := 42.0
@@ -62,6 +67,12 @@ func _init(definition: Dictionary = {}, seed_value: int = 1, allow_developer: bo
 	developer_enabled = allow_developer and OS.is_debug_build()
 	data = definition.duplicate(true) if not definition.is_empty() else JSON.parse_string(FileAccess.get_file_as_string("res://data/level01/definition.json"))
 	templates = data.templates
+	var catalog := Content.catalog()
+	controller = Controller.create(data.level.get("controller", "default"), catalog)
+	assert(controller != null, "Missing controller for " + str(data.level))
+	var behavior_error := Behaviors.validate(data, catalog)
+	assert(behavior_error.is_empty(), behavior_error)
+	behaviors = Behaviors.new(data, catalog)
 	animations = JSON.parse_string(FileAccess.get_file_as_string(data.get("level", {}).get("root", "res://data/level01/") + "animations.json")).animations
 	reset(seed_value)
 
@@ -74,8 +85,7 @@ func reset(seed_value: int = 1) -> void:
 	developer_used = false
 	towers.clear(); enemies.clear(); soldiers.clear(); projectiles.clear(); effects.clear(); decals.clear(); spawn_queue.clear(); spawn_log.clear()
 	eggs.clear()
-	var first: bool = int(data.get("level", {}).get("id", 1)) == 1 and int(data.get("level", {}).get("mode", 1)) == 1
-	notices = ["TUTORIAL_1", "TUTORIAL_2", "TUTORIAL_3"] if first else []
+	controller.reset(self)
 	# Dove enables the non-tutorial powers from the first next-wave-sent event,
 	# not while the battlefield is still in its pre-wave setup state.
 	unlocked = {"reinforcements": false, "fire": false}
@@ -83,9 +93,6 @@ func reset(seed_value: int = 1) -> void:
 	seen_enemies.merge(data.get("seen", {}), true)
 	enemy_cells.clear(); cell_for_enemy.clear(); spatial_tick = -1
 	cooldowns = {"reinforcements": 0, "fire": 0}
-	if not first:
-		for entry: Dictionary in data.waves.groups[0].waves:
-			if entry.has("notification") and data.ui.notifications.has(entry.notification): notices.append(entry.notification)
 	for index in range(data.layout.entities_list.size()):
 		var e: Dictionary = data.layout.entities_list[index]
 		if e.has("tower.holder_id") and templates.has(e.template):
@@ -200,10 +207,7 @@ func command(kind: String, args: Dictionary = {}) -> bool:
 			var upgraded := _holder(tower)
 			upgraded.merge({"type": tower.type, "template": target, "spent": int(tower.spent) + price,
 				"ready": tick, "inserted": true}, true)
-			if target == "tower_elf": Elf.initialize(upgraded)
-			elif tower.type == "barrack": _upgrade_garrison(tower, upgraded)
-			else: upgraded.attack_at = tick + _tower_period(upgraded)
-			if target == "tower_ranger": Ranger.initialize(self, upgraded)
+			behaviors.upgrade_tower(self, tower, upgraded)
 			gold -= price
 			towers[towers.find(tower)] = upgraded
 			add_effect("fx_tower_buy_dust", tower.pos + Vector2(0, 10))
@@ -214,21 +218,16 @@ func command(kind: String, args: Dictionary = {}) -> bool:
 			var price := power_price(tower, power)
 			if tower.is_empty() or tower.ready > tick or price < 0 or gold < price: return false
 			gold -= price; tower.spent += price; tower.powers[power] += 1
-			if power == "thorn" and int(tower.powers.thorn) == 1:
-				tower.ranger.aura = true; tower.ranger.thorn_ts = float(tick)
-				tower.layers[5] = {"state":"idle","at":tick,"loop":true,"flip":false,"visible":true}
-			if tower.template == "tower_elf":
-				for soldier: Dictionary in soldiers:
-					if soldier.home == tower.id and soldier.hp > 0: soldier.powers = tower.powers.duplicate()
+			behaviors.power_upgraded(self, tower, power)
 			for item: Dictionary in data.ui.tower_menus.get(str(tower_template(tower).tower.type), []):
 				if item.get("action_arg", "") == power:
 					for sound: String in item.get("sounds", []): event.emit("sound", {"id":sound})
 			return true
 		"buy_soldier":
 			var tower := tower_by_id(str(args.get("id","")))
-			var price := Elf.price(self,tower,str(args.get("type","")))
+			var price: int = behaviors.recruit_price(self,tower,str(args.get("type","")))
 			if price < 0 or tower.ready > tick or gold < price: return false
-			gold -= price; Elf.hire(self,tower); return true
+			gold -= price; behaviors.hire(self,tower); return true
 		"sell":
 			var tower := tower_by_id(str(args.get("id", "")))
 			if tower.is_empty() or tower.type == "" or tower.ready > tick: return false
@@ -408,10 +407,11 @@ func _start_wave(manual: bool) -> void:
 			if int(spawn.max) == 0: spawn_tick += int(spawn.interval)
 			if i + 1 < w.spawns.size(): spawn_tick += int(spawn.interval_next)
 		end_tick = maxi(end_tick, spawn_tick)
-		if w.has("notification") and data.ui.notifications.has(w.notification) and (wave > 1 or int(data.get("level", {}).get("id", 1)) == 1): notices.append(w.notification)
+		controller.wave_notification(self, w)
 		if w.has("notification_second_level"): event.emit("tip", {"id": w.notification_second_level})
 	spawn_queue.sort_custom(func(a, b): return a.tick < b.tick if a.tick != b.tick else a.order < b.order)
 	wave_end_tick = end_tick
+	controller.wave_started(self, group)
 	event.emit("wave", {"number": wave})
 	event.emit("sound", {"id": "GUINextWaveIncoming"})
 
@@ -428,8 +428,9 @@ func step() -> void:
 		event.emit("sound", {"id": "GUINextWaveReady"})
 	if next_wave_tick >= 0 and tick >= next_wave_tick: _start_wave(false)
 	if not notices.is_empty(): return
+	controller.step(self)
 	_decals_step()
-	Spider.step(self)
+	behaviors.step_spawners(self)
 	_sync_enemy_cells()
 	for tower: Dictionary in towers: _tower_step(tower)
 	for soldier: Dictionary in soldiers: _soldier_step(soldier)
@@ -440,7 +441,7 @@ func step() -> void:
 	soldiers = soldiers.filter(func(s): return s.hp > 0 or tick - s.dead_at < 60)
 	effects = effects.filter(func(e): return tick - e.at < e.duration)
 	if lives <= 0: _finish("defeat")
-	elif wave == data.waves.groups.size() and spawn_queue.is_empty() and enemies.all(func(e): return e.hp <= 0): _finish("victory")
+	elif controller.can_finish(self): _finish("victory")
 
 func _finish(value: String) -> void:
 	if result != "": return
@@ -465,14 +466,14 @@ func _spawn_enemy(type: String, subpath: int = -1, path: int = 0, origin: String
 	var e := {"id": next_id, "template": type, "hp": float(hp), "max_hp": float(hp), "pos": vec(data.paths.paths[path][subpath][0]), "path": path, "subpath": subpath, "node": 0, "progress": 0.0, "blocker": 0, "blockers": [], "attack_at": tick, "pending": {}, "state": "walkingDown", "state_at": tick, "dead_at": -1, "flip": false, "last_dir": Vector2.ZERO, "heal_at": tick, "casting": {}}
 	next_id += 1; enemies.append(e)
 	spawn_log.append({"tick": tick, "type": type, "path": path, "subpath": subpath, "wave": wave, "origin":origin})
-	if type == "enemy_spider_big": Spider.initialize(self,e)
+	behaviors.enemy_inserted(self,e)
 	if data.ui.notifications.has(type) and not seen_enemies.has(type):
 		seen_enemies[type] = true; alerts.append(type)
 	return e
 
 func _tower_step(tower: Dictionary) -> void:
 	if tower.type in ["","holder_elf"] or tower.ready > tick: return
-	if tower.template == "tower_ranger": Ranger.step(self, tower); return
+	if behaviors.tower_step(self, tower): return
 	var t: Dictionary = tower_template(tower)
 	if tower.ready == tick and not tower.get("inserted", false):
 		tower.inserted = true
@@ -557,8 +558,7 @@ func _barrack_step(tower: Dictionary, template: Dictionary) -> void:
 	if tower.door_state == "open":
 		for slot in missing:
 			var s := _soldier(b.soldier_type, tower.id, slot, tower.pos + vec(b.respawn_offset), tower.rally)
-			if template.get("mercenary",false):
-				Elf.inherit(s,tower); event.emit("sound",{"id":"ElfTaunt"})
+			behaviors.soldier_inserted(self,s,tower)
 			tower.slots[slot] = s.id
 		if tick - tower.door_at > frames(b.door_hold_time):
 			tower.door_state = "closing"; tower.door_at = tick
@@ -664,7 +664,7 @@ func _soldier_step(s: Dictionary) -> void:
 	if s.rallying:
 		if not _soldier_move(s, s.dest, t.motion.max_speed): s.rallying = false; _state(s, "idle")
 		return
-	if t.has("ranged") and Elf.ranged(self,s,t): return
+	if behaviors.soldier_step(self,s,t): return
 	var target := unit_by_id(s.target)
 	if target.is_empty() or target.hp <= 0 or not s.id in target.blockers:
 		_unblock(s)
@@ -688,8 +688,7 @@ func _enemy_step(e: Dictionary) -> void:
 	if e.hp <= 0: return
 	if int(e.get("stun_count",0)) > 0: e.last_dir = Vector2.ZERO; return
 	var t: Dictionary = templates[e.template]
-	if e.template == "enemy_spider_big": Spider.lay(self,e)
-	elif t.has("timed_attacks") and _healer_step(e, t): return
+	if behaviors.enemy_step(self,e,t): return
 	if e.blocker != 0:
 		var s := unit_by_id(e.blocker)
 		if s.is_empty() or s.hp <= 0 or s.target != e.id: e.blocker = 0; e.pending = {}
@@ -863,9 +862,9 @@ func _projectile(type: String, target: int, from: Vector2, to: Vector2, flight: 
 	var b := {"template": type, "target": target, "from": from, "to": to, "pos": from, "at": tick, "duration": duration, "done": false,
 		"velocity": Projectile.launch(from, to, duration / 30.0, bullet), "initial_rotation": rng.randf_range(-PI / 2, PI / 2) if bullet.has("rotation_speed") else 0.0,
 		"rotation": 0.0, "hidden": float(bullet.get("hide_radius", 0)) > 0}
-	if templates[type].get("behavior", "") == "scripts.bolt.update":
+	if behaviors.projectile_role(templates[type]) == "bolt":
 		b.speed = float(bullet.min_speed); b.last_step = tick; b.target_invalid = false
-	elif templates[type].get("behavior", "").ends_with(".arrow_missile.update"):
+	elif behaviors.projectile_role(templates[type]) == "arrow_missile":
 		b.last_step = tick; b.seeking = false; b.hit_distance = float(bullet.hit_distance)
 	projectiles.append(b)
 	var sounds: Dictionary = templates[type].get("sound_events", {})
@@ -874,53 +873,50 @@ func _projectile(type: String, target: int, from: Vector2, to: Vector2, flight: 
 func _bullet_step(p: Dictionary) -> void:
 	var b: Dictionary = templates[p.template].bullet
 	var target := unit_by_id(p.target)
-	var behavior: String = templates[p.template].get("behavior", "")
-	# game_scripts inherits common scripts; exported function identities retain
-	# the module through which the selected template accessed the behavior.
-	if behavior.ends_with(".arrow_missile.update"): behavior = "scripts.arrow_missile.update"
+	var behavior: String = behaviors.projectile_role(templates[p.template])
 	var ratio := clampf(float(tick - p.at) / p.duration, 0, 1)
-	if behavior == "scripts.bolt.update":
+	if behavior == "bolt":
 		if not _bolt_step(p, b, target): return
 		if p.target_invalid: target = {}
-	elif behavior == "scripts.arrow_missile.update":
+	elif behavior == "arrow_missile":
 		if not ArrowMissile.step(self,p,b): return
 		target = unit_by_id(p.target)
-	elif p.template == "power_fireball":
+	elif behavior == "fireball":
 		p.pos = p.from.lerp(p.to, ratio)
 		p.rotation = (p.to - p.from).angle()
 	else:
 		p.merge(Projectile.sample(p, b, (tick - p.at) / 30.0), true)
-	if behavior not in ["scripts.bolt.update","scripts.arrow_missile.update"] and ratio < 1: return
+	if behavior not in ["bolt","arrow_missile"] and ratio < 1: return
 	p.done = true
 	if float(b.damage_radius) > 0:
 		for e: Dictionary in enemies:
 			if e.hp > 0 and distance(p.to, e.pos) <= float(b.damage_radius):
 				var amount: float = rng.randi_range(int(b.damage_min), int(b.damage_max))
-				if behavior == "scripts.bomb.update":
+				if behavior == "bomb":
 					var delta: Vector2 = e.pos - p.to
 					var angle := delta.angle()
 					var ellipse_radius := Vector2(cos(angle), 0.7 * sin(angle)).length() * float(b.damage_radius)
 					amount = lerpf(float(b.damage_max), float(b.damage_min), clampf(delta.length() / ellipse_radius, 0, 1))
 				damage(e, amount, int(b.damage_type))
-		var water: bool = behavior == "scripts.bomb.update" and (_terrain_flags(p.to) & 2) != 0 and templates.has(b.get("hit_fx_water", ""))
+		var water: bool = behavior == "bomb" and (_terrain_flags(p.to) & 2) != 0 and templates.has(b.get("hit_fx_water", ""))
 		add_effect(str(b.get("hit_fx_water", "")) if water else str(b.get("hit_fx", "")), p.to)
 		if not water: add_effect(str(b.get("hit_decal", "")), p.to)
 	elif not target.is_empty() and target.hp > 0:
 		var hit: Vector2 = target.pos + vec(templates[target.template].unit.hit_offset)
-		if b.get("reset_to_target_pos",false) and behavior != "scripts.arrow_missile.update": p.to = hit
-		var missile_hit: bool = behavior == "scripts.arrow_missile.update" and p.pos.distance_to(hit) < float(p.hit_distance)
-		if behavior == "scripts.bolt.update" or missile_hit or (behavior != "scripts.arrow_missile.update" and p.to.distance_to(hit) < float(b.get("hit_distance", 22)) * 1.2):
+		if b.get("reset_to_target_pos",false) and behavior != "arrow_missile": p.to = hit
+		var missile_hit: bool = behavior == "arrow_missile" and p.pos.distance_to(hit) < float(p.hit_distance)
+		if behavior == "bolt" or missile_hit or (behavior != "arrow_missile" and p.to.distance_to(hit) < float(b.get("hit_distance", 22)) * 1.2):
 			damage(target, rng.randi_range(int(b.damage_min), int(b.damage_max)) + float(b.get("damage_inc",0)) * int(p.get("elf_level",0)), int(b.damage_type))
 			if target.hp > 0 and p.has("elf_level"):
 				if b.has("mod"): modifiers.apply(self,b.mod,target,int(p.elf_level),str(p.source))
 				if int(p.get("bleed_level",0)) > 0: modifiers.apply(self,"mod_elf_bleed",target,int(p.bleed_level),str(p.source))
 			if int(p.get("poison_level",0)) > 0 and target.hp > 0:
 				modifiers.apply(self,"mod_ranger_poison",target,int(p.poison_level),str(p.source))
-			if behavior != "scripts.bolt.update": add_effect(str(b.get("hit_fx", "")), hit)
+			if behavior != "bolt": add_effect(str(b.get("hit_fx", "")), hit)
 			add_effect(str(b.get("hit_blood_fx", "")), hit, {"rotation": p.rotation})
-	if behavior == "scripts.bolt.update": add_effect(str(b.get("hit_fx", "")), p.to)
+	if behavior == "bolt": add_effect(str(b.get("hit_fx", "")), p.to)
 	var sounds: Dictionary = templates[p.template].get("sound_events", {})
-	var water_impact: bool = behavior == "scripts.bomb.update" and (_terrain_flags(p.to) & 2) != 0 and templates.has(b.get("hit_fx_water", ""))
+	var water_impact: bool = behavior == "bomb" and (_terrain_flags(p.to) & 2) != 0 and templates.has(b.get("hit_fx_water", ""))
 	if water_impact and sounds.has("hit_water"): event.emit("sound", {"id": sounds.hit_water})
 	elif sounds.has("hit"): event.emit("sound", {"id": sounds.hit})
 

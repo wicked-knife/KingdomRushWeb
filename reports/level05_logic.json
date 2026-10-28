@@ -1,16 +1,8 @@
 {
-	"campaign": {
-		"defeat_tick": 4467,
-		"gold": 588,
-		"hatched": 156,
-		"kills": 387,
-		"leaks": 11,
-		"lives": 8,
-		"result": "victory",
-		"tick": 19015,
-		"wave_enemies": 242
-	},
-	"checks": 424,
+	"campaign": {},
+	"checks": 140,
 	"failures": [],
-	"passed": true
+	"full_replay": false,
+	"passed": true,
+	"scope": "transactions, modifiers, combat, spiders, roster, progress, settlement"
 }

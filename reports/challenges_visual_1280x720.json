@@ -42,19 +42,19 @@
 			"gold": 360,
 			"path": "res://reports/towers_challenge1_mode3_build_1280x720.png",
 			"state": "challenge1_mode3_build",
-			"tick": 4
+			"tick": 3
 		},
 		{
 			"gold": 235,
 			"path": "res://reports/towers_challenge1_mode3_powers_1280x720.png",
 			"state": "challenge1_mode3_powers",
-			"tick": 4
+			"tick": 3
 		},
 		{
 			"gold": 235,
 			"path": "res://reports/towers_challenge1_mode3_victory_1280x720.png",
 			"state": "challenge1_mode3_victory",
-			"tick": 4
+			"tick": 3
 		},
 		{
 			"path": "res://reports/challenges_mode3_first_completion_1280x720.png",

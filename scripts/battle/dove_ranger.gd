@@ -2,6 +2,11 @@ extends RefCounted
 ## Frozen kr1/tower_scripts.lua tower_ranger and game_scripts aura_ranger_thorn.
 const Anim = preload("res://scripts/battle/dove_animation.gd")
 
+static func power_upgraded(sim, tower: Dictionary, power: String) -> void:
+	if power == "thorn" and int(tower.powers.thorn) == 1:
+		tower.ranger.aura = true; tower.ranger.thorn_ts = float(sim.tick)
+		tower.layers[5] = {"state":"idle","at":sim.tick,"loop":true,"flip":false,"visible":true}
+
 static func initialize(sim: RefCounted, tower: Dictionary) -> void:
 	tower.powers = {"poison":0,"thorn":0}
 	tower.ranger = {"shot":-1,"animation_until":sim.tick,"reservations":[],"thorn_ts":float(sim.tick),"casting":{},"aura":false}

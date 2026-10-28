@@ -247,7 +247,9 @@ func settlement() -> void:
 	due.tick = due.eggs[0].next-1; due.wave = 15; due.step()
 	check(due.result == "" and due.enemies.size() == 1,"same-tick pending hatch counts before settlement")
 func run() -> void:
-	transactions(); modifiers(); combat(); spiders(); roster(); progress(); timeline(); settlement(); campaign()
-	var report := {"passed":failures.is_empty(),"checks":checks,"failures":failures,"campaign":campaign_report}
+	transactions(); modifiers(); combat(); spiders(); roster(); progress(); settlement()
+	var full_replay := OS.get_cmdline_user_args().has("--full-replay")
+	if full_replay: timeline(); campaign()
+	var report := {"passed":failures.is_empty(),"checks":checks,"failures":failures,"campaign":campaign_report,"full_replay":full_replay,"scope":"transactions, modifiers, combat, spiders, roster, progress, settlement"}
 	var f := FileAccess.open("res://reports/level05_logic.json",FileAccess.WRITE); f.store_string(JSON.stringify(report,"\t")); f.close()
 	print("LEVEL05_LOGIC: ",JSON.stringify(report)); quit(0 if failures.is_empty() else 1)

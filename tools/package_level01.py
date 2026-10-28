@@ -93,6 +93,7 @@ def package():
     result = {
         "package_created": True,
         "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+        "content_catalog_sha256": receipt.get("content_catalog_sha256"),
         "browser_tested": False,
         "build_type": receipt.get("build_type", "release"),
         "developer_menu": debug,

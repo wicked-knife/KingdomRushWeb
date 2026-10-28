@@ -1,0 +1,38 @@
+{
+	"captures": [
+		{
+			"gold": 270,
+			"path": "res://reports/towers_content_tutorial1_1280x720.png",
+			"state": "content_tutorial1",
+			"tick": 0
+		},
+		{
+			"gold": 270,
+			"path": "res://reports/towers_content_tutorial2_1280x720.png",
+			"state": "content_tutorial2",
+			"tick": 0
+		},
+		{
+			"gold": 270,
+			"path": "res://reports/towers_content_tutorial3_1280x720.png",
+			"state": "content_tutorial3",
+			"tick": 0
+		},
+		{
+			"gold": 270,
+			"path": "res://reports/towers_content_power3_1280x720.png",
+			"state": "content_power3",
+			"tick": 0
+		},
+		{
+			"gold": 270,
+			"path": "res://reports/towers_content_power7_1280x720.png",
+			"state": "content_power7",
+			"tick": 0
+		}
+	],
+	"checks": 43,
+	"failures": [],
+	"full_replay": false,
+	"passed": true
+}

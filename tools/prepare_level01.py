@@ -1,25 +1,41 @@
 """Build source-traceable atlases for campaigns 1-5 or the independent ranger arena."""
 from pathlib import Path
-import argparse, copy, hashlib, json, math, os, re, subprocess
+import argparse, copy, hashlib, io, json, math, os, re, subprocess
 from PIL import Image
+from campaign_content import export_spec, level_ids, validate_definition, template_dependencies
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = "e29ece82939fd73fb69bfc4b469d484a72e4dfd2"
 
 def write(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, ensure_ascii=False, separators=(",", ":"), allow_nan=False)+"\n", encoding="utf-8")
+    # Preserve byte order and imported resources when a regeneration is semantic-only.
+    if path.is_file() and json.loads(path.read_text(encoding="utf-8")) == value:
+        return
+    temporary = path.with_name(path.name + ".tmp")
+    temporary.write_text(json.dumps(value, ensure_ascii=False, separators=(",", ":"), allow_nan=False)+"\n", encoding="utf-8")
+    temporary.replace(path)
 
-def prepare(source, love, level_id=1, ranger_arena=False):
-    assert level_id in (1, 2, 3, 4, 5)
-    advanced = ranger_arena or level_id == 5
+def gameplay_projection(value):
+    value = copy.deepcopy(value)
+    for key in ("behaviors", "dependencies"):
+        value.pop(key, None)
+    value.get("level", {}).pop("controller", None)
+    return value
+
+def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False):
+    spec = export_spec(level_id, ranger_arena)
+    level_id = spec["id"]
+    features = set(spec["features"])
+    advanced = "ranger" in features
     source_level=f"level{level_id:02d}"
-    level_name="ranger_arena" if ranger_arena else source_level
+    level_name=spec["folder"]
     assert subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip() == BASE
     assert not subprocess.check_output(["git", "-C", str(source), "status", "--porcelain"], text=True).strip(), "Reference must be clean"
     folder=ROOT/f"output/{level_name}_export";folder.mkdir(parents=True,exist_ok=True)
+    write(folder/"content_spec.json", spec)
     evaluated=folder/"evaluated.json"
-    env=os.environ.copy();env.update(DOVE_SOURCE_DIR=str(source),DOVE_EXPORT_PATH=str(evaluated),DOVE_LEVEL_ID=str(level_id),DOVE_RANGER_ARENA="1" if ranger_arena else "0")
+    env=os.environ.copy();env.update(DOVE_SOURCE_DIR=str(source),DOVE_EXPORT_PATH=str(evaluated),DOVE_LEVEL_ID=str(level_id),DOVE_RANGER_ARENA="1" if ranger_arena else "0",DOVE_CONTENT_SPEC=str(folder/"content_spec.json"))
     run=subprocess.run([str(love),str(ROOT/"tools/level01_export")],env=env,capture_output=True,timeout=60)
     if run.returncode:
         error=evaluated.with_suffix(".json.error")
@@ -32,8 +48,7 @@ def prepare(source, love, level_id=1, ranger_arena=False):
     inputs.update({"all/gui_utils.lua", "all/game.lua"})
     script=f"kr1/data/levels/{source_level}.lua"
     if (source/script).is_file(): inputs.add(script)
-    if level_id >= 3: inputs.update({"kr1/game_scripts.lua","all/seek.lua","all/spatial_index.lua"})
-    if advanced: inputs.update({"all/systems/mod_lifecycle.lua","all/systems/last_hook.lua"})
+    inputs.update(spec["export"].get("inputs", []))
     data["source"]={"version":"2.1.0.2","commit":BASE,"difficulty":2,"inputs":{p:hashlib.sha256((source/p).read_bytes()).hexdigest() for p in sorted(inputs)}}
     # GGTextLabel slide and TutorialBalloon class defaults are part of the source layout.
     for slide_id, labels in data["ui"]["slides"].items():
@@ -41,17 +56,14 @@ def prepare(source, love, level_id=1, ranger_arena=False):
             label.setdefault("font_name", "body" if slide_id.startswith("TB_") else "body_slides")
     data["schema_version"]=1
     # Resolve the union of all mode placements before filtering into independent layouts.
-    data["level"]={"generation":1,"id":level_id,"mode":1,"difficulty":2,"root":f"res://data/{level_name}/","group":level_name,"background":f"stage_{level_id}","music":"BattleMusic","prep_music":"PrepMusic"}
+    data["level"]={"generation":spec["generation"],"id":level_id,"mode":1,"difficulty":2,"root":f"res://data/{level_name}/","group":level_name,"controller":spec["controller"],"background":f"stage_{level_id}","music":"BattleMusic","prep_music":"PrepMusic"}
     # all/scripts.lua editor_wave_flag.insert builds entrances from these markers.
     # game_gui.show_wave_flags indexes the sorted entrance array, not editor.path_id.
     # Level 4 deliberately has two editor markers with the same path ID.
     entrances=sorted((e for e in data["layout"]["entities_list"] if e["template"]=="editor_wave_flag"),key=lambda e:int(e["editor.path_id"]))
     data["locations"]={"entrances":[{"path_index":i,"source_path_id":int(e["editor.path_id"]),"pos":e["pos"],"r":e.get("editor.r",0)} for i,e in enumerate(entrances,1)]}
-    # The frozen wave references this ID, but its GUI definition is absent.
-    if level_id == 2:
-        data["ui"]["notifications"]["TOWER_LEVEL2"]={"layout":"upgrade","tier":2,"paper":"notifications_newenemy","adaptation":"Dove wave ID has no GUI definition in BASE"}
-    if level_id == 4:
-        data["ui"]["notifications"]["TOWER_LEVEL3"]={"layout":"upgrade","tier":3,"paper":"notifications_newenemy","adaptation":"Dove wave ID has no GUI definition in BASE"}
+    # Compatibility adaptations are registered with the affected content entry.
+    data["ui"]["notifications"].update(spec.get("notification_overrides", {}))
     # Resolve source layout overrides once, with isolated templates per instance.
     for entity in data["layout"]["entities_list"]:
         original=entity["template"]
@@ -66,20 +78,23 @@ def prepare(source, love, level_id=1, ranger_arena=False):
                 target[parts[-1]]=value
             name=f"{original}__{len(data['templates'])}"
             data["templates"][name]=instance;entity["template"]=name
-    if level_id == 5: data["templates"].pop("decal_background",None)
+            if original in data["behaviors"]: data["behaviors"][name]=data["behaviors"][original]
+            data["dependencies"][name]=copy.deepcopy(data["dependencies"].get(original, []))
+    for name in spec.get("exclude_templates", []):
+        data["templates"].pop(name, None)
+        data["behaviors"].pop(name, None)
+        data["dependencies"].pop(name, None)
     if not ranger_arena:
         for mode, variant in data["modes"].items():
             variant["layout"]=copy.deepcopy(data["layout"])
             variant["layout"]["entities_list"]=[e for e in variant["layout"]["entities_list"] if e.get("editor.game_mode",0) in (0,int(mode))]
             assert variant["waves"]["lives"] == 1
             assert len(variant["waves"]["groups"]) == (6 if mode == "2" else 1)
-            assert variant["waves"]["cash"] == {"2":[230,310,400,750,1000],"3":[360,275,660,1500,1500]}[mode][level_id-1]
         data["layout"]["entities_list"]=[e for e in data["layout"]["entities_list"] if e.get("editor.game_mode",0) in (0,1)]
     settings=(source/"kr1/game_settings.lua").read_text(encoding="utf-8")
     def scalar(key): return float(re.search(r"GS\."+key+r"\s*=\s*([\d.]+)",settings)[1])
     def normal(key): return float(re.search(r"GS\."+key+r"\s*=\s*\{([^}]+)",settings)[1].split(",")[1])
     data["rules"]={"enemy_hp_factor":normal("difficulty_enemy_hp_max_factor"),"enemy_speed_factor":normal("difficulty_enemy_speed_factor"),"enemy_gold_factor":normal("difficulty_enemy_gold_factor"),"early_wave_reward_per_second":scalar("early_wave_reward_per_second"),"soldier_regen_factor":scalar("soldier_regen_factor")}
-    assert data["waves"]["lives"]==20 and data["waves"]["cash"]=={1:270,2:240,3:330,4:520,5:700}[level_id] and len(data["waves"]["groups"])=={1:7,2:7,3:11,4:13,5:15}[level_id]
     counts={}
     for group in data["waves"]["groups"]:
         for wave in group["waves"]:
@@ -87,14 +102,10 @@ def prepare(source, love, level_id=1, ranger_arena=False):
                 for index in range(spawn["max"]):
                     creep=spawn["creep_aux"] if spawn.get("creep_aux") and spawn.get("max_same",0)>0 and (index//spawn["max_same"])%2 else spawn["creep"]
                     counts[creep]=counts.get(creep,0)+1
-    expected={1:{"enemy_goblin":48,"enemy_fat_orc":8},2:{"enemy_goblin":106,"enemy_fat_orc":26,"enemy_wolf_small":22},3:{"enemy_goblin":224,"enemy_fat_orc":58,"enemy_wolf_small":32,"enemy_shaman":12,"enemy_ogre":3}}
-    expected[4]={"enemy_goblin":130,"enemy_fat_orc":58,"enemy_shaman":24,"enemy_bandit":77,"enemy_wolf_small":18,"enemy_ogre":2,"enemy_brigand":30}
-    expected[5]={"enemy_brigand":39,"enemy_bandit":59,"enemy_spider_small":35,"enemy_wolf_small":55,"enemy_wolf":32,"enemy_spider_big":19,"enemy_marauder":3}
-    assert counts==expected[level_id],counts
     if advanced:
         data["upgrade_targets"]={"tower_archer_3":"tower_ranger"}
         data["ui"]["power_descriptions"]["poison"]=[s.replace("减速0.1%","减速10%").replace("可叠加3层","同级毒素最多叠加4层") for s in data["ui"]["power_descriptions"]["poison"]]
-    if level_id == 5: data["upgrade_targets"]["tower_elf_holder"]="tower_elf"
+    if "elf" in features: data["upgrade_targets"]["tower_elf_holder"]="tower_elf"
     if ranger_arena:
         data["upgrade_targets"]={"tower_archer_3":"tower_ranger"}
         data["waves"]={"cash":10000,"lives":100,"groups":[{"interval":0,"waves":[]}]}
@@ -102,14 +113,27 @@ def prepare(source, love, level_id=1, ranger_arena=False):
         data["ui"]["notifications"]={}
         data["ui"]["slides"]={}
         data["ui"]["power_descriptions"]["poison"]=[s.replace("减速0.1%","减速10%").replace("可叠加3层","同级毒素最多叠加4层") for s in data["ui"]["power_descriptions"]["poison"]]
+    data["dependencies"]={name:template_dependencies(template) for name,template in data["templates"].items()}
+    validate_definition(data, spec)
     # Runtime insert chooses one of these three visual variants; numbers remain source values.
     data["templates"]["re_farmer"]["render"]["sprites"][0]["prefix"]="re_farmer_1"
+    if reuse_resources:
+        out = ROOT / "data" / level_name
+        previous = json.loads((out / "definition.json").read_text(encoding="utf-8"))
+        if gameplay_projection(previous) != gameplay_projection(data):
+            raise ValueError(f"{level_name}: gameplay/source data changed; run a full export before reusing resources")
+        manifest = json.loads((out / "manifest.json").read_text(encoding="utf-8"))
+        for resource in manifest["resources"] + manifest["data"]:
+            if not (ROOT / resource.removeprefix("res://")).is_file():
+                raise ValueError(f"{level_name}: cannot reuse missing resource {resource}")
+        write(out / "definition.json", data)
+        print(json.dumps({"content":level_name,"templates":len(data["templates"]),"resources_reused":True,"gameplay_unchanged":True}))
+        return
     assets=ROOT/"assets/kingdom_rush"
     all_anims=json.loads((assets/"data/animations.json").read_text(encoding="utf-8"))["animations"]
     wanted={f"stage_{level_id}"};animations={}
     states=["idle","idleUp","idleDown","shoot","shootingUp","shootingDown","walkingRightLeft","walkingUp","walkingDown","running","attack","death","open","close","play","flying","heal","jump","small","medium","large"]
-    if advanced: states += ["start","loop","end"]
-    if level_id == 5: states += [s+"_"+c for s in ("small","big") for c in ("red","green","gray","orange","violet")]
+    states += spec["export"].get("animation_states", [])
     for template in data["templates"].values():
         if template.get("particle_system",{}).get("name"): wanted.add(template["particle_system"]["name"])
         for sprite in template.get("render",{}).get("sprites",[]):
@@ -123,6 +147,8 @@ def prepare(source, love, level_id=1, ranger_arena=False):
                         for suffix in states:
                             key=variant+"_"+suffix
                             if key in all_anims: animations[key]=all_anims[key]
+                default_key=prefix+"_"+name
+                if default_key not in all_anims: wanted.add(name.replace("%04i","0001"))
             elif name:
                 name=name.replace("%04i","0001")
                 if name in all_anims: animations[name]=all_anims[name]
@@ -139,10 +165,8 @@ def prepare(source, love, level_id=1, ranger_arena=False):
     ui_prefixes=["fire_","fire_ready_","reinforcements_","reinforcement_ready_","power_nbrs_","pause_btn_","victoryStars_","options_","tutorial_but_gotcha_bg_long_","notifications_but_","balloon_"]
     ui_names={"main_icons_0000","main_icons_0001","main_icons_0002","main_icons_0003","main_icons_0004","main_icons_0014","ico_sell_0001","sub_icons_0001","glow_ico_main","glow_ico_sell","glow_ico_sub","price_tag","bg_bottom_bar","bg_bottom_left","tutorial_tit_instructions_bg","notifications_tit_generics_bg_0001","notifications_tit_newpower_bg","notifications_polaroid_overlay","victoryBadges_notxt_0002","button_border_0001","button_border_0002","button_border_large_0001","button_border_large_0002","button_continue_chains","button_restart_chains","tooltip_bg_standard"}
     ui_names.update({"main_icons_0005","base","base_info_bar","base_info_bar_bg","info_portraits_0000","victoryBadges_notxt_0003"})
-    if advanced:
-        ui_names.update({"main_icons_0011","special_icons_0008","special_icons_0002","power_rank_0001","power_rank_0002"})
-    if level_id == 5: ui_names.update({"main_icons_0015","main_icons_0016","special_icons_0014","special_icons_0024"})
-    if level_id >= 2: ui_names.update({"notifications_tit_newenemy_bg","notifications_tit_towers_bg"})
+    ui_names.update(spec["export"].get("ui_frames", []))
+    if "wolf" in features: ui_names.update({"notifications_tit_newenemy_bg","notifications_tit_towers_bg"})
     ui_prefixes += ["base_info_icons_", "nextwaveTimer_", "nextwave_coin_", "waveReward_", "waveRewardTimer_", "error_feedback_"]
     for template in data["templates"].values():
         if template.get("info",{}).get("portrait"):
@@ -156,14 +180,15 @@ def prepare(source, love, level_id=1, ranger_arena=False):
         wanted.update(notification.get("images",[]))
         for key in ["image","paper","icon"]:
             if notification.get(key): wanted.add(notification[key])
-    if level_id >= 2:
+    if "wolf" in features:
         for template_id,template in data["templates"].items():
             if template.get("enemy") and template.get("info",{}).get("enc_icon"):
                 wanted.add(f"encyclopedia_creeps_{template['info']['enc_icon']:04d}")
     # Source slide text can be shared while a notification supplies its paper.
     order=["tower_holders",f"go_stage{level_id:02d}_bg","go_stage01","go_stages_grass","go_towers_group1","go_towers_group2","go_towers_group3","go_towers_group4","go_towers_group6","go_enemies_grass","go_power_reinforcements","go_decals","go_enemies_common","encyclopedia_creeps",*ui_groups]
-    if level_id == 5: order=["go_stage05","go_hero_alleria",*order]
-    if level_id == 5: wanted.add("stage_5_trees")
+    order=[*spec.get("atlas_groups", []), *spec["export"].get("atlas_groups", []), *order]
+    wanted.update(spec.get("frames", []))
+    wanted.difference_update(spec.get("exclude_frames", []))
     lookup={}
     for group in order:
         atlas=groups[group]
@@ -195,9 +220,13 @@ def prepare(source, love, level_id=1, ranger_arena=False):
     if original:original.close()
     pages.append(page)
     for i,page in enumerate(pages):
-        temporary=out/f"atlas_{i}.png.tmp"
-        page.save(temporary,format="PNG",compress_level=6);page.close()
-        temporary.replace(out/f"atlas_{i}.png")
+        encoded=io.BytesIO()
+        page.save(encoded,format="PNG",compress_level=6);page.close()
+        content=encoded.getvalue();encoded.close()
+        target=out/f"atlas_{i}.png"
+        if not target.exists() or content!=target.read_bytes():
+            temporary=out/f"atlas_{i}.png.tmp"
+            temporary.write_bytes(content);temporary.replace(target)
     for stale in out.glob("atlas_*.png"):
         if int(stale.stem.split("_")[1]) >= len(pages):
             stale.unlink()
@@ -205,6 +234,16 @@ def prepare(source, love, level_id=1, ranger_arena=False):
     write(out/"atlas.json",{"schema_version":1,"group":level_name,"texture_directory":f"res://data/{level_name}/","frames":frames,"lookup":aliases,"aliases":{k:v for k,v in aliases.items() if k!=v}})
     write(out/"animations.json",{"schema_version":1,"fps":30,"animations":animations})
     sound_data=json.loads((assets/"data/sounds.json").read_text(encoding="utf-8"))
+    def require_sound(value, origin):
+        if value and value not in sound_data:
+            raise ValueError(f"{level_name}: {origin} -> missing sound {value}")
+    for name, template in data["templates"].items():
+        for event, value in template.get("sound_events", {}).items():
+            if isinstance(value, str): require_sound(value, f"{name}/sound_events/{event}")
+        for field, key in (("timed_attacks", "list"), ("melee", "attacks"), ("attacks", "list")):
+            for index, attack in enumerate(template.get(field, {}).get(key, [])):
+                require_sound(attack.get("sound"), f"{name}/{field}/{index}")
+        require_sound(template.get("aura", {}).get("hit_sound"), f"{name}/aura/hit_sound")
     sound_ids={"MusicMainMenu","GUITowerBuilding","GUITowerSell","GUIQuickMenuOpen","GUIQuickMenuOver","GUINextWaveReady","GUINextWaveIncoming","GUICoins","GUIQuestCompleted","GUISpellRefresh","GUIWinStars","GUILooseLife","GUIButtonCommon","Sheep","DeathEplosion","BombExplosionSound","GUITowerOpenDoor","ReinforcementTaunt","MeleeSword"}
     for t in data["templates"].values():
         sound_ids.update(v for v in t.get("sound_events",{}).values() if isinstance(v,str))
@@ -239,4 +278,14 @@ def prepare(source, love, level_id=1, ranger_arena=False):
     print(json.dumps({"templates":len(data["templates"]),"frames":len(aliases),"animations":len(animations),"atlas_pages":len(pages),"audio":len(audio),"enemies":counts},ensure_ascii=False))
 
 if __name__=="__main__":
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument("--source",type=Path,default=Path("D:/projects/KingdomRushDove"));parser.add_argument("--love",type=Path,default=Path("D:/王国保卫战Dove版/love.exe"));parser.add_argument("--level",type=int,choices=[1,2,3,4,5],default=1);parser.add_argument("--ranger-arena",action="store_true");args=parser.parse_args();prepare(args.source,args.love,4 if args.ranger_arena else args.level,args.ranger_arena)
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--source",type=Path,default=Path("D:/projects/KingdomRushDove"))
+    parser.add_argument("--love",type=Path,default=Path("D:/王国保卫战Dove版/love.exe"))
+    selection=parser.add_mutually_exclusive_group()
+    selection.add_argument("--level",type=int,choices=level_ids(),default=1)
+    selection.add_argument("--all",action="store_true",help="Export all registered campaigns")
+    selection.add_argument("--ranger-arena",action="store_true")
+    parser.add_argument("--reuse-resources",action="store_true",help="Update bindings only; reject changed gameplay, source or missing resources")
+    args=parser.parse_args()
+    for level_id in level_ids() if args.all else [args.level]:
+        prepare(args.source,args.love,level_id,args.ranger_arena,args.reuse_resources)

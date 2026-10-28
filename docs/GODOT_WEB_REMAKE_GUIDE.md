@@ -8,6 +8,8 @@
 
 ## 阅读方式与约定
 
+**2026-10-28 统一接入：前五关全部 15 个关卡／模式组合与游侠测试场已迁移到共享内容目录、能力导出适配、关卡控制器和源行为注册表。玩法与存档保持原状，第六关继续预览。后续已有机制关卡按登记与源数据转换接入，专属流程通过控制器扩展。实现边界、验证证据与接入步骤见 [统一接入说明](CONTENT_INTEGRATION.md)。**
+
 **2026-10-27 存档调整：已采用 Dove 统一 JSON 槽位、数字模式成绩、`seen`、锁定塔和 `last_victory` 两阶段结算；区间规则覆盖全部源世代。早期存档迁移与索引机制已移除，详见 [统一槽位交付](DOVE_SAVES_DELIVERY.md)。**
 
 - **【事实】**：已读取代码、Git 对象、现有资源或校验报告得到的结论。
@@ -85,6 +87,7 @@
 | [游侠塔与独立场地](RANGER_DELIVERY.md) | 三级箭塔升游侠、双射手、毒箭／森林之怒各三级、状态叠加与多塔保护、可选敌人／数量／路线、清场及重置 | 独立场地不保存进度；第五关正式开放，前四关限制不变 |
 | [第五关与精灵营地](LEVEL05_ELF_DELIVERY.md) | 银橡森林、15 波 242 名波次敌人、独立蜘蛛孵化、预置箭塔、游侠解锁、四人营地、流血／致残、合法通关回放、前五关 Web 包 | 普通难度、无英雄参战、零科技；第六关保持预览；挑战另见本轮交付说明 |
 | [前五关英雄／钢铁挑战](CHALLENGES_DELIVERY.md) | 十个模式的数据、三星准入、禁塔、模式结算、地图标记及原生界面已接入 | 普通难度、零科技；按 Dove 配置和功能一致性验收，不要求打通；已有 3 份回放作补充回归 |
+| [内容统一接入](CONTENT_INTEGRATION.md) | 导出、运行时与 Web 清单共读内容目录；默认／首关控制器、能力模板适配与源行为注册表；15 个组合数据及战斗基线回归 | 保留现有算法与调度；尚未扩展 TSV、英雄战斗、科技及 Boss；新机制须增加共享模块 |
 | [转换测试](../tests/test_asset_conversion.py)、[Godot 校验](../tests/verify_godot_assets.gd) | 二进制转换样例和部分引擎资源加载检查 | 不证明战斗、EXO 显示、Web 导出已通过 |
 | [汇总报告](../reports/verification_summary.json) | 记录已有导入及兼容渲染预览结果 | 已有素材检查结果，不代表完整游戏或浏览器验收通过 |
 
@@ -1033,15 +1036,15 @@ python -m unittest discover -s tests -p 'test_*.py' -v
 
 ### C.3 后续构建接口
 
-下面命令要求 M0 先创建导出预设、入口和输出目录，**当前不能直接作为已存在的构建流程执行**：
+当前已有 `Web Bootstrap` 预设和受内容目录约束的构建工具，交付时使用：
 
 ~~~powershell
-& 'D:/godot/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --export-release 'Web Bootstrap' 'build/web/index.html'
-& 'D:/godot/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --export-pack 'Web Content Level01' 'build/web/packs/level01.pck'
-python -m http.server 8060 --directory build/web
+python tools/web_bootstrap.py export --check-pack
+python tools/package_level01.py
+python tools/web_bootstrap.py serve
 ~~~
 
-上面本地服务适用于首版普通单线程验证；需线程/扩展时换成可提供所需安全响应头的服务。正式构建工具还负责生成资源清单、内容哈希、预压缩文件和验证结果，不能只执行两条导出命令就认为分包正确。
+本地服务由用户需要浏览器验收时运行，日常功能检查使用 Godot。已有工具生成资源清单、内容目录哈希和导出／隔离 PCK 回执；动态关卡分包、预压缩发布与线程／扩展仍为后续能力，不能把当前单包导出视为分包已经完成。需线程／扩展时另配置所需安全响应头。
 
 ### C.4 官方参考资料
 

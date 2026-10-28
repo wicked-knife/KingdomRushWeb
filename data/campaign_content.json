@@ -1,0 +1,478 @@
+{
+  "schema_version": 1,
+  "source": {
+    "version": "2.1.0.2",
+    "commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2"
+  },
+  "levels": {
+    "1": {
+      "id": 1,
+      "generation": 1,
+      "folder": "level01",
+      "modes": [
+        1,
+        2,
+        3
+      ],
+      "difficulties": [
+        2
+      ],
+      "controller": "level01",
+      "features": [
+        "base"
+      ]
+    },
+    "2": {
+      "id": 2,
+      "generation": 1,
+      "folder": "level02",
+      "modes": [
+        1,
+        2,
+        3
+      ],
+      "difficulties": [
+        2
+      ],
+      "controller": "default",
+      "features": [
+        "base",
+        "wolf"
+      ],
+      "notification_overrides": {
+        "TOWER_LEVEL2": {
+          "layout": "upgrade",
+          "tier": 2,
+          "paper": "notifications_newenemy",
+          "adaptation": "Dove wave ID has no GUI definition in BASE"
+        }
+      }
+    },
+    "3": {
+      "id": 3,
+      "generation": 1,
+      "folder": "level03",
+      "modes": [
+        1,
+        2,
+        3
+      ],
+      "difficulties": [
+        2
+      ],
+      "controller": "default",
+      "features": [
+        "base",
+        "wolf",
+        "healer"
+      ]
+    },
+    "4": {
+      "id": 4,
+      "generation": 1,
+      "folder": "level04",
+      "modes": [
+        1,
+        2,
+        3
+      ],
+      "difficulties": [
+        2
+      ],
+      "controller": "default",
+      "features": [
+        "base",
+        "wolf",
+        "healer",
+        "bandits",
+        "tier3"
+      ],
+      "notification_overrides": {
+        "TOWER_LEVEL3": {
+          "layout": "upgrade",
+          "tier": 3,
+          "paper": "notifications_newenemy",
+          "adaptation": "Dove wave ID has no GUI definition in BASE"
+        }
+      }
+    },
+    "5": {
+      "id": 5,
+      "generation": 1,
+      "folder": "level05",
+      "modes": [
+        1,
+        2,
+        3
+      ],
+      "difficulties": [
+        2
+      ],
+      "controller": "default",
+      "features": [
+        "base",
+        "wolf",
+        "healer",
+        "bandits",
+        "tier3",
+        "ranger",
+        "elf",
+        "spider"
+      ],
+      "atlas_groups": [
+        "go_stage05"
+      ],
+      "frames": [
+        "stage_5_trees"
+      ],
+      "exclude_templates": [
+        "decal_background"
+      ]
+    }
+  },
+  "arenas": {
+    "ranger_arena": {
+      "id": 4,
+      "generation": 1,
+      "folder": "ranger_arena",
+      "modes": [
+        1
+      ],
+      "difficulties": [
+        2
+      ],
+      "controller": "default",
+      "features": [
+        "base",
+        "wolf",
+        "healer",
+        "bandits",
+        "tier3",
+        "arena_spider",
+        "ranger"
+      ],
+      "notification_overrides": {
+        "TOWER_LEVEL3": {
+          "layout": "upgrade",
+          "tier": 3,
+          "paper": "notifications_newenemy",
+          "adaptation": "Dove wave ID has no GUI definition in BASE"
+        }
+      },
+      "exclude_frames": [
+        "encyclopedia_creeps_0001",
+        "encyclopedia_creeps_0002",
+        "encyclopedia_creeps_0008",
+        "victoryBadges_notxt_0003"
+      ]
+    }
+  },
+  "features": {
+    "base": {
+      "enemy_ids": [
+        "enemy_goblin",
+        "enemy_fat_orc"
+      ],
+      "template_ids": [
+        "tower_archer_1",
+        "tower_archer_2",
+        "tower_barrack_1",
+        "tower_barrack_2",
+        "tower_mage_1",
+        "tower_mage_2",
+        "tower_engineer_1",
+        "tower_engineer_2",
+        "tower_holder_grass",
+        "tower_build_archer",
+        "tower_build_barrack",
+        "tower_build_mage",
+        "tower_build_engineer",
+        "soldier_militia",
+        "soldier_footmen",
+        "re_farmer",
+        "arrow_1",
+        "arrow_2",
+        "bolt_1",
+        "bolt_2",
+        "bomb",
+        "bomb_dynamite",
+        "power_fireball_control",
+        "power_fireball",
+        "power_reinforcements_control",
+        "fx_fireball_explosion",
+        "fx_bolt_hit",
+        "fx_explosion_small",
+        "fx_unit_explode",
+        "decal_bomb_crater",
+        "fx_blood_splat",
+        "fx_tower_buy_dust",
+        "fx_tower_sell_dust"
+      ],
+      "fields": [
+        "template_name",
+        "render",
+        "health",
+        "health_bar",
+        "motion",
+        "unit",
+        "enemy",
+        "soldier",
+        "tower",
+        "barrack",
+        "attacks",
+        "melee",
+        "bullet",
+        "sound_events",
+        "reinforcement",
+        "cooldown",
+        "duration",
+        "fireball_count",
+        "max_spread",
+        "delayed_play",
+        "ui",
+        "regen",
+        "tween",
+        "build_duration",
+        "info",
+        "dodge",
+        "timed_attacks",
+        "modifier",
+        "hps",
+        "vis"
+      ],
+      "notification_ids": [
+        "TUTORIAL_1",
+        "TUTORIAL_2",
+        "TUTORIAL_3",
+        "TIP_ARMOR",
+        "TIP_RALLY",
+        "POWER_REINFORCEMENT",
+        "POWER_FIREBALL"
+      ]
+    },
+    "wolf": {
+      "enemy_ids": [
+        "enemy_wolf_small"
+      ],
+      "notification_ids": [
+        "TOWER_LEVEL2",
+        "TIP_STRATEGY",
+        "enemy_wolf_small"
+      ]
+    },
+    "healer": {
+      "enemy_ids": [
+        "enemy_shaman",
+        "enemy_ogre"
+      ],
+      "template_ids": [
+        "mod_shaman_heal"
+      ],
+      "notification_ids": [
+        "TIP_ARMOR_MAGIC",
+        "enemy_shaman",
+        "enemy_ogre"
+      ],
+      "inputs": [
+        "kr1/game_scripts.lua",
+        "all/seek.lua",
+        "all/spatial_index.lua"
+      ]
+    },
+    "bandits": {
+      "enemy_ids": [
+        "enemy_bandit",
+        "enemy_brigand"
+      ],
+      "notification_ids": [
+        "enemy_bandit",
+        "enemy_brigand"
+      ]
+    },
+    "tier3": {
+      "template_ids": [
+        "tower_archer_3",
+        "tower_barrack_3",
+        "tower_mage_3",
+        "tower_engineer_3",
+        "soldier_knight",
+        "arrow_3",
+        "bolt_3",
+        "bomb_black",
+        "fx_explosion_water"
+      ]
+    },
+    "ranger": {
+      "template_ids": [
+        "tower_ranger",
+        "arrow_ranger",
+        "aura_ranger_thorn",
+        "mod_ranger_poison",
+        "mod_thorn",
+        "fx_spider_explode"
+      ],
+      "fields": [
+        "powers",
+        "dps",
+        "slow",
+        "aura",
+        "damage_min",
+        "damage_max",
+        "damage_type",
+        "damage_every"
+      ],
+      "constants": [
+        "DAMAGE_POISON",
+        "F_POISON",
+        "F_FLYING",
+        "F_BOSS",
+        "F_CLIFF"
+      ],
+      "inputs": [
+        "all/systems/mod_lifecycle.lua",
+        "all/systems/last_hook.lua"
+      ],
+      "animation_states": [
+        "start",
+        "loop",
+        "end"
+      ],
+      "ui_frames": [
+        "main_icons_0011",
+        "special_icons_0008",
+        "special_icons_0002",
+        "power_rank_0001",
+        "power_rank_0002"
+      ]
+    },
+    "elf": {
+      "template_ids": [
+        "tower_elf_holder",
+        "tower_elf",
+        "soldier_elf",
+        "arrow_elf",
+        "arrow_elf_cripple",
+        "mod_elf_bleed",
+        "mod_elf_cripple",
+        "fx_bleeding",
+        "decal_background",
+        "ps_arrow_multishot_hero_alleria"
+      ],
+      "fields": [
+        "ranged",
+        "mercenary",
+        "spawner",
+        "particle_system"
+      ],
+      "constants": [
+        "DAMAGE_NO_DODGE",
+        "F_BLOOD"
+      ],
+      "ui_frames": [
+        "main_icons_0015",
+        "main_icons_0016",
+        "special_icons_0014",
+        "special_icons_0024"
+      ],
+      "atlas_groups": [
+        "go_hero_alleria"
+      ]
+    },
+    "spider": {
+      "enemy_ids": [
+        "enemy_wolf",
+        "enemy_spider_tiny",
+        "enemy_spider_small",
+        "enemy_spider_big",
+        "enemy_spider_egg",
+        "enemy_marauder"
+      ],
+      "notification_ids": [
+        "TOWER_RANGER",
+        "enemy_wolf",
+        "enemy_spider_small",
+        "enemy_spider_big",
+        "enemy_marauder"
+      ],
+      "animation_states": [
+        "small_red",
+        "small_green",
+        "small_gray",
+        "small_orange",
+        "small_violet",
+        "big_red",
+        "big_green",
+        "big_gray",
+        "big_orange",
+        "big_violet"
+      ]
+    },
+    "arena_spider": {
+      "enemy_ids": [
+        "enemy_spider_small"
+      ]
+    }
+  },
+  "controllers": {
+    "default": "res://scripts/battle/controllers/default_level.gd",
+    "level01": "res://scripts/battle/controllers/level01.gd"
+  },
+  "behaviors": {
+    "scripts.enemy_mixed.update": "ground",
+    "game_scripts.enemy_shaman.update": "healer",
+    "game_scripts.enemy_spider_big.update": "spider",
+    "scripts.soldier_barrack.update": "soldier",
+    "scripts.soldier_reinforcement.update": "reinforcement",
+    "scripts.tower_archer.update": "archer",
+    "scripts.tower_mage.update": "mage",
+    "scripts.tower_engineer.update": "engineer",
+    "scripts.tower_barrack.update": "barrack",
+    "scripts.tower_barrack_mercenaries.update": "mercenary",
+    "tower_scripts.tower_ranger.update": "ranger",
+    "scripts.tower_build.update": "building",
+    "scripts.arrow.update": "arrow",
+    "scripts.bolt.update": "bolt",
+    "scripts.bomb.update": "bomb",
+    "scripts.power_fireball.update": "fireball",
+    "scripts.arrow_missile.update": "arrow_missile",
+    "game_scripts.aura_ranger_thorn.update": "thorn_aura",
+    "scripts.enemies_spawner.update": "spawner",
+    "scripts.mod_dps.update": "dps",
+    "scripts.mod_track_target.update": "track_modifier",
+    "scripts.mod_hps.update": "heal_modifier",
+    "game_scripts.mod_thorn.update": "thorn_modifier",
+    "scripts.power_fireball_control.update": "fire_control"
+  },
+  "behavior_aliases": {
+    "game_scripts.tower_archer.update": "scripts.tower_archer.update",
+    "game_scripts.tower_mage.update": "scripts.tower_mage.update",
+    "game_scripts.tower_engineer.update": "scripts.tower_engineer.update",
+    "game_scripts.tower_barrack.update": "scripts.tower_barrack.update",
+    "game_scripts.tower_barrack_mercenaries.update": "scripts.tower_barrack_mercenaries.update",
+    "game_scripts.soldier_reinforcement.update": "scripts.soldier_reinforcement.update",
+    "game_scripts.arrow_missile.update": "scripts.arrow_missile.update",
+    "game_scripts.tower_ranger.update": "tower_scripts.tower_ranger.update",
+    "game_scripts.enemies_spawner.update": "scripts.enemies_spawner.update",
+    "game_scripts.mod_hps.update": "scripts.mod_hps.update"
+  },
+  "runtime_scripts": [
+    "res://scripts/services/campaign_levels.gd",
+    "res://scripts/battle/level01_sim.gd",
+    "res://scripts/battle/battle_view.gd",
+    "res://scripts/battle/battle_ui.gd",
+    "res://scripts/battle/dove_ui_layout.gd",
+    "res://scripts/battle/dove_animation.gd",
+    "res://scripts/battle/dove_projectile.gd",
+    "res://scripts/battle/dove_unit_info.gd",
+    "res://scripts/battle/battle_developer.gd",
+    "res://scripts/battle/battle_wave_flags.gd",
+    "res://scripts/battle/dove_ranger.gd",
+    "res://scripts/battle/dove_modifiers.gd",
+    "res://scripts/battle/dove_elf.gd",
+    "res://scripts/battle/dove_spider.gd",
+    "res://scripts/battle/dove_arrow_missile.gd",
+    "res://scripts/battle/dove_behaviors.gd",
+    "res://scripts/battle/dove_level_controller.gd",
+    "res://scripts/map/dove_map_flag.gd"
+  ]
+}

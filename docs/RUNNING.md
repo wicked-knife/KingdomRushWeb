@@ -91,8 +91,15 @@ python tools/verify_level01_assets.py --ranger-arena
 依照根目录 `AGENTS.md`，日常验证在 Godot 内完成，浏览器验收由用户手动执行。
 以下命令在项目根目录的 PowerShell 中运行：
 
+前五关统一目录、控制器、行为分派及后续关卡接入方式见 [CONTENT_INTEGRATION.md](CONTENT_INTEGRATION.md)。共用机制迁移的代表检查如下；完整列表按受影响范围选用。
+
 ```powershell
-# 第五关：资源、波次时序、精灵营地、蜘蛛、合法通关及原生界面
+# 统一接入：六份玩法定义、全部模式出生时间线、三个短战斗基线与萨满分派
+python tools/verify_content_catalog.py
+& 'D:/godot/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script tests/verify_content_unification.gd
+& 'D:/godot/Godot_v4.7.2-stable_win64_console.exe' --path . --script tests/content_tutorial_visual.gd --resolution 1280x720
+
+# 第五关机制：精灵营地、状态、蜘蛛与结算；完整回放按需加 -- --full-replay
 python tools/verify_level01_assets.py --level 5
 & 'D:/godot/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script tests/verify_level05.gd
 & 'D:/godot/Godot_v4.7.2-stable_win64_console.exe' --path . --script tests/level05_visual.gd --resolution 1280x720
@@ -193,7 +200,7 @@ python tools/web_bootstrap.py serve
 浏览器首次点击或按键后启用声音。存储受到限制时会提示设置可能无法保留，不影响主菜单使用。
 浏览器也接受触摸与手柄按钮解锁声音；首次交互后菜单音乐会自动开始，进入地图、备战和开波时切换对应音乐。Web 播放器显式使用 Godot Stream 路径，以避开 4.7 Sample 路径在本项目中的静音输出。
 
-导出由菜单、`data/map_kr1/manifest.json`、`data/heroes/manifest.json` 和 `data/level01..05/manifest.json` 控制，只包含入口、地图、英雄房间和前五关使用的脚本、场景、字体、图集、声音及 JSON。三个模式按资源依赖并集裁剪，前五关分别使用 6、6、7、8、9 张 2048×2048 派生图集，不打包完整素材库。
+导出由 `data/campaign_content.json` 的内容／控制器／运行脚本登记，以及菜单、地图、英雄房间和各已登记关卡的 manifest 控制，只包含实际使用的脚本、场景、字体、图集、声音及 JSON。三个模式按资源依赖并集裁剪，前五关分别使用 6、6、7、8、9 张 2048×2048 派生图集，不打包完整素材库。
 `export_presets.cfg` 由工具生成；修改依赖时先更新对应 manifest，再运行 `python tools/web_bootstrap.py preset`。
 导出默认只生成文件；`export --check-pack` 另执行隔离 PCK 资源与全部 15 个关卡／模式组合初始化、禁塔、胜利徽章及第五关双营地检查。PCK 通过不代表十个挑战的完整通关检查通过；以本次导出回执和挑战交付报告分别记录。未操作浏览器，Web 功能与兼容性由用户手动验收。
 显式 `export --check-pack` 的结果写入 `build/web/pack_files.json`。每次导出先移除旧检查报告，避免沿用上一版结论；`export_receipt.json` 记录本次导出及检查状态。

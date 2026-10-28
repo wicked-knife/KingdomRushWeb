@@ -82,7 +82,8 @@ def verify(level_id=1, ranger_arena=False):
 
 if __name__=="__main__":
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--level",type=int,choices=[1,2,3,4,5],default=1)
+    from campaign_content import level_ids
+    parser.add_argument("--level",type=int,choices=level_ids(),default=1)
     parser.add_argument("--ranger-arena",action="store_true")
     args=parser.parse_args()
     verify(args.level,args.ranger_arena)
