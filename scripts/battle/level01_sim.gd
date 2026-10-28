@@ -16,6 +16,8 @@ const Spider = preload("res://scripts/battle/dove_spider.gd")
 const Content = preload("res://scripts/services/campaign_levels.gd")
 const Controller = preload("res://scripts/battle/dove_level_controller.gd")
 const Behaviors = preload("res://scripts/battle/dove_behaviors.gd")
+const Targets = preload("res://scripts/battle/dove_targeting.gd")
+const EnemyProjectiles = preload("res://scripts/battle/dove_enemy_projectiles.gd")
 var controller: RefCounted
 var behaviors: RefCounted
 var modifiers := Modifiers.new()
@@ -38,6 +40,9 @@ var decals: Array = []
 var spawn_log: Array = []
 var spawn_queue: Array = []
 var eggs: Array = []
+var pending_entities: Array = []
+var spawners: Array = []
+var auras: Array = []
 var notices: Array = []
 var unlocked := {"reinforcements": false, "fire": false}
 var cooldowns := {"reinforcements": 0, "fire": 0}
@@ -85,6 +90,7 @@ func reset(seed_value: int = 1) -> void:
 	developer_used = false
 	towers.clear(); enemies.clear(); soldiers.clear(); projectiles.clear(); effects.clear(); decals.clear(); spawn_queue.clear(); spawn_log.clear()
 	eggs.clear()
+	pending_entities.clear(); spawners.clear(); auras.clear()
 	controller.reset(self)
 	# Dove enables the non-tutorial powers from the first next-wave-sent event,
 	# not while the battlefield is still in its pre-wave setup state.
@@ -102,6 +108,9 @@ func reset(seed_value: int = 1) -> void:
 				tower.template = e.template; tower.type = "barrack" if templates[e.template].has("barrack") else str(templates[e.template].tower.type)
 				tower.inserted = true # Preplaced towers have no purchased investment or insertion sound.
 			towers.append(tower)
+		elif templates.has(e.template) and templates[e.template].has("soldier"):
+			var soldier := _soldier(e.template, "", 0, vec(e.pos), vec(e["nav_rally.center"]))
+			soldier.dest = vec(e["nav_rally.pos"]); soldier.rally_center = vec(e["nav_rally.center"])
 		elif templates.has(e.template) and (templates[e.template].has("delayed_play") or templates[e.template].template_name == "decal_fish"):
 			var fish: bool = templates[e.template].template_name == "decal_fish"
 			var d: Dictionary = templates[e.template].get("delayed_play", {"min_delay": 5, "max_delay": 10})
@@ -419,6 +428,7 @@ func step() -> void:
 	if paused or not notices.is_empty() or result != "": return
 	tick += 1
 	modifiers.step(self)
+	Behaviors.Spawner.flush(self)
 	for power: String in cooldowns: cooldowns[power] = maxi(0, cooldowns[power] - 1)
 	while not spawn_queue.is_empty() and spawn_queue[0].tick <= tick:
 		var spawn: Dictionary = spawn_queue.pop_front()
@@ -438,7 +448,7 @@ func step() -> void:
 	for bullet: Dictionary in projectiles: _bullet_step(bullet)
 	projectiles = projectiles.filter(func(p): return not p.done)
 	enemies = enemies.filter(func(e): return e.hp > 0 or tick - e.dead_at < frames(templates[e.template].health.dead_lifetime))
-	soldiers = soldiers.filter(func(s): return s.hp > 0 or tick - s.dead_at < 60)
+	soldiers = soldiers.filter(func(s): return s.hp > 0 or tick - s.dead_at < (frames(templates[s.template].health.dead_lifetime) if templates[s.template].get("powers", {}).has("holystrike") or s.home == "" and not templates[s.template].has("reinforcement") else 60))
 	effects = effects.filter(func(e): return tick - e.at < e.duration)
 	if lives <= 0: _finish("defeat")
 	elif controller.can_finish(self): _finish("victory")
@@ -485,6 +495,16 @@ func _tower_step(tower: Dictionary) -> void:
 	var attack: Dictionary = t.attacks.list[0]
 	if not tower.pending.is_empty() and tick >= tower.pending.at:
 		var target := unit_by_id(tower.pending.target)
+		if tower.type in ["archer", "mage"]:
+			# Source firing selects flying targets first; ground-only encounters
+			# keep the existing target and their deterministic combat baseline.
+			var flying := {}
+			var nodes_left := INF
+			for candidate: Dictionary in enemies:
+				if not Targets.matches(self, candidate, attack) or (int(candidate.get("vis", templates[candidate.template].vis).flags) & 128) == 0: continue
+				var left: float = data.paths.paths[candidate.path][candidate.subpath].size() - candidate.progress
+				if distance(tower.pos + vec(t.tower.range_offset), candidate.pos) <= float(t.attacks.range) and left < nodes_left: flying = candidate; nodes_left = left
+			if not flying.is_empty(): target = flying
 		if tower.type in ["engineer", "mage"] or (not target.is_empty() and target.hp > 0):
 			var offset := vec(tower.pending.offset)
 			var bullet: Dictionary = templates[attack.bullet].bullet
@@ -504,7 +524,7 @@ func _tower_step(tower: Dictionary) -> void:
 			_projectile(attack.bullet, target_id, tower.pos + offset, aim, flight)
 		tower.pending = {}
 	if tick < tower.attack_at or not tower.pending.is_empty(): return
-	var target := _target(tower.pos + vec(t.tower.range_offset), float(t.attacks.range))
+	var target := _target(tower.pos + vec(t.tower.range_offset), float(t.attacks.range), false, attack)
 	if target.is_empty(): return
 	var offsets = attack.bullet_start_offset
 	var shooter := 0
@@ -526,10 +546,10 @@ func _tower_step(tower: Dictionary) -> void:
 		var idle := "idleUp" if tower.shot_up else "idleDown"
 		tower.layers[sid] = {"state": state, "at": tick, "loop": false, "flip": tower.type == "archer" and target.pos.x < tower.pos.x + float(offset.x), "idle": idle if sprite.has("angles") else "idle"}
 
-func _target(point: Vector2, radius: float, unblocked: bool = false) -> Dictionary:
+func _target(point: Vector2, radius: float, unblocked: bool = false, rule: Dictionary = {}) -> Dictionary:
 	var best := {}; var remaining := INF
 	for e: Dictionary in enemies:
-		if e.hp <= 0 or (unblocked and e.blockers.size() >= 3): continue
+		if not Targets.matches(self, e, rule) or (unblocked and e.blockers.size() >= 3): continue
 		var nodes_left: float = data.paths.paths[e.get("path", 0)][e.subpath].size() - e.progress
 		if distance(point, e.pos) <= radius and nodes_left < remaining:
 			best = e; remaining = nodes_left
@@ -625,6 +645,7 @@ func _soldier_target(s: Dictionary, only_free: bool = false) -> Dictionary:
 	var remaining := INF
 	for e: Dictionary in enemies:
 		if e.hp <= 0 or (only_free and not e.blockers.is_empty()): continue
+		if not Targets.matches(self, e, templates[s.template].melee.attacks[0]): continue
 		if templates[e.template].enemy.has("max_blockers") and not e.blockers.is_empty(): continue
 		var nodes_left: float = data.paths.paths[e.path][e.subpath].size() - e.progress
 		if distance(s.rally_center, e.pos) <= float(templates[s.template].melee.range) and nodes_left < remaining:
@@ -658,13 +679,20 @@ func _soldier_step(s: Dictionary) -> void:
 	if s.hp <= 0: return
 	if s.expires >= 0 and tick >= s.expires: _retire(s); return
 	var t: Dictionary = templates[s.template]
+	if t.melee.attacks.size() > 1 and int(s.get("stun_count", 0)) > 0:
+		s.pending = {}; s.healing_cast = {}; s.melee_end = 0; _state(s, "idle"); return
 	if s.get("rally_pending", false):
+		s.healing_cast = {}; s.melee_end = 0
 		_unblock(s); s.rally_pending = false; s.rallying = true
 	# y_soldier_new_rally moves directly and suppresses interception until arrival.
 	if s.rallying:
 		if not _soldier_move(s, s.dest, t.motion.max_speed): s.rallying = false; _state(s, "idle")
 		return
 	if behaviors.soldier_step(self,s,t): return
+	if t.melee.attacks.size() > 1 and tick < int(s.get("melee_end",0)):
+		# A running source attack coroutine survives its original target's death.
+		# In particular holystrike still hits other enemies in its area.
+		_melee(s,unit_by_id(int(s.get("melee_target",0))),t); return
 	var target := unit_by_id(s.target)
 	if target.is_empty() or target.hp <= 0 or not s.id in target.blockers:
 		_unblock(s)
@@ -685,7 +713,9 @@ func _soldier_step(s: Dictionary) -> void:
 				s.hp = minf(s.max_hp, s.hp + s.max_hp * float(data.rules.soldier_regen_factor)); s.regen_at = tick + frames(t.regen.cooldown)
 
 func _enemy_step(e: Dictionary) -> void:
-	if e.hp <= 0: return
+	if e.hp <= 0:
+		if e.has("boss"): behaviors.enemy_step(self, e, templates[e.template])
+		return
 	if int(e.get("stun_count",0)) > 0: e.last_dir = Vector2.ZERO; return
 	var t: Dictionary = templates[e.template]
 	if behaviors.enemy_step(self,e,t): return
@@ -719,6 +749,8 @@ func _enemy_step(e: Dictionary) -> void:
 		event.emit("sound", {"id": "GUILooseLife"})
 
 func _melee(attacker: Dictionary, target: Dictionary, template: Dictionary) -> void:
+	if template.has("soldier") and template.melee.attacks.size() > 1:
+		Behaviors.Paladin.melee(self, attacker, target, template); return
 	var attack: Dictionary = template.melee.attacks[0]
 	# Arriving during the attack cooldown must stop the walk animation immediately.
 	if attacker.state == "running": _state(attacker, "idle")
@@ -727,13 +759,19 @@ func _melee(attacker: Dictionary, target: Dictionary, template: Dictionary) -> v
 		attacker.pending.dodged = rng.randf() <= float(dodge.get("chance", 0))
 	if not attacker.pending.is_empty() and tick >= attacker.pending.at:
 		if target.hp > 0 and not attacker.pending.get("dodged", false):
-			damage(target, float(rng.randi_range(int(attack.damage_min), int(attack.damage_max))), int(attack.damage_type))
+			if attack.get("type", "") == "area":
+				var point: Vector2 = attacker.pos + vec(attack.get("hit_offset", {"x":0,"y":0})) * Vector2(-1 if attacker.flip else 1, 1)
+				var victims := Targets.soldiers(self, point, {"max_range":attack.damage_radius,"vis_flags":attack.get("damage_flags",0),"vis_bans":attack.get("damage_bans",0)})
+				for victim: Dictionary in victims.slice(0, int(attack.get("count", victims.size()))): damage(victim, float(rng.randi_range(int(attack.damage_min), int(attack.damage_max))), int(attack.damage_type))
+				add_effect(str(attack.get("hit_fx", "")), point)
+			else: damage(target, float(rng.randi_range(int(attack.damage_min), int(attack.damage_max))), int(attack.damage_type))
 			if attacker.template == "soldier_elf" and target.hp > 0: modifiers.apply(self,"mod_elf_bleed",target,int(attacker.powers.bleed),str(attacker.id))
 		attacker.pending = {}
 	if tick >= attacker.attack_at:
 		attacker.attack_started_at = tick
 		attacker.attack_at = tick + _melee_period(template)
 		attacker.pending = {"at": tick + frames(attack.hit_time)}
+		if attacker.has("boss"): attacker.melee_end = tick + SpriteAnimation.duration(animations, SpriteAnimation.key(template.render.sprites[0], attack.animation))
 		if templates[target.template].has("dodge") and attack.has("dodge_time") and (int(attack.damage_type) & 33554432) == 0:
 			attacker.pending.dodge_at = tick + frames(attack.dodge_time)
 		_state(attacker, "attack", true)
@@ -751,7 +789,7 @@ func _healing_targets(source: Dictionary, attack: Dictionary) -> Array:
 		for id: int in enemy_cells[cell]:
 			var e := unit_by_id(id)
 			var flags: Dictionary = templates[e.template].get("vis", {})
-			if e.hp > 0 and e.hp < e.max_hp and distance(source.pos, e.pos) <= float(attack.max_range) and (int(flags.get("bans", 0)) & int(attack.vis_flags)) == 0 and (int(flags.get("flags", 0)) & int(attack.vis_bans)) == 0:
+			if e.hp > 0 and e.hp < e.max_hp and int(e.get("silence_count", 0)) == 0 and distance(source.pos, e.pos) <= float(attack.max_range) and (int(flags.get("bans", 0)) & int(attack.vis_flags)) == 0 and (int(flags.get("flags", 0)) & int(attack.vis_bans)) == 0:
 				targets.append(e)
 	return targets
 
@@ -781,6 +819,7 @@ func _remove_enemy_cell(id: int) -> void:
 	cell_for_enemy.erase(id)
 
 func _healer_step(e: Dictionary, template: Dictionary) -> bool:
+	if int(e.get("silence_count", 0)) > 0: e.casting = {}; return false
 	var attack: Dictionary = template.timed_attacks.list[0]
 	if not e.casting.is_empty():
 		if not e.casting.applied and tick >= e.casting.hit_at:
@@ -823,7 +862,8 @@ func _unblock(unit: Dictionary) -> void:
 		for id: int in unit.blockers:
 			var soldier := unit_by_id(id)
 			if not soldier.is_empty():
-				soldier.target = 0; soldier.pending = {}
+				soldier.target = 0
+				if templates[soldier.template].melee.attacks.size() == 1: soldier.pending = {}
 		unit.blocker = 0; unit.blockers.clear()
 
 func _retire(s: Dictionary) -> void:
@@ -838,9 +878,11 @@ func damage(unit: Dictionary, amount: float, type: int) -> float:
 	var armor := 0.0
 	if (type & 65536) != 0: armor = float(t.health.get("poison_armor",0))
 	elif (type & 1) != 0: armor = 0.0
-	elif (type & 2) != 0: armor = float(t.health.armor)
-	elif (type & 4) != 0: armor = float(t.health.magic_armor)
-	elif (type & 8) != 0: armor = float(t.health.armor)
+	elif (type & 2) != 0: armor = float(unit.get("armor", t.health.armor))
+	elif (type & 4) != 0: armor = float(unit.get("magic_armor", t.health.magic_armor))
+	elif (type & 32) != 0:
+		armor = float(unit.get("magic_armor", t.health.magic_armor)); armor *= 0.2 * armor + 0.4
+	elif (type & 8) != 0: armor = float(unit.get("armor", t.health.armor))
 	# Frozen Dove all/utils.lua U.calc_protection, including its explosion curve.
 	if (type & 8) != 0 and (type & (65536 | 1 | 2 | 4)) == 0: armor *= 0.2 * armor + 0.4
 	var actual := amount * (1.0 - armor)
@@ -850,7 +892,7 @@ func damage(unit: Dictionary, amount: float, type: int) -> float:
 		unit.dead_at = tick; _unblock(unit); _state(unit, "death", true); unit.pending = {}
 		if t.has("enemy"):
 			gold += int(unit_gold(unit) * float(data.rules.enemy_gold_factor)); kills += 1
-			if t.sound_events.has("death"): event.emit("sound", {"id": t.sound_events.death})
+			if t.sound_events.has("death") and not unit.has("boss"): event.emit("sound", {"id": t.sound_events.death})
 		elif unit.home != "":
 			var tower := tower_by_id(unit.home)
 			if not tower.is_empty(): tower.slots[unit.slot] = -(tick + frames(float(t.health.dead_lifetime)))
@@ -874,6 +916,8 @@ func _bullet_step(p: Dictionary) -> void:
 	var b: Dictionary = templates[p.template].bullet
 	var target := unit_by_id(p.target)
 	var behavior: String = behaviors.projectile_role(templates[p.template])
+	if behavior == "ray": Behaviors.Arcane.projectile(self, p, b); return
+	if EnemyProjectiles.step(self, p, b, behavior): return
 	var ratio := clampf(float(tick - p.at) / p.duration, 0, 1)
 	if behavior == "bolt":
 		if not _bolt_step(p, b, target): return
@@ -890,7 +934,7 @@ func _bullet_step(p: Dictionary) -> void:
 	p.done = true
 	if float(b.damage_radius) > 0:
 		for e: Dictionary in enemies:
-			if e.hp > 0 and distance(p.to, e.pos) <= float(b.damage_radius):
+			if Targets.matches(self, e, b, true) and distance(p.to, e.pos) <= float(b.damage_radius):
 				var amount: float = rng.randi_range(int(b.damage_min), int(b.damage_max))
 				if behavior == "bomb":
 					var delta: Vector2 = e.pos - p.to

@@ -46,6 +46,7 @@ U.set_terrain_style=function(e,style)
 end
 package.loaded.utils=U
 local function run()
+  math.randomseed(1)
   require("lib.klua.table")
   require("all.constants")
   local V=require("lib.klua.vector")
@@ -64,6 +65,20 @@ local function run()
   chunk("all/templates.lua");package.loaded.templates=true
   chunk("kr1/game_templates_utils.lua");package.loaded.game_templates_utils=true
   local function read(relative) local f=assert(io.open(source.."/"..relative,"rb"));local s=f:read("*a");f:close();return s end
+  -- Game-template dependencies are loaded individually; never execute the full
+  -- file (which would register every generation, hero and optional tower).
+  local function load_game_template(id)
+    if E.entities[id] then return end
+    local path="kr1/game_templates.lua"
+    local text=read(path)
+    local a=assert(text:find('tt = RT("'..id..'"',1,true),spec.folder..": missing game template "..id)
+    local b=text:find("\ntt = ",a+1,true) or #text+1
+    local body=text:sub(a,b-1)
+    local base=body:match('^tt = RT%([^,]+,%s*"([^"]+)"')
+    if base and not E.entities[base] then load_game_template(base) end
+    local header='local tt;local anchor_x,anchor_y,image_x,image_y=0,0,0,0;local scripts=require("game_scripts");local v=vec_2;local vv=vec_1;local function adx(x) return x-anchor_x*image_x end;local function ady(y) return y-anchor_y*image_y end;'
+    chunk(path,header..body)
+  end
   -- Source wave/layout tables are dependency roots, not hand-maintained enemy lists.
   local source_tables={}
   for _,pair in ipairs({{"layout","kr1/data/levels/"..level_name.."_data.lua"},{"paths","kr1/data/levels/"..level_name.."_paths.lua"},{"terrain","kr1/data/levels/"..level_name.."_grid.lua"},{"waves","kr1/data/waves/"..level_name.."_waves_campaign.lua"}}) do
@@ -106,26 +121,30 @@ local function run()
     if base and not E.entities[base] then load_enemy(base) end
     chunk("kr1/enemies.lua",header..body)
   end
+  local load_capabilities = assert(love.filesystem.load("capabilities.lua"))()
+  load_capabilities({read=read,chunk=chunk,features=spec.features,template=load_game_template,callback=function(fn,id) behavior_names[fn]=id end})
   for _,id in ipairs(enemy_ids) do load_enemy(id) end
   local game=read("kr1/game_templates.lua")
   local start=assert(game:find('tt = RT("re_farmer",',1,true))
   local finish=assert(game:find('tt = RT("re_farmer_well_fed",',start,true))
   chunk("kr1/game_templates.lua","local tt;local image_y;local anchor_y;local scripts=require('game_scripts');local function ady(v) return v-anchor_y*image_y end;"..game:sub(start,finish-1))
-  local load_capabilities = assert(love.filesystem.load("capabilities.lua"))()
-  load_capabilities({read=read,chunk=chunk,features=spec.features})
+  behavior_names[E.entities.re_farmer.main_script.insert]="kr1.game_templates.re_farmer.insert"
   local function clean(v)
     local kind=type(v)
-    if kind=="function" then return behavior_names[v] or "local_source_function" end
+    if kind=="function" then return assert(behavior_names[v],spec.folder..": unmapped source callback") end
+    if kind=="number" and (v==math.huge or v==-math.huge) then return v>0 and 1e99 or -1e99 end
     if kind=="cdata" then
       local ok,x,y=pcall(function() return tonumber(v.x),tonumber(v.y) end)
       if ok then return {x=x,y=y} end
+      local rally,center,pos=pcall(function() return clean(v.center),clean(v.pos) end)
+      if rally then return {center=center,pos=pos} end
       error("Unsupported exported cdata: "..tostring(v))
     end
     if kind~="table" then return v end
     local out={};for k,value in pairs(v) do out[k]=clean(value) end;return out
   end
   local fields=spec.export.fields
-  local out={templates={},behaviors={},dependencies={},inputs=loaded_inputs,constants={FPS=FPS,ASPECT=ASPECT,TERRAIN_LAND=TERRAIN_LAND,TERRAIN_NOWALK=TERRAIN_NOWALK,DAMAGE_PHYSICAL=DAMAGE_PHYSICAL,DAMAGE_MAGICAL=DAMAGE_MAGICAL,DAMAGE_EXPLOSION=DAMAGE_EXPLOSION,DAMAGE_TRUE=DAMAGE_TRUE}}
+  local out={templates={},behaviors={},dependencies={},callbacks={},inputs=loaded_inputs,constants={FPS=FPS,ASPECT=ASPECT,TERRAIN_LAND=TERRAIN_LAND,TERRAIN_NOWALK=TERRAIN_NOWALK,DAMAGE_PHYSICAL=DAMAGE_PHYSICAL,DAMAGE_MAGICAL=DAMAGE_MAGICAL,DAMAGE_EXPLOSION=DAMAGE_EXPLOSION,DAMAGE_TRUE=DAMAGE_TRUE}}
   out.constants.spatial_cell_size=SPATIAL_HASH_CELL_SIZE
   out.constants.spatial_origin={x=IN_GAME_X_MIN,y=IN_GAME_Y_MIN}
   for _,name in ipairs(spec.export.constants or {}) do out.constants[name]=assert(_G[name]) end
@@ -140,16 +159,33 @@ local function run()
     end
   end
   local references={bullet=true,mod=true,hit_fx=true,hit_decal=true,hit_blood_fx=true,soldier_type=true,entity=true}
+  for _,name in ipairs(spec.export.reference_fields or {}) do references[name]=true end
+  local unsupported={}
   local function export_template(id,origin)
     if out.templates[id] then return end
     if not E.entities[id] and id:match('^enemy_') then load_enemy(id) end
+    if not E.entities[id] and (has("arcane") or has("paladin") or has("juggernaut")) then load_game_template(id) end
     assert(E.entities[id],spec.folder..": "..origin.." -> missing template "..id)
     local t=E:get_template(id);local filtered={};for _,key in ipairs(fields) do if t[key]~=nil then filtered[key]=clean(t[key]) end end
+    if spec.export.validate_callbacks then
+      local supported={main_script=true,editor=true,editor_script=true,nav_grid=true,nav_path=true,pos=true,tower_upgrade_persistent_data=true,idle_flip=true,tower_holder=true,user_power=true,user_selection=true}
+      for _,key in ipairs(fields) do supported[key]=true end
+      for key,value in pairs(t) do
+        if type(value)=="table" and not supported[key] then unsupported[key]=id end
+      end
+    end
     if t.bullet then filtered.behavior=clean(t.main_script.update) end
     out.templates[id]=filtered
+    if spec.export.validate_callbacks then
+      out.callbacks[id]={}
+      for key,fn in pairs(t.main_script or {}) do
+        if type(fn)=="function" then out.callbacks[id][key]=assert(behavior_names[fn],spec.folder..": "..id..".main_script."..key.." -> unmapped source callback") end
+      end
+    end
     if t.modifier or t.aura or t.spawner or t.fireball_count or t.enemy or t.soldier or t.bullet or (t.tower and not t.tower_holder) then
-      assert(t.main_script and behavior_names[t.main_script.update],spec.folder..": "..id.." has an unmapped behavior")
-      out.behaviors[id]=behavior_names[t.main_script.update]
+      local fn=t.main_script and (t.main_script.update or t.main_script.insert)
+      assert(fn and behavior_names[fn],spec.folder..": "..id.." has an unmapped behavior")
+      out.behaviors[id]=behavior_names[fn]
     end
     local found={}
     local function visit(value)
@@ -165,6 +201,8 @@ local function run()
     for _,child in ipairs(dependencies) do export_template(child,id) end
   end
   for _,id in ipairs(template_ids) do export_template(id,"wave/layout/adapter") end
+  local errors={};for key,id in pairs(unsupported) do errors[#errors+1]=id.."."..key end;table.sort(errors)
+  assert(#errors==0,spec.folder..": wave/layout/dependencies -> unsupported components: "..table.concat(errors,", "))
   -- UI data only: evaluate the Chinese CJK branch, without loading any UI runtime.
   package.loaded.i18n.cjk=function(_,default,zh) return zh or default end
   _G._=function(key) return key end
@@ -196,6 +234,12 @@ local function run()
     out.ui.tower_menus.holder_elf=clean(menus.holder_elf[1]);out.ui.tower_menus.elf=clean(menus.elf[1])
     out.ui.upgrade_menus.tower_elf=clean(menus.holder_elf[1][1])
   end
+  for _,kind in ipairs(spec.export.tower_menus or {}) do out.ui.tower_menus[kind]=clean(menus[kind][1]) end
+  for _,key in ipairs(spec.export.upgrade_menus or {}) do
+    local kind,level,index=key:match("([^:]+):(%d+):(%d+)")
+    local item=menus[kind][tonumber(level)][tonumber(index)]
+    out.ui.upgrade_menus[item.action_arg]=clean(item)
+  end
   local strings=chunk("_assets/kr1-desktop/strings/zh-Hans.lua")
   out.ui.strings={}
   local function collect(v)
@@ -203,6 +247,24 @@ local function run()
     elseif type(v)=="table" then for _,value in pairs(v) do collect(value) end end
   end
   collect(out.ui)
+  for _,prefix in ipairs(spec.export.power_prefixes or {}) do
+    out.ui.power_descriptions=out.ui.power_descriptions or {}
+    for _,item in ipairs(out.ui.tower_menus[string.lower(prefix)] or {}) do
+      if item.action_arg and item.tt_list then
+        local descriptions={}
+        for level,entry in ipairs(item.tt_list) do
+          local description=assert(strings[entry.tt_desc],entry.tt_desc)
+          description=description:gsub("%%%$(.-)%%%$",function(expr)
+            local fn=assert(loadstring("return "..expr,"@power_description"))
+            setfenv(fn,{T=function(id) return E:get_template(id) end,level=level,tdmg=1,tcd=1,math=math})
+            return string.format("%g",fn())
+          end)
+          descriptions[level]=description
+        end
+        out.ui.power_descriptions[item.action_arg]=descriptions
+      end
+    end
+  end
   if has("elf") then
     for _,prefix in ipairs({"TOWER_RANGER","TOWER_ELF"}) do
       for _,suffix in ipairs({"_NAME","_EXTRA"}) do out.ui.strings[prefix..suffix]=assert(strings[prefix..suffix]) end
@@ -210,7 +272,7 @@ local function run()
   end
   if advanced then
     -- Evaluate only the selected frozen arithmetic expressions, without gameplay.
-    out.ui.power_descriptions={}
+    out.ui.power_descriptions=out.ui.power_descriptions or {}
     for _,power in ipairs(has("elf") and {"poison","thorn","bleed","cripple"} or {"poison","thorn"}) do
       local descriptions={}
       for level=1,3 do

@@ -169,7 +169,8 @@ func _selection(id: String, closing: bool) -> void:
 				var pos: Vector2 = view.Simulation.vec(data.tower_menu_button_places[int(item.place) - 1])
 				var price: int = sim.power_price(tower, power)
 				_menu_icon(item.image, pos, "upgrade_power", {"id":id,"power":power}, price, enabled and price >= 0 and sim.gold >= price)
-				for rank in range(3):
+				var maximum: int = sim.tower_template(tower).powers[power].max_level
+				for rank in range(maximum):
 					paint.image("power_rank_0001" if rank < int(tower.powers[power]) else "power_rank_0002", pos + Vector2((rank - 1) * 9, 17), Vector2(0.5,0.5))
 		if tower.type == "barrack": _menu_icon("sub_icons_0001", Vector2(128, 118), "target", {"power": "rally"}, -1, enabled)
 		if t.get("mercenary",false):
@@ -216,7 +217,7 @@ func _tower_tooltip(tower: Dictionary) -> void:
 	for item: Dictionary in data.tower_menus.get(str(view.sim.tower_template(tower).tower.type), []):
 		var power: String = item.get("action_arg", "")
 		if not tower.get("powers",{}).has(power) or view.hovered != "upgrade_power" + str({"id":tower.id,"power":power}): continue
-		var level := mini(3, int(tower.powers[power]) + 1)
+		var level := mini(item.tt_list.size(), int(tower.powers[power]) + 1)
 		title = text(item.tt_list[level - 1].tt_title)
 		description = data.power_descriptions[power][level - 1]
 	if title == "": return

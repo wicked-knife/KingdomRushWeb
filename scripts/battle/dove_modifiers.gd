@@ -24,6 +24,17 @@ func clear(sim: RefCounted) -> void:
 	active.clear()
 
 func _release(sim: RefCounted, m: Dictionary) -> void:
+	if m.get("silence", false):
+		var unit: Dictionary = sim.unit_by_id(m.target)
+		if not unit.is_empty():
+			unit.silence_count = maxi(0, int(unit.get("silence_count", 0)) - 1)
+			if unit.silence_count == 0:
+				var duration: int = sim.tick - int(unit.silence_at)
+				unit.heal_at += duration
+				if unit.has("ranged_at"): unit.ranged_at += duration
+	if m.get("special", "") == "teleport":
+		var target: Dictionary = sim.unit_by_id(m.target)
+		if not target.is_empty(): target.hidden = false; target.stun_count = maxi(0, int(target.get("stun_count", 0)) - 1)
 	if m.template != "mod_thorn": return
 	var target: Dictionary = sim.unit_by_id(m.target)
 	if not target.is_empty(): target.stun_count = maxi(0, int(target.get("stun_count", 0)) - 1)
@@ -31,8 +42,15 @@ func _release(sim: RefCounted, m: Dictionary) -> void:
 func apply(sim: RefCounted, template: String, target: Dictionary, level: int, source: String, duration: float = -1) -> bool:
 	if target.is_empty() or target.hp <= 0 or level <= 0 or not sim.templates.has(template): return false
 	var t: Dictionary = sim.templates[template]
+	if sim.behaviors.role(template) in ["arcane_damage", "disintegrate", "teleport"]: return sim.Behaviors.Arcane.apply(sim, template, target, level, source)
 	var rule: Dictionary = t.modifier
 	if not flags_match(sim, target, rule): return false
+	for existing: Dictionary in active.duplicate():
+		if existing.target != target.id: continue
+		var other: Dictionary = sim.templates[existing.template].modifier
+		if template in other.get("bans", []): return false
+		if rule.get("remove_banned", false) and (existing.template in rule.get("bans", []) or other.get("type", "") in rule.get("ban_types", [])):
+			_release(sim, existing); active.erase(existing)
 	var duplicates := 0
 	for m: Dictionary in active:
 		if m.target != target.id or m.template != template: continue
@@ -66,6 +84,10 @@ func apply(sim: RefCounted, template: String, target: Dictionary, level: int, so
 		sim._state(target, "idle", true)
 	elif t.has("render"):
 		m.state = t.render.sprites[0].get("size_names",["","",""])[size_index]
+	if template == "mod_paladin_silence":
+		m.silence = true
+		if int(target.get("silence_count", 0)) == 0: target.silence_at = sim.tick
+		target.silence_count = int(target.get("silence_count", 0)) + 1
 	active.append(m)
 	sim.event.emit("modifier_applied", {"template":template,"target":target.id,"level":level})
 	return true
@@ -77,6 +99,7 @@ func step(sim: RefCounted) -> void:
 		if target.is_empty() or target.hp <= 0:
 			_release(sim, m); active.erase(m); continue
 		var t: Dictionary = sim.templates[m.template]
+		if sim.Behaviors.Arcane.modifier_step(sim, m, target, t): continue
 		if m.template == "mod_thorn":
 			if m.phase == "start" and sim.tick >= m.loop_at:
 				m.phase = "loop"; m.state = "loop"; m.at = m.loop_at
@@ -90,7 +113,7 @@ func step(sim: RefCounted) -> void:
 				m.next_hit += sim.frames(t.damage_every)
 				sim.damage(target, float(t.damage_min), int(t.damage_type))
 		else:
-			if sim.tick >= m.expires: active.erase(m); continue
+			if sim.tick >= m.expires: _release(sim, m); active.erase(m); continue
 			if t.has("dps") and sim.tick >= m.next_hit:
 				m.next_hit += sim.frames(t.dps.damage_every)
 				var amount := float(t.dps.damage_min) + float(t.dps.damage_inc) * int(m.level)

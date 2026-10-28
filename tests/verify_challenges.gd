@@ -198,7 +198,7 @@ func _progress() -> void:
 			if id==1:
 				p.record_result(outcome);var again: Dictionary=p.enter_map()
 				check(p.total_stars()==before+1 and again.heroic.is_empty() and again.iron.is_empty(),"repeated victory does not duplicate reward")
-	check(p.total_stars()==25 and not p.is_playable(6,2),"fifteen completions total 25 stars and sixth remains preview")
+	check(p.total_stars()==25 and not p.is_playable(6,2),"first five completions total 25 stars and sixth challenge still requires three stars")
 	var prior: Dictionary=p.record(5).duplicate(true)
 	p.record(5)[2]=3
 	p.record_result({"generation":1,"level_id":5,"mode":2,"difficulty":2,"result":"victory","lives":1});p.enter_map()

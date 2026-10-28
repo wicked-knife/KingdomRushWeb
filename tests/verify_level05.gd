@@ -173,7 +173,7 @@ func progress() -> void:
 	var old := Progress.new(); old.initialize(path)
 	check(old.total_stars() == 12 and old.is_playable(5),"settled fourth-stage slot opens fifth")
 	Fixture.complete(p, {"generation":1,"level_id":5,"mode":1,"difficulty":2,"result":"victory","lives":20})
-	old.initialize(path); check(old.total_stars() == 15 and old.is_unlocked(6) and not old.is_playable(6),"fifth persists and sixth preview")
+	old.initialize(path); check(old.total_stars() == 15 and old.is_unlocked(6) and old.is_playable(6),"fifth persists and sixth campaign opens")
 	Fixture.complete(p, {"generation":1,"level_id":5,"mode":1,"difficulty":2,"result":"victory","lives":1})
 	old.initialize(path); check(old.record(5).stars == 3,"fifth lower replay preserves best stars")
 	check(Levels.supports(5,2) and Levels.supports(5,3),"challenge modes supported")

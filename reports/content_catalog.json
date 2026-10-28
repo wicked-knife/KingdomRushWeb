@@ -1,6 +1,6 @@
 {
   "passed": true,
-  "content_combinations": 15,
+  "content_combinations": 18,
   "definitions": {
     "level01": {
       "gameplay_unchanged": true,
@@ -73,8 +73,8 @@
       "reason": "level05: controller differs from content registration"
     }
   ],
-  "publication_resources": 259,
-  "publication_data": 49,
+  "publication_resources": 291,
+  "publication_data": 55,
   "unchanged_resource_files": 74,
   "changed_resource_files": [],
   "failures": []

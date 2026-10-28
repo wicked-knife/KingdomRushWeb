@@ -60,12 +60,12 @@ func _run() -> void:
 	check(battle.outcome.result == "victory" and Replay.failures.is_empty(), "native legal fifth replay wins again")
 	state("return_to_map"); await app.map_ready
 	check(app.battle == null and app.campaign.total_stars() == 14 and app.campaign.record(5)[1] == 2, "physical map return settles numeric mode record")
-	check(app.campaign.is_unlocked(6) and not app.campaign.is_playable(6) and not app.campaign.data.has("last_victory"), "native sixth preview unlocked exactly once")
+	check(app.campaign.is_unlocked(6) and app.campaign.is_playable(6) and not app.campaign.data.has("last_victory"), "native sixth campaign unlocked exactly once")
 	check(not "tower_ranger" in app.campaign.data.locked_towers and not "tower_elf" in app.campaign.data.locked_towers, "native map settles tower unlocks")
-	await capture("settled_map"); state("open_sixth_preview")
+	await capture("settled_map"); state("open_sixth_entry")
 	while app.campaign_map.overlay != "level" or app.campaign_map.selected_level != 6: await process_frame
-	await capture("sixth_preview")
-	check(app.battle == null and not app.campaign.is_playable(6), "physical sixth click shows preview without entering battle")
+	await capture("sixth_entry")
+	check(app.battle == null and app.campaign.is_playable(6), "physical sixth flag click shows playable entry before confirmation")
 	var report := {"passed": failures.is_empty(), "checks": checks, "failures": failures, "captures": captures, "physical_mouse": true, "resolution": [root.size.x, root.size.y], "legal_fifth_replays": 2, "empty_defense": true, "temporary": temporary}
 	var f := FileAccess.open("res://reports/dove_saves_native.json", FileAccess.WRITE); f.store_string(JSON.stringify(report)); f.close()
 	state("complete"); app.queue_free(); await process_frame; quit(0 if failures.is_empty() else 1)

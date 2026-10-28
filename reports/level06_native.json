@@ -1,0 +1,116 @@
+{
+	"captures": [
+		{
+			"path": "res://reports/challenges_level6_mode1_1280x720.png",
+			"state": "level6_mode1"
+		},
+		{
+			"gold": 700,
+			"path": "res://reports/towers_sixth_campaign_guards_1280x720.png",
+			"state": "sixth_campaign_guards",
+			"tick": 0
+		},
+		{
+			"gold": 9135,
+			"path": "res://reports/towers_sixth_healing_1280x720.png",
+			"state": "sixth_healing",
+			"tick": 30
+		},
+		{
+			"gold": 8635,
+			"path": "res://reports/towers_sixth_holystrike_1280x720.png",
+			"state": "sixth_holystrike",
+			"tick": 30
+		},
+		{
+			"gold": 8460,
+			"path": "res://reports/towers_sixth_shield_1280x720.png",
+			"state": "sixth_shield",
+			"tick": 30
+		},
+		{
+			"gold": 8410,
+			"path": "res://reports/towers_sixth_disintegrate_1280x720.png",
+			"state": "sixth_disintegrate",
+			"tick": 60
+		},
+		{
+			"gold": 7910,
+			"path": "res://reports/towers_sixth_teleport_1280x720.png",
+			"state": "sixth_teleport",
+			"tick": 60
+		},
+		{
+			"gold": 7910,
+			"path": "res://reports/towers_sixth_healing_action_1280x720.png",
+			"state": "sixth_healing_action",
+			"tick": 408
+		},
+		{
+			"gold": 7910,
+			"path": "res://reports/towers_sixth_holystrike_action_1280x720.png",
+			"state": "sixth_holystrike_action",
+			"tick": 453
+		},
+		{
+			"gold": 7935,
+			"path": "res://reports/towers_sixth_disintegrate_action_1280x720.png",
+			"state": "sixth_disintegrate_action",
+			"tick": 458
+		},
+		{
+			"gold": 7935,
+			"path": "res://reports/towers_sixth_boss_flight_skills_1280x720.png",
+			"state": "sixth_boss_flight_skills",
+			"tick": 458
+		},
+		{
+			"gold": 700,
+			"path": "res://reports/towers_sixth_campaign_victory_1280x720.png",
+			"state": "sixth_campaign_victory",
+			"tick": 0
+		},
+		{
+			"path": "res://reports/challenges_level6_mode2_1280x720.png",
+			"state": "level6_mode2"
+		},
+		{
+			"gold": 1200,
+			"path": "res://reports/towers_sixth_mode2_opening_1280x720.png",
+			"state": "sixth_mode2_opening",
+			"tick": 3
+		},
+		{
+			"gold": 1200,
+			"path": "res://reports/towers_sixth_mode2_victory_1280x720.png",
+			"state": "sixth_mode2_victory",
+			"tick": 3
+		},
+		{
+			"path": "res://reports/challenges_level6_mode3_1280x720.png",
+			"state": "level6_mode3"
+		},
+		{
+			"gold": 800,
+			"path": "res://reports/towers_sixth_mode3_opening_1280x720.png",
+			"state": "sixth_mode3_opening",
+			"tick": 3
+		},
+		{
+			"gold": 800,
+			"path": "res://reports/towers_sixth_steel_upgrade_1280x720.png",
+			"state": "sixth_steel_upgrade",
+			"tick": 3
+		},
+		{
+			"gold": 800,
+			"path": "res://reports/towers_sixth_mode3_victory_1280x720.png",
+			"state": "sixth_mode3_victory",
+			"tick": 3
+		}
+	],
+	"checks": 135,
+	"failures": [],
+	"passed": true,
+	"scope": "native three-mode entry, tower/skill input, restart and finish-event settlement; fixtures are not full victory replays"
+}

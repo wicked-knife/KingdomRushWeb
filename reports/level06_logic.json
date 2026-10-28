@@ -1,0 +1,10 @@
+{
+	"births": 1116,
+	"checks": 185,
+	"failures": [],
+	"full_replays": false,
+	"independent_modes": 3,
+	"passed": true,
+	"timeline_report": "reports/level06_timelines.json",
+	"timeline_waves": 24
+}

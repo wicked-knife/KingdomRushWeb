@@ -89,9 +89,9 @@ func _init() -> void:
 	var sim_script = load("res://scripts/battle/level01_sim.gd")
 	for script: String in ["res://scripts/map/dove_map_flag.gd", "res://scripts/battle/battle_wave_flags.gd"]:
 		if not ResourceLoader.exists(script) or load(script) == null: failures.append("Interaction script missing: " + script)
-	for id in [1, 2, 3, 4, 5]:
+	for id: int in content.levels.keys().map(func(key): return int(key)):
 		var stage: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/level%02d/definition.json" % id))
-		if stage.get("locations", {}).get("entrances", []).size() != {1:1, 2:1, 3:2, 4:2, 5:3}[id]: failures.append("Exported entrances incomplete %d" % id)
+		if stage.get("locations", {}).get("entrances", []).size() != {1:1, 2:1, 3:2, 4:2, 5:3, 6:5}[id]: failures.append("Exported entrances incomplete %d" % id)
 		var art = load("res://scripts/dove_asset_catalog.gd").new(stage.level.root + "catalog.json")
 		for image: String in ["nextwaveTimer_Full", "nextwaveTimer_0001", "nextwaveTimer_0002", "nextwaveTimer_0020", "nextwaveTimer_glow_0001"]:
 			if art.get_frame(stage.level.group, image).is_empty(): failures.append("Exported wave flag art missing: " + image)
@@ -100,7 +100,7 @@ func _init() -> void:
 		for frame in range(1,15):
 			if art.get_frame(stage.level.group, "error_feedback_%04d" % frame).is_empty(): failures.append("Exported invalid-point feedback missing %d/%d" % [id,frame])
 		var placement = sim_script.new(stage)
-		var grass: Vector2 = {1:Vector2(256,424), 2:Vector2(256,328), 3:Vector2(256,376), 4:Vector2(100,100), 5:Vector2(100,100)}[id]
+		var grass: Vector2 = {1:Vector2(256,424), 2:Vector2(256,328), 3:Vector2(256,376), 4:Vector2(100,100), 5:Vector2(100,100), 6:Vector2(100,100)}[id]
 		if placement.valid_power_point("reinforcements", grass) or not placement.valid_power_point("reinforcements", placement.towers[0].rally): failures.append("Exported troop placement rules invalid %d" % id)
 		if id == 2:
 			placement.notices.clear(); placement.command("build", {"id":"5", "type":"barrack"})
@@ -129,7 +129,7 @@ func _init() -> void:
 		var simulation = sim_script.new(definition)
 		if simulation.towers.size() != 8: failures.append("Exported simulation initialization failed")
 		var levels = load("res://scripts/services/campaign_levels.gd")
-		for id in range(1,6):
+		for id in levels.ids():
 			for mode in [1,2,3]:
 				var active: Dictionary=levels.load_definition(id,mode,2)
 				if active.is_empty():failures.append("Exported mode dependencies invalid %d/%d" % [id,mode]);continue
@@ -138,22 +138,25 @@ func _init() -> void:
 				var art=load("res://scripts/dove_asset_catalog.gd").new(active.level.root+"catalog.json")
 				if art.get_frame(active.level.group,"victoryBadges_notxt_%04d" % {1:2,2:3,3:1}[mode]).is_empty():failures.append("Exported mode victory badge missing %d/%d" % [id,mode])
 				if mode==1:continue
-				if challenge.lives!=1 or challenge.gold!={2:[230,310,400,750,1000],3:[360,275,660,1500,1500]}[mode][id-1] or active.waves.groups.size()!=(6 if mode==2 else 1):failures.append("Exported challenge initial state invalid %d/%d" % [id,mode])
+				if challenge.lives!=1 or challenge.gold!={2:[230,310,400,750,1000,1200],3:[360,275,660,1500,1500,800]}[mode][id-1] or active.waves.groups.size()!=(6 if mode==2 else 1):failures.append("Exported challenge initial state invalid %d/%d" % [id,mode])
 				while not challenge.notices.is_empty():challenge.command("confirm")
 				for kind: String in sim_script.TYPES:
 					if not challenge.tower_locked("tower_build_"+kind):continue
 					var empty: Dictionary=challenge.towers.filter(func(t):return t.type=="")[0]
 					var gold: int=challenge.gold
 					if challenge.command("build",{"id":empty.id,"type":kind}) or challenge.gold!=gold:failures.append("Exported forbidden build accepted %d/%d" % [id,mode])
+				if id==6 and mode==3:
+					if challenge.towers.filter(func(t):return t.template=="tower_mage_3" and t.spent==0).size()!=2: failures.append("Pack sixth iron free mages invalid")
+					if not challenge.command("upgrade",{"id":"8","upgrade_to":"tower_arcane_wizard"}): failures.append("Pack sixth advanced tower transaction failed")
 				if id==5 and mode==3:
 					if challenge.towers.filter(func(t):return t.template=="tower_archer_3" and t.spent==0).size()!=3:failures.append("Pack fifth iron free archers invalid")
 					for site in ["5","7"]:
 						if not challenge.command("upgrade",{"id":site,"upgrade_to":"tower_elf"}) or not challenge.command("buy_soldier",{"id":site,"type":"soldier_elf"}):failures.append("Pack fifth iron camp transaction failed "+site)
-		for id in [2, 3, 4, 5]:
+		for id in [2, 3, 4, 5, 6]:
 			var stage: Dictionary = levels.load_definition(id)
 			if stage.is_empty(): failures.append("Exported campaign dependencies invalid %d" % id); continue
 			var campaign = sim_script.new(stage)
-			if campaign.towers.size() != {2: 7, 3: 12, 4: 15, 5:14}[id] or campaign.data.waves.groups.size() != {2: 7, 3: 11, 4: 13, 5:15}[id]: failures.append("Exported campaign initialization invalid %d" % id)
+			if campaign.towers.size() != {2: 7, 3: 12, 4: 15, 5:14, 6:15}[id] or campaign.data.waves.groups.size() != {2: 7, 3: 11, 4: 13, 5:15, 6:17}[id]: failures.append("Exported campaign initialization invalid %d" % id)
 			if id == 5:
 				campaign.notices.clear()
 				if campaign.gold != 700 or not campaign.command("upgrade",{"id":"5","upgrade_to":"tower_elf"}) or not campaign.command("buy_soldier",{"id":"5","type":"soldier_elf"}) or not campaign.command("upgrade",{"id":"4","upgrade_to":"tower_ranger"}): failures.append("Pack fifth camp/ranger transactions failed")
@@ -185,7 +188,7 @@ func _init() -> void:
 		for excluded: String in ["source_assets", "reports", "tests", "tools", "docs"]:
 			if path.begins_with("res://" + excluded + "/"):
 				failures.append("Excluded directory found: " + path)
-	var report := {"passed": failures.is_empty(), "failures": failures, "mode_combinations_checked":15, "files": files}
+	var report := {"passed": failures.is_empty(), "failures": failures, "mode_combinations_checked":content.levels.size() * 3, "files": files}
 	var report_path := args[0].get_base_dir().path_join("pack_files.json")
 	var report_file := FileAccess.open(report_path, FileAccess.WRITE)
 	report_file.store_string(JSON.stringify(report, "\t"))

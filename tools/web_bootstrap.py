@@ -1,4 +1,4 @@
-"""Export/serve the menu, KR1 map, hero room and campaigns 1-5 with explicit manifests."""
+"""Export/serve the menu, KR1 map, hero room and registered campaigns with explicit manifests."""
 import argparse
 import functools
 import http.server
@@ -121,6 +121,11 @@ def main():
             subprocess.run([engine, "--headless", "--path", str(ROOT), "--script", "res://tests/verify_web_pack.gd", "--", str(output.with_suffix(".pck"))], check=True)
         challenge_report_path = ROOT / "reports/challenges_logic.json"
         challenge_report = json.loads(challenge_report_path.read_text(encoding="utf-8")) if challenge_report_path.exists() else {}
+        sixth_path = ROOT / "reports/level06_logic.json"
+        sixth_report = json.loads(sixth_path.read_text(encoding="utf-8")) if sixth_path.exists() else {}
+        native_path = ROOT / "reports/level06_native.json"
+        native_report = json.loads(native_path.read_text(encoding="utf-8")) if native_path.exists() else {}
+        sixth_required = 6 in level_ids()
         receipt = {
             "export_succeeded": True,
             "build_type": "debug" if args.debug else "release",
@@ -131,8 +136,11 @@ def main():
             "playable_modes": sorted({row["mode"] for row in combinations()}),
             "playable_combinations": combinations(),
             "content_catalog_sha256": hashlib.sha256((ROOT / "data/campaign_content.json").read_bytes()).hexdigest(),
-            "challenge_validation_passed": challenge_report.get("passed", False),
+            "challenge_validation_passed": challenge_report.get("passed", False) and (not sixth_required or sixth_report.get("passed", False) and native_report.get("passed", False)),
             "challenge_checks": challenge_report.get("checks", 0),
+            "challenge_check_scope": "levels 1-5; sixth data/mechanisms and native flow are reported separately",
+            "sixth_logic": {k: sixth_report.get(k) for k in ("passed", "checks", "independent_modes", "timeline_waves", "births", "full_replays")},
+            "sixth_native": {k: native_report.get(k) for k in ("passed", "checks", "scope")},
             "challenge_acceptance_basis": challenge_report.get("acceptance_basis", "dove_configuration_and_functionality"),
             "challenge_victory_replays_required": False,
             "challenge_replays_run": challenge_report.get("replays_run", False),

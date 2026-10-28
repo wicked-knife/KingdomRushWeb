@@ -128,6 +128,40 @@
       "exclude_templates": [
         "decal_background"
       ]
+    },
+    "6": {
+      "id": 6,
+      "generation": 1,
+      "folder": "level06",
+      "modes": [
+        1,
+        2,
+        3
+      ],
+      "difficulties": [
+        2
+      ],
+      "controller": "level06",
+      "features": [
+        "base",
+        "wolf",
+        "healer",
+        "bandits",
+        "tier3",
+        "ranger",
+        "flying",
+        "enemy_ranged",
+        "royal_guard",
+        "paladin",
+        "arcane",
+        "juggernaut"
+      ],
+      "atlas_groups": [
+        "go_stage06"
+      ],
+      "frames": [
+        "stage6_boss_corpse"
+      ]
     }
   },
   "arenas": {
@@ -411,11 +445,177 @@
       "enemy_ids": [
         "enemy_spider_small"
       ]
+    },
+    "flying": {
+      "fields": [
+        "ranged"
+      ],
+      "enemy_ids": [
+        "enemy_gargoyle"
+      ],
+      "notification_ids": [
+        "enemy_gargoyle",
+        "TIP_ARMOR_HARD"
+      ],
+      "constants": [
+        "F_BLOCK",
+        "F_RANGED",
+        "F_AREA",
+        "F_FLYING",
+        "F_ENEMY",
+        "F_FRIEND",
+        "F_BOSS",
+        "F_INSTAKILL",
+        "F_DISINTEGRATED",
+        "F_TELEPORT",
+        "F_MOD",
+        "F_FREEZE",
+        "DAMAGE_INSTAKILL",
+        "DAMAGE_DISINTEGRATE",
+        "DAMAGE_NO_SPAWNS"
+      ]
+    },
+    "enemy_ranged": {
+      "template_ids": [
+        "arrow_shadow_archer"
+      ],
+      "enemy_ids": [
+        "enemy_shadow_archer",
+        "enemy_dark_knight",
+        "enemy_marauder",
+        "enemy_wolf"
+      ],
+      "notification_ids": [
+        "enemy_shadow_archer",
+        "enemy_dark_knight"
+      ],
+      "animation_states": [
+        "shoot"
+      ]
+    },
+    "royal_guard": {
+      "template_ids": [
+        "soldier_s6_imperial_guard"
+      ],
+      "fields": [
+        "nav_rally"
+      ]
+    },
+    "paladin": {
+      "template_ids": [
+        "tower_paladin"
+      ],
+      "fields": [
+        "powers",
+        "timed_actions"
+      ],
+      "notification_ids": [
+        "TOWER_PALADIN"
+      ],
+      "animation_states": [
+        "healing",
+        "holystrike",
+        "attack2"
+      ],
+      "tower_menus": [
+        "paladin"
+      ],
+      "upgrade_menus": [
+        "barrack:3:1"
+      ],
+      "power_prefixes": [
+        "PALADIN"
+      ],
+      "upgrade_targets": [
+        "tower_barrack_3:tower_paladin"
+      ],
+      "validate_callbacks": [
+        true
+      ]
+    },
+    "arcane": {
+      "template_ids": [
+        "tower_arcane_wizard",
+        "decalmod_arcane_wizard_disintegrate_ready"
+      ],
+      "fields": [
+        "powers",
+        "image_width",
+        "track_target",
+        "ray_duration",
+        "boss_damage_base",
+        "boss_damage_hp_percent",
+        "delay_end",
+        "delay_start",
+        "fx_end",
+        "fx_start",
+        "max_times_applied",
+        "nodes_offset_min",
+        "nodes_offset_max",
+        "nodes_offset_inc",
+        "damage_inc",
+        "damage_base",
+        "damage_type",
+        "hold_time",
+        "nodeslimit"
+      ],
+      "notification_ids": [
+        "TOWER_ARCANE_WIZARD"
+      ],
+      "animation_states": [
+        "teleportUp",
+        "teleportDown"
+      ],
+      "tower_menus": [
+        "arcane_wizard"
+      ],
+      "upgrade_menus": [
+        "mage:3:1"
+      ],
+      "power_prefixes": [
+        "ARCANE_WIZARD"
+      ],
+      "reference_fields": [
+        "hit_payload",
+        "aura",
+        "fx_start",
+        "fx_end",
+        "particles_name",
+        "hit_fx_air",
+        "disintegrate_fx"
+      ],
+      "upgrade_targets": [
+        "tower_mage_3:tower_arcane_wizard"
+      ]
+    },
+    "juggernaut": {
+      "template_ids": [
+        "eb_juggernaut"
+      ],
+      "fields": [
+        "spawner",
+        "total_gold",
+        "particle_system"
+      ],
+      "inputs": [
+        "kr1/boss.lua",
+        "kr1/boss_scripts.lua"
+      ],
+      "animation_states": [
+        "raise"
+      ],
+      "atlas_groups": [
+        "go_enemies_grass"
+      ],
+      "constants": [
+        "F_ALL"
+      ]
     }
   },
   "controllers": {
     "default": "res://scripts/battle/controllers/default_level.gd",
-    "level01": "res://scripts/battle/controllers/level01.gd"
+    "level01": "res://scripts/battle/controllers/level01.gd",
+    "level06": "res://scripts/battle/controllers/level06.gd"
   },
   "behaviors": {
     "scripts.enemy_mixed.update": "ground",
@@ -441,7 +641,19 @@
     "scripts.mod_track_target.update": "track_modifier",
     "scripts.mod_hps.update": "heal_modifier",
     "game_scripts.mod_thorn.update": "thorn_modifier",
-    "scripts.power_fireball_control.update": "fire_control"
+    "scripts.power_fireball_control.update": "fire_control",
+    "scripts.enemy_passive.update": "passive",
+    "game_scripts.eb_juggernaut.update": "juggernaut",
+    "game_scripts.tower_arcane_wizard.update": "arcane",
+    "scripts.ray_simple.update": "ray",
+    "game_scripts.mod_ray_arcane.update": "arcane_damage",
+    "game_scripts.mod_ray_arcane_disintegrate.update": "disintegrate",
+    "scripts.mod_teleport.update": "teleport",
+    "scripts.aura_apply_mod.update": "mod_aura",
+    "scripts.enemy_missile.update": "enemy_missile",
+    "scripts.enemy_bomb.update": "enemy_bomb",
+    "scripts.mod_tower_decal.update": "tower_decal",
+    "scripts.mod_tower_decal.insert": "tower_decal"
   },
   "behavior_aliases": {
     "game_scripts.tower_archer.update": "scripts.tower_archer.update",
@@ -453,7 +665,17 @@
     "game_scripts.arrow_missile.update": "scripts.arrow_missile.update",
     "game_scripts.tower_ranger.update": "tower_scripts.tower_ranger.update",
     "game_scripts.enemies_spawner.update": "scripts.enemies_spawner.update",
-    "game_scripts.mod_hps.update": "scripts.mod_hps.update"
+    "game_scripts.mod_hps.update": "scripts.mod_hps.update",
+    "game_scripts.enemy_passive.update": "scripts.enemy_passive.update",
+    "game_scripts.ray_simple.update": "scripts.ray_simple.update",
+    "game_scripts.mod_teleport.update": "scripts.mod_teleport.update",
+    "game_scripts.aura_apply_mod.update": "scripts.aura_apply_mod.update",
+    "game_scripts.enemy_missile.update": "scripts.enemy_missile.update",
+    "game_scripts.enemy_bomb.update": "scripts.enemy_bomb.update",
+    "game_scripts.mod_tower_decal.update": "scripts.mod_tower_decal.update",
+    "game_scripts.mod_track_target.update": "scripts.mod_track_target.update",
+    "game_scripts.mod_silence.update": "scripts.mod_silence.update",
+    "game_scripts.mod_tower_decal.insert": "scripts.mod_tower_decal.insert"
   },
   "runtime_scripts": [
     "res://scripts/services/campaign_levels.gd",
@@ -473,6 +695,74 @@
     "res://scripts/battle/dove_arrow_missile.gd",
     "res://scripts/battle/dove_behaviors.gd",
     "res://scripts/battle/dove_level_controller.gd",
-    "res://scripts/map/dove_map_flag.gd"
+    "res://scripts/map/dove_map_flag.gd",
+    "res://scripts/battle/dove_targeting.gd",
+    "res://scripts/battle/dove_enemy_ranged.gd",
+    "res://scripts/battle/dove_paladin.gd",
+    "res://scripts/battle/dove_arcane.gd",
+    "res://scripts/battle/dove_enemy_projectiles.gd",
+    "res://scripts/battle/dove_spawner.gd",
+    "res://scripts/battle/dove_juggernaut.gd"
+  ],
+  "callbacks": [
+    "game_scripts.aura_apply_mod.insert",
+    "game_scripts.aura_apply_mod.update",
+    "game_scripts.aura_ranger_thorn.update",
+    "game_scripts.eb_juggernaut.update",
+    "game_scripts.enemies_spawner.update",
+    "game_scripts.enemy_basic.insert",
+    "game_scripts.enemy_bomb.insert",
+    "game_scripts.enemy_bomb.update",
+    "game_scripts.enemy_missile.update",
+    "game_scripts.enemy_passive.update",
+    "game_scripts.enemy_shaman.update",
+    "game_scripts.mod_hps.insert",
+    "game_scripts.mod_hps.update",
+    "game_scripts.mod_ray_arcane.update",
+    "game_scripts.mod_ray_arcane_disintegrate.update",
+    "game_scripts.mod_silence.insert",
+    "game_scripts.mod_silence.remove",
+    "game_scripts.mod_slow.remove",
+    "game_scripts.mod_thorn.insert",
+    "game_scripts.mod_thorn.remove",
+    "game_scripts.mod_thorn.update",
+    "game_scripts.mod_tower_decal.insert",
+    "game_scripts.mod_tower_decal.remove",
+    "game_scripts.mod_track_target.update",
+    "game_scripts.ray_simple.update",
+    "game_scripts.soldier_reinforcement.update",
+    "game_scripts.tower_arcane_wizard.remove",
+    "game_scripts.tower_arcane_wizard.update",
+    "game_scripts.tower_archer.insert",
+    "game_scripts.tower_archer.update",
+    "game_scripts.tower_barrack.insert",
+    "game_scripts.tower_barrack.remove",
+    "game_scripts.tower_barrack.update",
+    "game_scripts.tower_engineer.insert",
+    "game_scripts.tower_engineer.update",
+    "game_scripts.tower_mage.update",
+    "game_scripts.tower_ranger.remove",
+    "game_scripts.tower_ranger.update",
+    "kr1.archer_towers.mod_ranger_poison.insert",
+    "kr1.barrack_towers.soldier_paladin.healing.fn_can",
+    "kr1.game_templates.re_farmer.insert",
+    "scripts.arrow.insert",
+    "scripts.arrow.update",
+    "scripts.bolt.insert",
+    "scripts.bolt.update",
+    "scripts.bomb.insert",
+    "scripts.bomb.update",
+    "scripts.enemy_basic.insert",
+    "scripts.enemy_mixed.update",
+    "scripts.mod_dps.update",
+    "scripts.mod_teleport.insert",
+    "scripts.mod_teleport.remove",
+    "scripts.mod_teleport.update",
+    "scripts.power_fireball.update",
+    "scripts.power_fireball_control.update",
+    "scripts.power_reinforcements_control.insert",
+    "scripts.soldier_barrack.insert",
+    "scripts.soldier_barrack.update",
+    "scripts.tower_build.update"
   ]
 }

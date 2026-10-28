@@ -1,4 +1,4 @@
-"""Build source-traceable atlases for campaigns 1-5 or the independent ranger arena."""
+"""Build source-traceable atlases for registered campaigns or the independent ranger arena."""
 from pathlib import Path
 import argparse, copy, hashlib, io, json, math, os, re, subprocess
 from PIL import Image
@@ -18,7 +18,7 @@ def write(path, value):
 
 def gameplay_projection(value):
     value = copy.deepcopy(value)
-    for key in ("behaviors", "dependencies"):
+    for key in ("behaviors", "dependencies", "callbacks"):
         value.pop(key, None)
     value.get("level", {}).pop("controller", None)
     return value
@@ -106,6 +106,16 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
         data["upgrade_targets"]={"tower_archer_3":"tower_ranger"}
         data["ui"]["power_descriptions"]["poison"]=[s.replace("减速0.1%","减速10%").replace("可叠加3层","同级毒素最多叠加4层") for s in data["ui"]["power_descriptions"]["poison"]]
     if "elf" in features: data["upgrade_targets"]["tower_elf_holder"]="tower_elf"
+    for item in spec["export"].get("upgrade_targets", []):
+        parent, child = item.split(":")
+        data.setdefault("upgrade_targets", {})[parent] = child
+    if "paladin" in features:
+        # The source Chinese formatter appends % to a fractional probability.
+        # Display the actual source chance; combat values remain untouched.
+        data["ui"]["power_descriptions"]["holystrike"] = [
+            text.replace(f"{chance:.2f}%", f"{round(chance * 100)}%")
+            for text, chance in zip(data["ui"]["power_descriptions"]["holystrike"], (0.12, 0.18, 0.24))
+        ]
     if ranger_arena:
         data["upgrade_targets"]={"tower_archer_3":"tower_ranger"}
         data["waves"]={"cash":10000,"lives":100,"groups":[{"interval":0,"waves":[]}]}
@@ -113,7 +123,7 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
         data["ui"]["notifications"]={}
         data["ui"]["slides"]={}
         data["ui"]["power_descriptions"]["poison"]=[s.replace("减速0.1%","减速10%").replace("可叠加3层","同级毒素最多叠加4层") for s in data["ui"]["power_descriptions"]["poison"]]
-    data["dependencies"]={name:template_dependencies(template) for name,template in data["templates"].items()}
+    data["dependencies"]={name:template_dependencies(template, spec["export"].get("reference_fields", [])) for name,template in data["templates"].items()}
     validate_definition(data, spec)
     # Runtime insert chooses one of these three visual variants; numbers remain source values.
     data["templates"]["re_farmer"]["render"]["sprites"][0]["prefix"]="re_farmer_1"
@@ -166,6 +176,16 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
     ui_names={"main_icons_0000","main_icons_0001","main_icons_0002","main_icons_0003","main_icons_0004","main_icons_0014","ico_sell_0001","sub_icons_0001","glow_ico_main","glow_ico_sell","glow_ico_sub","price_tag","bg_bottom_bar","bg_bottom_left","tutorial_tit_instructions_bg","notifications_tit_generics_bg_0001","notifications_tit_newpower_bg","notifications_polaroid_overlay","victoryBadges_notxt_0002","button_border_0001","button_border_0002","button_border_large_0001","button_border_large_0002","button_continue_chains","button_restart_chains","tooltip_bg_standard"}
     ui_names.update({"main_icons_0005","base","base_info_bar","base_info_bar_bg","info_portraits_0000","victoryBadges_notxt_0003"})
     ui_names.update(spec["export"].get("ui_frames", []))
+    # Menus are source dependency roots, including newly registered towers.
+    def menu_frames(node):
+        if isinstance(node, dict):
+            for key, value in node.items():
+                if key in {"image", "halo"} and isinstance(value, str): wanted.add(value)
+                menu_frames(value)
+        elif isinstance(node, list):
+            for value in node: menu_frames(value)
+    menu_frames(data["ui"]["tower_menus"])
+    menu_frames(data["ui"]["upgrade_menus"])
     if "wolf" in features: ui_names.update({"notifications_tit_newenemy_bg","notifications_tit_towers_bg"})
     ui_prefixes += ["base_info_icons_", "nextwaveTimer_", "nextwave_coin_", "waveReward_", "waveRewardTimer_", "error_feedback_"]
     for template in data["templates"].values():

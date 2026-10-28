@@ -1,8 +1,9 @@
-"""Package the menu, KR1 map and all 15 level/mode entries for manual Web acceptance."""
+"""Package the menu, KR1 map and all registered level/mode entries for manual Web acceptance."""
 from pathlib import Path
 import hashlib
 import json
 import zipfile
+from campaign_content import level_ids, combinations
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -16,6 +17,8 @@ def package():
     receipt = json.loads((folder / "export_receipt.json").read_text(encoding="utf-8"))
     if not receipt.get("export_succeeded") or receipt.get("pck_sha256") != sha256(folder / "index.pck"):
         raise RuntimeError("Run tools/web_bootstrap.py export successfully before packaging this build")
+    last = max(level_ids())
+    count = len(combinations())
     debug = receipt.get("developer_menu", False)
     checked = receipt.get("pck_isolated_check", False)
     report = json.loads((folder / "pack_files.json").read_text(encoding="utf-8")) if checked else None
@@ -27,7 +30,7 @@ def package():
         encoding="ascii",
     )
     (folder / "README.txt").write_text(
-        "Kingdom Rush Web - KR1 levels 1-5 campaign and challenges playtest\n"
+        f"Kingdom Rush Web - KR1 levels 1-{last} campaign and challenges playtest\n"
         "Source: Dove 2.1.0.2 / e29ece82\n\n"
         "1. Extract this whole folder.\n"
         "2. Run start_server.cmd (Python 3 required), or serve this folder with any HTTP server.\n"
@@ -35,11 +38,11 @@ def package():
         "4. Click Start, choose one of three save slots, select the first flag, then enter battle.\n"
         "5. Confirm tutorials, build towers and click the skull at the entrance to start wave 1.\n"
         "6. Victory saves last_victory; return to the map to commit best stars and unlock the next flag.\n"
-        "Levels 1-5 campaign, Heroic and Iron entries are enabled on normal difficulty (15 combinations).\n"
+        f"Levels 1-{last} campaign, Heroic and Iron entries are enabled on normal difficulty ({count} combinations).\n"
         "Earn three campaign stars on a level to enter its challenges. Each challenge starts with one life.\n"
         "Heroic: 6 waves; Iron: 1 wave. First completion of each challenge grants one star.\n"
-        "Campaign three stars plus both challenges on all five levels total 25 stars. Level 6 is a preview.\n"
-        "Heroic gold (levels 1-5): 230/310/400/750/1000. Iron: 360/275/660/1500/1500.\n"
+        f"Campaign three stars plus both challenges total {len(level_ids()) * 5} stars. Level {last + 1} is a preview.\n"
+        "Heroic gold (levels 1-6): 230/310/400/750/1000/1200. Iron: 360/275/660/1500/1500/800.\n"
         "Iron tower bans: L1 archer+mage; L2 barracks; L3 artillery; L4 mage+artillery; L5 barracks.\n"
         "L5 Iron has 3 free tier-3 archers and 2 elf ruins; camp repair/recruit/skills remain available.\n"
         "Level 2: 240 gold, 7 waves, 7 tower sites. Level 3: 330 gold, 11 waves, 12 sites, two lanes.\n"
@@ -49,6 +52,9 @@ def package():
         "Level 5 opens Rangers (230 from tier-3 archers), Poison Arrows and Wrath of the Forest.\n"
         "Elf camp: repair for 190; recruit up to 4 paid slots at 100 each. Fallen elves refill automatically.\n"
         "Bleed: 100/100/100; Cripple: 200/125/125. Hiring costs are excluded from sale refunds.\n"
+        "Level 6: 700 gold, 17 waves, 15 sites, 7 permanent royal guards, flying gargoyles, shadow archers and Juggernaut.\n"
+        "Paladins (185 from barracks3): Healing Light, Holy Strike, Shield. Arcane (290 from mage3): Death Ray, Teleport.\n"
+        "Level 6 Iron has 2 free mage3 towers; only barracks can be newly built. Heroes and technology remain disabled.\n"
         "Three independent local save slots; volume settings remain global.\n"
         "Hero room: browse 79 heroes, view computed skills, select up to two unlocked heroes.\n"
         "Completing level 1 unlocks 12 heroes; selecting a third replaces slot two.\n"
@@ -63,7 +69,7 @@ def package():
         "Early-wave rewards animate +gold at the gold counter and -seconds above cooling skills.\n"
         "Click a soldier/enemy to inspect live stats. Click a sheep 8 times to pop it.\n"
         "1 = fire rain, 2 = reinforcements, Space = next wave. Skills unlock after wave 3/7 tutorials in level 1.\n"
-        "In all challenges and campaigns 2-5 both skills unlock when wave 1 is sent; neither can be used during setup.\n"
+        "In all challenges and campaigns 2-6 both skills unlock when wave 1 is sent; neither can be used during setup.\n"
         "Click enemy alerts for information.\n\n"
         "Normal difficulty, no hero combat or technology. Campaigns start with 20 lives, challenges with 1.\n"
         "Campaign level 1: 270 gold, 7 waves.\n"
@@ -72,7 +78,7 @@ def package():
         + ("The isolated PCK check passed; browser acceptance is manual.\n" if checked else
            "Web validation was not run for this delivery; browser acceptance is manual.\n")
         + "Challenge acceptance: Dove configuration and functionality; complete victory recordings are optional.\n"
-        + (f"Supplementary verified challenge victory recordings: {len(receipt.get('challenge_replays_verified', []))}/10.\n" if receipt.get("challenge_replays_run", False) else
+        + (f"Supplementary verified challenge victory recordings: {len(receipt.get('challenge_replays_verified', []))}/{len(level_ids()) * 2}.\n" if receipt.get("challenge_replays_run", False) else
            "Complete victory recordings were not run by the default configuration/functionality check.\n")
         + ("All challenge logic acceptance checks passed.\n" if receipt.get("challenge_validation_passed", False) else
            "Challenge configuration/functionality checks have not passed; see the report.\n")
@@ -86,7 +92,7 @@ def package():
     files += [folder / name for name in ("export_receipt.json", "README.txt", "start_server.cmd")]
     if checked:
         files.append(folder / "pack_files.json")
-    output = ROOT / ("build/KingdomRush-KR1-Playtest-Debug-Web.zip" if debug else "build/KingdomRush-KR1-Levels01-05-Web.zip")
+    output = ROOT / ("build/KingdomRush-KR1-Playtest-Debug-Web.zip" if debug else f"build/KingdomRush-KR1-Levels01-{last:02d}-Web.zip")
     with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
         for path in files:
             archive.write(path, path.name)

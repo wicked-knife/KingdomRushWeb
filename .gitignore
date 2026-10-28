@@ -83,3 +83,7 @@ __pycache__/
 !/reports/content_unification.json
 !/reports/content_tutorial_native.json
 !/reports/content_unification_delivery.json
+!/reports/level06_logic.json
+!/reports/level06_native.json
+!/reports/level06_assets.json
+!/reports/level06_delivery.json

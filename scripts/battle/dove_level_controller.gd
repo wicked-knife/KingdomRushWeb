@@ -6,6 +6,7 @@ func wave_started(_sim, _group: Dictionary) -> void: pass
 # Called in lane order, before the corresponding tip event.
 func wave_notification(_sim, _entry: Dictionary) -> void: pass
 func step(_sim) -> void: pass
+func enemy_died(_sim, _enemy: Dictionary) -> void: pass
 func can_finish(_sim) -> bool: return false
 
 static func create(id: String, catalog: Dictionary) -> RefCounted:

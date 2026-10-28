@@ -5,15 +5,16 @@ import json
 
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG = ROOT / "data/campaign_content.json"
-REFERENCE_FIELDS = {"bullet", "mod", "hit_fx", "hit_decal", "hit_blood_fx", "soldier_type", "entity"}
+REFERENCE_FIELDS = {"bullet", "mod", "hit_fx", "hit_decal", "hit_blood_fx", "soldier_type", "entity", "hit_payload", "aura", "fx_start", "fx_end", "particles_name", "hit_fx_air"}
 
 
-def template_dependencies(value):
+def template_dependencies(value, reference_fields=()):
     found = set()
+    fields = REFERENCE_FIELDS | set(reference_fields)
     def visit(node):
         if isinstance(node, dict):
             for key, child in node.items():
-                if key in REFERENCE_FIELDS and isinstance(child, str) and child: found.add(child)
+                if key in fields and isinstance(child, str) and child: found.add(child)
                 visit(child)
         elif isinstance(node, list):
             for child in node: visit(child)
@@ -86,6 +87,19 @@ def validate_definition(data, spec):
             resolve_behavior(source_id, catalog)
         except ValueError as error:
             raise ValueError(f"{identity}: {name} -> {source_id}: {error}") from error
+    for name, callbacks in data.get("callbacks", {}).items():
+        for event, source_id in callbacks.items():
+            if source_id not in catalog.get("callbacks", []):
+                raise ValueError(f"{identity}: {name}.main_script.{event} -> unsupported callback {source_id}")
+    def validate_callbacks(node, path):
+        if isinstance(node, dict):
+            for key, value in node.items():
+                if key.startswith("fn_") and value not in catalog.get("callbacks", []):
+                    raise ValueError(f"{identity}: {path}.{key} -> unsupported callback {value}")
+                validate_callbacks(value, f"{path}.{key}")
+        elif isinstance(node, list):
+            for i, value in enumerate(node): validate_callbacks(value, f"{path}[{i}]")
+    validate_callbacks(templates, "templates")
     for name, template in templates.items():
         active_tower = "tower" in template and not template.get("tower", {}).get("type", "").startswith("holder")
         if active_tower or any(key in template for key in ("enemy", "soldier", "bullet", "modifier", "aura", "spawner", "fireball_count")):
@@ -119,7 +133,7 @@ def validate_definition(data, spec):
     # Explicitly supported reference fields; extending the exporter must extend
     # this list when a new behavior introduces another kind of child entity.
     for name, template in templates.items():
-        for child in template_dependencies(template):
+        for child in template_dependencies(template, spec["export"].get("reference_fields", [])):
             if child not in templates:
                 raise ValueError(f"{identity}: missing template dependency: {name} -> {child}")
     if data["level"]["id"] != spec["id"]:

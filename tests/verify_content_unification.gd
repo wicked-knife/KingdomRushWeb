@@ -21,7 +21,7 @@ func run() -> void:
 	check(not baseline.is_empty(), "pre-migration combat baseline exists")
 	var expected_timelines: Dictionary = Levels.read_json("res://tests/fixtures/content_timelines.json")
 	check(expected_timelines.size() == 15, "all pre-migration mode timelines exist")
-	check(not Levels.supports(6) and not Levels.supports(1, 1, 3), "preview and unsupported difficulty remain unavailable")
+	check(not Levels.supports(7) and not Levels.supports(1, 1, 3), "preview and unsupported difficulty remain unavailable")
 	var catalog := Levels.catalog()
 	check(Sim.Controller.create("unknown", catalog) == null, "unknown controller rejected")
 	var invalid := Levels.load_definition(5)

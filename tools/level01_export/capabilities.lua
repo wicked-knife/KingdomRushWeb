@@ -1,5 +1,20 @@
 -- Feature adapters evaluate frozen source templates without running gameplay.
 local adapters = {}
+  adapters.royal_guard = function(ctx) ctx.template("soldier_s6_imperial_guard") end
+  adapters.enemy_ranged = function(ctx) ctx.template("arrow_shadow_archer") end
+  adapters.paladin = function(ctx)
+    local text=ctx.read("kr1/barrack_towers.lua")
+    ctx.chunk("kr1/barrack_towers.lua",text:sub(1,assert(text:find('tt = RT("tower_barbarian"',1,true))-1))
+	ctx.callback(E.entities.soldier_paladin.timed_actions.list[1].fn_can, "kr1.barrack_towers.soldier_paladin.healing.fn_can")
+  end
+  adapters.arcane = function(ctx)
+    local text=ctx.read("kr1/mage_towers.lua")
+    ctx.chunk("kr1/mage_towers.lua",text:sub(1,assert(text:find('tt = RT("tower_sorcerer"',1,true))-1))
+  end
+  adapters.juggernaut = function(ctx)
+    local text=ctx.read("kr1/boss.lua")
+    ctx.chunk("kr1/boss.lua",text:sub(1,assert(text:find('tt = RT("eb_jt"',1,true))-1))
+  end
   adapters.healer = function(ctx)
     local read,chunk = ctx.read,ctx.chunk
     local game = read("kr1/game_templates.lua")
@@ -11,6 +26,7 @@ local adapters = {}
     local read,chunk = ctx.read,ctx.chunk
     local archers=read("kr1/archer_towers.lua")
     chunk("kr1/archer_towers.lua",archers:sub(1,assert(archers:find('local tower_crossbow = RT(',1,true))-1))
+	ctx.callback(E.entities.mod_ranger_poison.main_script.insert,"kr1.archer_towers.mod_ranger_poison.insert")
   end
   adapters.elf = function(ctx)
     local read,chunk = ctx.read,ctx.chunk

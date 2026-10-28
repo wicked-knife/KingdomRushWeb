@@ -1,0 +1,197 @@
+{
+  "passed": true,
+  "date": "2026-10-28",
+  "source_version": "2.1.0.2",
+  "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+  "difficulty": 2,
+  "hero_combat": false,
+  "technology": false,
+  "playable_combinations": [
+    {
+      "level": 1,
+      "mode": 1,
+      "difficulty": 2
+    },
+    {
+      "level": 1,
+      "mode": 2,
+      "difficulty": 2
+    },
+    {
+      "level": 1,
+      "mode": 3,
+      "difficulty": 2
+    },
+    {
+      "level": 2,
+      "mode": 1,
+      "difficulty": 2
+    },
+    {
+      "level": 2,
+      "mode": 2,
+      "difficulty": 2
+    },
+    {
+      "level": 2,
+      "mode": 3,
+      "difficulty": 2
+    },
+    {
+      "level": 3,
+      "mode": 1,
+      "difficulty": 2
+    },
+    {
+      "level": 3,
+      "mode": 2,
+      "difficulty": 2
+    },
+    {
+      "level": 3,
+      "mode": 3,
+      "difficulty": 2
+    },
+    {
+      "level": 4,
+      "mode": 1,
+      "difficulty": 2
+    },
+    {
+      "level": 4,
+      "mode": 2,
+      "difficulty": 2
+    },
+    {
+      "level": 4,
+      "mode": 3,
+      "difficulty": 2
+    },
+    {
+      "level": 5,
+      "mode": 1,
+      "difficulty": 2
+    },
+    {
+      "level": 5,
+      "mode": 2,
+      "difficulty": 2
+    },
+    {
+      "level": 5,
+      "mode": 3,
+      "difficulty": 2
+    },
+    {
+      "level": 6,
+      "mode": 1,
+      "difficulty": 2
+    },
+    {
+      "level": 6,
+      "mode": 2,
+      "difficulty": 2
+    },
+    {
+      "level": 6,
+      "mode": 3,
+      "difficulty": 2
+    }
+  ],
+  "next_preview": 7,
+  "logic": {
+    "checks": 185,
+    "independent_modes": 3,
+    "timeline_waves": 24,
+    "births": 1116,
+    "full_timelines": "reports/level06_timelines.json",
+    "source_oracle": "tests/fixtures/level06_source.json",
+    "source_samples": [
+      "original wave spawner",
+      "original arcane ray",
+      "original tracking missile",
+      "original enemies spawner"
+    ],
+    "clock_scope": "Controlled tick/30 clock and selected random outputs; not universal bit-exact equivalence between engines."
+  },
+  "native": {
+    "passed": true,
+    "checks": 135,
+    "resolution": [
+      1280,
+      720
+    ],
+    "capture_count": 19,
+    "captures_visually_reviewed": true,
+    "fixtures": "extra gold, synthetic entities and real finish events; not complete victory replays"
+  },
+  "first_five_regression": {
+    "unchanged_resource_files": 74,
+    "combinations": 15,
+    "timeline_waves": 88,
+    "births": 2794,
+    "combat_ticks": 3600,
+    "combat_checkpoints": 36,
+    "ranger_checks": 215,
+    "fifth_checks": 140,
+    "challenge_checks": 290,
+    "save_checks": 112
+  },
+  "evidence": {
+    "logic": {
+      "path": "reports/level06_logic.json",
+      "sha256": "8279f955aa8940ff1ca4a9dce6773f38892faa35c6df536ee5941d5da5d43ba7"
+    },
+    "native": {
+      "path": "reports/level06_native.json",
+      "sha256": "d73ffb6174e7791adec525b0ffb60dfcc6941b829e8ce3577ff1be5edda414b8"
+    },
+    "assets": {
+      "path": "reports/level06_assets.json",
+      "sha256": "79da1d52b3ded3de286c0a206f8b2650f0ae8c545b4fbaf492f3bb2c27310397"
+    },
+    "catalog": {
+      "path": "reports/content_catalog.json",
+      "sha256": "b769674910ecde95b3e8abbf4fc7e239519c4e097bf7f665c8f09ae4495ffa02"
+    },
+    "old_combat": {
+      "path": "reports/content_unification.json",
+      "sha256": "fa54080b5095e41259b7f2cb28c9dba18cfb047d8476e5059313d3fc3f62983f"
+    },
+    "ranger": {
+      "path": "reports/ranger_logic.json",
+      "sha256": "c1562b25b782539666667e3fcb2ee73963040dc56a9358b58a288b94e67d2c75"
+    },
+    "fifth": {
+      "path": "reports/level05_logic.json",
+      "sha256": "b54ae8bfcd12677cb26dd7b587cb1f44b991673f2af158d89d76a14222690b61"
+    },
+    "old_challenges": {
+      "path": "reports/challenges_logic.json",
+      "sha256": "133fc0e3453bdb96294fa194d665d0e5f020e76019695fb41f7795d5af9e4409"
+    },
+    "saves": {
+      "path": "reports/dove_saves_logic.json",
+      "sha256": "f496c22522d57900ce6ab0e84190a2c662abcc8cc6beff75df2adec3593a9e6c"
+    }
+  },
+  "web": {
+    "release": true,
+    "developer_menu": false,
+    "isolated_pck_passed": true,
+    "files": 641,
+    "combinations_checked": 18,
+    "pck_sha256": "e737d3403aa0607d0426c231086e15237c6ce9cd25f0342cb5f1349f2800b66f",
+    "bundle": "build/KingdomRush-KR1-Levels01-06-Web.zip",
+    "bytes": 162427356,
+    "sha256": "2fb25269235f2dea9f21cd9a3314378e175986ce6f4f266a97e2110518deb3d5",
+    "zip_crc_passed": true,
+    "exports_this_batch": 2,
+    "export_note": "One final rebuild followed the holystrike target-death fix; no browser automation or iterative development exports."
+  },
+  "browser_tested": false,
+  "browser_acceptance": "manual by user",
+  "full_replays_run": false,
+  "full_replays_required": false,
+  "failures": []
+}

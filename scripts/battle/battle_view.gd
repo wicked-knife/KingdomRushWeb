@@ -89,6 +89,7 @@ func target_pointer_frame() -> String:
 
 func _on_event(kind: String, payload: Dictionary) -> void:
 	match kind:
+		"music": _music(str(payload.id))
 		"sound": _sound(str(payload.id))
 		"wave":
 			selected = ""; targeting = ""
@@ -191,6 +192,10 @@ func _draw() -> void:
 		if not decal.removed: _queue_template(decal.template, decal.pos, decal.state, decal.state_at, decal.flip, false, 1, false, "", decal)
 	for egg: Dictionary in sim.eggs:
 		_queue_template(egg.template,egg.pos,egg.state,egg.at,false,false,1,false,"",{"alpha":clampf(1 - float(sim.tick - int(egg.get("fade_at",sim.tick))) / 120.0,0,1)})
+	for spawner: Dictionary in sim.spawners:
+		_queue_template(spawner.template, spawner.pos, spawner.state, spawner.at, false, false, 1, false, "", {"alpha": clampf(1 - float(sim.tick - int(spawner.get("fade_at", sim.tick))) / 120.0, 0, 1), "playback_loop": false})
+	for aura: Dictionary in sim.auras:
+		_queue_template(aura.template, aura.pos, "", aura.at, false, false, 1, false, "", {"playback_loop": false})
 	for tower: Dictionary in sim.towers:
 		var template_name: String = tower.template
 		if tower.ready > sim.tick:
@@ -200,6 +205,10 @@ func _draw() -> void:
 			for type: String in Simulation.TYPES:
 				if hovered == "build" + str({"id": selected, "type": type}): preview = "tower_preview_" + ("artillery" if type == "engineer" else type)
 		_queue_template(template_name, tower.pos, "", int(tower.get("built_at", 0)) if tower.ready > sim.tick else 0, false, false, 1, false, preview, {} if tower.ready > sim.tick else tower)
+		if tower.has("arcane") and tower.powers.disintegrate > 0:
+			var cooldown: float = sim.tower_template(tower).powers.disintegrate.cooldown_base + sim.tower_template(tower).powers.disintegrate.cooldown_inc * tower.powers.disintegrate - sim.tower_template(tower).attacks.min_cooldown
+			if tower.arcane.timestamps[1] <= tower.arcane.last - sim.frames(cooldown) or sim.tick - tower.arcane.timestamps[1] >= sim.frames(cooldown):
+				_queue_template("decalmod_arcane_wizard_disintegrate_ready", tower.pos)
 	for unit: Dictionary in sim.enemies + sim.soldiers:
 		_queue_template(unit.template, unit.pos, unit.state, unit.state_at, unit.flip, false, int(unit.get("variant", 1)), unit.hp <= 0, "", unit)
 	for p: Dictionary in sim.projectiles:
@@ -212,7 +221,7 @@ func _draw() -> void:
 		_queue_template(effect.template, effect.pos, effect.get("state", ""), effect.at, effect.get("flip",false), false, 1, false, "", effect)
 	for modifier: Dictionary in sim.modifiers.active:
 		var target: Dictionary = sim.unit_by_id(modifier.target)
-		if target.is_empty() or target.hp <= 0: continue
+		if target.is_empty() or target.hp <= 0 or target.get("hidden", false): continue
 		# The original lifecycle hides older duplicate poison sprites.
 		if not modifier.get("visible",true) or not sim.templates[modifier.template].has("render"): continue
 		_queue_template(modifier.template, target.pos + (Vector2.ZERO if modifier.template == "mod_thorn" else Simulation.vec(sim.templates[target.template].unit.mod_offset)), modifier.state, modifier.at, target.flip, false, 1, false, "", {"prefix":modifier.prefix,"sprite_scale":modifier.scale,"playback_loop":modifier.phase == "loop"})
@@ -222,7 +231,7 @@ func _draw() -> void:
 		return a.order < b.order)
 	for item: Dictionary in draw_list: _art(item.frame, world(item.pos), item.anchor, 1.0, item.tint, item.flip, -item.rotation, item.scale)
 	for unit: Dictionary in sim.enemies + sim.soldiers:
-		if unit.hp <= 0 or unit.hp >= unit.max_hp: continue
+		if unit.hp <= 0 or unit.hp >= unit.max_hp or unit.get("hidden", false) or unit.has("boss"): continue
 		var p := world(unit.pos + Simulation.vec(sim.templates[unit.template].health_bar.offset))
 		var width := 36.0 if sim.templates[unit.template].health_bar.type == "medium" else 24.0
 		draw_rect(Rect2(p + Vector2(-width / 2 - 1, -2), Vector2(width + 2, 4)), Color("362519"))
@@ -236,6 +245,7 @@ func _draw() -> void:
 	_draw_selection()
 	interface.wave_flags.draw_path()
 	_draw_hud()
+	_draw_boss_bar()
 	developer.hud()
 	if message_time > 0: _text(message, Vector2(view_width / 2, 95), 20, INK, true)
 	if targeting != "":
@@ -268,9 +278,9 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 			if layer.has("idle") and int(playback.elapsed) >= length:
 				playback.state = layer.idle; playback.elapsed -= length; playback.loop = true
 		elif state != "":
-			playback.loop = state not in ["attack", "death", "play", "shoot", "heal", "jump", "small", "medium", "large"]
+			playback.loop = state not in ["attack", "attack2", "holystrike", "healing", "death", "play", "shoot", "heal", "jump", "small", "medium", "large"]
 			if sprite.has("angles") and state == "shoot": playback.state = "shootingUp" if up else "shootingDown"
-			if state == "attack" and int(playback.elapsed) >= SpriteAnimation.duration(animations, SpriteAnimation.key(sprite, state)):
+			if state in ["attack", "attack2", "holystrike", "healing"] and int(playback.elapsed) >= SpriteAnimation.duration(animations, SpriteAnimation.key(sprite, state)):
 				playback.state = "idle"; playback.loop = true
 		if runtime.has("playback_loop"): playback.loop = runtime.playback_loop
 		if template_name == "re_farmer": playback.prefix = "re_farmer_%d" % variant
@@ -278,7 +288,9 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 		var offset := Simulation.vec(sprite.get("offset", {"x": 0, "y": 0}))
 		var alpha := float(sprite.get("alpha", 255)) / 255.0
 		alpha *= float(runtime.get("alpha",1.0))
-		if dead: alpha *= clampf(1 - float(sim.tick - at - 24) / 36, 0, 1)
+		# Multi-attack soldiers use the source corpse lifetime (guards/paladins).
+		# Existing units retain their established presentation.
+		if dead and not (template.has("soldier") and template.melee.attacks.size() > 1): alpha *= clampf(1 - float(sim.tick - at - 24) / 36, 0, 1)
 		var sprite_scale: Vector2 = runtime.get("sprite_scale", Simulation.vec(sprite.get("scale", {"x": 1, "y": 1})))
 		var tween: Dictionary = template.get("tween", {})
 		var clicked: bool = runtime.has("clicked_at") and sim.tick - int(runtime.clicked_at) <= 6
@@ -288,7 +300,20 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 				if int(property.get("sprite_id", 1)) != order: continue
 				if property.name == "scale": sprite_scale *= SpriteAnimation.vector_track(property.keys, seconds)
 				elif property.name == "alpha": alpha *= SpriteAnimation.scalar_track(property.keys, seconds) / 255.0
-		draw_list.append({"scale": sprite_scale, "frame": frame_name, "pos": point + offset, "sort_y": float(sprite.get("sort_y",point.y + float(sprite.get("sort_y_offset", 0)))), "anchor": Simulation.vec(sprite.get("anchor", {"x": 0.5, "y": 0.5})), "z": int(sprite.get("z", 3000)), "order": draw_list.size(), "flip": layer.get("flip", flip), "rotation": float(runtime.get("rotation", sprite.get("r", 0))), "tint": Color(1, 1, 1, alpha)})
+		var color: Array = sprite.get("color", [255, 255, 255])
+		draw_list.append({"scale": sprite_scale, "frame": frame_name, "pos": point + offset, "sort_y": float(sprite.get("sort_y",point.y + float(sprite.get("sort_y_offset", 0)))), "anchor": Simulation.vec(sprite.get("anchor", {"x": 0.5, "y": 0.5})), "z": int(sprite.get("z", 3000)), "order": draw_list.size(), "flip": layer.get("flip", flip), "rotation": float(runtime.get("rotation", sprite.get("r", 0))), "tint": Color(color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, alpha)})
+
+func _draw_boss_bar() -> void:
+	for unit: Dictionary in sim.enemies:
+		if not unit.has("boss") or unit.hp <= 0: continue
+		var origin := Vector2((view_width - 440) / 2, 20)
+		var hp: float = clampf(unit.hp / unit.max_hp, 0, 1)
+		var panel := StyleBoxFlat.new(); panel.bg_color = Color(0, 0, 0, 0.55); panel.set_corner_radius_all(5)
+		draw_style_box(panel, Rect2(origin, Vector2(440, 42)))
+		draw_rect(Rect2(origin + Vector2(40, 26), Vector2(392, 8)), Color("801414"))
+		draw_rect(Rect2(origin + Vector2(40, 26), Vector2(392 * hp, 8)), Color("d94d33") if hp < 0.3 else Color("33d933"))
+		_art(sim.templates[unit.template].info.portrait, origin + Vector2(20, 21), Vector2(0.5, 0.5), 0.6)
+		_text(sim.data.ui.strings.get(unit.template.to_upper() + "_NAME", unit.template), origin + Vector2(40, 19), 14)
 
 func unit_info() -> Dictionary:
 	return UnitInfo.snapshot(sim.unit_by_id(selected_unit), sim.templates, sim.data.ui.strings) if selected_unit != 0 else {}

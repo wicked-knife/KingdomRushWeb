@@ -54,7 +54,7 @@ func _run() -> void:
 	check(p.record_result({"result": "defeat"}) and not p.data.has("last_victory") and p.total_stars() == before, "defeat clears pending victory without changing committed best")
 	check(not p.is_unlocked(6) and "tower_ranger" in p.data.locked_towers, "discarded fifth victory grants no unlock")
 	complete(p, fifth)
-	check(p.is_unlocked(6) and not p.is_playable(6) and p.record(5)[1] == 2, "fifth settlement opens sixth preview")
+	check(p.is_unlocked(6) and p.is_playable(6) and p.record(5)[1] == 2, "fifth settlement opens sixth campaign")
 	check(not "tower_ranger" in p.data.locked_towers and not "tower_elf" in p.data.locked_towers, "settlement removes source unlocked towers")
 	complete(p, win(5, 1)); check(p.record(5).stars == 3, "lower victory preserves best stars")
 	var harder := win(5, 6); harder.difficulty = 4; complete(p, harder)
