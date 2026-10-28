@@ -18,7 +18,7 @@ static func step(sim, enemy: Dictionary, template: Dictionary) -> bool:
 			cast.fired = true
 			var from: Vector2 = enemy.pos + Vector2(float(attack.bullet_start_offset.x) * (-1 if enemy.flip else 1), float(attack.bullet_start_offset.y))
 			if int(cast.index) == 0:
-				sim._projectile(attack.bullet, cast.target, from, from + sim.vec(attack.launch_vector), 1)
+				sim._projectile(attack.bullet, cast.target, from, from + sim.vec(attack.launch_vector), 1, enemy)
 			else:
 				var payload_level = mini(7, int(state.spawn_level))
 				state.spawn_level += 1 # The source also advances when no valid landing point is found.
@@ -26,7 +26,7 @@ static func step(sim, enemy: Dictionary, template: Dictionary) -> bool:
 				if not destination.is_empty():
 					var to: Vector2 = destination.pos
 					var b: Dictionary = sim.templates[attack.bullet].bullet
-					sim._projectile(attack.bullet, 0, from, to, float(b.flight_time_base) + from.distance_to(to) * float(b.flight_time_factor))
+					sim._projectile(attack.bullet, 0, from, to, float(b.flight_time_base) + from.distance_to(to) * float(b.flight_time_factor), enemy)
 					sim.projectiles[-1].payload_level = payload_level
 			if not sim.projectiles.is_empty(): sim.projectiles[-1].owner = enemy.id
 		if sim.tick < cast.end: return true

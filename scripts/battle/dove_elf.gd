@@ -39,7 +39,7 @@ static func ranged(sim, s: Dictionary, t: Dictionary) -> bool:
 			var offset: Vector2 = sim.vec(attack.bullet_start_offset[0]); offset.x *= -1 if s.flip else 1
 			var origin: Vector2 = s.pos + offset
 			var aim: Vector2 = pending.aim + sim.vec(sim.templates[target.template].unit.hit_offset)
-			sim._projectile(pending.bullet,target.id,origin,aim,float(bullet.flight_time))
+			sim._projectile(pending.bullet,target.id,origin,aim,float(bullet.flight_time), s)
 			var p: Dictionary = sim.projectiles[-1]
 			p.elf_level = int(s.powers.cripple) if pending.special else int(s.powers.bleed)
 			p.bleed_level = 0 if pending.special else int(s.powers.bleed); p.source = str(s.id)

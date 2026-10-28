@@ -68,7 +68,8 @@ func _run() -> void:
 	p.levels[5][3] = 2
 	p.data.future_field = {"items": [1, "two", {"ok": true}]}; p.levels[9999] = {"custom": {"value": 7}}
 	p.levels[27] = {1: 2, "stars": 2}; p.levels[5].custom_level_field = "retained"
-	p.data.heroes.future_hero_field = {"xp": 123}; p.data.achievements.example = 1
+	p.data.heroes.future_hero_field = {"xp": 123}; p.data.achievements = {"example":1}
+	check(p.data.upgrade_list_id is String and p.data.upgrade_list_id == "1", "current source tech ID is a string")
 	p.flush_seen({"enemy_wolf": true, "enemy_spider_big": true, "enemy_spider_small": true, "enemy_marauder": true, "FUTURE_NOTICE": true})
 	p.save(); var restored := Progress.new(); restored.initialize(p.path)
 	check(restored.data.future_field.items[0] == 1 and restored.data.future_field.items[1] == "two" and restored.data.future_field.items[2].ok and restored.record(9999).custom.value == 7 and restored.record(27)[1] == 2, "unknown fields and non-playable generation records round-trip")

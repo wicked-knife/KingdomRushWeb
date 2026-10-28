@@ -8,6 +8,7 @@ const UPGRADES := {"tower_archer_1": "tower_archer_2", "tower_barrack_1": "tower
 	"tower_archer_2": "tower_archer_3", "tower_barrack_2": "tower_barrack_3", "tower_mage_2": "tower_mage_3", "tower_engineer_2": "tower_engineer_3"}
 const SpriteAnimation = preload("res://scripts/battle/dove_animation.gd")
 const Projectile = preload("res://scripts/battle/dove_projectile.gd")
+const DamageFactors = preload("res://scripts/battle/dove_damage_factors.gd")
 const ArrowMissile = preload("res://scripts/battle/dove_arrow_missile.gd")
 const Ranger = preload("res://scripts/battle/dove_ranger.gd")
 const Modifiers = preload("res://scripts/battle/dove_modifiers.gd")
@@ -300,6 +301,7 @@ func _upgrade_garrison(old: Dictionary, upgraded: Dictionary) -> void:
 		if s.home != old.id: continue
 		if s.hp > 0:
 			var replacement := _soldier(type, old.id, s.slot, s.pos, old.rally)
+			DamageFactors.inherit(self, replacement, upgraded)
 			var started: int = s.get("attack_started_at", int(s.attack_at) - _melee_period(templates[s.template]))
 			for key in ["dest", "flip", "state", "state_at", "target"]: replacement[key] = s[key]
 			replacement.attack_started_at = started
@@ -521,7 +523,7 @@ func _tower_step(tower: Dictionary) -> void:
 				else:
 					aim = target.pos + vec(templates[target.template].unit.hit_offset)
 					if bullet.get("predict_target_pos", false) and target.blocker == 0: aim += target.last_dir * 30.0 * flight
-			_projectile(attack.bullet, target_id, tower.pos + offset, aim, flight)
+			_projectile(attack.bullet, target_id, tower.pos + offset, aim, flight, tower)
 		tower.pending = {}
 	if tick < tower.attack_at or not tower.pending.is_empty(): return
 	var target := _target(tower.pos + vec(t.tower.range_offset), float(t.attacks.range), false, attack)
@@ -762,10 +764,10 @@ func _melee(attacker: Dictionary, target: Dictionary, template: Dictionary) -> v
 			if attack.get("type", "") == "area":
 				var point: Vector2 = attacker.pos + vec(attack.get("hit_offset", {"x":0,"y":0})) * Vector2(-1 if attacker.flip else 1, 1)
 				var victims := Targets.soldiers(self, point, {"max_range":attack.damage_radius,"vis_flags":attack.get("damage_flags",0),"vis_bans":attack.get("damage_bans",0)})
-				for victim: Dictionary in victims.slice(0, int(attack.get("count", victims.size()))): damage(victim, float(rng.randi_range(int(attack.damage_min), int(attack.damage_max))), int(attack.damage_type))
+				for victim: Dictionary in victims.slice(0, int(attack.get("count", victims.size()))): damage(victim, float(rng.randi_range(int(attack.damage_min), int(attack.damage_max))) * attack_factor(attacker), int(attack.damage_type))
 				add_effect(str(attack.get("hit_fx", "")), point)
-			else: damage(target, float(rng.randi_range(int(attack.damage_min), int(attack.damage_max))), int(attack.damage_type))
-			if attacker.template == "soldier_elf" and target.hp > 0: modifiers.apply(self,"mod_elf_bleed",target,int(attacker.powers.bleed),str(attacker.id))
+			else: damage(target, float(rng.randi_range(int(attack.damage_min), int(attack.damage_max))) * attack_factor(attacker), int(attack.damage_type))
+			if attacker.template == "soldier_elf" and target.hp > 0: modifiers.apply(self,"mod_elf_bleed",target,int(attacker.powers.bleed),str(attacker.id),-1,attack_factor(attacker))
 		attacker.pending = {}
 	if tick >= attacker.attack_at:
 		attacker.attack_started_at = tick
@@ -872,6 +874,9 @@ func _retire(s: Dictionary) -> void:
 func unit_gold(unit: Dictionary) -> int:
 	return int(unit.get("gold_override",templates[unit.template].enemy.gold))
 
+func attack_factor(actor: Dictionary) -> float:
+	return 1.0 if actor.is_empty() else DamageFactors.value(actor, templates[actor.template])
+
 func damage(unit: Dictionary, amount: float, type: int) -> float:
 	if unit.is_empty() or unit.hp <= 0: return 0
 	var t: Dictionary = templates[unit.template]
@@ -885,7 +890,7 @@ func damage(unit: Dictionary, amount: float, type: int) -> float:
 	elif (type & 8) != 0: armor = float(unit.get("armor", t.health.armor))
 	# Frozen Dove all/utils.lua U.calc_protection, including its explosion curve.
 	if (type & 8) != 0 and (type & (65536 | 1 | 2 | 4)) == 0: armor *= 0.2 * armor + 0.4
-	var actual := amount * (1.0 - armor)
+	var actual := amount * DamageFactors.value(unit, t, true) * (1.0 - armor)
 	unit.hp = maxf(0, unit.hp - actual)
 	if unit.has("last_hit"): unit.last_hit = tick
 	if unit.hp <= 0:
@@ -898,12 +903,14 @@ func damage(unit: Dictionary, amount: float, type: int) -> float:
 			if not tower.is_empty(): tower.slots[unit.slot] = -(tick + frames(float(t.health.dead_lifetime)))
 	return actual
 
-func _projectile(type: String, target: int, from: Vector2, to: Vector2, flight: float) -> void:
+func _projectile(type: String, target: int, from: Vector2, to: Vector2, flight: float, attacker: Dictionary = {}) -> void:
 	var bullet: Dictionary = templates[type].bullet
 	var duration := frames(flight)
 	var b := {"template": type, "target": target, "from": from, "to": to, "pos": from, "at": tick, "duration": duration, "done": false,
 		"velocity": Projectile.launch(from, to, duration / 30.0, bullet), "initial_rotation": rng.randf_range(-PI / 2, PI / 2) if bullet.has("rotation_speed") else 0.0,
 		"rotation": 0.0, "hidden": float(bullet.get("hide_radius", 0)) > 0}
+	b.source = attacker.get("id", 0)
+	b.damage_factor = attack_factor(attacker) * float(bullet.get("damage_factor", 1.0))
 	if behaviors.projectile_role(templates[type]) == "bolt":
 		b.speed = float(bullet.min_speed); b.last_step = tick; b.target_invalid = false
 	elif behaviors.projectile_role(templates[type]) == "arrow_missile":
@@ -921,7 +928,7 @@ func _bullet_step(p: Dictionary) -> void:
 	var ratio := clampf(float(tick - p.at) / p.duration, 0, 1)
 	if behavior == "bolt":
 		if not _bolt_step(p, b, target): return
-		if p.target_invalid: target = {}
+		if p.target_invalid or not p.get("has_tracked", false): target = {}
 	elif behavior == "arrow_missile":
 		if not ArrowMissile.step(self,p,b): return
 		target = unit_by_id(p.target)
@@ -941,7 +948,7 @@ func _bullet_step(p: Dictionary) -> void:
 					var angle := delta.angle()
 					var ellipse_radius := Vector2(cos(angle), 0.7 * sin(angle)).length() * float(b.damage_radius)
 					amount = lerpf(float(b.damage_max), float(b.damage_min), clampf(delta.length() / ellipse_radius, 0, 1))
-				damage(e, amount, int(b.damage_type))
+				damage(e, amount * float(p.damage_factor), int(b.damage_type))
 		var water: bool = behavior == "bomb" and (_terrain_flags(p.to) & 2) != 0 and templates.has(b.get("hit_fx_water", ""))
 		add_effect(str(b.get("hit_fx_water", "")) if water else str(b.get("hit_fx", "")), p.to)
 		if not water: add_effect(str(b.get("hit_decal", "")), p.to)
@@ -950,12 +957,15 @@ func _bullet_step(p: Dictionary) -> void:
 		if b.get("reset_to_target_pos",false) and behavior != "arrow_missile": p.to = hit
 		var missile_hit: bool = behavior == "arrow_missile" and p.pos.distance_to(hit) < float(p.hit_distance)
 		if behavior == "bolt" or missile_hit or (behavior != "arrow_missile" and p.to.distance_to(hit) < float(b.get("hit_distance", 22)) * 1.2):
-			damage(target, rng.randi_range(int(b.damage_min), int(b.damage_max)) + float(b.get("damage_inc",0)) * int(p.get("elf_level",0)), int(b.damage_type))
+			damage(target, (rng.randi_range(int(b.damage_min), int(b.damage_max)) + float(b.get("damage_inc",0)) * int(p.get("elf_level",0))) * float(p.get("damage_factor",1.0)), int(b.damage_type))
 			if target.hp > 0 and p.has("elf_level"):
-				if b.has("mod"): modifiers.apply(self,b.mod,target,int(p.elf_level),str(p.source))
-				if int(p.get("bleed_level",0)) > 0: modifiers.apply(self,"mod_elf_bleed",target,int(p.bleed_level),str(p.source))
+				if b.has("mod"): modifiers.apply(self,b.mod,target,int(p.elf_level),str(p.source),-1,float(p.damage_factor))
+				if int(p.get("bleed_level",0)) > 0: modifiers.apply(self,"mod_elf_bleed",target,int(p.bleed_level),str(p.source),-1,float(p.damage_factor))
 			if int(p.get("poison_level",0)) > 0 and target.hp > 0:
-				modifiers.apply(self,"mod_ranger_poison",target,int(p.poison_level),str(p.source))
+				modifiers.apply(self,"mod_ranger_poison",target,int(p.poison_level),str(p.source),-1,float(p.damage_factor))
+			if not p.has("elf_level"):
+				for modifier_name: String in b.get("mods", [b.mod] if b.has("mod") else []):
+					modifiers.apply(self,modifier_name,target,maxi(1,int(p.get("level",b.get("level",0)))),str(p.source),-1,float(p.damage_factor))
 			if behavior != "bolt": add_effect(str(b.get("hit_fx", "")), hit)
 			add_effect(str(b.get("hit_blood_fx", "")), hit, {"rotation": p.rotation})
 	if behavior == "bolt": add_effect(str(b.get("hit_fx", "")), p.to)
@@ -971,12 +981,13 @@ func _bolt_step(p: Dictionary, bullet: Dictionary, target: Dictionary) -> bool:
 		p.pos = p.to; return true
 	if tick <= int(p.last_step): return false
 	p.last_step = tick
+	p.has_tracked = true
 	if not p.target_invalid and not target.is_empty():
 		var hit: Vector2 = target.pos + vec(templates[target.template].unit.hit_offset)
 		var delta: Vector2 = hit - p.to
 		if maxf(absf(delta.x), absf(delta.y)) > float(bullet.max_track_distance): p.target_invalid = true
 		elif target.hp > 0: p.to = hit
-	p.speed = clampf(float(p.speed) + 30.0 * ceilf(float(p.speed) / 30.0 * float(bullet.acceleration_factor)), float(bullet.min_speed), float(bullet.max_speed))
+	p.speed = clampf(float(p.speed) + 30.0 * float(p.speed) * ceilf(float(bullet.acceleration_factor) / 30.0), float(bullet.min_speed), float(bullet.max_speed))
 	p.pos += p.pos.direction_to(p.to) * float(p.speed) * STEP
 	p.rotation = (p.to - p.pos).angle()
 	if p.pos.distance_to(p.to) <= float(p.speed) * STEP:

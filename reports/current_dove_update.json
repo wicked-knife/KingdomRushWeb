@@ -1,0 +1,177 @@
+{
+  "passed": true,
+  "source": {
+    "version": "2.1.0.3",
+    "commit": "1a863df00b08f6bf1018ae0b0e7e4e106b939082"
+  },
+  "scope": "Current Dove source synchronization, shared combat, exporters and documentation cleanup; no new levels, hero combat or technology",
+  "shared_combat": [
+    "additive factor increases and multiplicative reductions; inverse removal",
+    "incremental tower buffs and garrison inheritance",
+    "current bolt acceleration, tracking and arrival order",
+    "projectile shooter/factor/level provenance and modifier filtering"
+  ],
+  "data": {
+    "playable_combinations": 18,
+    "content_bundles": 7,
+    "existing_gameplay_fields_unchanged": true,
+    "source_metadata_compared_separately": true,
+    "timeline_waves": 112,
+    "timeline_births": 3910,
+    "short_combat_ticks": 3600,
+    "short_combat_scenarios": 3
+  },
+  "hero_room": {
+    "registry": true,
+    "heroes": 79,
+    "computed_skills": 373,
+    "explicit_KR1_images": true,
+    "registered_sounds": true,
+    "hero_combat": false
+  },
+  "save": {
+    "upgrade_list_id": "1",
+    "new_slots_create_achievements": false,
+    "existing_unknown_fields_preserved": true
+  },
+  "docs": {
+    "retained": [
+      "docs/ASSETS.md",
+      "docs/BATTLE_BEHAVIOR.md",
+      "docs/CONTENT_INTEGRATION.md",
+      "docs/GODOT_WEB_REMAKE_GUIDE.md",
+      "docs/RUNNING.md",
+      "docs/TEST_REDUNDANCY_REVIEW.md",
+      "docs/UI_ADAPTATION.md"
+    ],
+    "removed": [
+      "docs/ARCHER_UPGRADE_DELIVERY.md",
+      "docs/BATTLE_UI_ALIGNMENT.md",
+      "docs/CHALLENGES_DELIVERY.md",
+      "docs/DOVE_SAVES_DELIVERY.md",
+      "docs/HERO_SELECTION_DELIVERY.md",
+      "docs/INTERACTION_FIXES.md",
+      "docs/LEVEL01_DELIVERY.md",
+      "docs/LEVEL02_03_DELIVERY.md",
+      "docs/LEVEL04_TIER3_DELIVERY.md",
+      "docs/LEVEL05_ELF_DELIVERY.md",
+      "docs/LEVEL06_DELIVERY.md",
+      "docs/MAP_KR1_DELIVERY.md",
+      "docs/RANGER_DELIVERY.md",
+      "docs/TOWER_UPGRADES_DELIVERY.md"
+    ],
+    "broken_links": 0,
+    "historical_baseline_sections": 0,
+    "discarded_uncommitted_update_note": true
+  },
+  "checks": {
+    "current_dove_combat": {
+      "passed": true,
+      "checks": 22
+    },
+    "content_catalog": {
+      "passed": true
+    },
+    "content_unification": {
+      "passed": true,
+      "checks": 303,
+      "timeline_waves": 88,
+      "timeline_entries": 2794,
+      "combat_scenarios": 3,
+      "combat_ticks": 3600
+    },
+    "level06_logic": {
+      "passed": true,
+      "checks": 185,
+      "timeline_waves": 24,
+      "births": 1116
+    },
+    "level05_logic": {
+      "passed": true,
+      "checks": 140
+    },
+    "ranger_logic": {
+      "passed": true,
+      "checks": 215
+    },
+    "battle_details_logic": {
+      "passed": true,
+      "checks": 49
+    },
+    "dove_saves_logic": {
+      "passed": true,
+      "checks": 113
+    },
+    "heroes_logic": {
+      "passed": true,
+      "checks": 35,
+      "heroes": 79
+    },
+    "heroes_assets": {
+      "passed": true,
+      "heroes": 79,
+      "skills": 373
+    },
+    "battle_ui_logic": {
+      "passed": true,
+      "checks": 122,
+      "layout_only": false
+    },
+    "battle_ui_1280x720": {
+      "passed": true,
+      "checks": 130,
+      "layout_only": false
+    },
+    "battle_ui_1024x768": {
+      "passed": true,
+      "checks": 52,
+      "layout_only": true
+    },
+    "battle_ui_assets": {
+      "passed": true
+    },
+    "challenges_logic": {
+      "passed": true,
+      "checks": 290
+    },
+    "ranged_animation_logic": {
+      "passed": true,
+      "checks": 83
+    },
+    "skill_placement_logic": {
+      "passed": true,
+      "checks": 185
+    },
+    "heroes_visual_1280x720": {
+      "passed": true,
+      "text_boxes_checked": 985
+    }
+  },
+  "native": {
+    "1280x720": true,
+    "1024x768_layout_only": true,
+    "hero_room_1280x720": true,
+    "representative_images_reviewed": true
+  },
+  "web": {
+    "exported": true,
+    "type": "release",
+    "isolated_pck": true,
+    "files": 651,
+    "package": "build/KingdomRush-KR1-Levels01-06-Web.zip",
+    "sha256": "dd2fbbf70c40cf3ca4aa7f5b19c6058303ddebc9da5a88145fe80c4bc4c4e154",
+    "browser_tested": false
+  },
+  "full_victory_replays_run": false,
+  "assets_hash_verification": {
+    "verified_files": 13035,
+    "source_files_checked": 7020,
+    "errors": []
+  },
+  "cleanup": {
+    "temporary_files_removed": 78,
+    "bytes_removed": 769675,
+    "kept_current_web_bundle": true,
+    "kept_source_manifest_dependencies": true
+  }
+}

@@ -40,7 +40,7 @@ static func read_json(filename: String) -> Dictionary:
 
 static func valid(value: Dictionary) -> bool:
 	if value.get("schema_version", 0) != 1: return false
-	for key in ["levels", "upgrades", "heroes", "seen", "achievements", "bag"]:
+	for key in ["levels", "upgrades", "heroes", "seen", "bag"]:
 		if not value.get(key) is Dictionary: return false
 	if not value.heroes.get("selected") is Array or not value.get("locked_towers") is Array: return false
 	if value.has("last_victory") and not value.last_victory is Dictionary: return false

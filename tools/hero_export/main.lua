@@ -5,7 +5,7 @@ function love.errorhandler(msg)
 end
 local source = assert(os.getenv("DOVE_SOURCE_DIR"))
 local destination = assert(os.getenv("DOVE_EXPORT_PATH"))
-package.path = source .. "/?.lua;" .. source .. "/all/?.lua;" .. source .. "/kr1/?.lua;" .. source .. "/kr1-desktop/?.lua;" .. package.path
+package.path = source .. "/?.lua;" .. source .. "/all/?.lua;" .. source .. "/kr1/?.lua;" .. source .. "/kr1/?/init.lua;" .. source .. "/kr1-desktop/?.lua;" .. package.path
 local loaded_inputs = {}
 local original_require=require
 local allowed={
@@ -16,11 +16,13 @@ local allowed={
 }
 function require(name)
   if package.loaded[name] or name=="bit" or name=="ffi" then return original_require(name) end
-  assert(allowed[name],"Module outside hero exporter allowlist: "..name)
+  assert(allowed[name] or name:match("^heroes%."),"Module outside hero exporter allowlist: "..name)
   local stem=name:gsub("%.","/")..".lua"
   for _,prefix in ipairs({"","all/","kr1/","kr1-desktop/"}) do
-    local file=io.open(source.."/"..prefix..stem,"rb")
-    if file then file:close();loaded_inputs[prefix..stem]=true;break end
+    for _,candidate in ipairs({stem,name:gsub("%.","/").."/init.lua"}) do
+      local file=io.open(source.."/"..prefix..candidate,"rb")
+      if file then file:close();loaded_inputs[prefix..candidate]=true end
+    end
   end
   return original_require(name)
 end
@@ -49,6 +51,12 @@ U.set_terrain_style=function(e,style)
 end
 package.loaded.utils=U
 package.loaded.script_utils=functions("script_utils")
+package.loaded.hero_utils=functions("hero_utils")
+package.loaded.path_db=functions("path_db")
+package.loaded.animation_db={loaded=false}
+local registered_sounds={}
+package.loaded.sound_db={register_sounds=function(_,sounds) for k,v in pairs(sounds)do registered_sounds[k]=v end end,register_groups=function() end}
+package.loaded["lib.hump.signal"]={}
 local function run()
   require("lib.klua.table")
   require("all.constants")
@@ -62,29 +70,39 @@ local function run()
   function E:register_t(name,base) local v=base and table.deepclone(assert(self.entities[base],"Unknown base "..base)) or {};v.template_name=name;self.entities[name]=v;return v end
   E.register_t_hot=E.register_t
   function E:add_comps(t,...) for _,name in ipairs({...}) do t[name]=self:clone_c(name) end end
-  function E:get_template(name) return assert(self.entities[name],"Unknown template "..tostring(name)) end
+  function E:get_template(name) return self.entities[name] end
   _G.E=E;package.loaded.entity_db=E
   chunk("all/components.lua");package.loaded.components=true
   chunk("all/templates.lua");package.loaded.templates=true
   chunk("kr1/game_templates_utils.lua");package.loaded.game_templates_utils=true
   for _,name in ipairs({"foundamental_towers","mage_towers","archer_towers","engineer_towers","barrack_towers"}) do chunk("kr1/"..name..".lua");package.loaded[name]=true end
   chunk("kr1/heroes.lua");package.loaded.heroes=true
+  local registry=require("heroes.registry")
+  registry:init();registry:ensure_template("hero_gerald")
   chunk("kr1/game_templates.lua")
   local strings=chunk("_assets/kr1-desktop/strings/zh-Hans.lua")
   _G._=function(key) return strings[key] or key end
-  local details=chunk("_assets/kr1-desktop/strings/hero_room_special.lua")
+  local utils=assert(io.open(source.."/all/utils.lua","rb")):read("*a")
+  local begin=assert(utils:find("local expr_cache = {}",1,true))
+  local ending=assert(utils:find("function U.get_enemy_encyclopedia_creep_from_kr",begin,true))
+  chunk("all/utils.lua",'local U=require("utils");local E=require("entity_db");local band=require("bit").band;local log={error=function(...) error(string.format(...)) end};'..utils:sub(begin,ending-1))
   package.loaded.map_decos_functions=scripts("map_decos_functions")
   _G.GGLabel={static={ref_h=1080}};_G.REF_H=1080
   local map=chunk("kr1-desktop/data/map_data.lua")
-  local out={heroes={},inputs=loaded_inputs}
-  for _,row in ipairs(map.hero_data) do
+  local out={heroes={},sounds=registered_sounds,inputs=loaded_inputs}
+  for _,row in ipairs(registry:get_hero_data()) do
     local t=E:get_template(row.name)
     local copy={};for k,v in pairs(row) do copy[k]=v end
     copy.title=_G._((t.info.i18n_key or string.upper(row.name)).."_NAME")
     copy.bio=_G._(string.upper(row.name).."_DESCRIPTION")
     copy.special=_G._(string.upper(row.name).."_SPECIAL")
     copy.sound=t.sound_events.hero_room_select
-    copy.details=details[row.name] or details.default
+    copy.details={}
+    local prefix="HERO_ROOM_"..string.upper(t.info.i18n_key or row.name):gsub("^HERO_", "").."_"
+    for _,key in ipairs(t.hero.room_special_order or {}) do
+      copy.details[#copy.details+1]={title=_G._(prefix..key.."_NAME"),text=U.format_text_expr(_G._(prefix..key.."_DESC"),{})}
+    end
+    if #copy.details==0 then copy.details={{title=_G._("HERO_ROOM_PROCESSING"),text=_G._("HERO_ROOM_PROCESSING")}} end
     out.heroes[#out.heroes+1]=copy
   end
   local json=require("lib.json")

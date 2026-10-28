@@ -33,7 +33,7 @@ static func step(sim, enemy: Dictionary, template: Dictionary) -> bool:
 			var from: Vector2 = enemy.pos + offset
 			var flight: float = sim.templates[attack.bullet].bullet.flight_time
 			var to: Vector2 = target.pos + sim.vec(sim.templates[target.template].unit.hit_offset)
-			sim._projectile(attack.bullet, target.id, from, to, flight)
+			sim._projectile(attack.bullet, target.id, from, to, flight, enemy)
 			sim.projectiles[-1].source = enemy.id
 	if sim.tick >= casting.end: enemy.ranged_cast = {}; return false
 	enemy.last_dir = Vector2.ZERO

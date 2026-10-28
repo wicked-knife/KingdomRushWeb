@@ -7,7 +7,7 @@ import os
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = "e29ece82939fd73fb69bfc4b469d484a72e4dfd2"
+from dove_source import BASE, VERSION
 INPUTS = ["kr1/data/slot_template.lua", "kr1/game_settings.lua", "all/storage.lua",
           "all/utils.lua", "all/systems/level.lua", "all/systems/enemy.lua",
           "all/game.lua", "all-desktop/screen_map.lua"]
@@ -25,7 +25,7 @@ def prepare(source, love, check=False):
     data = json.loads(output.read_text(encoding="utf-8"))
     template = data["template"]
     # Lua's empty table has no array/object distinction. Give JSON explicit types.
-    for key in ("achievements", "seen", "upgrades", "heroes", "levels"):
+    for key in ("seen", "upgrades", "heroes", "levels"):
         template[key] = template[key] or {}
     template["levels"] = {str(key): value or {} for key, value in template["levels"].items()}
     template["heroes"]["selected"] = []
@@ -33,7 +33,7 @@ def prepare(source, love, check=False):
     storage = (source / "all/storage.lua").read_text(encoding="utf-8")
     assert "gems = 0" in storage and "bag = {}" in storage
     template.update(schema_version=1, gems=0, bag={})
-    data.update(schema_version=1, source={"version": "2.1.0.2", "commit": BASE,
+    data.update(schema_version=1, source={"version": VERSION, "commit": BASE,
         "inputs": {p: hashlib.sha256((source / p).read_bytes()).hexdigest() for p in INPUTS}})
     target = ROOT / "data/save/definition.json"
     if check:

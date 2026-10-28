@@ -33,21 +33,22 @@ def verify():
         source = gameplay.pop("source")
         changed = [key for key, value in gameplay.items() if digest(value) != baseline["sections"][name].get(key)]
         rows[name] = {"gameplay_unchanged": digest(gameplay) == expected, "changed_sections": changed,
-                      "source_unchanged": digest(source) == baseline["sources"][name],
+                      "source_current": all(source[k] == catalog["source"][k] for k in ("version", "commit")),
                       "controller": definition["level"]["controller"], "behaviors": len(definition["behaviors"]),
                       "dependency_owners": len(definition["dependencies"])}
-        if changed or not rows[name]["gameplay_unchanged"] or not rows[name]["source_unchanged"]:
+        if changed or not rows[name]["gameplay_unchanged"] or not rows[name]["source_current"]:
             failures.append(f"{name}: frozen gameplay/source mismatch; first section {next(iter(changed), 'source')}")
     # Meaningful fail-closed probes: a reachable actor, its child template, and
     # a registered mode must not disappear silently from the publication path.
     base = json.loads((ROOT / "data/level05/definition.json").read_text(encoding="utf-8"))
     probes = []
-    for label in ("unknown_behavior", "missing_dependency", "missing_mode", "wrong_controller"):
+    for label in ("unknown_behavior", "missing_dependency", "missing_mode", "wrong_controller", "stale_source"):
         bad = copy.deepcopy(base)
         if label == "unknown_behavior": bad["behaviors"]["enemy_goblin"] = "unknown.enemy.update"
         if label == "missing_dependency": del bad["templates"]["arrow_elf"]
         if label == "missing_mode": del bad["modes"]["3"]
         if label == "wrong_controller": bad["level"]["controller"] = "unknown"
+        if label == "stale_source": bad["source"]["commit"] = "stale"
         try:
             validate_definition(bad, export_spec(5))
         except ValueError as error:
@@ -55,7 +56,10 @@ def verify():
         else:
             failures.append(f"Publication accepted {label}")
     resources, data = resource_paths()
-    expected_resources = baseline["resource_files"] | ui_baseline["resource_files"]
+    # Definitions are checked field by field above; their source metadata and
+    # manifests necessarily change when advancing the current source baseline.
+    expected_resources = {p: h for p, h in (baseline["resource_files"] | ui_baseline["resource_files"]).items()
+                          if not p.endswith(("/definition.json", "/manifest.json"))}
     changed_resources = [path for path, expected in expected_resources.items()
                          if resource_digest(ROOT / path) != expected]
     if changed_resources: failures.append(f"Unnecessary resource changes: {changed_resources}")
@@ -63,7 +67,7 @@ def verify():
               "failure_probes": probes, "publication_resources": len(resources), "publication_data": len(data),
               "resource_baseline": "battle_ui_baseline.json (source pixel verification in battle_ui_assets.json)",
               "verified_resource_files": len(expected_resources),
-              "unchanged_resource_files": sum(resource_digest(ROOT / path) == expected for path, expected in baseline["resource_files"].items()),
+              "unchanged_resource_files": sum(resource_digest(ROOT / path) == expected for path, expected in expected_resources.items()),
               "changed_resource_files": changed_resources, "failures": failures}
     (ROOT / "reports/content_catalog.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False))

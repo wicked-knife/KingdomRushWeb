@@ -70,6 +70,6 @@
 		}
 	},
 	"scope": "elf normal/special arrows, both facings; enemy and tower animation group regression",
-	"source": "Dove 2.1.0.2 soldier_elf_shoot: elfSoldier 25-36; shoot_time 7/30; bullet_start_offset (4,16)",
+	"source": "Dove current soldier_elf_shoot: elfSoldier 25-36; shoot_time 7/30; bullet_start_offset (4,16)",
 	"source_frames": 24
 }

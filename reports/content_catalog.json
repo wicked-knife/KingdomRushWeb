@@ -5,7 +5,7 @@
     "level01": {
       "gameplay_unchanged": true,
       "changed_sections": [],
-      "source_unchanged": true,
+      "source_current": true,
       "controller": "level01",
       "behaviors": 25,
       "dependency_owners": 40
@@ -13,7 +13,7 @@
     "level02": {
       "gameplay_unchanged": true,
       "changed_sections": [],
-      "source_unchanged": true,
+      "source_current": true,
       "controller": "default",
       "behaviors": 26,
       "dependency_owners": 39
@@ -21,7 +21,7 @@
     "level03": {
       "gameplay_unchanged": true,
       "changed_sections": [],
-      "source_unchanged": true,
+      "source_current": true,
       "controller": "default",
       "behaviors": 29,
       "dependency_owners": 66
@@ -29,7 +29,7 @@
     "level04": {
       "gameplay_unchanged": true,
       "changed_sections": [],
-      "source_unchanged": true,
+      "source_current": true,
       "controller": "default",
       "behaviors": 39,
       "dependency_owners": 78
@@ -37,7 +37,7 @@
     "level05": {
       "gameplay_unchanged": true,
       "changed_sections": [],
-      "source_unchanged": true,
+      "source_current": true,
       "controller": "default",
       "behaviors": 56,
       "dependency_owners": 73
@@ -45,7 +45,7 @@
     "ranger_arena": {
       "gameplay_unchanged": true,
       "changed_sections": [],
-      "source_unchanged": true,
+      "source_current": true,
       "controller": "default",
       "behaviors": 45,
       "dependency_owners": 85
@@ -71,13 +71,18 @@
       "case": "wrong_controller",
       "rejected": true,
       "reason": "level05: controller differs from content registration"
+    },
+    {
+      "case": "stale_source",
+      "rejected": true,
+      "reason": "level05: source differs from current Dove catalog"
     }
   ],
-  "publication_resources": 295,
+  "publication_resources": 296,
   "publication_data": 55,
   "resource_baseline": "battle_ui_baseline.json (source pixel verification in battle_ui_assets.json)",
-  "verified_resource_files": 99,
-  "unchanged_resource_files": 20,
+  "verified_resource_files": 85,
+  "unchanged_resource_files": 85,
   "changed_resource_files": [],
   "failures": []
 }

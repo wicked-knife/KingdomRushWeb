@@ -192,6 +192,7 @@ local function run()
       if type(value)~="table" then return end
       for key,child in pairs(value) do
         if references[key] and type(child)=="string" and child~="" then found[child]=true end
+        if key=="mods" and type(child)=="table" then for _,name in ipairs(child) do if type(name)=="string" and name~="" then found[name]=true end end end
         visit(child)
       end
     end

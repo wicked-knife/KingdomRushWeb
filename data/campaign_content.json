@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "source": {
-    "version": "2.1.0.2",
-    "commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2"
+    "version": "2.1.0.3",
+    "commit": "1a863df00b08f6bf1018ae0b0e7e4e106b939082"
   },
   "levels": {
     "1": {
@@ -704,7 +704,8 @@
     "res://scripts/battle/dove_arcane.gd",
     "res://scripts/battle/dove_enemy_projectiles.gd",
     "res://scripts/battle/dove_spawner.gd",
-    "res://scripts/battle/dove_juggernaut.gd"
+    "res://scripts/battle/dove_juggernaut.gd",
+    "res://scripts/battle/dove_damage_factors.gd"
   ],
   "callbacks": [
     "game_scripts.aura_apply_mod.insert",

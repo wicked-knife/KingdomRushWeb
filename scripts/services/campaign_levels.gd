@@ -60,6 +60,7 @@ static func _load_definition(id: int, mode: int, difficulty: int) -> Dictionary:
 	if definition.get("templates", {}).is_empty() or definition.get("waves", {}).get("groups", []).is_empty(): return _fail("关卡模板或波次数据不完整。")
 	if identity.get("root", "") != base or identity.get("mode", 0) != mode or identity.get("difficulty", 0) != difficulty: return _fail("关卡资源版本或战役身份不匹配。")
 	var content := catalog()
+	if definition.get("source", {}).get("commit", "") != content.source.commit or manifest.get("source", {}).get("commit", "") != content.source.commit: return _fail("%s: source differs from current Dove catalog" % base)
 	var registered: Dictionary = content.levels[str(id)]
 	if identity.get("controller", "") != registered.controller: return _fail("%s: controller differs from content registration" % base)
 	if Controller.create(identity.controller, content) == null: return _fail("%s: missing or invalid controller '%s'" % [base, identity.controller])

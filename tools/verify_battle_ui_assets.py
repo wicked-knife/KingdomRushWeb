@@ -17,6 +17,8 @@ def verify():
         folder = ROOT / "data" / name
         definition = json.loads((folder / "definition.json").read_text(encoding="utf-8"))
         gameplay = gameplay_projection(definition)
+        source = gameplay.pop("source")
+        assert all(source[k] == baseline["source"][k] for k in ("version", "commit")), f"{name}: source is stale"
         ui = gameplay.pop("ui")
         assert digest(gameplay) == expected["gameplay_sha256"], f"{name}: non-UI data changed"
         assert ui.pop("tower_menu_power_offset") == [{"x":7,"y":-16},{"x":25,"y":-9},{"x":31,"y":8}]
@@ -35,7 +37,7 @@ def verify():
         file = ROOT / path
         actual = digest(json.loads(file.read_text(encoding="utf-8"))) if file.suffix == ".json" else hashlib.sha256(file.read_bytes()).hexdigest()
         assert actual == expected, f"{path}: UI resource baseline differs"
-    result = {"passed":True,"baseline_commit":baseline["baseline_commit"],"definitions":rows,"resource_files":len(baseline["resource_files"]),"scope":"All seven regenerated contents; non-UI gameplay and existing UI unchanged; binding metadata excluded from gameplay projection; source pixels and complete new frame families checked"}
+    result = {"passed":True,"source":baseline["source"],"definitions":rows,"resource_files":len(baseline["resource_files"]),"scope":"All seven current contents; source metadata checked separately from gameplay and UI; source pixels and complete frame families checked"}
     (ROOT / "reports/battle_ui_assets.json").write_text(json.dumps(result,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     print(json.dumps(result,ensure_ascii=False))
 

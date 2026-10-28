@@ -5,7 +5,7 @@ from PIL import Image
 from campaign_content import export_spec, level_ids, validate_definition, template_dependencies
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = "e29ece82939fd73fb69bfc4b469d484a72e4dfd2"
+from dove_source import BASE, VERSION
 
 def write(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -49,7 +49,7 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
     script=f"kr1/data/levels/{source_level}.lua"
     if (source/script).is_file(): inputs.add(script)
     inputs.update(spec["export"].get("inputs", []))
-    data["source"]={"version":"2.1.0.2","commit":BASE,"difficulty":2,"inputs":{p:hashlib.sha256((source/p).read_bytes()).hexdigest() for p in sorted(inputs)}}
+    data["source"]={"version":VERSION,"commit":BASE,"difficulty":2,"inputs":{p:hashlib.sha256((source/p).read_bytes()).hexdigest() for p in sorted(inputs)}}
     # GGTextLabel slide and TutorialBalloon class defaults are part of the source layout.
     for slide_id, labels in data["ui"]["slides"].items():
         for label in labels:

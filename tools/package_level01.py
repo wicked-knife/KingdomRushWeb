@@ -4,6 +4,7 @@ import hashlib
 import json
 import zipfile
 from campaign_content import level_ids, combinations
+from dove_source import BASE, VERSION
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -31,7 +32,7 @@ def package():
     )
     (folder / "README.txt").write_text(
         f"Kingdom Rush Web - KR1 levels 1-{last} campaign and challenges playtest\n"
-        "Source: Dove 2.1.0.2 / e29ece82\n\n"
+        f"Source: Dove {VERSION} / {BASE[:8]}\n\n"
         "1. Extract this whole folder.\n"
         "2. Run start_server.cmd (Python 3 required), or serve this folder with any HTTP server.\n"
         "3. Open http://127.0.0.1:8060/ . Do not open index.html with file:// .\n"
@@ -99,7 +100,7 @@ def package():
             archive.write(path, path.name)
     result = {
         "package_created": True,
-        "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+        "source_commit": "1a863df00b08f6bf1018ae0b0e7e4e106b939082",
         "content_catalog_sha256": receipt.get("content_catalog_sha256"),
         "browser_tested": False,
         "build_type": receipt.get("build_type", "release"),

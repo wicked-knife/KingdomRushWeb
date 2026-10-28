@@ -40,7 +40,7 @@ static func step(sim: RefCounted, tower: Dictionary) -> void:
 			var offset: Vector2 = sim.vec(t.render.sprites[sid - 1].offset)
 			var bullet_offset: Vector2 = sim.vec(a.bullet_start_offset[0 if e.pos.y > center.y else 1])
 			bullet_offset.x *= 1 if e.pos.x > center.x else -1
-			sim._projectile(a.bullet, e.id, tower.pos + offset + bullet_offset, e.pos + sim.vec(sim.templates[e.template].unit.hit_offset), sim.templates[a.bullet].bullet.flight_time)
+			sim._projectile(a.bullet, e.id, tower.pos + offset + bullet_offset, e.pos + sim.vec(sim.templates[e.template].unit.hit_offset), sim.templates[a.bullet].bullet.flight_time, tower)
 			var bullet: Dictionary = sim.projectiles[-1]
 			bullet.poison_level = int(tower.powers.poison); bullet.source = str(tower.id)
 			sim.event.emit("ranger_shot", {"target":e.id,"sid":sid,"tick":sim.tick})
@@ -94,7 +94,7 @@ static func _thorn(sim: RefCounted, tower: Dictionary, center: Vector2) -> void:
 					e.ranger_thorn_ts = sim.tick
 					var duration := float(m.duration) + float(m.duration_inc) * level
 					if sim.modifiers.has(e.id,"mod_ranger_poison"): duration += int(tower.powers.poison) * float(m.duration_inc) * 0.5
-					sim.modifiers.apply(sim,"mod_thorn",e,level,str(tower.id),duration)
+					sim.modifiers.apply(sim,"mod_thorn",e,level,str(tower.id),duration,sim.attack_factor(tower))
 		if sim.tick < r.casting.ends_at: return
 		r.casting = {}
 	if float(sim.tick) - float(r.thorn_ts) < float(a.cooldown) * 30: return

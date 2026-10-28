@@ -15,6 +15,7 @@ def template_dependencies(value, reference_fields=()):
         if isinstance(node, dict):
             for key, child in node.items():
                 if key in fields and isinstance(child, str) and child: found.add(child)
+                if key == "mods" and isinstance(child, list): found.update(x for x in child if isinstance(x, str) and x)
                 visit(child)
         elif isinstance(node, list):
             for child in node: visit(child)
@@ -77,6 +78,8 @@ def validate_definition(data, spec):
     templates = data["templates"]
     identity = spec["folder"]
     catalog = read_catalog()
+    if any(data.get("source", {}).get(key) != catalog["source"][key] for key in ("version", "commit")):
+        raise ValueError(f"{identity}: source differs from current Dove catalog")
     if data.get("level", {}).get("controller") != spec["controller"]:
         raise ValueError(f"{identity}: controller differs from content registration")
     for mode in spec["modes"]:

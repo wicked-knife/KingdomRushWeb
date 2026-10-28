@@ -95,6 +95,7 @@ func tower_step(sim, tower: Dictionary) -> bool:
 	return true
 
 func soldier_inserted(sim, soldier: Dictionary, tower: Dictionary) -> void:
+	sim.DamageFactors.inherit(sim, soldier, tower)
 	if tower.get("powers", {}).has("holystrike"): Paladin.inherit(sim, soldier, tower)
 	if role(tower.template) == "mercenary":
 		Elf.inherit(soldier, tower); sim.event.emit("sound", {"id":"ElfTaunt"})

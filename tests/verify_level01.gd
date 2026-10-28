@@ -15,7 +15,7 @@ func dismiss(sim) -> void:
 func _run() -> void:
 	var sim = Sim.new()
 	check(sim.lives == 20 and sim.gold == 270 and sim.towers.size() == 8, "initial state")
-	check(sim.data.source.commit == "e29ece82939fd73fb69bfc4b469d484a72e4dfd2", "frozen source")
+	check(sim.data.source.commit == preload("res://scripts/services/campaign_levels.gd").catalog().source.commit, "current source")
 	for path in sim.data.paths.paths[0]: check(path.size() == 218, "original 218-node subpaths")
 	check(not sim.command("build", {"id": "1", "type": "archer"}), "tutorial blocks battlefield commands")
 	dismiss(sim)

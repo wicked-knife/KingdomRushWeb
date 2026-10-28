@@ -53,12 +53,12 @@ static func melee(sim, soldier: Dictionary, target: Dictionary, template: Dictio
 			sim.add_effect(a.hit_decal, point)
 			for enemy: Dictionary in sim.enemies:
 				if Targets.matches(sim, enemy, a, true) and sim.distance(point, enemy.pos) <= float(a.damage_radius):
-					sim.damage(enemy, sim.rng.randi_range(int(a.damage_min) + int(a.damage_min_inc) * level, int(a.damage_max) + int(a.damage_max_inc) * level), int(a.damage_type))
+					sim.damage(enemy, sim.rng.randi_range(int(a.damage_min) + int(a.damage_min_inc) * level, int(a.damage_max) + int(a.damage_max_inc) * level) * sim.attack_factor(soldier), int(a.damage_type))
 					if enemy.hp > 0: sim.modifiers.apply(sim, a.mod, enemy, level, str(soldier.id))
 		elif not target.is_empty() and target.hp > 0:
 			var dodge: Dictionary = sim.templates[target.template].get("dodge", {})
 			var dodged: bool = not dodge.is_empty() and int(target.get("stun_count", 0)) == 0 and sim.rng.randf() <= float(dodge.chance)
-			if not dodged: sim.damage(target, sim.rng.randi_range(int(a.damage_min), int(a.damage_max)), int(a.damage_type))
+			if not dodged: sim.damage(target, sim.rng.randi_range(int(a.damage_min), int(a.damage_max)) * sim.attack_factor(soldier), int(a.damage_type))
 		soldier.pending = {}
 	if sim.tick < int(soldier.get("melee_end", 0)): return
 	if target.is_empty() or target.hp <= 0: return

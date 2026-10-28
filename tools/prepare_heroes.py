@@ -8,6 +8,7 @@ import os
 import subprocess
 from PIL import Image, ImageChops, ImageDraw, ImageOps
 from prepare_map import BASE, ROOT, write
+from dove_source import VERSION
 
 
 def apply_approved_portraits(data, out, frames, lookup):
@@ -58,9 +59,10 @@ def prepare(source, love):
     if result.returncode:
         raise RuntimeError(Path(str(evaluated) + ".error").read_text(encoding="utf-8", errors="replace"))
     data = json.loads(evaluated.read_text(encoding="utf-8"))
+    registered_sounds = data.pop("sounds", {})
     inputs = set(data.pop("inputs")) | {"all-desktop/screen_map.lua", "kr1-desktop/data/kui_templates/hero_room_view.lua", "kr1/data/slot_template.lua"}
     data.update(schema_version=1, reference_size=[1920, 1080], max_selected=2)
-    data["source"] = {"version": "2.1.0.2", "commit": BASE, "inputs": {p: hashlib.sha256((source / p).read_bytes()).hexdigest() for p in sorted(inputs)}}
+    data["source"] = {"version": VERSION, "commit": BASE, "inputs": {p: hashlib.sha256((source / p).read_bytes()).hexdigest() for p in sorted(inputs)}}
     assets = ROOT / "assets/kingdom_rush"
     atlas = json.loads((assets / "data/atlases/hero_room.json").read_text(encoding="utf-8"))
     locale = json.loads((assets / "data/locale_zh-Hans.json").read_text(encoding="utf-8"))
@@ -68,15 +70,17 @@ def prepare(source, love):
     assert len(data["heroes"]) == 79
     data["portrait_fallbacks"] = []
     for row in data["heroes"]:
-        prefix = f"kr{row['from_kr']}_" if row.get("from_kr") else ""
-        row["thumbnail"] = f"{prefix}hero_room_thumbs_{row['thumb']:04d}"
-        row["map_icon"] = f"{prefix}mapButtons_portrait_hero_{row['icon']:04d}"
-        row["portrait"] = f"{prefix}portrait_notxt_{row['portrait']:04d}"
+        # KR1 uses unprefixed atlas names, including registry rows declaring 1.
+        prefix = f"kr{row['from_kr']}_" if int(row.get("from_kr", 1)) > 1 else ""
+        row["thumbnail"] = row.get("thumb_image", f"{prefix}hero_room_thumbs_{row['thumb']:04d}")
+        row["map_icon"] = row.get("icon_image", f"{prefix}mapButtons_portrait_hero_{row['icon']:04d}")
+        row["portrait"] = row.get("portrait_image", f"{prefix}portrait_notxt_{row['portrait']:04d}")
         row["portrait_fallback"] = row["portrait"] not in atlas["lookup"]
         if row["portrait_fallback"]:
             row["portrait"] = row["thumbnail"]
             data["portrait_fallbacks"].append(row["name"])
-        row["details"] = [{"title": k, "text": v} for k, v in sorted(row["details"].items())]
+        if isinstance(row["details"], dict):
+            row["details"] = [{"title": k, "text": v} for k, v in sorted(row["details"].items())]
         assert row["details"] and not row["title"].endswith("_NAME")
     out = ROOT / "data/heroes"
     out.mkdir(parents=True, exist_ok=True)
@@ -108,6 +112,7 @@ def prepare(source, love):
     generated = apply_approved_portraits(data, out, frames, lookup)
     write(out / "atlas.json", {"schema_version": 1, "group": "heroes", "texture_directory": "res://data/heroes/", "frames": frames, "lookup": lookup, "aliases": {k: v for k, v in lookup.items() if k != v}})
     all_sounds = json.loads((assets / "data/sounds.json").read_text(encoding="utf-8"))
+    all_sounds.update(registered_sounds)
     ids = {"GUIButtonCommon", "GUIQuickMenuOpen", "GUIBuyUpgrade"} | {row["sound"] for row in data["heroes"] if row.get("sound")}
     sounds = {k: all_sounds[k] for k in sorted(ids)}
     write(out / "sounds.json", sounds)

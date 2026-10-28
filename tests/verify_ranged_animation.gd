@@ -91,7 +91,7 @@ func run() -> void:
 		for i in images.size(): sheet.blit_rect(images[i],Rect2i(0,0,216,192),Vector2i((i%5)*216,(i/5)*192))
 		var path := "res://reports/elf_ranged_animation_frames.png"; sheet.save_png(path); captures.append(path)
 	app.queue_free(); await process_frame
-	var report := {"passed":failures.is_empty(),"checks":checks,"failures":failures,"native":native,"independent_scenarios":2,"source_frames":24,"samples":samples,"captures":captures,"source":"Dove 2.1.0.2 soldier_elf_shoot: elfSoldier 25-36; shoot_time 7/30; bullet_start_offset (4,16)","scope":"elf normal/special arrows, both facings; enemy and tower animation group regression"}
+	var report := {"passed":failures.is_empty(),"checks":checks,"failures":failures,"native":native,"independent_scenarios":2,"source_frames":24,"samples":samples,"captures":captures,"source":"Dove current soldier_elf_shoot: elfSoldier 25-36; shoot_time 7/30; bullet_start_offset (4,16)","scope":"elf normal/special arrows, both facings; enemy and tower animation group regression"}
 	var file := FileAccess.open("res://reports/ranged_animation_"+("native" if native else "logic")+".json",FileAccess.WRITE)
 	file.store_string(JSON.stringify(report,"\t")); file.close()
 	print("RANGED_ANIMATION: ",JSON.stringify(report)); quit(0 if failures.is_empty() else 1)

@@ -39,10 +39,10 @@ func _release(sim: RefCounted, m: Dictionary) -> void:
 	var target: Dictionary = sim.unit_by_id(m.target)
 	if not target.is_empty(): target.stun_count = maxi(0, int(target.get("stun_count", 0)) - 1)
 
-func apply(sim: RefCounted, template: String, target: Dictionary, level: int, source: String, duration: float = -1) -> bool:
+func apply(sim: RefCounted, template: String, target: Dictionary, level: int, source: String, duration: float = -1, damage_factor: float = 1.0) -> bool:
 	if target.is_empty() or target.hp <= 0 or level <= 0 or not sim.templates.has(template): return false
 	var t: Dictionary = sim.templates[template]
-	if sim.behaviors.role(template) in ["arcane_damage", "disintegrate", "teleport"]: return sim.Behaviors.Arcane.apply(sim, template, target, level, source)
+	if sim.behaviors.role(template) in ["arcane_damage", "disintegrate", "teleport"]: return sim.Behaviors.Arcane.apply(sim, template, target, level, source, damage_factor)
 	var rule: Dictionary = t.modifier
 	if not flags_match(sim, target, rule): return false
 	for existing: Dictionary in active.duplicate():
@@ -72,6 +72,7 @@ func apply(sim: RefCounted, template: String, target: Dictionary, level: int, so
 	var m := {"template":template, "target":target.id, "level":level, "source":source, "born":sim.tick,
 		"at":sim.tick, "expires":sim.tick + sim.frames(duration if duration >= 0 else float(rule.duration)), "next_hit":sim.tick + 1,
 		"state":"", "prefix":"", "scale":Vector2.ONE, "phase":"loop", "visible":true}
+	if damage_factor != 1.0: m.damage_factor = damage_factor
 	if template == "mod_thorn":
 		var sprite: Dictionary = t.render.sprites[0]
 		m.prefix = sprite.size_prefixes[size_index]; m.scale = sim.vec(sprite.size_scales[size_index])
@@ -111,13 +112,13 @@ func step(sim: RefCounted) -> void:
 				continue
 			if m.phase == "loop" and sim.tick >= m.next_hit:
 				m.next_hit += sim.frames(t.damage_every)
-				sim.damage(target, float(t.damage_min), int(t.damage_type))
+				sim.damage(target, float(t.damage_min) * float(m.get("damage_factor",1.0)), int(t.damage_type))
 		else:
 			if sim.tick >= m.expires: _release(sim, m); active.erase(m); continue
 			if t.has("dps") and sim.tick >= m.next_hit:
 				m.next_hit += sim.frames(t.dps.damage_every)
 				var amount := float(t.dps.damage_min) + float(t.dps.damage_inc) * int(m.level)
-				sim.damage(target, amount, int(t.dps.damage_type))
+				sim.damage(target, amount * float(m.get("damage_factor",1.0)), int(t.dps.damage_type))
 				if t.dps.get("fx","") != "":
 					var unit: Dictionary = sim.templates[target.template].unit
 					var size: String = "small" if int(unit.size) == 1 else "big"

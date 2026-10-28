@@ -33,7 +33,7 @@ static func step(sim, projectile: Dictionary, bullet: Dictionary, role: String) 
 			var hit: Vector2 = soldier.pos + sim.vec(sim.templates[soldier.template].unit.hit_offset)
 			if Targets.matches(sim, soldier, bullet, true) and sim.distance(hit, projectile.to) <= float(bullet.damage_radius):
 				var factor = clampf(sim.distance(hit, projectile.pos) / float(bullet.damage_radius), 0, 1)
-				sim.damage(soldier, lerpf(float(bullet.damage_max), float(bullet.damage_min), factor), int(bullet.damage_type))
+				sim.damage(soldier, lerpf(float(bullet.damage_max), float(bullet.damage_min), factor) * float(projectile.get("damage_factor",1.0)), int(bullet.damage_type))
 		sim.add_effect(bullet.hit_fx, projectile.pos)
 		sim.event.emit("sound", {"id": sim.templates[projectile.template].sound_events.hit})
 		return true

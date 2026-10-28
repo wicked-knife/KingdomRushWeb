@@ -405,7 +405,7 @@ class Migration:
             raise ValueError(f"not a Dove installation: {self.source}")
         if not (self.project / "project.godot").is_file():
             raise ValueError(f"not a Godot project: {self.project}")
-        for left, right in [(self.source, self.project), (self.project, self.source)]:
+        for left, right in [(self.source, self.raw), (self.raw, self.source), (self.source, self.assets), (self.assets, self.source)]:
             if left == right or left.is_relative_to(right):
                 raise ValueError("installation and destination must not overlap")
         self.reports.mkdir(parents=True, exist_ok=True)
@@ -413,6 +413,10 @@ class Migration:
         self.raw.mkdir(parents=True, exist_ok=True)
         atomic_bytes(self.raw / ".gdignore", b"")
         self.journal_path = self.reports / "assets_migration_state.jsonl"
+        manifest_path = self.reports / "assets_manifest.json"
+        if manifest_path.is_file():
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            self.previous = {entry["destination"]: entry for entry in manifest["files"]}
         if self.journal_path.exists():
             for line in self.journal_path.read_text(encoding="utf-8").splitlines():
                 try:
@@ -435,7 +439,7 @@ class Migration:
         key = destination.relative_to(self.project).as_posix()
         old = self.previous.get(key)
         if old and old.get("converter") == CONVERTER and old.get("source_sha256") == self.source_hash(source) and old.get("action") == action and destination.is_file() and destination.stat().st_size == old["bytes"] and digest(destination) == old["sha256"]:
-            self.entries.append(old)
+            self.entries.append(dict(old, source=str(source), source_relative=source.relative_to(self.source).as_posix()))
             self.reused += 1
             return True
         return False
@@ -579,7 +583,7 @@ class Migration:
                     self.warnings["missing_font_mappings"].append(missing_font)
             self.output_json(path, self.assets / "data" / (name + ".json"), data, "static_lua_to_json")
             static_paths[name] = RESOURCE_ROOT + f"data/{name}.json"
-        catalog = {"schema_version": SCHEMA, "baseline": "installed", "fps": 30, "groups": groups, "exoskeletons": exoskeletons,
+        catalog = {"schema_version": SCHEMA, "baseline": "source_snapshot", "fps": 30, "groups": groups, "exoskeletons": exoskeletons,
                    "animations": RESOURCE_ROOT + "data/animations.json", "audio_directory": RESOURCE_ROOT + "kr1-desktop/sounds/files/",
                    "font_directory": RESOURCE_ROOT + "all-desktop/fonts/", "static": static_paths}
         atomic_bytes(self.assets / "catalog.json", json_bytes(catalog))
@@ -602,6 +606,11 @@ class Migration:
             originals = self.write_raw()
             textures, formats = self.write_media()
             metadata = self.write_metadata(textures)
+            live = {entry['destination'] for entry in self.entries}
+            for previous in self.previous.values():
+                target = (self.project / previous['destination']).resolve()
+                if previous['destination'] not in live and (target.is_relative_to(self.raw.resolve()) or target.is_relative_to(self.assets.resolve())) and target.is_file():
+                    target.unlink()
             source_entries = {entry["source_relative"]: {"bytes": entry["source_bytes"], "sha256": entry["source_sha256"]} for entry in self.entries}
             installed_index = StaticLua((self.source / "_assets/assets_index.lua").read_text(encoding="utf-8")).parse()
             missing_index = [key for key in installed_index if not (self.source / "_assets" / key).is_file()]
@@ -611,7 +620,7 @@ class Migration:
                      "font_files": sum(1 for entry in self.entries if entry["action"] == "copy_runtime_media" and Path(entry["destination"]).suffix in {".ttf", ".ttc", ".otf"}),
                      "original_bytes": sum(entry["bytes"] for entry in self.entries if entry["action"] == "copy_original"),
                      "runtime_bytes": sum(entry["bytes"] for entry in self.entries if entry["action"] != "copy_original")}
-            manifest = {"schema_version": SCHEMA, "converter": CONVERTER, "source_root": str(self.source), "baseline": "installed",
+            manifest = {"schema_version": SCHEMA, "converter": CONVERTER, "source_root": str(self.source), "baseline": "source_snapshot",
                         "statistics": stats, "files": self.entries, "source_snapshot": source_entries}
             verification = {"schema_version": SCHEMA, "status": "passed_with_source_warnings" if self.warnings else "passed",
                             "copied_file_hashes_verified": True, "all_dds_png_pixels_verified": True, "binary_structures_verified": True,
@@ -645,37 +654,18 @@ def write_summary(project: Path):
     report = json.loads((project / "reports/assets_verification.json").read_text(encoding="utf-8"))
     manifest = json.loads((project / "reports/assets_manifest.json").read_text(encoding="utf-8"))
     stats = report["statistics"]
-    warnings = report["source_warnings"]
-    atlas_warnings = sum(len(group["warnings"]) for group in warnings.get("atlas", []))
-    difference = report["newer_source_difference"]
-    lines = ["# Dove 素材搬运报告", "", "基准：已安装版本。原安装目录仅被读取，未移动或修改原文件。", "",
-             "| 项目 | 数量 / 大小 |", "| --- | ---: |",
-             f"| 原始素材与配套数据 | {stats['original_files']:,} 个文件 |",
-             f"| DDS → PNG | {stats['dds_textures']:,} 张 |", f"| OGG 音频 | {stats['ogg_files']:,} 段 |",
-             f"| 字体 | {stats['font_files']} 份 |", f"| 图集 / 图像帧 | {stats['atlases']:,} / {stats['frames']:,} |",
-             f"| 普通动画 / 组合动画文件 | {stats['animations']:,} / {stats['exoskeletons']:,} |",
-             f"| 中文 / 英文文案 | {stats['locales']['locale_zh-Hans']:,} / {stats['locales']['locale_en']:,} 条 |",
-             f"| 原始档案 | {stats['original_bytes'] / 1024**3:.2f} GiB |",
-             f"| Godot 资源（不含导入缓存） | {stats['runtime_bytes'] / 1024**3:.2f} GiB |", "",
-             "## 完整性", "",
-             f"- {len(manifest['files']):,} 个搬运/转换文件记录了来源、大小、SHA-256 和验证结果。",
-             f"- 全部 {stats['dds_textures']:,} 张 DDS 与 PNG 的解码 RGBA 像素逐张一致。",
-             f"- 安装包索引中的 {report['installed_index_entries']:,} 项外部素材均存在。",
-             "- 图集、动画和 EXO3 的结构、边界及内部索引经过校验。",
-             "- `assets_hash_check.log` 为独立目标哈希及原安装目录哈希复核结果。", "",
-             "## 安装版本原有数据提示", "",
-             f"- {len(warnings.get('atlas', []))} 组图集的 {atlas_warnings} 条边界提示：声明尺寸边缘存在 1 像素舍入差异；保留原始数据和 UV 换算。",
-             f"- {len(warnings.get('exo_missing_parts', []))} 份组合动画定义含未在图集中找到的部件名。",
-             f"- {len(warnings.get('animation_missing_frames', []))} 条普通动画定义含未解析帧引用。此项为全量静态检查，也可能包含原游戏未使用的定义。",
-             f"- {len(warnings.get('missing_font_mappings', []))} 个字体映射指向安装包未附带的字体；已附带的简体中文字体经独立验证。",
-             "- 上述情况来自原始安装数据，不是复制丢失；没有生成占位图、删掉引用或合并新版定义。完整明细见 `assets_verification.json`。", "",
-             "## 新版源码差异", "",
-             f"新版源码额外引用 {difference.get('missing_extensions', {}).get('.dds', 0)} 张 DDS 和 {difference.get('missing_extensions', {}).get('.ogg', 0)} 段 OGG，未混入安装版本。", ""]
-    for name in difference.get("missing_from_installed", []):
-        if name.endswith(".dds"): lines.append("- `" + name + "`")
-    lines += ["", "## 使用与 Godot 验证", "", "打开 `scenes/asset_preview.tscn` 后按 F6；完整命令及接口示例见 `docs/ASSETS.md`。",
-              "Godot 实际加载检查见 `godot_assets_verification.json`，预览截图见 `asset_preview_background.png` 和 `asset_preview.png`。",
-              "本阶段准备全量本地开发素材，未实现游戏玩法、组合动画渲染器或 Web 分包发布。", ""]
+    commit = (project / "source_assets/kingdom_rush_dove/current_version_commit_hash.txt").read_text(encoding="utf-8").strip()
+    lines = ["# Dove 当前素材快照", "", f"源提交：`{commit}`。源元数据与安装媒体只读同步，安装目录未修改。", "",
+             "| 项目 | 数量 |", "| --- | ---: |",
+             f"| 原始素材与配套数据 | {stats['original_files']:,} |",
+             f"| DDS → PNG | {stats['dds_textures']:,} |",
+             f"| OGG／字体 | {stats['ogg_files']:,}／{stats['font_files']} |",
+             f"| 图集／图像帧 | {stats['atlases']:,}／{stats['frames']:,} |",
+             f"| 普通动画／组合动画 | {stats['animations']:,}／{stats['composition_animations']:,} |", "",
+             f"清单包含 {len(manifest['files']):,} 份转换记录，保存来源、大小、SHA-256 和验证状态。",
+             "源数据引用与图集边界提示见 assets_verification.json；开放内容另行验证全部必需依赖。",
+             "全量素材用于本地开发，Web 仅发布关卡、地图与英雄房间 manifest 所需资源。",
+             "运行与资源访问说明见 docs/ASSETS.md。", ""]
     atomic_bytes(project / "reports/ASSET_REPORT.md", "\n".join(lines).encode("utf-8"))
 
 

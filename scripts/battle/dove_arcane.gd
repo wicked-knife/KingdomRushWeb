@@ -46,7 +46,7 @@ static func step(sim, tower: Dictionary) -> void:
 							var effective = base_time if enemy.hp < base else base_time + (enemy.hp - base) / (upper - base) * (cooldown - base_time)
 							state.timestamps[index] -= sim.frames(cooldown - effective)
 					var from: Vector2 = tower.pos + sim.vec(attack.bullet_start_offset)
-					sim._projectile(attack.bullet, enemy.id, from, enemy.pos, float(sim.templates[attack.bullet].ray_duration))
+					sim._projectile(attack.bullet, enemy.id, from, enemy.pos, float(sim.templates[attack.bullet].ray_duration), tower)
 					sim.projectiles[-1].source = tower.id; sim.projectiles[-1].level = maxi(1, int(tower.powers.disintegrate))
 		if sim.tick < cast.end: return
 		state.casting = {}; state.resume = (int(cast.order) + 1) % 3
@@ -80,10 +80,10 @@ static func projectile(sim, p: Dictionary, bullet: Dictionary) -> void:
 	p.sprite_scale = Vector2(p.from.distance_to(p.to) / float(sim.templates[p.template].image_width), 1)
 	if not p.get("applied", false):
 		p.applied = true
-		sim.modifiers.apply(sim, bullet.mod, target, int(p.get("level", 1)), str(p.get("source", "")))
+		sim.modifiers.apply(sim, bullet.mod, target, int(p.get("level", 1)), str(p.get("source", "")), -1, float(p.get("damage_factor",1.0)))
 	if sim.tick - p.at >= p.duration: p.done = true
 
-static func apply(sim, template: String, target: Dictionary, level: int, source: String) -> bool:
+static func apply(sim, template: String, target: Dictionary, level: int, source: String, damage_factor: float = 1.0) -> bool:
 	var t: Dictionary = sim.templates[template]
 	var role = sim.behaviors.role(template)
 	if not sim.modifiers.flags_match(sim, target, t.modifier): return false
@@ -91,7 +91,7 @@ static func apply(sim, template: String, target: Dictionary, level: int, source:
 		if existing.target == target.id and existing.template == template and existing.level >= level and not t.modifier.get("allows_duplicates", false): return false
 	var item = {"template": template, "target": target.id, "level": level, "source": source, "born": sim.tick, "at": sim.tick, "state": "", "prefix": "", "scale": Vector2.ONE, "phase": "loop", "visible": true, "special": role}
 	if role == "arcane_damage":
-		var raw = sim.rng.randi_range(int(t.dps.damage_min), int(t.dps.damage_max))
+		var raw: float = sim.rng.randi_range(int(t.dps.damage_min), int(t.dps.damage_max)) * damage_factor
 		var cycles = roundi(float(t.modifier.duration) / float(t.dps.damage_every))
 		var extra = maxf(0, raw - target.hp)
 		var damage = floorf((raw - extra) / cycles)
@@ -100,7 +100,7 @@ static func apply(sim, template: String, target: Dictionary, level: int, source:
 	elif role == "teleport":
 		if int(target.get("teleport_count", 0)) >= int(t.max_times_applied): return false
 		target.teleport_count = int(target.get("teleport_count", 0)) + 1
-		sim.damage(target, float(t.damage_base) + float(t.damage_inc) * level, int(t.damage_type))
+		sim.damage(target, (float(t.damage_base) + float(t.damage_inc) * level) * damage_factor, int(t.damage_type))
 		target.stun_count = int(target.get("stun_count", 0)) + 1
 		item.phase = "start"; item.next = sim.tick + sim.frames(t.delay_start)
 		unit_effect(sim, t.fx_start, target)

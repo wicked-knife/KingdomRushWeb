@@ -1,125 +1,26 @@
-# Dove 素材使用说明
+# Dove 素材与源数据
 
-资源基准是本机已安装的 Dove 版本：`D:\王国保卫战Dove版\KingdomRushDove`。
-`D:\projects\KingdomRushDove` 提供同版本源码，用于后续玩法迁移与资源依赖核对。
-原安装目录始终只读；所有操作都是复制和生成新文件。
+基准为 [复刻指南](GODOT_WEB_REMAKE_GUIDE.md) 所列当前最新源码，机器配置在 `data/campaign_content.json.source`。源码 `D:/projects/KingdomRushDove` 提供 Lua、布局、动画、声音索引和翻译；本机安装 `D:/王国保卫战Dove版/KingdomRushDove` 提供未跟踪的 DDS、OGG、字体等媒体。安装目录始终只读。
 
-### 空音频的 Godot 兼容处理
-
-原始 `kr6_sfx_ambiance_terrain3_var3_v1.ogg` 与 `Sound_MapRoad.ogg` 都是零时长 Vorbis。
-Godot 4.7.2 原生编辑器为它们生成音频波形预览时，会反复出现 `ran out of packets in stream` 和 `mixed < 0`，造成打开项目后无响应。
-运行资源中的这两段音频转换为同采样率、同声道的 10 ms 静音；原安装文件和 `source_assets` 快照保持原样。
-转换器会自动处理零时长 Vorbis，并在清单中记录 `empty_ogg_to_silence_v1`、来源哈希及实际输出哈希，重新导入不会把问题带回来。
-
-已有资源库可执行 `python tools/import_dove_assets.py --repair-empty-audio`，只修复空音频并同步资源清单与检查点。
-需要重新生成时先安装 `tools/requirements.txt` 中的 SoundFile。运行游戏与编辑器无需安装 Python 音频库。
-Godot 解码回归检查：`--headless --path . --script tests/verify_audio_compat.gd`。
-
-当前资源快照为 **2.1.0.2**（2026-10-25 同步），安装版本与源码 HEAD 均为 `e29ece82939fd73fb69bfc4b469d484a72e4dfd2`。同一版本号下仍有后续提交，迁移时同时锁定版本与提交。
-
-本次更新了 `go_enemies_T2-1`、`go_enemies_spiders-1` 两张 DDS 及对应图集元数据，已重新生成 Godot PNG 和图集 JSON；另同步 78 份关卡脚本。未新增音频、字体、图集或 EXO。源码还包含哨兵修复、数值调整、塔技能升级回调与辅助函数整理，详见复刻指南 1.2.1 和 `reports/assets_sync_summary.json`。
-
-## 后续复刻指导
-
-首关已新增受控派生资源：`data/level01/` 包含布局、模板、路径、地形、波次、依赖清单和 6 张 2048² 图集。含四类二级塔测试资源后，1358 个运行帧 ID、96 段动画与 49 个音频文件通过独立 manifest 导出，原素材库保持完整。生成、像素及哈希校验方法见 [首关交付报告](LEVEL01_DELIVERY.md)；四类二级塔只在[独立测试场](TOWER_UPGRADES_DELIVERY.md)开放。
-
-源码阅读索引、Godot 架构、数据迁移规则、Web 分包、阶段任务和验收清单见 [Godot Web 复刻指导文档](GODOT_WEB_REMAKE_GUIDE.md)。指南统一以 `2.1.0.2` 及上述提交为唯一基准，覆盖该版本的完整玩家玩法、配套资源与验收要求。
-
-## 目录
-
-| 目录 | 内容 |
-| --- | --- |
-| `source_assets/kingdom_rush_dove/` | 原始 `_assets`、游戏与界面配套数据、版本信息；由 `.gdignore` 排除导入和导出 |
-| `assets/kingdom_rush/` | Godot 使用的 PNG、OGG、TTF/OTF/TTC、JSON 和资源目录索引 |
-| `scripts/dove_asset_catalog.gd` | `DoveAssetCatalog`，按需读取元数据和纹理 |
-| `scenes/asset_preview.tscn` | 独立素材预览场景，用 F6 运行，无须修改项目主场景 |
-| `reports/` | 搬运清单、完整性校验、来源核对与 Godot 检查结果；不导入游戏 |
-
-原始文件包括 582 张 DDS、3,899 段 OGG、8 份字体、490 份 KRAB 图集，以及 1,021 份 EXO3 组合动画。
-转换保留图集，不把十几万帧拆成独立 PNG。
-
-## 导入与验证
-
-在项目根目录的 PowerShell 中执行：
+## 同步与验证
 
 ```powershell
-python -m pip install -r tools/requirements.txt
-python tools/import_dove_assets.py
-```
-
-本机已经安装 Pillow 13.0.0，无须重复安装。指定其他安装目录：
-
-```powershell
-python tools/import_dove_assets.py --source 'D:\王国保卫战Dove版\KingdomRushDove'
-```
-
-工具逐项写入本地检查点 `reports/assets_migration_state.jsonl`（不提交 Git）；中断后执行同一个命令即可继续。只有来源哈希、转换器版本、目标大小和目标哈希都匹配的文件才会跳过。
-582 张 DDS 转换时逐张解码为 RGBA，再重新读取 PNG 比较像素，覆盖 DXT1、DXT5 和 BC7。
-原始文件、OGG 和字体通过 SHA-256 核对。不会启动或执行原游戏 Lua。
-
-本机游戏更新后，先拉取参考源码，再同步安装目录中的资源：
-
-```powershell
-git -C D:\projects\KingdomRushDove pull --ff-only
-python tools/import_dove_assets.py
-```
-
-源码拉取不会更新本机安装包；导入时始终以已经更新完成的游戏安装目录为准。
-当前资源包含奥术幻铸师（`go_towers_forger`）、哨兵瞭望塔（`go_towers_sentry`）的图集、音频及组合动画；中英文文案各为 9,573 条。
-当前资源总量与校验结果见 `reports/assets_manifest.json`、`reports/assets_verification.json` 和 `reports/verification_summary.json`。
-
-```powershell
+python tools/sync_dove_assets.py
 python tools/import_dove_assets.py --verify-only --check-source
-python -m unittest discover -s tests -p 'test_*.py' -v
-& 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --headless --path . --editor --import --max-fps 30
-& 'D:\godot\Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script tests/verify_godot_assets.gd
 ```
 
-首次 Godot 导入会生成较大的 `.godot` 缓存。图片默认使用 Godot 的 2D 无损导入设置，不缩小原图；字体支持中文 TTC。
-转换期间可能暂时存在 `assets/kingdom_rush/.gdignore`，用于防止编辑器扫描尚未完成的素材；成功完成转换后才移除。
+同步器验证源码 HEAD 与目录一致且工作区干净，将 Git 当前元数据放入忽略的 `output/dove_assets_<commit>`，补充安装目录的媒体，再运行统一转换器。已安装媒体通过只读硬链接暂存；覆盖源元数据前先解除已有链接，不会写入安装文件。删除不再受源清单管理的生成文件仅限受管 raw／assets 目录，不删除用户数据。
 
-## 访问图片与动画
+原始快照保存在 `source_assets/kingdom_rush_dove`，运行资源在 `assets/kingdom_rush`，清单与完整性信息在 `reports/assets_manifest.json`、`assets_verification.json`。关卡／地图／英雄房间另生成裁剪后的图集与 manifest，发布仅收集其依赖。不要把整个本地素材库打入 Web 包。
 
-```gdscript
-var assets := DoveAssetCatalog.new()
-var frame := assets.get_frame("go_towers_group4", "soldier_lvl4_barbarian_0003")
-$Sprite2D.texture = frame["texture"]
+空 Vorbis 音频在运行资源中转换为同采样率、同声道的 10 ms 静音，原始快照保持原样，清单记录 `empty_ogg_to_silence_v1` 与双方哈希；可用 `python tools/import_dove_assets.py --repair-empty-audio` 专门修复。Godot 编辑器不应加载原始零时长 OGG。
 
-var animation := assets.get_animation("soldier_barbarian_running")
-# animation["fps"] == 30；animation["frames"] 是有序帧名，可逐帧交给 get_frame。
+## 访问与坐标
 
-var composition := assets.get_exoskeleton("archer4Def")
-var sound := assets.get_sound("AmazonTaunt")
-$AudioStreamPlayer.stream = load(sound["paths"][0])
-$AudioStreamPlayer.play()
+`DoveAssetCatalog` 提供 `get_frame(group,name)`、`get_animation(name)`、`get_exoskeleton(name)`、`get_sound(name)` 与 `get_static(name)`。帧返回纹理、实际 region、source_region、logical_size、original_size、trim 和 ref_scale。同名帧可能分属不同组，必须携带分组。
 
-var chinese := assets.get_static("locale_zh-Hans")
-var font_rules := assets.get_static("fonts")
-assets.clear_cache()
-```
+裁切区域按高清 DDS 实际尺寸与源声明尺寸之比转换；逻辑尺寸不变。显示要恢复原画布与 trim，不能将裁切纹理大小直接用作游戏尺寸。普通动画为 30 FPS，重复帧和倒序保留；EXO 共享帧索引从 0 开始，部件／挂点仍以标注的 1-based 索引保存。
 
-`get_frame()` 返回 `texture`（AtlasTexture）、`region`（实际纹理像素区域）、`source_region`、`logical_size`、`original_size`、`trim` 和 `ref_scale`。
-`Sprite2D.texture` 示例用于观察裁切；还原游戏坐标时应使用逻辑尺寸、裁切偏移和缩放，不能把物理纹理大小直接当作游戏尺寸。
+原数据缺失引用、图集边缘舍入和字体映射问题保留于校验报告。开放内容遇到必需媒体或行为缺失必须失败，不生成占位资源掩盖。英雄房间动态技能文本由当前源表达式格式化器求值；未支持的战斗机制不因拥有素材而视作已经实现。
 
-部分高清 DDS 的实际尺寸与原版图集声明尺寸不同。实际裁切区域按以下方式换算，逻辑尺寸不改变：
-
-```text
-region.x / region.width 乘以 actual_texture_width / declared_texture_width
-region.y / region.height 乘以 actual_texture_height / declared_texture_height
-```
-
-不同组可以拥有同名帧，因此必须同时指定分组和帧名。图集中的别名保留；元数据和纹理按调用加载，`clear_cache()` 释放目录持有的引用，调用者仍持有的纹理保持有效。
-
-## 数据约定与边界
-
-- JSON 的 `schema_version` 为 1，普通动画默认 30 FPS，倒序和重复帧保留。
-- EXO3 的 `frames` 保存去重的组合帧，`animations` 中的共享帧引用已转为从 0 开始；部件/挂点记录中的索引仍从 1 开始，并在字段名标明。
-- 每条组合记录依次为：`type, index_1_based, alpha, x, y, scale_x, scale_y, rotation, skew_x, skew_y`；type 1 为图像部件，type 8 为挂点。
-- 中英文文本中的 `%$...%$` 和 `%s` 等占位符保留，不计算伤害、等级或其他游戏数值。
-- 原版已有的图集舍入边界、缺失引用等问题记录在 `assets_verification.json`，不生成占位图掩盖缺失。最终统计以报告为准。
-- 奥术幻铸师和哨兵瞭望塔共有 11 条源数据动画引用提示：部分单帧动画引用带 `_0001` 的帧名，图集中对应静态图名不带编号。原始图像、帧名和动画定义均已保留，未自动改名；迁移核对方式见复刻指南附录 B。
-- 当前安装包已包含 `2.1.0.2` 源码索引中的全部素材，安装索引中的 4,497 个外部素材全部存在；源定义引用告警仍按校验报告逐项核对。
-- 关卡中需要执行逻辑的 Lua、英雄房间动态文本脚本和 LÖVE 着色器保存在原始档案，后续移植对应功能时再改写。本阶段不提供玩法和组合动画渲染器。
-
-后续 Web 导出时，保持兼容渲染器；导出预设需包含通过 FileAccess 动态读取的 `assets/kingdom_rush/**/*.json`（也可在非资源包含过滤器中使用 `*.json`）。
-本次资源是全量本地开发素材，未生成整个游戏的 Web 发布包；分包、加载策略和压缩优化属于后续工作。
+导出后用 `tools/verify_level01_assets.py --level N` 校验源输入哈希、全部动画／音频引用与重打包像素。运行时不依赖安装目录和转换工具。

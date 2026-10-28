@@ -18,7 +18,9 @@ func dismiss(sim) -> void:
 func run() -> void:
 	var samples := {}
 	var baseline: Dictionary = Levels.read_json("res://tests/fixtures/content_combat_baseline.json")
-	check(not baseline.is_empty(), "pre-migration combat baseline exists")
+	var record_current := OS.get_cmdline_user_args().has("--record-current")
+	check(not baseline.is_empty(), "current combat snapshot exists")
+	if not record_current: check(baseline.get("source",{}).get("commit","") == Levels.catalog().source.commit, "combat snapshot uses current source")
 	var expected_timelines: Dictionary = Levels.read_json("res://tests/fixtures/content_timelines.json")
 	check(expected_timelines.size() == 15, "all pre-migration mode timelines exist")
 	check(not Levels.supports(7) and not Levels.supports(1, 1, 3), "preview and unsupported difficulty remain unavailable")
@@ -71,7 +73,10 @@ func run() -> void:
 				var state := [sim.tick,sim.gold,sim.lives,sim.kills,sim.leaks,sim.rng.state,sim.towers,sim.enemies,sim.soldiers,sim.projectiles,sim.modifiers.active,sim.eggs,sim.spawn_log]
 				hashes.append(var_to_str(state).sha256_text())
 		samples[str(id)] = hashes
-		check(hashes == baseline.get("samples", {}).get(str(id), []), "combat state matches pre-migration baseline %d; first differing sample %d" % [id, first_difference(hashes, baseline.get("samples", {}).get(str(id), []))])
+		if not record_current: check(hashes == baseline.get("samples", {}).get(str(id), []), "combat state matches current snapshot %d; first differing sample %d" % [id, first_difference(hashes, baseline.get("samples", {}).get(str(id), []))])
+	if record_current and failures.is_empty():
+		var snapshot := FileAccess.open("res://tests/fixtures/content_combat_baseline.json",FileAccess.WRITE)
+		snapshot.store_string(JSON.stringify({"source":Levels.catalog().source,"samples":samples},"\t")); snapshot.close()
 	var timeline_file := FileAccess.open("res://reports/content_timelines.json", FileAccess.WRITE)
 	timeline_file.store_string(JSON.stringify(timelines)); timeline_file.close()
 	var report := {"passed":failures.is_empty(),"checks":checks,"combinations":15,"timeline_waves":timeline_waves,"timeline_entries":timeline_entries,"timeline_report":"reports/content_timelines.json","combat_scenarios":3,"combat_ticks":3600,"samples":samples,"failures":failures}

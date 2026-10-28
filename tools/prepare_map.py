@@ -10,7 +10,7 @@ import subprocess
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = "e29ece82939fd73fb69bfc4b469d484a72e4dfd2"
+from dove_source import BASE, VERSION
 
 
 def write(path, value):
@@ -31,7 +31,7 @@ def prepare(source, love):
     data = json.loads(evaluated.read_text(encoding="utf-8"))
     inputs = set(data.pop("inputs")) | {"all-desktop/screen_map.lua", "kr1-desktop/map_decos_functions.lua", "kr1/game_settings.lua", "all/systems/level.lua", "all/utils.lua"}
     data.update(schema_version=1, generation=1, reference_size=[1920, 1080])
-    data["source"] = {"version": "2.1.0.2", "commit": BASE, "inputs": {p: hashlib.sha256((source / p).read_bytes()).hexdigest() for p in sorted(inputs)}}
+    data["source"] = {"version": VERSION, "commit": BASE, "inputs": {p: hashlib.sha256((source / p).read_bytes()).hexdigest() for p in sorted(inputs)}}
     gs = (source / "kr1/game_settings.lua").read_text(encoding="utf-8")
     ranges = re.search(r"GS\.level_ranges1\s*=\s*(\{[^\n]+)", gs)[1]
     data["level_ranges"] = [list(map(int, re.findall(r"\d+", r))) for r in re.findall(r"\{([^{}]+)\}", ranges)]

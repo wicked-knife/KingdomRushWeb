@@ -8,7 +8,7 @@ function love.load()
   local V=require("lib.klua.vector");local json=require("lib.json");local bit=require("bit")
   local function read(path) local f=assert(io.open(root.."/"..path,"rb"));local t=f:read("*a");f:close();return t end
   local function eval(path) local f=assert(loadstring(read(path)));setfenv(f,{v=V.v});return f() end
-  local result={source_commit="e29ece82939fd73fb69bfc4b469d484a72e4dfd2",layout=eval("kr1/data/levels/level06_data.lua"),modes={},timelines={},rays={}}
+  local result={source_commit=json.decode(assert(io.open(assert(os.getenv("DOVE_CATALOG")),"rb")):read("*a")).source.commit,layout=eval("kr1/data/levels/level06_data.lua"),modes={},timelines={},rays={}}
   local wave_source=read("all/systems/wave_spawn.lua")
   local body=assert(wave_source:match("local function spawner%(store, wave, group_id%)(.-)\nfunction wave_spawn:init"))
   body=body:gsub("\nend%s*$","")

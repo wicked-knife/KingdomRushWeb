@@ -1,7 +1,7 @@
 {
   "source": {
-    "version": "2.1.0.2",
-    "commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2"
+    "version": "2.1.0.3",
+    "commit": "1a863df00b08f6bf1018ae0b0e7e4e106b939082"
   },
   "definitions": {
     "level01": "713526acf2bbf8cb13c7eaad258433fc75df00eb5dbef0cb54322ffbc080173c",
@@ -100,12 +100,12 @@
     }
   },
   "sources": {
-    "level01": "3b6c5d56d7842d19006ed26091bf993b1f3d87e532595a533c5d43065e4ab2db",
-    "level02": "d2d30fec25539a416e9753ca6c9f37e970ddb52cc47826179c86f67c4326913a",
-    "level03": "6163856188be8f3dcbaf29da72cc200aa481fd7ce4fe02b4d48b25b0fa972b67",
-    "level04": "f7cebcb941be7bc5656bd83eb5fd30fd226c2433be53979ba24c5b75ab290e0b",
-    "level05": "10d5a7153c71eb52ecfe915c75ab63c960f6fcd971ac62575e755998ec7f5437",
-    "ranger_arena": "fa3aacd9a55b2d358dc0c88a1432d83f0fd2d0311df707909fb12b8e8e9d4853"
+    "level01": "ea5b2e97b415b15a6f21ce8141d55deee195e2b491ebbbebc667287d2793581b",
+    "level02": "4e4e05096b2215b012249d1b547a4d6c73c76b5175d1d6cd877791a7190672ff",
+    "level03": "088ddcc9ceadedc325c1605c93a6c38b6583976a647ab4a7eba53ee0badde540",
+    "level04": "9e84b04c046890b75e98b16d9e09ce674b728db6a43ee52617fa5b5eecba7bc3",
+    "level05": "e8c82962fa2e24574d328a3b920c5ccafe95ed7775be75b8837e9d8d1dcab022",
+    "ranger_arena": "ba0e434f827fc0a1fb417a923eb9edb941642e2bccb4274cb21e24e85ea410f2"
   },
   "resource_files": {
     "data/level01/animations.json": "920a6eec2e0cc09736dbfb46581186ddc62c20fc896bd48e7e3ed77f468632cd",
@@ -117,7 +117,7 @@
     "data/level01/atlas_4.png": "2d4e54b2bac4c924cb139e15951f451a57894e110c8a520957e263743f107c3f",
     "data/level01/atlas_5.png": "0ec974ccba7a21202dd1ebfb38ea42c2f5af7aaa54c74fd9e75d00bf362a48cc",
     "data/level01/catalog.json": "db932e04b1b115568effd6a74448c77cf1a09711381df9f9c8d9bdc3644c6ddc",
-    "data/level01/manifest.json": "e25a21fabbdc4523d1de307222497c8dcd38ef5b408eecbb5cd56228426e3c94",
+    "data/level01/manifest.json": "b37abe09c0ab0c451409df5e9ba450b41d47eb66eab54915f900bed59b13ffd9",
     "data/level01/sounds.json": "ea38e8f518ee5f6fcc7db56e02539597a90b4798abafe4b07bbc86d9125154d1",
     "data/level02/animations.json": "debc1868bb70e2b95cc215b35e6d8d5d1ca09e8ba3cbdc9c076f6260395f7818",
     "data/level02/atlas.json": "4bf07632dd48f95148b9a8725d8c5e95828efeb93a36c47fcf04104080e9b4e9",
@@ -128,7 +128,7 @@
     "data/level02/atlas_4.png": "097b5d78a84bd33194c381827b85ff0ac9db317430b34cce6877194a5f6cdae7",
     "data/level02/atlas_5.png": "e0e52c6047d9b7a7c0d018f2980f81ed113ad6ca78b530bf0ef93b4229227116",
     "data/level02/catalog.json": "29218d6db51a25498c94cf4c073fbc03fe5494b1ce922dcd0d049f8a9d8d0b9c",
-    "data/level02/manifest.json": "fdb8d1ba860cc1fec3c69dcbabb40bb2644e7b14eb9baea9773c2fe1a21eed1c",
+    "data/level02/manifest.json": "1ecf73757a7b16f66bf2812c532b503e94946f94fd7d2603948bea6f69101a7d",
     "data/level02/sounds.json": "d47e4dae8b8a1d545a96ae34d1475bf57fd13ca4f42636aafe3676bb9d3bdabe",
     "data/level03/animations.json": "5c2a1b4c826e16f9a4b86694d35d5888ae5b061dc746b3dde088fdaf937a9d62",
     "data/level03/atlas.json": "71fda25949d0e292f201082ef9d77d8912350e7a32d3106572e8c063dd0369d4",
@@ -140,7 +140,7 @@
     "data/level03/atlas_5.png": "f3fb336bfa473d8b6728fd83359012123561012225226492da0ddf530ab35870",
     "data/level03/atlas_6.png": "8560df502c6b24e3d19eb47d972f1bab7243c30c6a2228002ad71d03d425e61d",
     "data/level03/catalog.json": "b1dcf0cccac08b8d415e7b31c9fa854126e688f4fcfaea6896801f334660ef69",
-    "data/level03/manifest.json": "e1c9c918ff01df60c615cf1435412474ec5c81e6458f7a50747c3bf0a47dc397",
+    "data/level03/manifest.json": "1c77972ae6ae01400bff0366ca5a0bd2833d4bf1b5480a3fc010a7237183f8da",
     "data/level03/sounds.json": "0c48aa6be99489c5c8fba1a82f376e42471133b0226ebeb35ebdf6ca6f1a5ef0",
     "data/level04/animations.json": "15d584aa737e9256eb46d105711b5b5fb38e613d4c814a2a35fb506bcd21bd02",
     "data/level04/atlas.json": "c2067f51c8c6c0bdcf042743da97f947b3d3d5bbaf07284b5251b76fabcfaa9c",
@@ -153,7 +153,7 @@
     "data/level04/atlas_6.png": "866aacc2eb932e07f451f44d20acd5c2e6e01b86569b04929d5ead7b9781abdb",
     "data/level04/atlas_7.png": "e59b2f0bd57145dedf7fbc541bc9b8999732bc9a25180c11ec74b2d88e5c2bb6",
     "data/level04/catalog.json": "261e6e6979e80c2075bdb219ff98d8978973dbae843c7aecf5c532c69e199a4f",
-    "data/level04/manifest.json": "9c818b24ea3669876fff148c3b02c849b0ef3037823c9ba0b43ca75126e20ef9",
+    "data/level04/manifest.json": "ed75bb36baf2af32934ab88ad3aee1ab068b16254e89e6e96b2c43f89b5de9c4",
     "data/level04/sounds.json": "9d755ba5aa3a244aae7f9aca967270e1239e7ea9f1fadde5f3ceb8a58ced4344",
     "data/level05/animations.json": "f961fd4810373be0efec1abc301c4e60c158400ea37b6610d1e3027b1bb5ef39",
     "data/level05/atlas.json": "5ef4e0a610a03fb23151152e595f77931cffb915dd42d939f2f10716dd18e7ca",
@@ -167,7 +167,7 @@
     "data/level05/atlas_7.png": "4a79c9384991e05da689a6abdf411f732e51bf0bcff9503c4436aa4e4cc8b599",
     "data/level05/atlas_8.png": "e59b2f0bd57145dedf7fbc541bc9b8999732bc9a25180c11ec74b2d88e5c2bb6",
     "data/level05/catalog.json": "c51fe4d257ecd801f99324c5e1d2c6c3a8974421947cc5b3a777c3394aba3cd7",
-    "data/level05/manifest.json": "644bc69dc555d752217c9e800c1c0871bf07f260d3d1d5aae9869c02f92329c3",
+    "data/level05/manifest.json": "1fad2e0db7542c16ac6e94f1300528276340eb9d13a42499ad4516493f5fdb3b",
     "data/level05/sounds.json": "75a3fe917c885a7bec7291d57a461e8e4a1dfadca53d345724277d51f29dc644",
     "data/ranger_arena/animations.json": "a777861d95b271eeb0c57963bb3f1eb5559e290fff854f5b780308d685762607",
     "data/ranger_arena/atlas.json": "869c53ea39fd46418049abd4cf481eda7cf0625354864d3be04b0adcc4d09e6d",
@@ -180,7 +180,7 @@
     "data/ranger_arena/atlas_6.png": "ba31ed2ced3043f8a2fe8f2f4b3f75b9dd06ad870217a4cfde4335f31a2e6e42",
     "data/ranger_arena/atlas_7.png": "0ec974ccba7a21202dd1ebfb38ea42c2f5af7aaa54c74fd9e75d00bf362a48cc",
     "data/ranger_arena/catalog.json": "e8430a8656eb91084869853b5e1ee28007eda0ae52ec48efa04ee1198f610c72",
-    "data/ranger_arena/manifest.json": "d619b3c247848e009b406e1c0525c139ec10d84b7c278426fef20bd0893fa1f4",
+    "data/ranger_arena/manifest.json": "e4e62ab3e50780be2035ac74d01bd00860ac909afdee07eb8c4e906c14aa7356",
     "data/ranger_arena/sounds.json": "6bd002972e3544c5159a77e01e3c32ee6e311e56ef075e17c3d4d5e7e56cd341"
   }
 }

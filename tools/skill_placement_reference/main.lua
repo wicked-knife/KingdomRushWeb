@@ -32,7 +32,7 @@ function love.load()
     return chunk()
   end
   local can_fire, can_troops = compile(fire), compile(troops)
-  local result = {source_commit="e29ece82939fd73fb69bfc4b469d484a72e4dfd2", expressions={fire=fire, reinforcements=troops}, levels={}}
+  local result = {source_commit=json.decode(assert(io.open(assert(os.getenv("DOVE_CATALOG")),"rb")):read("*a")).source.commit, expressions={fire=fire, reinforcements=troops}, levels={}}
   local resolve_rally
   if rally_only then
     local utils_file = assert(io.open(source .. "/all/utils.lua", "rb"))
