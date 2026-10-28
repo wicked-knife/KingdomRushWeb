@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "source_dds": "D:\\王国保卫战Dove版\\KingdomRushDove\\_assets\\kr1-desktop\\images\\fullhd\\go_towers_group2-1.dds",
+  "source_sha256": "a0a0f4103e900ea5e86fa4e50bcdba92a118d3eab2592000d1aa54e8bccde32b",
+  "frames_checked": 12,
+  "range": "elfSoldier_0025..0036",
+  "comparison": "direct Dove DDS pixels against current packed atlas crops",
+  "first_difference": null
+}

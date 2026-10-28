@@ -2,6 +2,8 @@
 
 实施日期：2026-10-28。源基准为 Dove `2.1.0.2`，冻结提交 `e29ece82939fd73fb69bfc4b469d484a72e4dfd2`。第六关功能先提交为 `5490ef9`；本批在该基线上修正共用表现与输入，覆盖前六关和游侠测试场。固定普通难度、无英雄参战、零科技，第七关保持预览。
 
+八项 UI 修正的历史交付提交为 `d9541eb`，`reports/battle_ui_delivery.json` 保留该批回执。随后补修精灵／暗影弓箭手射箭动画，共用 UI 报告与 Web 包已重新验证更新；最新小修回执见 `reports/ranged_animation_delivery.json`，原因与源版确认见 [精灵营地说明](LEVEL05_ELF_DELIVERY.md)。
+
 ## 本次行为
 
 | 项目 | 完成内容 |

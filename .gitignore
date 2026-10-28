@@ -92,3 +92,7 @@ __pycache__/
 !/reports/battle_ui_1024x768.json
 !/reports/battle_ui_assets.json
 !/reports/battle_ui_delivery.json
+!/reports/ranged_animation_logic.json
+!/reports/ranged_animation_native.json
+!/reports/ranged_animation_source.json
+!/reports/ranged_animation_delivery.json

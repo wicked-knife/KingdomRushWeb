@@ -159,8 +159,8 @@
   },
   "pck_files": 649,
   "bundle": "build\\KingdomRush-KR1-Levels01-06-Web.zip",
-  "bytes": 168033126,
-  "sha256": "9a43dc6e3229ef22357d2e1ef87c3aed49914c8bf8deac83a3b1fb2fc4ab7c49",
+  "bytes": 168033222,
+  "sha256": "54b7233429d7d5095d50258bf1e0d5bb09bf99818920cd53484ebfdf01eb3730",
   "web_files": {
     "index.apple-touch-icon.png": {
       "bytes": 11939,
@@ -176,7 +176,7 @@
     },
     "index.html": {
       "bytes": 3146,
-      "sha256": "ef854a3322d8ed4dd95aaa2b463a45508188fe6c49d74e1fde8f965f16ee67e4"
+      "sha256": "7ba83bb018e2af2b5a9c0ff917ce3ddaf69fac097c9f7c6109fa44cda59a009f"
     },
     "index.icon.png": {
       "bytes": 5765,
@@ -187,8 +187,8 @@
       "sha256": "33c94cb3175f3333b82e2a3be5e8e86f77986f0aa2042b1631f6367a4e5bb6ba"
     },
     "index.pck": {
-      "bytes": 166908740,
-      "sha256": "e342c55177ca4241ba9ec2c977bcaf5bdcf8c4bf89d7db8e429b94f3b97b00cd"
+      "bytes": 166908804,
+      "sha256": "f3deb92eb7989cf045350130b3cc218a82d33ed3d639104b618bd9d4d214020a"
     },
     "index.png": {
       "bytes": 21443,
@@ -200,7 +200,7 @@
     },
     "export_receipt.json": {
       "bytes": 3707,
-      "sha256": "844ced2838fb9b80360f9041fad2ca7b34ee5bb4c0a9160287f3651975ae53aa"
+      "sha256": "3911cc3241dc08424c4b57804a45e4bcfcf5ae66960d1867369a73b6c6642066"
     },
     "README.txt": {
       "bytes": 4420,

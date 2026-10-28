@@ -283,7 +283,8 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 				playback.state = layer.idle; playback.elapsed -= length; playback.loop = true
 		elif state != "":
 			playback.loop = state not in ["attack", "attack2", "holystrike", "healing", "death", "play", "shoot", "heal", "jump", "small", "medium", "large"]
-			if sprite.has("angles") and state == "shoot": playback.state = "shootingUp" if up else "shootingDown"
+			var shoot_angles: Array = sprite.get("angles", {}).get("shoot", [])
+			if state == "shoot" and not shoot_angles.is_empty(): playback.state = shoot_angles[0 if up else mini(1, shoot_angles.size() - 1)]
 			if state in ["attack", "attack2", "holystrike", "healing"] and int(playback.elapsed) >= SpriteAnimation.duration(animations, SpriteAnimation.key(sprite, state)):
 				playback.state = "idle"; playback.loop = true
 		if runtime.has("playback_loop"): playback.loop = runtime.playback_loop

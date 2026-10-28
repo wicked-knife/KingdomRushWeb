@@ -1,0 +1,107 @@
+{
+  "passed": true,
+  "date": "2026-10-28",
+  "baseline_commit": "d9541eb",
+  "source_version": "2.1.0.2",
+  "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+  "cause": "Shared renderer treated any angles table as directional shooting. Elf and shadow archer only declare walk angles, so nonexistent shootingUp/Down fell back to idle.",
+  "fix": "Read only angles.shoot and use its declared names; preserve plain shoot when the group has no directional aliases.",
+  "runtime_sha256": "e0e90078e2a4d19c65c40fff425773bd1d95b2db0723dccba2b81a8f4f2dd2e6",
+  "test_sha256": "f3fe5295865c97d7c030ccc7c6c943d361c19404d72db169b2fd650daab8e6d0",
+  "source_references": [
+    "all/utils.lua:610 (animation_name_for_angle)",
+    "all/script_utils.lua:1592 (y_soldier_do_ranged_attack)",
+    "kr1/barrack_towers.lua:289 (soldier_elf)",
+    "kr1/data/game_animations.bin (soldier_elf_shoot)"
+  ],
+  "targeted_checks": {
+    "independent_scenarios": 2,
+    "per_run_assertions": 83,
+    "rendered_source_frame_samples": 24,
+    "native_capture_stages_per_facing": [
+      0,
+      4,
+      6,
+      7,
+      11
+    ],
+    "native_visually_reviewed": true,
+    "direct_dove_dds_frames_compared": 12,
+    "first_frame_difference": null,
+    "unchanged_shoot_tick": 7,
+    "unchanged_bullet_start_offset": {
+      "right": [
+        4,
+        16
+      ],
+      "left": [
+        -4,
+        16
+      ]
+    },
+    "coverage": "Both elf facings, normal and cripple arrows; no draw RNG mutation; source idle return; shadow archer shoot and tower up/down shooting"
+  },
+  "regression": {
+    "level05_logic": {
+      "passed": true,
+      "checks": 140,
+      "full_replay": false
+    },
+    "shared_ui": {
+      "logic": {
+        "passed": true,
+        "checks": 122
+      },
+      "1280x720": {
+        "passed": true,
+        "checks": 130
+      },
+      "1024x768": {
+        "passed": true,
+        "checks": 52
+      }
+    }
+  },
+  "gameplay_data_changed": false,
+  "simulation_changed": false,
+  "save_schema_changed": false,
+  "evidence": {
+    "reports/ranged_animation_logic.json": {
+      "sha256": "3be28a049aa061c1aa8562c3735874010f889c2fef1cdbdd23442f0b6153a159"
+    },
+    "reports/ranged_animation_native.json": {
+      "sha256": "d9c070bd83a5694834db8fe6f93be011eb3a776495e17b837af2cd4238734d72"
+    },
+    "reports/ranged_animation_source.json": {
+      "sha256": "458ca9bde30a61d1156e741a7e60333639ceaab12b4d62aa0b9497cff1e68547"
+    },
+    "reports/level05_logic.json": {
+      "sha256": "b54ae8bfcd12677cb26dd7b587cb1f44b991673f2af158d89d76a14222690b61"
+    },
+    "reports/battle_ui_logic.json": {
+      "sha256": "cbdc6466260c0bff1d7ecafbf8d0743d797f167038bb8761169863742d6cbb73"
+    },
+    "reports/battle_ui_1280x720.json": {
+      "sha256": "ff5e16aa8502d4d085566b4d18b15333e5c50b6dc71806fe45ffdb5aba3f81ba"
+    },
+    "reports/battle_ui_1024x768.json": {
+      "sha256": "14bffcc25d535b15cf5b90155879c68610d3a37be50609955f8b5d587b9e37b2"
+    }
+  },
+  "web": {
+    "release": true,
+    "pck_isolated_check": true,
+    "files": 649,
+    "combinations_checked": 18,
+    "pck_sha256": "f3deb92eb7989cf045350130b3cc218a82d33ed3d639104b618bd9d4d214020a",
+    "bundle": "build/KingdomRush-KR1-Levels01-06-Web.zip",
+    "bytes": 168033222,
+    "sha256": "54b7233429d7d5095d50258bf1e0d5bb09bf99818920cd53484ebfdf01eb3730",
+    "zip_crc_passed": true,
+    "exports_this_fix": 1
+  },
+  "browser_tested": false,
+  "browser_acceptance": "manual by user",
+  "full_replay_run": false,
+  "failures": []
+}
