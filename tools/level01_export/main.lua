@@ -209,6 +209,13 @@ local function run()
   for _,key in ipairs({"N_ENEMY","N_TUTORIAL","N_TIP","N_POWER","N_TOWER","N_TOWER_2","N_TOWER_4"}) do _G[key]=key end
   local gui=chunk("kr1-desktop/data/game_gui_data.lua")
   out.ui={notifications={},slides={},balloons={},tower_menu_button_places=clean(gui.tower_menu_button_places),tower_menu_center_x=gui.tower_menu_center_x,tower_menu_center_y=gui.tower_menu_center_y}
+  out.ui.tower_menu_power_offset=clean(gui.tower_menu_power_offset)
+  out.ui.selection_markers={}
+  for _,size in ipairs({"small","med","big","soldier_small"}) do
+    out.ui.selection_markers[size]=clean(E:get_template("decal_entity_marker_"..size).render.sprites[1])
+  end
+  out.ui.selection_markers.rally=clean(E:get_template("decal").render.sprites[1])
+  out.ui.selection_markers.rally.name="decal_rally_feedback"
   local notification_ids=spec.export.notification_ids
   for _,id in ipairs(notification_ids) do
     out.ui.notifications[id]=clean(gui.notifications[id]);out.ui.slides[id]=clean(gui.notification_slides[id])

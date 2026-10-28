@@ -9,6 +9,7 @@ const Interface = preload("res://scripts/battle/battle_ui.gd")
 const SpriteAnimation = preload("res://scripts/battle/dove_animation.gd")
 const UnitInfo = preload("res://scripts/battle/dove_unit_info.gd")
 const Catalog = preload("res://scripts/dove_asset_catalog.gd")
+const Feedback = preload("res://scripts/battle/battle_feedback.gd")
 const ART_SCALE := 768.0 / 1080.0
 const INK := Color("ffe9b0")
 const VICTORY_STAR_DELAY := 0.65
@@ -45,6 +46,7 @@ var outcome := {}
 var return_label := "返回地图"
 var victory_elapsed := -1.0
 var victory_star_sounds := 0
+var feedback: RefCounted
 
 func initialize(boot: Node, sound: Node, definition: Dictionary = {}, simulation_override: RefCounted = null) -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -60,6 +62,7 @@ func initialize(boot: Node, sound: Node, definition: Dictionary = {}, simulation
 	sim.event.connect(_on_event)
 	interface = Interface.new(self)
 	developer = preload("res://scripts/battle/battle_developer.gd").new(self)
+	feedback = Feedback.new(self)
 	for i in range(12):
 		var player := AudioStreamPlayer.new()
 		player.playback_type = AudioServer.PLAYBACK_TYPE_STREAM
@@ -81,11 +84,13 @@ func _process(delta: float) -> void:
 
 func advance_target_feedback(delta: float) -> void:
 	invalid_point_time = maxf(0, invalid_point_time - delta) if targeting != "" else 0.0
+	feedback.advance(delta)
+	interface.advance_feedback(delta)
 
 func target_pointer_frame() -> String:
 	if invalid_point_time > 0:
 		return "error_feedback_%04d" % clampi(1 + floori((INVALID_POINT_DURATION - invalid_point_time) * 30), 1, 14)
-	return "pointer_set_rally_0001" if targeting == "rally" else "pointer_power_" + ("reinforcements" if targeting == "reinforcements" else "rain_of_fire")
+	return feedback.pointer_frame()
 
 func _on_event(kind: String, payload: Dictionary) -> void:
 	match kind:
@@ -93,12 +98,14 @@ func _on_event(kind: String, payload: Dictionary) -> void:
 		"sound": _sound(str(payload.id))
 		"wave":
 			selected = ""; targeting = ""
+			feedback.sync_cursor()
 			if int(payload.number) == 1: _music(sim.data.get("level", {}).get("music", "Level01Music"))
 		"reward": interface.show_wave_reward(payload)
 		"tip": tip = str(payload.id)
 		"notice_confirmed": interface.confirmed(payload.notice)
 		"finished":
 			selected = ""; selected_unit = 0; targeting = ""
+			feedback.sync_cursor()
 			if outcome.is_empty():
 				var identity: Dictionary = sim.data.get("level", {})
 				var stars := CampaignProgress.stars_for(sim.lives) if int(identity.get("mode", 1)) == 1 else (1 if sim.lives > 0 else 0)
@@ -112,6 +119,7 @@ func _begin_victory_audio() -> void:
 	audio.stop_music(); audio.click_player.stop()
 	for player: AudioStreamPlayer in fx_players: player.stop()
 	victory_elapsed = 0; victory_star_sounds = 0
+	interface.victory.start()
 	_sound("GUIQuestCompleted", false)
 
 func _advance_victory_audio(delta: float) -> void:
@@ -145,6 +153,7 @@ func _sound(id: String, limit_repeats: bool = true) -> void:
 			player.volume_db = linear_to_db(float(sound.gain)); player.play(); return
 
 func _exit_tree() -> void:
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	flush_seen()
 	for player: AudioStreamPlayer in fx_players: player.stop(); player.stream = null
 	if is_instance_valid(audio) and is_instance_valid(audio.music_player):
@@ -225,6 +234,7 @@ func _draw() -> void:
 		# The original lifecycle hides older duplicate poison sprites.
 		if not modifier.get("visible",true) or not sim.templates[modifier.template].has("render"): continue
 		_queue_template(modifier.template, target.pos + (Vector2.ZERO if modifier.template == "mod_thorn" else Simulation.vec(sim.templates[target.template].unit.mod_offset)), modifier.state, modifier.at, target.flip, false, 1, false, "", {"prefix":modifier.prefix,"sprite_scale":modifier.scale,"playback_loop":modifier.phase == "loop"})
+	feedback.queue_markers()
 	draw_list.sort_custom(func(a, b):
 		if a.z != b.z: return a.z < b.z
 		if a.sort_y != b.sort_y: return a.sort_y > b.sort_y
@@ -236,20 +246,14 @@ func _draw() -> void:
 		var width := 36.0 if sim.templates[unit.template].health_bar.type == "medium" else 24.0
 		draw_rect(Rect2(p + Vector2(-width / 2 - 1, -2), Vector2(width + 2, 4)), Color("362519"))
 		draw_rect(Rect2(p + Vector2(-width / 2, -1), Vector2(width * unit.hp / unit.max_hp, 2)), Color("67ce26"))
-	if selected_unit != 0:
-		var unit: Dictionary = sim.unit_by_id(selected_unit)
-		if not unit.is_empty() and unit.hp > 0:
-			var ring := PackedVector2Array()
-			for i in range(33): ring.append(world(unit.pos) + Vector2(cos(i * TAU / 32) * 14, sin(i * TAU / 32) * 7))
-			draw_polyline(ring, Color("ffe477"), 1.5, true)
 	_draw_selection()
+	feedback.draw_rally_feedback()
 	interface.wave_flags.draw_path()
 	_draw_hud()
 	_draw_boss_bar()
 	developer.hud()
 	if message_time > 0: _text(message, Vector2(view_width / 2, 95), 20, INK, true)
-	if targeting != "":
-		_art(target_pointer_frame(), pointer, Vector2(0.5, 0.5))
+	feedback.draw_pointer()
 	if developer.opened: developer.draw()
 	elif not sim.notices.is_empty(): _draw_notice(str(sim.notices[0]))
 	elif sim.result != "": _draw_result()
@@ -342,6 +346,7 @@ func _gui_input(input: InputEvent) -> void:
 	if input is InputEventMouseMotion:
 		var point: Vector2 = input.position / zoom
 		pointer = point
+		feedback.inside = true; feedback.sync_cursor()
 		if not volume_drag.is_empty(): _set_volume(volume_drag, point.x)
 		_refresh_hover()
 		return
@@ -350,27 +355,33 @@ func _gui_input(input: InputEvent) -> void:
 	if not input is InputEventMouseButton or not input.pressed: return
 	accept_event()
 	if input.button_index == MOUSE_BUTTON_RIGHT:
+		interface.wave_flags.pending_click.clear()
 		if developer.opened: developer.close(); return
-		targeting = ""; invalid_point_time = 0; selected = ""; selected_unit = 0; hits.clear(); return
+		targeting = ""; invalid_point_time = 0; selected = ""; selected_unit = 0; hits.clear(); feedback.sync_cursor(); return
 	if input.button_index != MOUSE_BUTTON_LEFT: return
 	var point: Vector2 = input.position / zoom
 	pointer = point
 	for i in range(hits.size() - 1, -1, -1):
 		var hit: Dictionary = hits[i]
 		if hit.rect.has_point(point):
+			if hit.action == "wave" and hit.enabled:
+				interface.wave_flags.click(int(hit.args.path), input.double_click); return
+			interface.wave_flags.pending_click.clear()
 			if hit.action == "volume":
 				volume_drag = hit.args
 				_set_volume(hit.args, point.x)
 			elif hit.enabled: _action(hit.action, hit.args)
-			elif hit.action != "target" or hit.args.get("power", "") not in ["fire", "reinforcements"]:
-				_message("金币不足或当前操作不可用")
 			return
+	interface.wave_flags.pending_click.clear()
 	if not sim.notices.is_empty() or sim.paused or sim.result != "": return
 	var world_point := Vector2(point.x - margin, 768 - point.y)
 	if targeting != "":
 		var success: bool = sim.command("rally", {"id": selected, "pos": world_point}) if targeting == "rally" else sim.command("cast", {"power": targeting, "pos": world_point})
-		if success: targeting = ""; selected = ""; invalid_point_time = 0
+		if success:
+			if targeting == "rally": feedback.rallied(sim.tower_by_id(selected).rally)
+			targeting = ""; selected = ""; invalid_point_time = 0
 		else: invalid_point_time = INVALID_POINT_DURATION
+		feedback.sync_cursor()
 		return
 	selected_unit = UnitInfo.pick(sim.soldiers + sim.enemies, sim.templates, world_point)
 	if selected_unit != 0:
@@ -399,18 +410,27 @@ func _refresh_hover() -> void:
 func _notification(what: int) -> void:
 	if what in [NOTIFICATION_WM_MOUSE_EXIT, NOTIFICATION_APPLICATION_FOCUS_OUT]:
 		pointer = Vector2(-1000, -1000); hovered = ""; mouse_default_cursor_shape = CURSOR_ARROW
+		if feedback != null:
+			if what == NOTIFICATION_WM_MOUSE_EXIT: feedback.inside = false
+			else: feedback.focused = false
+			feedback.sync_cursor(); interface.wave_flags.pending_click.clear()
+	elif what in [NOTIFICATION_WM_MOUSE_ENTER, NOTIFICATION_APPLICATION_FOCUS_IN] and feedback != null:
+		if what == NOTIFICATION_WM_MOUSE_ENTER: feedback.inside = true
+		else: feedback.focused = true
+		pointer = get_local_mouse_position() / zoom; feedback.sync_cursor()
 
 func _input(input: InputEvent) -> void:
 	if sim == null or not visible: return
 	if input is InputEventKey and input.pressed and not input.echo:
 		if input.keycode == KEY_F8:
-			developer.toggle(); get_viewport().set_input_as_handled(); return
+			_action("developer"); get_viewport().set_input_as_handled(); return
 		if input.keycode == KEY_ESCAPE:
 			if developer.opened: developer.close()
 			elif not sim.notices.is_empty(): _action("confirm")
 			elif targeting != "" or selected != "" or selected_unit != 0: targeting = ""; invalid_point_time = 0; selected = ""; selected_unit = 0
 			elif sim.result == "": _action("pause")
 			get_viewport().set_input_as_handled()
+			feedback.sync_cursor(); interface.wave_flags.pending_click.clear()
 		elif not developer.opened and sim.notices.is_empty() and not sim.paused and sim.result == "":
 			if input.keycode == KEY_1: _action("target", {"power": "fire"})
 			elif input.keycode == KEY_2: _action("target", {"power": "reinforcements"})
@@ -421,7 +441,8 @@ func _action(action: String, args: Dictionary = {}) -> void:
 	# A command can replace the entire composition before the next rendered frame.
 	# Never dispatch a subsequent click through hit regions from the old mode.
 	hits.clear()
-	if action == "developer": developer.toggle(); return
+	interface.wave_flags.pending_click.clear()
+	if action == "developer": developer.toggle(); feedback.sync_cursor(); return
 	if action.begins_with("dev_"):
 		if not developer.execute(action): _message("当前开发操作不可用")
 		queue_redraw(); return
@@ -434,8 +455,10 @@ func _action(action: String, args: Dictionary = {}) -> void:
 			var power: String = args.power
 			if power != "rally" and (sim.wave == 0 or not sim.unlocked.get(power, false) or sim.cooldowns.get(power, 0) > 0): return
 			selected_unit = 0
+			interface.power_fx.clear()
 			invalid_point_time = 0
 			if power == "rally" or (sim.unlocked.get(power, false) and sim.cooldowns.get(power, 0) == 0): targeting = power
+			pointer = get_local_mouse_position() / zoom
 			interface.power_hint_hidden = true
 		"restart":
 			flush_seen()
@@ -443,16 +466,23 @@ func _action(action: String, args: Dictionary = {}) -> void:
 			outcome.clear()
 			victory_elapsed = -1; victory_star_sounds = 0
 			sim.reset(); interface.reset(); selected = ""; selected_unit = 0; targeting = ""; invalid_point_time = 0; tip = ""
+			feedback.reset()
 			_music(sim.data.get("level", {}).get("prep_music", "Level01PrepMusic"))
 			for player: AudioStreamPlayer in fx_players: player.stop()
-		"map": flush_seen(); returned_to_map.emit(); return
+		"map":
+			targeting = ""; feedback.sync_cursor(); flush_seen(); returned_to_map.emit(); return
 		"tip": sim.notices.append(tip); tip = ""
 		"enemy_notice":
 			if sim.alerts.has(str(args.id)):
 				sim.alerts.erase(str(args.id)); sim.notices.append(str(args.id))
 		_:
-			if not sim.command(action, args): _message("当前操作不可用")
-			elif action in ["build", "upgrade", "sell", "buy_soldier"]: selected = ""
+			if not sim.command(action, args):
+				if action in ["build", "upgrade", "upgrade_power", "sell", "buy_soldier"]: return
+				_message("当前操作不可用")
+			elif action == "upgrade_power": interface.power_bought(str(args.id), str(args.power))
+			elif action in ["build", "upgrade", "sell", "buy_soldier"]:
+				selected = ""; interface.power_fx.clear()
+	feedback.sync_cursor()
 	_sound("GUIButtonCommon")
 	queue_redraw()
 

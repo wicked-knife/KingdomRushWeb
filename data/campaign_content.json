@@ -682,6 +682,8 @@
     "res://scripts/battle/level01_sim.gd",
     "res://scripts/battle/battle_view.gd",
     "res://scripts/battle/battle_ui.gd",
+    "res://scripts/battle/battle_feedback.gd",
+    "res://scripts/battle/battle_victory.gd",
     "res://scripts/battle/dove_ui_layout.gd",
     "res://scripts/battle/dove_animation.gd",
     "res://scripts/battle/dove_projectile.gd",

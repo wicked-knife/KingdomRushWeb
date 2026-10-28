@@ -43,6 +43,10 @@
 
 目录的 `features` 合并可购买塔、菜单、升级目标、动态文案前缀、模板引用字段和已检查回调。导出器逐个装载来源模板，递归收集 `hit_payload`、光环、生成器、粒子与分解特效；源回调使用显式 allowlist，未知行为、回调或组件拒绝导出。只在适用能力中声明新增引用字段，避免无关旧关卡扩包。
 
+共用战斗表现由 `battle_feedback.gd`（选择贴花、集结与施法指示器、系统鼠标生命周期）、`battle_wave_flags.gd`（开波确认与预告弹窗）、`battle_ui.gd`（塔菜单与购买动画）及 `battle_victory.gd`（胜利徽章、星星、链条和独立粒子）处理。动画使用表现时钟，不增加模拟步骤或战斗随机数调用；前六关及游侠测试场共用，无关卡编号分支。
+
+导出 `ui.selection_markers` 保存源选择贴花的名称、锚点和地面层级，单位位置再叠加既有 `unit.marker_offset`；`ui.tower_menu_power_offset` 保存源技能等级灯的三个偏移。`decal_rally_feedback` 是动画 ID，须连同实际 `rally_feedback` 帧族导出。新增关卡沿用转换器共用 UI 资源收集，不手填这两份元数据。具体行为与再生成后的资源核对见 [战斗 UI 修正](BATTLE_UI_ALIGNMENT.md)。
+
 ## 后续关卡怎么接
 
 1. 在 `campaign_content.json` 的 `levels` 增加登记，填写源关卡 ID、资源文件夹、模式／难度、复用的 `features` 和控制器。现有流程选择 `default`，有专属脚本才声明新控制器；控制器路径登记在 `controllers`，Web 工具自动收集。
@@ -82,7 +86,7 @@ python tools/package_level01.py
 
 第五关机制检查默认不跑完整回放；按需加 `-- --full-replay`。挑战完整回放仍通过 `-- --with-replays` 显式启用。
 
-## 前五关迁移验证口径（历史及本批回归）
+## 前五关迁移验证口径（历史基线）
 
 - 六份定义（前五关及游侠场地）除新增 `behaviors`、`dependencies`、`level.controller` 外，玩法全部字段与迁移前一致；源输入哈希单独比较一致。74 份资源文件保持不变，JSON 使用规范化比较，图片使用字节哈希。
 - 15 个组合、88 波、2794 条实际波次出生记录完整比较时间、敌人、路线及固定支路。随机支路检查合法范围；完整的预期／实际列表及每波首次差异保存在本地 `reports/content_timelines.json`。

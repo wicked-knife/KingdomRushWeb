@@ -1,0 +1,50 @@
+{
+  "passed": true,
+  "baseline_commit": "5490ef95eb8f3eb7ccfc8f7c793ec48394010bdb",
+  "definitions": {
+    "level01": {
+      "gameplay_unchanged": true,
+      "previous_ui_unchanged": true,
+      "required_ui_frames": 116,
+      "source_pixels_verified": true
+    },
+    "level02": {
+      "gameplay_unchanged": true,
+      "previous_ui_unchanged": true,
+      "required_ui_frames": 116,
+      "source_pixels_verified": true
+    },
+    "level03": {
+      "gameplay_unchanged": true,
+      "previous_ui_unchanged": true,
+      "required_ui_frames": 116,
+      "source_pixels_verified": true
+    },
+    "level04": {
+      "gameplay_unchanged": true,
+      "previous_ui_unchanged": true,
+      "required_ui_frames": 116,
+      "source_pixels_verified": true
+    },
+    "level05": {
+      "gameplay_unchanged": true,
+      "previous_ui_unchanged": true,
+      "required_ui_frames": 116,
+      "source_pixels_verified": true
+    },
+    "level06": {
+      "gameplay_unchanged": true,
+      "previous_ui_unchanged": true,
+      "required_ui_frames": 116,
+      "source_pixels_verified": true
+    },
+    "ranger_arena": {
+      "gameplay_unchanged": true,
+      "previous_ui_unchanged": true,
+      "required_ui_frames": 116,
+      "source_pixels_verified": true
+    }
+  },
+  "resource_files": 99,
+  "scope": "All seven regenerated contents; non-UI gameplay and existing UI unchanged; binding metadata excluded from gameplay projection; source pixels and complete new frame families checked"
+}

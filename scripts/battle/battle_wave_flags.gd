@@ -8,15 +8,17 @@ var shown_wave := -1
 var tooltip := {}
 var tooltip_alpha := 0.0
 var time := 0.0
+var pending_click := {}
 
 func _init(battle: Control, layout: RefCounted) -> void:
 	view = battle; paint = layout
 
 func reset() -> void:
-	active.clear(); fading.clear(); shown_wave = -1; tooltip = {}; tooltip_alpha = 0
+	active.clear(); fading.clear(); shown_wave = -1; tooltip = {}; tooltip_alpha = 0; pending_click.clear()
 
 func advance(delta: float) -> void:
 	time += delta
+	if not enabled(): pending_click.clear()
 	var hovered := hovered_flag()
 	if not hovered.is_empty(): tooltip = hovered
 	tooltip_alpha = move_toward(tooltip_alpha, 1.0 if not hovered.is_empty() else 0.0, delta * 4)
@@ -28,6 +30,7 @@ func enabled() -> bool:
 func sync() -> void:
 	var sim: RefCounted = view.sim
 	if shown_wave >= 0 and (not sim.can_send_wave() or sim.wave != shown_wave or sim.result != ""):
+		pending_click.clear()
 		for flag: Dictionary in active: flag.hidden_at = time; fading.append(flag)
 		active.clear(); shown_wave = -1
 	if sim.can_send_wave() and sim.result == "" and shown_wave != sim.wave:
@@ -43,6 +46,15 @@ func sync() -> void:
 				var report := incoming(group, path)
 				if not report.is_empty(): active.append({"path":path, "entrance":entrance, "report":report, "born":time, "group":sim.wave + 1, "some_flying":wave.get("some_flying", false)})
 	fading = fading.filter(func(flag): return time - flag.hidden_at < 0.5)
+
+func click(path: int, double_click: bool) -> void:
+	if not enabled() or not view.sim.can_send_wave(): pending_click.clear(); return
+	var identity := {"wave": view.sim.wave, "path": path}
+	if view.sim.wave == 0 or (double_click and pending_click == identity):
+		pending_click.clear()
+		view._action("wave", {"path":path})
+	else:
+		pending_click = identity
 
 func incoming(group: Dictionary, path: int) -> Array:
 	var counts := {}
@@ -119,23 +131,38 @@ func draw_path() -> void:
 
 func draw_tooltip() -> void:
 	if tooltip.is_empty() or tooltip_alpha <= 0 or not enabled(): return
-	var point := position(tooltip)
-	var width := 200.0
-	var height: float = 50 + 19 * tooltip.report.size()
+	var geometry := tooltip_geometry(tooltip)
+	var width: float = geometry.rect.size.x
+	var height: float = geometry.rect.size.y
+	paint.push(geometry.rect.position, 1, tooltip_alpha)
+	paint._apply()
+	var background := Color(21.0 / 255, 17.0 / 255, 13.0 / 255, 220.0 / 255 * tooltip_alpha)
+	# Draw the union once so the translucent corner cannot acquire a dark seam.
+	for polygon: PackedVector2Array in geometry.polygons: view.draw_colored_polygon(polygon, background)
+	paint.label("一波敌人即将到来", Rect2(0, 10, width, 30), 14, Color("ff7337"), "center", "top", 1, 0, "incoming:title", "h")
+	for i in range(tooltip.report.size()):
+		var row: Dictionary = tooltip.report[i]
+		paint.label("%s × %d" % [row.name, row.count], Rect2(0, 30 + i * geometry.line_height, width, geometry.line_height), 12, Color("fff5d2"), "center", "top", 1, 0, "incoming:" + row.type)
+	paint.pop()
+
+func tooltip_geometry(flag: Dictionary) -> Dictionary:
+	var point := position(flag)
+	var title_font: Font = view.fonts.font_for("h")
+	var body_font: Font = view.fonts.font_for("body")
+	var title_size: int = view.fonts.size_for("h", 14)
+	var body_size: int = view.fonts.size_for("body", 12)
+	var width := title_font.get_string_size("一波敌人即将到来", HORIZONTAL_ALIGNMENT_LEFT, -1, title_size).x
+	for row: Dictionary in flag.report:
+		width = maxf(width, body_font.get_string_size("%s × %d" % [row.name, row.count], HORIZONTAL_ALIGNMENT_LEFT, -1, body_size).x)
+	width = minf(ceilf(width) + 40, view.view_width - 64)
+	var line_height := ceilf(body_font.get_height(body_size))
+	var height: float = 50 + line_height * flag.report.size()
 	var left := point.x > 1.5 * width
 	var above := point.y >= 3 * height
 	var at := point + Vector2(-width - 24 if left else 24, -height - 27 if above else 27)
 	at.x = clampf(at.x, 8, view.view_width - width - 8); at.y = clampf(at.y, 8, 700 - height)
-	paint.push(at, 1, tooltip_alpha)
-	paint._apply()
-	var background := Color(21.0 / 255, 17.0 / 255, 13.0 / 255, 220.0 / 255 * tooltip_alpha)
-	view.draw_rect(Rect2(0, 0, width, height), background)
-	var arrow := Vector2(width if left else 0, height if above else 0)
-	var dx := 1.0 if left else -1.0
-	var dy := 1.0 if above else -1.0
-	view.draw_colored_polygon(PackedVector2Array([arrow, arrow + Vector2(dx * 18, dy * 24), arrow + Vector2(0, dy * 12)]), background)
-	paint.label("一波敌人即将到来", Rect2(8, 10, width - 16, 25), 16, Color("ff7337"), "center", "middle", 1, 0, "incoming:title", "body_bold")
-	for i in range(tooltip.report.size()):
-		var row: Dictionary = tooltip.report[i]
-		paint.label("%s × %d" % [row.name, row.count], Rect2(8, 36 + i * 19, width - 16, 19), 13, Color("fff5d2"), "center", "middle", 1, 0, "incoming:" + row.type)
-	paint.pop()
+	var arrow := PackedVector2Array()
+	for vertex in [Vector2(0,24), Vector2(18,12), Vector2(9,12), Vector2(9,0)]:
+		arrow.append(Vector2(width if left else 0, height if above else 0) + (vertex - Vector2(9,12)) * Vector2(-1 if left else 1, 1 if above else -1))
+	var rectangle := PackedVector2Array([Vector2.ZERO, Vector2(width,0), Vector2(width,height), Vector2(0,height)])
+	return {"rect":Rect2(at.round(),Vector2(width,height)), "line_height":line_height, "polygons":Geometry2D.merge_polygons(rectangle,arrow)}

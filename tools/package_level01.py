@@ -64,8 +64,9 @@ def package():
         "A defeat after restarting from victory discards that unsettled victory; settled best scores remain.\n\n"
         "Map: screen edges/wheel = pan, Shift+wheel = horizontal pan; touch drag/pinch = pan/zoom.\n"
         "Controls: left click to select/build/cast; right click to cancel; Esc to close/pause.\n"
-        "Wave icons appear at active entrances; hover for enemy counts and the route, click to start early.\n"
-        "The timer ring fills until automatic release; clicking either icon sends the whole dual-path wave.\n"
+        "Wave icons appear at active entrances; hover for enemy counts and the route. Click once to start wave 1.\n"
+        "Double-click the same icon to call later waves early. Space remains the next-wave shortcut.\n"
+        "The timer ring fills until automatic release; either entrance sends the whole dual-path wave.\n"
         "Early-wave rewards animate +gold at the gold counter and -seconds above cooling skills.\n"
         "Click a soldier/enemy to inspect live stats. Click a sheep 8 times to pop it.\n"
         "1 = fire rain, 2 = reinforcements, Space = next wave. Skills unlock after wave 3/7 tutorials in level 1.\n"
@@ -115,6 +116,7 @@ def package():
         "challenge_pending_replays": receipt.get("challenge_pending_replays", []),
         "challenge_replays_verified": receipt.get("challenge_replays_verified", []),
         "pck_isolated_check": checked,
+        "battle_ui_acceptance": receipt.get("battle_ui_acceptance", {}),
         "pck_files": len(report["files"]) if checked else None,
         "bundle": str(output.relative_to(ROOT)),
         "bytes": output.stat().st_size,

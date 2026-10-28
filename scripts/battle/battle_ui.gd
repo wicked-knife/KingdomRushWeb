@@ -3,6 +3,7 @@ extends RefCounted
 ## mechanics (image, text fitting, transforms and hit regions) live in one place.
 const Layout = preload("res://scripts/battle/dove_ui_layout.gd")
 const WaveFlags = preload("res://scripts/battle/battle_wave_flags.gd")
+const Victory = preload("res://scripts/battle/battle_victory.gd")
 var view: Control
 var paint: RefCounted
 var data: Dictionary
@@ -24,11 +25,31 @@ var power_hint := ""
 var power_hint_hidden := false
 var wave_flags: RefCounted
 var reward_fx: Array[Dictionary] = []
+var victory: RefCounted
+var feedback_time := 0.0
+var power_fx := {}
 
 func _init(battle: Control) -> void:
 	view = battle; paint = Layout.new(view, view.fonts)
 	data = view.sim.data.ui; strings = data.strings
 	wave_flags = WaveFlags.new(view, paint)
+	victory = Victory.new(view, paint)
+
+func advance_feedback(delta: float) -> void:
+	feedback_time += delta
+	var tower: Dictionary = view.sim.tower_by_id(view.selected)
+	if tower.is_empty() or power_fx.get("id", "") != view.selected or power_fx.get("template", "") != tower.template:
+		power_fx.clear()
+	elif power_fx.has("powers"):
+		for power: String in power_fx.powers.keys():
+			if feedback_time - float(power_fx.powers[power]) >= 23.0 / 30.0: power_fx.powers.erase(power)
+
+func power_bought(id: String, power: String) -> void:
+	var tower: Dictionary = view.sim.tower_by_id(id)
+	if tower.is_empty() or view.selected != id: return
+	if power_fx.get("id", "") != id or power_fx.get("template", "") != tower.template:
+		power_fx = {"id":id, "template":tower.template, "powers":{}}
+	power_fx.powers[power] = feedback_time
 
 func clock() -> float: return Time.get_ticks_msec() / 1000.0
 func begin() -> void: paint.begin()
@@ -105,6 +126,7 @@ func _draw_wave_rewards() -> void:
 
 func selection() -> void:
 	if selection_id != view.selected:
+		power_fx.clear()
 		closing_id = selection_id; closing_type = selection_type; closing_at = clock()
 		closing_template = selection_template
 		selection_id = view.selected; selection_at = clock()
@@ -126,7 +148,6 @@ func _selection(id: String, closing: bool) -> void:
 		var ellipse := PackedVector2Array()
 		for i in range(65): ellipse.append(range_pos + Vector2(cos(i * TAU / 64), sin(i * TAU / 64) * 0.7) * radius)
 		view.draw_colored_polygon(ellipse, Color(0.4, 0.85, 1, 0.10)); view.draw_polyline(ellipse, Color(0.7, 0.9, 1, 0.5), 1)
-		if tower.type == "barrack": view._art("pointer_set_rally_0001", view.world(tower.rally))
 	elif not closing:
 		for type: String in view.Simulation.TYPES:
 			if view.hovered != "build" + str({"id": id, "type": type}): continue
@@ -168,10 +189,13 @@ func _selection(id: String, closing: bool) -> void:
 				if not tower.powers.has(power): continue
 				var pos: Vector2 = view.Simulation.vec(data.tower_menu_button_places[int(item.place) - 1])
 				var price: int = sim.power_price(tower, power)
-				_menu_icon(item.image, pos, "upgrade_power", {"id":id,"power":power}, price, enabled and price >= 0 and sim.gold >= price)
+				_menu_icon(item.image, pos, "upgrade_power", {"id":id,"power":power}, price, enabled and price >= 0 and sim.gold >= price, price < 0, item.get("halo", "glow_ico_main"))
 				var maximum: int = sim.tower_template(tower).powers[power].max_level
 				for rank in range(maximum):
-					paint.image("power_rank_0001" if rank < int(tower.powers[power]) else "power_rank_0002", pos + Vector2((rank - 1) * 9, 17), Vector2(0.5,0.5))
+					paint.image("power_rank_0001" if rank < int(tower.powers[power]) else "power_rank_0002", pos + view.Simulation.vec(data.tower_menu_power_offset[rank]), Vector2.ONE)
+				if power_fx.get("id", "") == id and power_fx.get("powers", {}).has(power):
+					var age: float = feedback_time - power_fx.powers[power]
+					if age < 23.0 / 30.0: paint.image("effect_powerbuy_%04d" % (1 + int(age * 30)), pos, Vector2(0.5, 0.5))
 		if tower.type == "barrack": _menu_icon("sub_icons_0001", Vector2(128, 118), "target", {"power": "rally"}, -1, enabled)
 		if t.get("mercenary",false):
 			var price: int = sim.Elf.price(sim,tower,"soldier_elf")
@@ -180,15 +204,16 @@ func _selection(id: String, closing: bool) -> void:
 	paint.pop(); paint.pop()
 	if not closing and enabled: _tower_tooltip(tower)
 
-func _menu_icon(image: String, center: Vector2, action: String, args: Dictionary, price: int, enabled: bool) -> void:
-	var dimensions := _size("main_icons_0000") if image.begins_with("main_icons") else _size(image)
+func _menu_icon(image: String, center: Vector2, action: String, args: Dictionary, price: int, enabled: bool, maxed: bool = false, halo: String = "") -> void:
+	var border := "special_icons_0000" if action == "upgrade_power" else ("main_icons_0000" if image.begins_with("main_icons") else "")
+	var dimensions := _size(border) if border != "" else _size(image)
 	var pos := center - dimensions / 2
 	var over: bool = view.hovered == action + str(args)
 	if over and enabled:
-		var glow := "glow_ico_sell" if action == "sell" else ("glow_ico_sub" if action == "target" else "glow_ico_main")
+		var glow := halo if halo != "" else ("glow_ico_sell" if action == "sell" else ("glow_ico_sub" if action == "target" else "glow_ico_main"))
 		paint.image(glow, center, Vector2(0.5, 0.5))
-	paint.image(image, center, Vector2(0.5, 0.5), Color.WHITE if enabled or action == "locked" else Color(0.5, 0.5, 0.5))
-	if image.begins_with("main_icons"): paint.image("main_icons_0000", pos)
+	paint.image(image, center, Vector2(0.5, 0.5), Color.WHITE if enabled or maxed or action == "locked" else Color(0.5, 0.5, 0.5))
+	if border != "": paint.image(border, pos)
 	if price >= 0:
 		var tag := _size("price_tag")
 		var at := pos + Vector2((dimensions.x - tag.x) / 2, dimensions.y - 11)
@@ -471,23 +496,8 @@ func _volume(caption: String, y: float, bus: String, value: float, index: int) -
 func result() -> void:
 	view._dim()
 	if view.sim.result == "victory":
-		var badge := "victoryBadges_notxt_%04d" % {1: 2, 2: 3, 3: 1}[int(view.sim.data.get("level", {}).get("mode", 1))]
-		var dimensions := _size(badge)
-		_panel("victory", Vector2(dimensions.x, 480), 1.15)
-		paint.image(badge)
-		paint.label("胜 利", Rect2(dimensions.x / 2 - 160, 165, 320, 78), 64, Color("4c3817"), "center", "middle", 1, 0, "", "h_popup")
-		var stars: int = view.outcome.get("stars", 1)
-		var end_frame: int = [19, 38, 54][stars - 1]
-		var elapsed: float = clock() - panel_at - view.VICTORY_STAR_DELAY
-		var frame := mini(int(maxf(0, elapsed) * 30), end_frame)
-		if elapsed >= 0:
-			paint.image("victoryStars_%04d" % maxi(1, frame), Vector2(dimensions.x / 2, 270 if int(view.outcome.get("mode", 1)) == 3 else 230), Vector2(0.5, 0))
-		paint.label(("调试局 · " if view.sim.developer_used else "") + "生命 %d · 击杀 %d · %d/%d 波" % [view.sim.lives, view.sim.kills, view.sim.wave, view.sim.data.waves.groups.size()], Rect2(60, 347, dimensions.x - 120, 28), 17, Color("ffe9b0"), "center", "middle", 1, 1)
-		var button := _size("button_border_large_0001")
-		paint.button("button_border_large_0001", Vector2((dimensions.x - button.x) / 2, 389), view.return_label, "map")
-		paint.push(Vector2(dimensions.x / 2, 448), 0.85)
-		paint.button("button_border_0001", Vector2(-_size("button_border_0001").x / 2, 0), "重新开始", "restart")
-		paint.pop()
+		victory.draw()
+		return
 	else:
 		_panel("defeat", Vector2(455, 384), 1.25)
 		paint.image("defeat_bg_notxt")
@@ -506,4 +516,5 @@ func confirmed(id: String) -> void:
 func reset() -> void:
 	selection_id = ""; closing_id = ""; panel_id = ""; power_mode.clear(); power_at.clear(); power_animation.clear(); power_hint = ""
 	wave_flags.reset()
+	power_fx.clear(); victory.reset()
 	reward_fx.clear()

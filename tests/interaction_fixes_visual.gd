@@ -38,9 +38,10 @@ func click_wave(path: int) -> void:
 		if hit.action == "wave" and int(hit.args.path) == path and hit.enabled:
 			var point: Vector2 = root.get_screen_transform() * battle.get_global_transform_with_canvas() * (hit.rect.get_center() * battle.zoom)
 			battle.mouse_filter = Control.MOUSE_FILTER_STOP
-			for pressed in [true, false]:
-				var event := InputEventMouseButton.new(); event.pressed = pressed; event.button_index = MOUSE_BUTTON_LEFT; event.position = point; event.global_position = point
-				Input.parse_input_event(event); await process_frame
+			for tap in (2 if battle.sim.wave > 0 else 1):
+				for pressed in [true, false]:
+					var event := InputEventMouseButton.new(); event.pressed = pressed; event.button_index = MOUSE_BUTTON_LEFT; event.position = point; event.global_position = point; event.double_click = tap == 1 and pressed
+					Input.parse_input_event(event); await process_frame
 			battle.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			return
 	check(false, "active entrance has clickable icon")

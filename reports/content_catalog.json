@@ -73,9 +73,11 @@
       "reason": "level05: controller differs from content registration"
     }
   ],
-  "publication_resources": 291,
+  "publication_resources": 295,
   "publication_data": 55,
-  "unchanged_resource_files": 74,
+  "resource_baseline": "battle_ui_baseline.json (source pixel verification in battle_ui_assets.json)",
+  "verified_resource_files": 99,
+  "unchanged_resource_files": 20,
   "changed_resource_files": [],
   "failures": []
 }

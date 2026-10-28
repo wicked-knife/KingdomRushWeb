@@ -87,7 +87,7 @@ func _init() -> void:
 		if not ResourceLoader.exists(atlas.texture_directory + frame.sheet):
 			failures.append("Missing first-level atlas " + frame.sheet)
 	var sim_script = load("res://scripts/battle/level01_sim.gd")
-	for script: String in ["res://scripts/map/dove_map_flag.gd", "res://scripts/battle/battle_wave_flags.gd"]:
+	for script: String in ["res://scripts/map/dove_map_flag.gd", "res://scripts/battle/battle_wave_flags.gd", "res://scripts/battle/battle_feedback.gd", "res://scripts/battle/battle_victory.gd"]:
 		if not ResourceLoader.exists(script) or load(script) == null: failures.append("Interaction script missing: " + script)
 	for id: int in content.levels.keys().map(func(key): return int(key)):
 		var stage: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/level%02d/definition.json" % id))
@@ -99,6 +99,16 @@ func _init() -> void:
 			if art.get_frame(stage.level.group, image).is_empty(): failures.append("Exported wave reward art missing: " + image)
 		for frame in range(1,15):
 			if art.get_frame(stage.level.group, "error_feedback_%04d" % frame).is_empty(): failures.append("Exported invalid-point feedback missing %d/%d" % [id,frame])
+		for image: String in ["selected_small", "selected_med", "selected_big", "selected_soldier_small", "pointer_user_power_0001", "pointer_user_power_0002", "special_icons_0000", "power_rank_0001", "power_rank_0002", "button_continue_chains", "button_restart_chains", "victory_star"]:
+			if art.get_frame(stage.level.group, image).is_empty(): failures.append("Exported battle UI frame missing %d/%s" % [id,image])
+		for family: Array in [["pointer_set_rally",10],["pointer_fireball",32],["pointer_point_orange",10],["rally_feedback",30],["effect_powerbuy",23]]:
+			for frame in range(1,int(family[1])+1):
+				if art.get_frame(stage.level.group, "%s_%04d" % [family[0],frame]).is_empty(): failures.append("Exported battle UI animation missing %d/%s/%d" % [id,family[0],frame])
+		var offsets: Array = stage.ui.get("tower_menu_power_offset",[]).map(func(point):return Vector2(point.x,point.y))
+		if offsets != [Vector2(7,-16),Vector2(25,-9),Vector2(31,8)]: failures.append("Exported power rank offsets invalid %d" % id)
+		if stage.ui.get("selection_markers",{}).get("rally",{}).get("name","") != "decal_rally_feedback": failures.append("Exported rally marker metadata missing %d" % id)
+		var animations: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(stage.level.root + "animations.json"))
+		if not animations.get("animations",{}).has("decal_rally_feedback"): failures.append("Exported rally marker animation missing %d" % id)
 		var placement = sim_script.new(stage)
 		var grass: Vector2 = {1:Vector2(256,424), 2:Vector2(256,328), 3:Vector2(256,376), 4:Vector2(100,100), 5:Vector2(100,100), 6:Vector2(100,100)}[id]
 		if placement.valid_power_point("reinforcements", grass) or not placement.valid_power_point("reinforcements", placement.towers[0].rally): failures.append("Exported troop placement rules invalid %d" % id)

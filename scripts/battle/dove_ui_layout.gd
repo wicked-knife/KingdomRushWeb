@@ -50,6 +50,34 @@ func image(id: String, at: Vector2 = Vector2.ZERO, anchor: Vector2 = Vector2.ZER
 func region(rect: Rect2) -> Rect2:
 	return transform * rect
 
+func image_clip(id: String, at: Vector2, clip: Rect2) -> void:
+	var frame: Dictionary = canvas._frame(id)
+	if frame.is_empty(): return
+	var factor: float = frame.ref_scale * image_scale
+	var dest := Rect2(at + frame.trim * factor, frame.logical_size * factor)
+	var visible := dest.intersection(clip)
+	if not visible.has_area(): return
+	var texture: AtlasTexture = frame.texture
+	var uv := Rect2(texture.region.position + (visible.position - dest.position) / dest.size * texture.region.size, visible.size / dest.size * texture.region.size)
+	_apply()
+	canvas.draw_texture_rect_region(texture.atlas, visible, uv, Color(1,1,1,opacity))
+
+func ellipse_label(value: String, center: Vector2, ellipse: Vector2, font_size: float, color: Color, role: String, max_angle: float) -> void:
+	var face: Font = fonts.font_for(role)
+	var actual: int = fonts.size_for(role,font_size)
+	var width := face.get_string_size(value,HORIZONTAL_ALIGNMENT_LEFT,-1,actual).x
+	var cursor := (ellipse.x - width) / 2
+	for character: String in value:
+		var advance := face.get_string_size(character,HORIZONTAL_ALIGNMENT_LEFT,-1,actual).x
+		var x := cursor + advance / 2
+		var phase := (x - (ellipse.x - width) / 2) / maxf(width,1)
+		push(center + Vector2(x - ellipse.x / 2, sin(x / ellipse.x * PI) * ellipse.y), 1, 1, -(phase - 0.5) * max_angle)
+		_apply()
+		var ink := Color(color); ink.a *= opacity
+		canvas.draw_string(face, Vector2(-advance / 2,face.get_ascent(actual) - face.get_height(actual) * 2 / 3), character,HORIZONTAL_ALIGNMENT_LEFT,-1,actual,ink)
+		pop()
+		cursor += advance
+
 func image_sector(id: String, at: Vector2, fraction: float) -> void:
 	# Clip the source timer texture to its filling sector, respecting atlas trim.
 	if fraction <= 0: return

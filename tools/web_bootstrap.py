@@ -109,6 +109,16 @@ def main():
         (ROOT / "export_presets.cfg").write_text(preset_text(), encoding="utf-8")
     if args.command == "export":
         engine = godot_path(args.godot)
+        ui_reports = {}
+        for key in ("logic", "1280x720", "1024x768", "assets"):
+            path = ROOT / f"reports/battle_ui_{key}.json"
+            result = json.loads(path.read_text(encoding="utf-8"))
+            if not result.get("passed"):
+                raise RuntimeError(f"Battle UI acceptance failed: {path}")
+            for relative, expected in result.get("source_hashes", {}).items():
+                if hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() != expected:
+                    raise RuntimeError(f"Battle UI acceptance is stale: {relative}")
+            ui_reports[key] = {k: result[k] for k in ("passed", "checks", "layout_only", "scope") if k in result}
         output = ROOT / "build/web/index.html"
         output.parent.mkdir(parents=True, exist_ok=True)
         # Keep generated artifacts and the isolated verification project out of the editor.
@@ -141,6 +151,7 @@ def main():
             "challenge_check_scope": "levels 1-5; sixth data/mechanisms and native flow are reported separately",
             "sixth_logic": {k: sixth_report.get(k) for k in ("passed", "checks", "independent_modes", "timeline_waves", "births", "full_replays")},
             "sixth_native": {k: native_report.get(k) for k in ("passed", "checks", "scope")},
+            "battle_ui_acceptance": ui_reports,
             "challenge_acceptance_basis": challenge_report.get("acceptance_basis", "dove_configuration_and_functionality"),
             "challenge_victory_replays_required": False,
             "challenge_replays_run": challenge_report.get("replays_run", False),

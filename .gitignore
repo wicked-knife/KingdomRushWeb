@@ -87,3 +87,8 @@ __pycache__/
 !/reports/level06_native.json
 !/reports/level06_assets.json
 !/reports/level06_delivery.json
+!/reports/battle_ui_logic.json
+!/reports/battle_ui_1280x720.json
+!/reports/battle_ui_1024x768.json
+!/reports/battle_ui_assets.json
+!/reports/battle_ui_delivery.json

@@ -19,12 +19,17 @@ def resource_digest(path):
 def verify():
     baseline = json.loads((ROOT / "tests/fixtures/campaign_content_baseline.json").read_text(encoding="utf-8"))
     catalog = read_catalog()
+    ui_baseline = json.loads((ROOT / "tests/fixtures/battle_ui_baseline.json").read_text(encoding="utf-8"))
     rows, failures = {}, []
     for name, expected in baseline["definitions"].items():
         definition = json.loads((ROOT / f"data/{name}/definition.json").read_text(encoding="utf-8"))
         spec = export_spec(definition["level"]["id"], name == "ranger_arena")
         validate_definition(definition, spec)
         gameplay = gameplay_projection(definition)
+        # The UI revision adds source presentation metadata, without altering
+        # any frozen gameplay or previous UI fields.
+        for field in ("selection_markers", "tower_menu_power_offset"):
+            gameplay["ui"].pop(field, None)
         source = gameplay.pop("source")
         changed = [key for key, value in gameplay.items() if digest(value) != baseline["sections"][name].get(key)]
         rows[name] = {"gameplay_unchanged": digest(gameplay) == expected, "changed_sections": changed,
@@ -50,12 +55,15 @@ def verify():
         else:
             failures.append(f"Publication accepted {label}")
     resources, data = resource_paths()
-    changed_resources = [path for path, expected in baseline["resource_files"].items()
+    expected_resources = baseline["resource_files"] | ui_baseline["resource_files"]
+    changed_resources = [path for path, expected in expected_resources.items()
                          if resource_digest(ROOT / path) != expected]
     if changed_resources: failures.append(f"Unnecessary resource changes: {changed_resources}")
     result = {"passed": not failures, "content_combinations": len(combinations()), "definitions": rows,
               "failure_probes": probes, "publication_resources": len(resources), "publication_data": len(data),
-              "unchanged_resource_files": len(baseline["resource_files"]) - len(changed_resources),
+              "resource_baseline": "battle_ui_baseline.json (source pixel verification in battle_ui_assets.json)",
+              "verified_resource_files": len(expected_resources),
+              "unchanged_resource_files": sum(resource_digest(ROOT / path) == expected for path, expected in baseline["resource_files"].items()),
               "changed_resource_files": changed_resources, "failures": failures}
     (ROOT / "reports/content_catalog.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False))

@@ -103,7 +103,7 @@ func _run() -> void:
 				battle.advance_target_feedback(0.14)
 				await capture(battle, "invalid_cross")
 			battle.advance_target_feedback(Battle.INVALID_POINT_DURATION)
-			check(battle.target_pointer_frame() == "pointer_power_" + ("reinforcements" if power == "reinforcements" else "rain_of_fire"), "pointer returns after 14/30 seconds level %d %s" % [level,power])
+			check(battle.target_pointer_frame().begins_with("pointer_point_orange_" if power == "reinforcements" else "pointer_fireball_"), "animated source pointer returns after 14/30 seconds level %d %s" % [level,power])
 			for frame in range(1,15):
 				check(not battle._frame("error_feedback_%04d" % frame).is_empty(), "cross art %d loads level %d" % [frame, level])
 			click(battle, battle.sim.towers[0].rally)

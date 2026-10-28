@@ -1,0 +1,188 @@
+{
+  "passed": true,
+  "date": "2026-10-28",
+  "source_version": "2.1.0.2",
+  "source_commit": "e29ece82939fd73fb69bfc4b469d484a72e4dfd2",
+  "baseline_commit": "5490ef95eb8f3eb7ccfc8f7c793ec48394010bdb",
+  "scope": "Shared battle UI/input for levels 1-6 and ranger arena; no simulation algorithm, command API or save schema changes",
+  "difficulty": 2,
+  "hero_combat": false,
+  "technology": false,
+  "preview_level": 7,
+  "ui_fixes": [
+    "source ground selection decals",
+    "animated rally and resolved-point feedback",
+    "combined fire/reinforcement targeting and cursor lifecycle",
+    "first-wave single / early-wave double click with entrance and wave identity",
+    "silent disabled tower actions",
+    "measured incoming tooltip and seamless arrow",
+    "source victory layout, animation and independent particles",
+    "source advanced skill ranks, purchase feedback and maxed state"
+  ],
+  "ui_checks": {
+    "logic": {
+      "passed": true,
+      "checks": 122,
+      "native": false,
+      "layout_only": false,
+      "scope": "targeted UI/input with constructed battle states; no complete replays",
+      "captures": 0
+    },
+    "1280x720": {
+      "passed": true,
+      "checks": 130,
+      "native": true,
+      "layout_only": false,
+      "scope": "targeted UI/input with constructed battle states; no complete replays",
+      "captures": 26
+    },
+    "1024x768": {
+      "passed": true,
+      "checks": 52,
+      "native": true,
+      "layout_only": true,
+      "scope": "targeted UI/input with constructed battle states; no complete replays",
+      "captures": 13
+    }
+  },
+  "gameplay_and_assets": {
+    "passed": true,
+    "baseline_commit": "5490ef95eb8f3eb7ccfc8f7c793ec48394010bdb",
+    "definitions": {
+      "level01": {
+        "gameplay_unchanged": true,
+        "previous_ui_unchanged": true,
+        "required_ui_frames": 116,
+        "source_pixels_verified": true
+      },
+      "level02": {
+        "gameplay_unchanged": true,
+        "previous_ui_unchanged": true,
+        "required_ui_frames": 116,
+        "source_pixels_verified": true
+      },
+      "level03": {
+        "gameplay_unchanged": true,
+        "previous_ui_unchanged": true,
+        "required_ui_frames": 116,
+        "source_pixels_verified": true
+      },
+      "level04": {
+        "gameplay_unchanged": true,
+        "previous_ui_unchanged": true,
+        "required_ui_frames": 116,
+        "source_pixels_verified": true
+      },
+      "level05": {
+        "gameplay_unchanged": true,
+        "previous_ui_unchanged": true,
+        "required_ui_frames": 116,
+        "source_pixels_verified": true
+      },
+      "level06": {
+        "gameplay_unchanged": true,
+        "previous_ui_unchanged": true,
+        "required_ui_frames": 116,
+        "source_pixels_verified": true
+      },
+      "ranger_arena": {
+        "gameplay_unchanged": true,
+        "previous_ui_unchanged": true,
+        "required_ui_frames": 116,
+        "source_pixels_verified": true
+      }
+    },
+    "resource_files": 99,
+    "scope": "All seven regenerated contents; non-UI gameplay and existing UI unchanged; binding metadata excluded from gameplay projection; source pixels and complete new frame families checked"
+  },
+  "metadata_changes": [
+    "ui.selection_markers",
+    "ui.tower_menu_power_offset",
+    "empty callbacks on older full exports",
+    "existing ranger thorn aura and elf arrow particle dependencies re-derived"
+  ],
+  "regressions": {
+    "reports/skill_placement_logic.json": {
+      "passed": true,
+      "checks": 185,
+      "scope": "skill placement, rejected-cast side effects, cursor feedback and adjacent rally path filter"
+    },
+    "reports/power_feedback_logic.json": {
+      "passed": true,
+      "checks": 35,
+      "scope": "skill ready transitions and disabled input only"
+    },
+    "reports/rally_clamp_logic.json": {
+      "passed": true,
+      "checks": 129,
+      "scope": "directional rally fallback, range center and soldier destination",
+      "source_cases": 80
+    },
+    "reports/victory_audio_logic.json": {
+      "passed": true,
+      "checks": 29,
+      "scope": "victory audio only"
+    }
+  },
+  "source_hashes": {
+    "scripts/battle/battle_feedback.gd": "a2c1b705b3dbbabaf59908d91af19d5aec7602a681389d74480ae64ec9efce49",
+    "scripts/battle/battle_ui.gd": "654eb2e20dba6c264404ab9a6273470427733a5fb4c3ae01078ca0438ae60eff",
+    "scripts/battle/battle_victory.gd": "0ce46751eb798ec710ae9304132d67c7806f6816a25ccf6ad8ca5bf3c47e6211",
+    "scripts/battle/battle_view.gd": "8c762c99238be9e8be57723cbd3fb941f8477403a690c057988e334a4c05814c",
+    "scripts/battle/battle_wave_flags.gd": "cf3daa90f148cf81e3d0dee7c257d75b2ec918adea6bd3bda43b1ee0e93b1735",
+    "scripts/battle/dove_ui_layout.gd": "28b1e8be9ec3baf1f2257b772c36cc1cd4f58e4e993337f3341baec433e83d57"
+  },
+  "evidence": {
+    "logic": {
+      "path": "reports/battle_ui_logic.json",
+      "sha256": "4bfb7f316fc1657cc2864c551e937eb6535ac75f69a465974e7b84723449eb0f"
+    },
+    "1280x720": {
+      "path": "reports/battle_ui_1280x720.json",
+      "sha256": "977c8ba9f5119d3f9a911d0d2a9a5a423d16f98ca88774f59dc1dcd21fcb2708"
+    },
+    "1024x768": {
+      "path": "reports/battle_ui_1024x768.json",
+      "sha256": "81e53e9c5aa0fa09021819c6b576fe85533a03e9d2aa199eb7733b3883f8eb52"
+    },
+    "assets": {
+      "path": "reports/battle_ui_assets.json",
+      "sha256": "c816405704b6266318ce496b2b4c1962cba4374f64afacd612eb1bb0e0710c68"
+    },
+    "catalog": {
+      "path": "reports/content_catalog.json",
+      "sha256": "4aeb0b6f275e890525c77ef0d9db645d592005fce22c1ca5fb5d372e2eb6a652"
+    },
+    "web": {
+      "path": "reports/map_kr1_web.json",
+      "sha256": "84f44fbb16f5979557bfdb7d1a8da52bb0a7d4fa2351929abf469590b33186c2"
+    }
+  },
+  "inherited_evidence": {
+    "commit": "5490ef95eb8f3eb7ccfc8f7c793ec48394010bdb",
+    "report": "reports/level06_delivery.json",
+    "new_run": false,
+    "scope": "Level-six source timelines, new combat behaviors and first-five deterministic samples are inherited because UI gameplay hash projections remain identical"
+  },
+  "web": {
+    "release": true,
+    "developer_menu": false,
+    "isolated_pck_passed": true,
+    "files": 649,
+    "combinations_checked": 18,
+    "pck_sha256": "e342c55177ca4241ba9ec2c977bcaf5bdcf8c4bf89d7db8e429b94f3b97b00cd",
+    "bundle": "build\\KingdomRush-KR1-Levels01-06-Web.zip",
+    "bytes": 168033126,
+    "sha256": "9a43dc6e3229ef22357d2e1ef87c3aed49914c8bf8deac83a3b1fb2fc4ab7c49",
+    "zip_crc_passed": true,
+    "zip_entries": 13,
+    "export_attempts_this_ui_batch": 2,
+    "successful_deliveries": 1,
+    "export_note": "First isolated check rejected omitted UI scripts; added both to content runtime_scripts and rebuilt. Also fixed numeric-type-sensitive offset comparison. No browser automation."
+  },
+  "browser_tested": false,
+  "browser_acceptance": "manual by user",
+  "full_replays_run": false,
+  "full_replays_required": false,
+  "failures": []
+}
