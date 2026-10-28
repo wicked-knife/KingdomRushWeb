@@ -200,7 +200,7 @@ func _draw() -> void:
 	for decal: Dictionary in sim.decals:
 		if not decal.removed: _queue_template(decal.template, decal.pos, decal.state, decal.state_at, decal.flip, false, 1, false, "", decal)
 	for egg: Dictionary in sim.eggs:
-		_queue_template(egg.template,egg.pos,egg.state,egg.at,false,false,1,false,"",{"alpha":clampf(1 - float(sim.tick - int(egg.get("fade_at",sim.tick))) / 120.0,0,1)})
+		_queue_egg(egg)
 	for spawner: Dictionary in sim.spawners:
 		_queue_template(spawner.template, spawner.pos, spawner.state, spawner.at, false, false, 1, false, "", {"alpha": clampf(1 - float(sim.tick - int(spawner.get("fade_at", sim.tick))) / 120.0, 0, 1), "playback_loop": false})
 	for aura: Dictionary in sim.auras:
@@ -265,9 +265,16 @@ func _draw() -> void:
 	_refresh_hover()
 	draw_set_transform(Vector2.ZERO)
 
+func _queue_egg(egg: Dictionary) -> void:
+	# Dove plays start once, holds its last frame, then fades the idle shell.
+	_queue_template(egg.template,egg.pos,egg.state,egg.at,false,false,1,false,"",{"alpha":clampf(1 - float(sim.tick - int(egg.get("fade_at",sim.tick))) / 120.0,0,1),"playback_loop":false})
+
 func _queue_template(template_name: String, point: Vector2, state: String = "", at: int = 0, flip: bool = false, up: bool = false, variant: int = 1, dead: bool = false, preview: String = "", runtime: Dictionary = {}) -> void:
 	if runtime.get("hidden", false): return
 	var template: Dictionary = sim.templates[template_name]
+	if dead and template.get("unit", {}).get("hide_after_death", false):
+		var sprite: Dictionary = template.render.sprites[0]
+		if sim.tick - at >= SpriteAnimation.duration(animations, SpriteAnimation.key(sprite, state)): return
 	if template.has("particle_system"):
 		var ps: Dictionary = template.particle_system
 		var alpha: float = lerpf(float(ps.alphas[0]),float(ps.alphas[1]),clampf(float(sim.tick - at) / int(runtime.duration),0,1)) / 255.0

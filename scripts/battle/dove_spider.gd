@@ -10,7 +10,7 @@ static func initialize(sim, enemy: Dictionary) -> void:
 static func lay(sim, enemy: Dictionary) -> void:
 	var a: Dictionary = sim.templates[enemy.template].timed_attacks.list[0]
 	var limit: int = int(a.max_count[1]) if a.max_count is Array else int(a.max_count)
-	if sim.tick <= int(enemy.egg_at) or enemy.eggs_laid >= limit or enemy.blocker != 0: return
+	if sim.tick <= int(enemy.egg_at) or enemy.eggs_laid >= limit or enemy.blocker != 0 or int(enemy.get("silence_count", 0)) > 0: return
 	var t: Dictionary = sim.templates[a.bullet]
 	var at: int = sim.tick + Anim.duration(sim.animations,Anim.key(t.render.sprites[0],t.spawner.animation_start))
 	sim.eggs.append({"template":a.bullet,"pos":enemy.pos,"path":enemy.path,"node":enemy.node,"at":sim.tick,"next":at,"spawned":0,"state":"start"})
@@ -30,5 +30,7 @@ static func step(sim) -> void:
 			egg.spawned += 1; egg.next = sim.tick + sim.frames(spec.cycle_time)
 		else:
 			# Frozen spawner enables its four-second alpha tween after the hatch cycle.
-			if not egg.has("fade_at"): egg.fade_at = sim.tick; egg.next = sim.tick + 120
+			if not egg.has("fade_at"):
+				egg.state = "idle"; egg.at = sim.tick
+				egg.fade_at = sim.tick; egg.next = sim.tick + 120
 			else: sim.eggs.erase(egg)

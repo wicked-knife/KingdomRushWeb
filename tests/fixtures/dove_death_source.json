@@ -1,0 +1,111 @@
+{
+  "source": {
+    "version": "2.1.0.3",
+    "commit": "1a863df00b08f6bf1018ae0b0e7e4e106b939082",
+    "inputs": {
+      "all/script_utils.lua": "b5dbc705d8d85e113130452ba040a85db1e1bdbf80a1e61eda2034d494cd484a",
+      "kr1/data/game_animations.bin": "4669da7aa261c34557c7ac32dd8b1ad7f363c82a1ff3088caf6e9f58b13dda93",
+      "kr1/enemies.lua": "fe0300d1c7de27f05bd033af857a0001003bfa744745451af0e25d97cbee80ee"
+    }
+  },
+  "units": {
+    "enemy_wolf": {
+      "animation": {
+        "prefix": "worg",
+        "frames": [
+          69,
+          70,
+          71,
+          72,
+          73,
+          74,
+          75,
+          76,
+          77,
+          78,
+          79,
+          80,
+          81,
+          82,
+          83,
+          84
+        ]
+      },
+      "hide_after_death": true,
+      "dead_lifetime": 2,
+      "death_sound": "DeathPuff"
+    },
+    "enemy_wolf_small": {
+      "animation": {
+        "prefix": "wulf",
+        "frames": [
+          69,
+          70,
+          71,
+          72,
+          73,
+          74,
+          75,
+          76,
+          77,
+          78,
+          79,
+          80,
+          81,
+          82,
+          83,
+          84,
+          85
+        ]
+      },
+      "hide_after_death": true,
+      "dead_lifetime": 2,
+      "death_sound": "DeathPuff"
+    },
+    "enemy_gargoyle": {
+      "animation": {
+        "prefix": "gargoyle",
+        "frames": [
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54
+        ]
+      },
+      "hide_after_death": true,
+      "dead_lifetime": 2,
+      "death_sound": "DeathPuff"
+    },
+    "enemy_golem_head": {
+      "animation": {
+        "prefix": "golemHead",
+        "frames": [
+          89,
+          90,
+          91,
+          92,
+          93,
+          94,
+          95,
+          96,
+          97,
+          98,
+          99,
+          100
+        ]
+      },
+      "hide_after_death": true,
+      "dead_lifetime": 2,
+      "death_sound": "DeathPuff"
+    }
+  },
+  "verified_pixel_frames": 57
+}

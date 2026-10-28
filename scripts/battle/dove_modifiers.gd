@@ -32,6 +32,7 @@ func _release(sim: RefCounted, m: Dictionary) -> void:
 				var duration: int = sim.tick - int(unit.silence_at)
 				unit.heal_at += duration
 				if unit.has("ranged_at"): unit.ranged_at += duration
+				if unit.has("egg_at"): unit.egg_at += duration
 	if m.get("special", "") == "teleport":
 		var target: Dictionary = sim.unit_by_id(m.target)
 		if not target.is_empty(): target.hidden = false; target.stun_count = maxi(0, int(target.get("stun_count", 0)) - 1)

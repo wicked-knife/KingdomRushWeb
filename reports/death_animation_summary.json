@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "source_commit": "1a863df00b08f6bf1018ae0b0e7e4e106b939082",
+  "independent_scenarios": 5,
+  "verified_source_pixel_frames": 57,
+  "logic_checks": 315,
+  "native_checks": 315,
+  "source_hiding_ticks": {
+    "enemy_gargoyle": 12,
+    "enemy_golem_head": 12,
+    "enemy_wolf": 16,
+    "enemy_wolf_small": 17
+  },
+  "first_differences": {
+    "enemy_gargoyle": -1,
+    "enemy_golem_head": -1,
+    "enemy_wolf": -1,
+    "enemy_wolf_small": -1
+  },
+  "root_cause": "Imported hide_after_death was unused by renderer; shared corpse fade outlasted source animation. Smoke frames themselves match source.",
+  "change": "Hide flagged units when their death animation ends, keep source simulation lifetime and rewards.",
+  "source_capture": "reports/wolf_source_death_frames.png",
+  "native_capture": "reports/wolf_native_death_frames.png",
+  "web_exported": false
+}

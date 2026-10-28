@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "source_commit": "1a863df00b08f6bf1018ae0b0e7e4e106b939082",
+  "fixes": [
+    "egg start animation plays once",
+    "idle shell before four-second fade",
+    "silence blocks laying and suspends egg cooldown"
+  ],
+  "independent_scenarios": 2,
+  "sampled_egg_frames": 229,
+  "logic_checks": 245,
+  "native_checks": 245,
+  "first_frame_difference": -1,
+  "reference_clock": "Source mother/spawner coroutines; engine waits normalized to integer 30 Hz ticks",
+  "baseline_audit": {
+    "passed": true,
+    "level": 5,
+    "changed_sample_indexes": [
+      1,
+      3,
+      5
+    ],
+    "difference": "Only faded egg state=start -> idle and animation origin timestamp; gameplay and RNG unchanged",
+    "other_levels_unchanged": [
+      1,
+      3
+    ]
+  },
+  "adjacent_regression": {
+    "level05_checks": 140,
+    "level06_checks": 185
+  },
+  "complete_comparison": [
+    "reports/spider_logic.json",
+    "reports/spider_native.json",
+    "reports/spider_snapshot_audit.json"
+  ],
+  "native_capture": "reports/spider_native_frames.png",
+  "web_exported": false
+}

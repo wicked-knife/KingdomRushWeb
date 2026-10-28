@@ -42,6 +42,10 @@ python tools/verify_level01_assets.py --level 6
 
 原生专项脚本位于 `tests/*visual*.gd`，截图及临时日志写入忽略目录。画面、输入、音频优先用 Godot 原生窗口；不为日常检查反复导出 Web。
 
+蜘蛛产卵／孵化专项：`python tools/prepare_spider_reference.py` 生成源样本；使用 Godot 的 `--headless --path . --script tests/verify_spider.gd` 检查逻辑，去掉 `--headless` 并加 `--resolution 1280x720` 检查实际画面。两种运行分别保留完整逐帧比较，原生运行另外生成 `reports/spider_native_frames.png`。
+
+死亡动画专项：先运行 `python tools/verify_wolf_death_source.py`，再用 Godot 的 `--headless --path . --script tests/verify_death_animation.gd` 检查逻辑；去掉 `--headless` 并加 `--resolution 1280x720` 检查原生渲染。包括座狼、小狼及共用隐藏规则的代表单位，不运行完整战役。
+
 默认科技专项：
 
 ```powershell

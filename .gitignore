@@ -104,3 +104,5 @@ __pycache__/
 !/reports/upgrades_native_1024x768.json
 !/reports/upgrades_delivery.json
 !/reports/technology_slot_entry.json
+!/reports/spider_summary.json
+!/reports/death_animation_summary.json
