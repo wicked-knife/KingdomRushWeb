@@ -59,7 +59,11 @@ def prepare(source, love):
                 collect(child)
     collect(data)
     groups = ["screen_map_backgrond", "screen_map_animations", "screen_map_flags", "screen_map_buttons", "stars_container", "level_select", "ballon", "view_options", "hero_room"]
+    groups.append("upgrades")
     atlases = {g: json.loads((assets / f"data/atlases/{g}.json").read_text(encoding="utf-8")) for g in groups}
+    upgrades = json.loads((ROOT / "data/upgrades/definition.json").read_text(encoding="utf-8"))
+    wanted.update(t["image"] for t in upgrades["techs"].values())
+    wanted.update(k for k in atlases["upgrades"]["frames"] if not k.startswith(("kr2_", "kr3_", "kr4_", "kr5_")))
     for group in ["screen_map_flags", "screen_map_buttons", "stars_container"]:
         wanted.update(atlases[group]["frames"])
     wanted.update(k for k in atlases["hero_room"]["frames"] if "mapButtons_portrait_hero_" in k)
@@ -115,7 +119,7 @@ def prepare(source, love):
         if int(stale.stem.split("_")[1]) >= len(pages):
             stale.unlink()
     write(out / "atlas.json", {"schema_version": 1, "group": "map_kr1", "texture_directory": "res://data/map_kr1/", "frames": frames, "lookup": aliases, "aliases": {k: v for k, v in aliases.items() if k != v}})
-    sound_ids = ["MusicMap1", "GUIButtonCommon", "GUIQuickMenuOver", "GUIWinStars", "GuimapNewRoad", "GUIMapNewFlah"]
+    sound_ids = ["MusicMap1", "GUIButtonCommon", "GUIQuickMenuOver", "GUIWinStars", "GuimapNewRoad", "GUIMapNewFlah", "GUIBuyUpgrade"]
     all_sounds = json.loads((assets / "data/sounds.json").read_text(encoding="utf-8"))
     sounds = {k: all_sounds[k] for k in sound_ids}
     write(out / "sounds.json", sounds)

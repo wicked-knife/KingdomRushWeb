@@ -65,6 +65,9 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
     # Compatibility adaptations are registered with the affected content entry.
     data["ui"]["notifications"].update(spec.get("notification_overrides", {}))
     # Resolve source layout overrides once, with isolated templates per instance.
+    # Stable identities must not depend on how many technology/actor templates
+    # are exported. Existing contents retain their original suffix base.
+    instance_index = spec.get("layout_instance_base", 0)
     for entity in data["layout"]["entities_list"]:
         original=entity["template"]
         if original not in data["templates"]: continue
@@ -76,7 +79,8 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
                 parts=re.findall(r"[^.\[\]]+",key)
                 for part in parts[:-1]: target=target[int(part)-1] if isinstance(target,list) else target[part]
                 target[parts[-1]]=value
-            name=f"{original}__{len(data['templates'])}"
+            name=f"{original}__{instance_index}"
+            instance_index += 1
             data["templates"][name]=instance;entity["template"]=name
             if original in data["behaviors"]: data["behaviors"][name]=data["behaviors"][original]
             data["dependencies"][name]=copy.deepcopy(data["dependencies"].get(original, []))
@@ -145,11 +149,15 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
     states=["idle","idleUp","idleDown","shoot","shootingUp","shootingDown","walkingRightLeft","walkingUp","walkingDown","running","attack","death","open","close","play","flying","heal","jump","small","medium","large"]
     states += spec["export"].get("animation_states", [])
     for template in data["templates"].values():
+        if template.get("template_name") == "spear_legionnaire": wanted.add(template["bullet"]["miss_decal"])
         if template.get("particle_system",{}).get("name"): wanted.add(template["particle_system"]["name"])
         for sprite in template.get("render",{}).get("sprites",[]):
             name=sprite.get("name","");prefix=sprite.get("prefix","")
             if prefix:
-                for suffix in set(states + [name] + (sprite.get("size_names",[]) if advanced else [])):
+                if sprite.get("use_blood_color"):
+                    animations.update({k: v for k, v in all_anims.items() if k.startswith(prefix + "_")})
+                sprite_states = [name] if template.get("template_name") == "fx_splash_small" else states + [name] + (sprite.get("size_names",[]) if advanced else [])
+                for suffix in set(sprite_states):
                     key=prefix+"_"+suffix
                     if key in all_anims: animations[key]=all_anims[key]
                 if advanced:
@@ -163,10 +171,12 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
                 name=name.replace("%04i","0001")
                 if name in all_anims: animations[name]=all_anims[name]
                 else: wanted.add(name)
-    for prefix in ["re_farmer_2","re_farmer_3"]:
+    for prefix in [f"{name}_{variant}" for name in ["re_farmer", "re_farmer_well_fed", "re_conscript", "re_warrior", "re_legionnaire", "re_legionnaire_ranged"] for variant in range(1, 4)]:
         for suffix in states:
             key=prefix+"_"+suffix
             if key in all_anims: animations[key]=all_anims[key]
+        key=prefix+"_ranged_attack"
+        if key in all_anims: animations[key]=all_anims[key]
     for definition in animations.values(): wanted.update(f"{definition['prefix']}_{int(n):04d}" for n in definition["frames"])
     groups={p.stem:json.loads(p.read_text(encoding="utf-8")) for p in (assets/"data/atlases").glob("*.json")}
     ui_groups=["gui_portraits","gui_common","gui_ico","gui_tutorial","gui_notifications_bg","gui_notifications","view_options","ballon"]

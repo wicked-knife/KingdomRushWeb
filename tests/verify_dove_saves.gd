@@ -4,6 +4,7 @@ const Slots = preload("res://scripts/services/save_slots.gd")
 const Settings = preload("res://scripts/services/menu_settings.gd")
 const Levels = preload("res://scripts/services/campaign_levels.gd")
 const Sim = preload("res://scripts/battle/level01_sim.gd")
+const Upgrades = preload("res://scripts/battle/dove_upgrades.gd")
 var checks := 0
 var failures: Array[String] = []
 var temporary := "user://dove_saves_%d" % Time.get_ticks_usec()
@@ -29,6 +30,20 @@ func _run() -> void:
 	check(p.data.levels.keys().all(func(k): return k is int), "all in-memory level keys are integers")
 	check(p.unlocked == [1] and p.total_stars() == 0 and p.data.levels.has(201), "shared source template preserves other generation entry points")
 	check(p.data.upgrades.archers == 0 and p.data.bag.is_empty() and p.data.gems == 0 and p.data.locked_towers.size() == 75, "full source defaults exported")
+	for wrong_id: Variant in [1, 1.0, true, null, [], {}]:
+		var malformed: Dictionary = p.data.duplicate(true); malformed.upgrade_list_id = wrong_id
+		check(not Progress.valid(malformed), "slot schema rejects non-string technology ID %s" % type_string(typeof(wrong_id)))
+		check(not Upgrades.slot_error(malformed).is_empty(), "technology validation rejects non-string ID before comparison %s" % type_string(typeof(wrong_id)))
+	var missing_id: Dictionary = p.data.duplicate(true); missing_id.erase("upgrade_list_id")
+	check(not Progress.valid(missing_id), "current slot schema requires technology ID")
+	var invalid_directory := temporary + "/invalid_type"; DirAccess.make_dir_recursive_absolute(invalid_directory)
+	var malformed: Dictionary = p.data.duplicate(true); malformed.upgrade_list_id = 1.0
+	var invalid_path := invalid_directory + "/slot_1.json"
+	write(invalid_path, malformed)
+	var original_file := FileAccess.get_file_as_string(invalid_path)
+	var rejected := Slots.new(); rejected.initialize(invalid_directory)
+	check(rejected.status(1) == "corrupt" and rejected.select_slot(1) == null, "non-string technology ID cannot enter a slot")
+	check(FileAccess.get_file_as_string(invalid_path) == original_file, "invalid technology ID is neither converted nor rewritten")
 	check(p.max_stars == 645 and slots.summaries()[0].max_stars == 645, "shared star denominator comes from all source generations")
 	p.data.bag.example = 2; p.data.upgrades.archers = 1
 	check(second.data.bag.is_empty() and second.data.upgrades.archers == 0, "new slots deep-copy every nested field")

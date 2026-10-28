@@ -60,6 +60,8 @@ def verify(level_id=1, ranger_arena=False):
         if level_id >= 4 and bullet.get("hit_fx_water"): assert bullet["hit_fx_water"] in data["templates"],template_name
     for name,definition in animations.items():
         for number in definition["frames"]: assert f"{definition['prefix']}_{int(number):04d}" in atlas["lookup"],name
+    from upgrades_contract import validate_technology_resources
+    validate_technology_resources(data, animations, atlas, read(folder/"sounds.json"))
     images={}; originals={}; original_atlases={}
     for name,f in atlas["frames"].items():
         group=f["source_group"]

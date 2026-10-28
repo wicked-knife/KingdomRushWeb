@@ -7,48 +7,48 @@
       "changed_sections": [],
       "source_current": true,
       "controller": "level01",
-      "behaviors": 25,
-      "dependency_owners": 40
+      "behaviors": 37,
+      "dependency_owners": 55
     },
     "level02": {
       "gameplay_unchanged": true,
       "changed_sections": [],
       "source_current": true,
       "controller": "default",
-      "behaviors": 26,
-      "dependency_owners": 39
+      "behaviors": 38,
+      "dependency_owners": 54
     },
     "level03": {
       "gameplay_unchanged": true,
       "changed_sections": [],
       "source_current": true,
       "controller": "default",
-      "behaviors": 29,
-      "dependency_owners": 66
+      "behaviors": 41,
+      "dependency_owners": 81
     },
     "level04": {
       "gameplay_unchanged": true,
       "changed_sections": [],
       "source_current": true,
       "controller": "default",
-      "behaviors": 39,
-      "dependency_owners": 78
+      "behaviors": 51,
+      "dependency_owners": 93
     },
     "level05": {
       "gameplay_unchanged": true,
       "changed_sections": [],
       "source_current": true,
       "controller": "default",
-      "behaviors": 56,
-      "dependency_owners": 73
+      "behaviors": 68,
+      "dependency_owners": 87
     },
     "ranger_arena": {
       "gameplay_unchanged": true,
       "changed_sections": [],
       "source_current": true,
       "controller": "default",
-      "behaviors": 45,
-      "dependency_owners": 85
+      "behaviors": 57,
+      "dependency_owners": 100
     }
   },
   "failure_probes": [
@@ -75,14 +75,15 @@
     {
       "case": "stale_source",
       "rejected": true,
-      "reason": "level05: source differs from current Dove catalog"
+      "reason": "technology source differs from current Dove catalog"
     }
   ],
-  "publication_resources": 296,
-  "publication_data": 55,
+  "publication_resources": 303,
+  "publication_data": 56,
   "resource_baseline": "battle_ui_baseline.json (source pixel verification in battle_ui_assets.json)",
   "verified_resource_files": 85,
-  "unchanged_resource_files": 85,
+  "unchanged_resource_files": 21,
+  "repacked_files_source_pixel_check": "reports/battle_ui_assets.json",
   "changed_resource_files": [],
   "failures": []
 }

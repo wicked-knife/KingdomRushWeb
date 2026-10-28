@@ -13,6 +13,9 @@
 | `tools/level01_export/main.lua` | 隔离求值布局、路径、网格、波次和模板，递归依赖并保留源行为 ID |
 | `tools/prepare_level01.py` | 转换模式覆盖、数值、通知、禁塔、升级限制、UI、图集、动画与声音 |
 | `scripts/services/campaign_levels.gd` | 验证当前基准并加载独立模式；目录查询缓存，运行实例深拷贝 |
+| `scripts/services/battle_setup.gd` | 地图／战斗边界：深拷贝通知、存档禁塔和购买科技；不改变关卡加载接口 |
+| `scripts/battle/dove_upgrades.gd` | 默认方案的显式 ID 适配、模板补丁、科技上限和运行时行为 |
+| `tools/upgrades_contract.py` | 逐科技追踪可达模板、动画、帧与声音；缺项阻止导出 |
 | `scripts/battle/dove_behaviors.gd` | 显式源 ID 到 Godot 模块分派；只接受登记的等价名称 |
 | `tools/web_bootstrap.py` | 同一目录生成发布文件清单与组合回执 |
 
@@ -34,3 +37,5 @@
 新机制在 `dove_behaviors.gd` 注册源 ID，并按需扩展 `capabilities.lua`、Lua 和 Python 引用字段检查。共享行为和 UI 不按关卡编号分派。转换器当前只覆盖已核实的 Lua 波次与普通难度 2，其他世代、TSV 或未支持 Boss 须先扩展能力。
 
 选择贴花、技能等级灯偏移与共用动画都由源 UI 导出，不为新关卡手填。表现时钟与战斗随机数独立。`--reuse-resources` 仅适用于源输入、玩法和媒体完全未变的接入元数据更新；同步新版源码应正常重新生成。
+
+科技规则和扩展步骤见 [默认科技闭环](DEFAULT_UPGRADES.md)。新关卡必须同时包含当前已开放科技对该关可达内容的依赖，不因测试使用零科技而省略。关卡目录中的 `layout_instance_base` 固定历史布局实例的命名起点，新增依赖不能重命名旧卫兵、鱼或背景实例。

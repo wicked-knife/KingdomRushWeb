@@ -5,6 +5,7 @@ import json
 from campaign_content import ROOT, read_catalog, export_spec, validate_definition, combinations
 from prepare_level01 import gameplay_projection
 from web_bootstrap import resource_paths
+from upgrades_compatibility import previous_gameplay, previous_resource_digest, repacked
 
 
 def digest(value):
@@ -25,7 +26,7 @@ def verify():
         definition = json.loads((ROOT / f"data/{name}/definition.json").read_text(encoding="utf-8"))
         spec = export_spec(definition["level"]["id"], name == "ranger_arena")
         validate_definition(definition, spec)
-        gameplay = gameplay_projection(definition)
+        gameplay = previous_gameplay(name, gameplay_projection(definition))
         # The UI revision adds source presentation metadata, without altering
         # any frozen gameplay or previous UI fields.
         for field in ("selection_markers", "tower_menu_power_offset"):
@@ -60,14 +61,17 @@ def verify():
     # manifests necessarily change when advancing the current source baseline.
     expected_resources = {p: h for p, h in (baseline["resource_files"] | ui_baseline["resource_files"]).items()
                           if not p.endswith(("/definition.json", "/manifest.json"))}
+    # Preserve every old logical atlas entry; source pixel checks cover repacked PNGs.
+    for name in ui_baseline["definitions"]: previous_resource_digest(ROOT / f"data/{name}/atlas.json")
     changed_resources = [path for path, expected in expected_resources.items()
-                         if resource_digest(ROOT / path) != expected]
+                         if not repacked(ROOT / path) and previous_resource_digest(ROOT / path) != expected]
     if changed_resources: failures.append(f"Unnecessary resource changes: {changed_resources}")
     result = {"passed": not failures, "content_combinations": len(combinations()), "definitions": rows,
               "failure_probes": probes, "publication_resources": len(resources), "publication_data": len(data),
               "resource_baseline": "battle_ui_baseline.json (source pixel verification in battle_ui_assets.json)",
               "verified_resource_files": len(expected_resources),
-              "unchanged_resource_files": sum(resource_digest(ROOT / path) == expected for path, expected in expected_resources.items()),
+              "unchanged_resource_files": sum(previous_resource_digest(ROOT / path) == expected for path, expected in expected_resources.items() if not repacked(ROOT / path)),
+              "repacked_files_source_pixel_check": "reports/battle_ui_assets.json",
               "changed_resource_files": changed_resources, "failures": failures}
     (ROOT / "reports/content_catalog.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False))

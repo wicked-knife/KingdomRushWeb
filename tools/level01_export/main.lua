@@ -129,6 +129,8 @@ local function run()
   local finish=assert(game:find('tt = RT("re_farmer_well_fed",',start,true))
   chunk("kr1/game_templates.lua","local tt;local image_y;local anchor_y;local scripts=require('game_scripts');local function ady(v) return v-anchor_y*image_y end;"..game:sub(start,finish-1))
   behavior_names[E.entities.re_farmer.main_script.insert]="kr1.game_templates.re_farmer.insert"
+  -- Technology roots are shared by every campaign; keep the unmodified templates.
+  for _,id in ipairs({"re_farmer_well_fed","re_conscript","re_warrior","re_legionnaire","re_legionnaire_ranged","spear_legionnaire","mod_arcane_shatter","mod_arcane_shatter_little","mod_slow_curse","mod_blood_elves"}) do load_game_template(id) end
   local function clean(v)
     local kind=type(v)
     if kind=="function" then return assert(behavior_names[v],spec.folder..": unmapped source callback") end
@@ -151,6 +153,7 @@ local function run()
   for key,value in pairs(source_tables) do out[key]=clean(value) end
   for _,id in ipairs(out.layout.required_templates or {}) do chunk("kr1/template_groups/"..id..".lua") end
   local template_ids=table.deepclone(spec.export.template_ids)
+  for _,id in ipairs({"re_farmer_well_fed","re_conscript","re_warrior","re_legionnaire","re_legionnaire_ranged","spear_legionnaire","mod_arcane_shatter","mod_arcane_shatter_little","mod_slow_curse","mod_blood_elves","power_scorched_earth","power_scorched_water","pop_crit"}) do table.insert(template_ids,id) end
   for _,id in ipairs(enemy_ids) do table.insert(template_ids,id) end
   for _,entity in ipairs(out.layout.entities_list) do
     if entity.template ~= "decal_background" and entity.template ~= "decal_defend_point" and entity.template ~= "editor_wave_flag" then
@@ -197,6 +200,8 @@ local function run()
       end
     end
     visit(filtered)
+    -- miss_decal is a raw sprite, whereas miss_fx_water is an entity.
+    if id=="spear_legionnaire" then found[t.bullet.miss_fx_water]=true end
     local dependencies={};for child in pairs(found) do dependencies[#dependencies+1]=child end;table.sort(dependencies)
     out.dependencies[id]=dependencies
     for _,child in ipairs(dependencies) do export_template(child,id) end

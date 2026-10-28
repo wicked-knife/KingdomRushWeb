@@ -181,8 +181,10 @@ func _start_level(level_id: int, mode: int, difficulty: int) -> void:
 	if definition.is_empty():
 		if campaign_map != null: campaign_map.show_message(preload("res://scripts/services/campaign_levels.gd").last_error)
 		return
-	definition["seen"] = campaign.data.seen.duplicate()
-	definition["slot_locked_towers"] = campaign.data.locked_towers.duplicate()
+	definition = preload("res://scripts/services/battle_setup.gd").create(definition, campaign.data)
+	if definition.is_empty():
+		if campaign_map != null: campaign_map.show_message(preload("res://scripts/services/battle_setup.gd").last_error)
+		return
 	_release_map()
 	battle = Battle.new()
 	add_child(battle)

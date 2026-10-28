@@ -39,12 +39,26 @@ func _release(sim: RefCounted, m: Dictionary) -> void:
 	var target: Dictionary = sim.unit_by_id(m.target)
 	if not target.is_empty(): target.stun_count = maxi(0, int(target.get("stun_count", 0)) - 1)
 
-func apply(sim: RefCounted, template: String, target: Dictionary, level: int, source: String, duration: float = -1, damage_factor: float = 1.0) -> bool:
+func apply(sim: RefCounted, template: String, target: Dictionary, level: int, source: String, duration: float = -1, damage_factor: float = 1.0, source_damage: Dictionary = {}) -> bool:
 	if target.is_empty() or target.hp <= 0 or level <= 0 or not sim.templates.has(template): return false
 	var t: Dictionary = sim.templates[template]
 	if sim.behaviors.role(template) in ["arcane_damage", "disintegrate", "teleport"]: return sim.Behaviors.Arcane.apply(sim, template, target, level, source, damage_factor)
 	var rule: Dictionary = t.modifier
 	if not flags_match(sim, target, rule): return false
+	if target.template in rule.get("excluded_templates", []): return false
+	if sim.behaviors.role(template) == "instant_damage":
+		sim.damage(target, float(t.damage_min) * damage_factor, int(t.damage_type), int(source)); return false
+	if template == "mod_slow_curse" and active.any(func(m): return m.target == target.id and sim.templates[m.template].modifier.get("type", "") == "rage"): return false
+	var bleeding := -1.0
+	if template == "mod_blood_elves":
+		if sim.rng.randf() >= float(t.chance): return false
+		var same: Array = active.filter(func(m): return m.target == target.id and sim.templates[m.template].modifier.get("type", "") == rule.type)
+		if same.size() >= int(rule.max_of_same) or source_damage.is_empty(): return false
+		var health: Dictionary = sim.templates[target.template].health
+		var armor := 0.0
+		if (int(source_damage.type) & 2) != 0: armor = clampf(float(target.get("armor", health.armor)) - float(source_damage.get("reduce_armor",0)), 0, 1)
+		bleeding = maxf(1.0, float(source_damage.value) * (1 - armor) * sim.DamageFactors.value(target, sim.templates[target.template], true) * float(t.damage_factor))
+		for old: Dictionary in same: old.bleed_fx = false
 	for existing: Dictionary in active.duplicate():
 		if existing.target != target.id: continue
 		var other: Dictionary = sim.templates[existing.template].modifier
@@ -73,6 +87,7 @@ func apply(sim: RefCounted, template: String, target: Dictionary, level: int, so
 		"at":sim.tick, "expires":sim.tick + sim.frames(duration if duration >= 0 else float(rule.duration)), "next_hit":sim.tick + 1,
 		"state":"", "prefix":"", "scale":Vector2.ONE, "phase":"loop", "visible":true}
 	if damage_factor != 1.0: m.damage_factor = damage_factor
+	if bleeding >= 0: m.bleeding = bleeding; m.damage_factor = 1.0; m.bleed_fx = true; m.next_hit = sim.tick + 1; m.last_fx = 0; m.damage_ts = sim.tick / 30.0 - float(t.dps.damage_every)
 	if template == "mod_thorn":
 		var sprite: Dictionary = t.render.sprites[0]
 		m.prefix = sprite.size_prefixes[size_index]; m.scale = sim.vec(sprite.size_scales[size_index])
@@ -116,10 +131,14 @@ func step(sim: RefCounted) -> void:
 		else:
 			if sim.tick >= m.expires: _release(sim, m); active.erase(m); continue
 			if t.has("dps") and sim.tick >= m.next_hit:
-				m.next_hit += sim.frames(t.dps.damage_every)
-				var amount := float(t.dps.damage_min) + float(t.dps.damage_inc) * int(m.level)
-				sim.damage(target, amount * float(m.get("damage_factor",1.0)), int(t.dps.damage_type))
-				if t.dps.get("fx","") != "":
+				if m.has("bleeding"):
+					m.damage_ts += float(t.dps.damage_every)
+					m.next_hit = maxi(sim.tick + 1, ceili((float(m.damage_ts) + float(t.dps.damage_every)) * 30.0 - 0.0000001))
+				else: m.next_hit += sim.frames(t.dps.damage_every)
+				var amount := float(int(m.bleeding)) if m.has("bleeding") else float(t.dps.damage_min) + float(t.dps.damage_inc) * int(m.level)
+				sim.damage(target, amount * float(m.get("damage_factor",1.0)), int(t.dps.damage_type), int(m.source))
+				if t.dps.get("fx","") != "" and m.get("bleed_fx", true) and (not m.has("bleeding") or sim.tick - int(m.last_fx) >= sim.frames(t.dps.fx_every)):
+					if m.has("bleeding"): m.last_fx = sim.tick
 					var unit: Dictionary = sim.templates[target.template].unit
 					var size: String = "small" if int(unit.size) == 1 else "big"
 					sim.add_effect(t.dps.fx,target.pos,{"target":target.id,"state":size + "_" + str(unit.blood_color),"flip":target.flip if t.dps.get("fx_target_flip",false) else false})

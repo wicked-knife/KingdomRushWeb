@@ -8,7 +8,8 @@ const Paladin = preload("res://scripts/battle/dove_paladin.gd")
 const Ranged = preload("res://scripts/battle/dove_enemy_ranged.gd")
 const Spawner = preload("res://scripts/battle/dove_spawner.gd")
 const Juggernaut = preload("res://scripts/battle/dove_juggernaut.gd")
-const ROLES := ["ground", "healer", "spider", "soldier", "reinforcement", "archer", "mage", "engineer", "barrack", "mercenary", "ranger", "building", "arrow", "bolt", "bomb", "fireball", "arrow_missile", "thorn_aura", "spawner", "dps", "track_modifier", "heal_modifier", "thorn_modifier", "fire_control", "passive", "juggernaut", "arcane", "ray", "arcane_damage", "disintegrate", "teleport", "mod_aura", "enemy_missile", "enemy_bomb", "tower_decal"]
+const Upgrades = preload("res://scripts/battle/dove_upgrades.gd")
+const ROLES := ["ground", "healer", "spider", "soldier", "reinforcement", "archer", "mage", "engineer", "barrack", "mercenary", "ranger", "building", "arrow", "bolt", "bomb", "fireball", "arrow_missile", "thorn_aura", "spawner", "dps", "track_modifier", "heal_modifier", "thorn_modifier", "fire_control", "passive", "juggernaut", "arcane", "ray", "arcane_damage", "disintegrate", "teleport", "mod_aura", "enemy_missile", "enemy_bomb", "tower_decal", "instant_damage", "damage_aura"]
 var catalog: Dictionary
 var bindings: Dictionary
 
@@ -20,6 +21,8 @@ static func canonical(source_id: String, content_catalog: Dictionary) -> String:
 	return content_catalog.get("behavior_aliases", {}).get(source_id, source_id)
 
 static func validate(definition: Dictionary, content_catalog: Dictionary) -> String:
+	var tech_error := Upgrades.validate(definition)
+	if not tech_error.is_empty(): return tech_error
 	var content: String = definition.get("level", {}).get("root", "unknown")
 	var templates: Dictionary = definition.get("templates", {})
 	for name: String in definition.get("callbacks", {}):

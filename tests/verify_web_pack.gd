@@ -30,6 +30,7 @@ func _init() -> void:
 	var manifest: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/menu_manifest.json"))
 	var expected: Array = [manifest.catalog, manifest.locale, manifest.sounds, manifest.font, manifest.background]
 	expected.append("res://data/save/definition.json")
+	expected.append("res://data/upgrades/definition.json")
 	expected.append_array(manifest.get("fonts", [manifest.font]))
 	expected.append(manifest.font_roles)
 	expected.append_array(manifest.scenes)
@@ -66,6 +67,10 @@ func _init() -> void:
 			failures.append("Missing resource: " + path)
 	if load("res://scenes/app_root.tscn") == null:
 		failures.append("Exported main scene or script dependencies failed to load")
+	var upgrades = load("res://scripts/battle/dove_upgrades.gd")
+	var setup = load("res://scripts/services/battle_setup.gd")
+	if upgrades == null or setup == null or upgrades.definition().techs.size()!=36: failures.append("Default technology registry missing in pack")
+	if load("res://scripts/map/upgrades_room.gd")==null: failures.append("Technology room missing in pack")
 	var progress_script = load("res://scripts/services/campaign_progress.gd")
 	var smoke_path := args[0].get_base_dir() + "/slot_smoke.json"
 	var session = progress_script.new(); session.initialize(smoke_path)
@@ -75,6 +80,7 @@ func _init() -> void:
 	var settlement: Dictionary = session.enter_map()
 	if session.record(1).get(1, 0) != 2 or settlement.unlocked != [2] or session.data.has("last_victory") or "tower_ranger" in session.data.locked_towers:
 		failures.append("Exported unified slot settlement failed")
+	if not session.set_upgrade_level("archers",2) or session.upgrade_summary().spent!=2: failures.append("Exported technology purchase failed")
 	for suffix in ["", ".tmp", ".bak"]:
 		if FileAccess.file_exists(smoke_path + suffix): DirAccess.remove_absolute(smoke_path + suffix)
 	var definition: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/level01/definition.json"))
@@ -127,6 +133,9 @@ func _init() -> void:
 	for frame: Dictionary in map_atlas.frames.values():
 		if not ResourceLoader.exists(map_atlas.texture_directory + frame.sheet): failures.append("Missing map atlas " + frame.sheet)
 	if map_catalog.get_frame("map_kr1", "map_background_kr1").is_empty(): failures.append("Map background unavailable")
+	if map_catalog.get_sound("GUIBuyUpgrade").is_empty(): failures.append("Technology purchase audio missing")
+	for tech: Dictionary in upgrades.definition().techs.values():
+		if map_catalog.get_frame("map_kr1",tech.image).is_empty(): failures.append("Technology icon missing: "+tech.title)
 	var hero_catalog = load("res://scripts/dove_asset_catalog.gd").new("res://data/heroes/catalog.json")
 	var hero_atlas: Dictionary = hero_catalog.load_group("heroes")
 	for frame: Dictionary in hero_atlas.get("frames", {}).values():
@@ -138,6 +147,8 @@ func _init() -> void:
 	else:
 		var simulation = sim_script.new(definition)
 		if simulation.towers.size() != 8: failures.append("Exported simulation initialization failed")
+		var upgraded = sim_script.new(setup.create(definition,session.data),42)
+		if upgraded.upgrades.effective.archers!=2 or upgraded.templates.tower_archer_1.tower.price!=67 or simulation.templates.tower_archer_1.tower.price!=70: failures.append("Exported battle setup or zero-technology isolation failed")
 		var levels = load("res://scripts/services/campaign_levels.gd")
 		for id in levels.ids():
 			for mode in [1,2,3]:

@@ -8,6 +8,7 @@ from pathlib import Path
 import shutil
 import subprocess
 from campaign_content import read_catalog, level_ids, combinations, export_spec, validate_definition
+from upgrades_contract import validate_technology_resources
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "data/menu_manifest.json"
@@ -20,6 +21,7 @@ def resource_paths():
     resources = [*manifest["scenes"], *manifest["scripts"], *manifest.get("fonts", [manifest["font"]]), manifest["background"], *manifest["textures"], *manifest["audio"].values()]
     data = ["res://data/menu_manifest.json", manifest["catalog"], manifest["locale"], manifest["sounds"], manifest["font_roles"], *manifest["atlases"].values()]
     data.append("res://data/save/definition.json")
+    data.append("res://data/upgrades/definition.json")
     content = read_catalog()
     data.append("res://data/campaign_content.json")
     for level_id in level_ids():
@@ -28,6 +30,10 @@ def resource_paths():
         level = json.loads((ROOT / f"data/{level_name}/manifest.json").read_text(encoding="utf-8"))
         definition = json.loads((ROOT / f"data/{level_name}/definition.json").read_text(encoding="utf-8"))
         validate_definition(definition, export_spec(level_id))
+        validate_technology_resources(definition,
+            json.loads((ROOT / f"data/{level_name}/animations.json").read_text(encoding="utf-8"))["animations"],
+            json.loads((ROOT / f"data/{level_name}/atlas.json").read_text(encoding="utf-8")),
+            json.loads((ROOT / f"data/{level_name}/sounds.json").read_text(encoding="utf-8")))
         resources += level["resources"]
         data += level["data"] + [f"res://data/{level_name}/manifest.json"]
     resources += content["runtime_scripts"]
@@ -109,6 +115,16 @@ def main():
         (ROOT / "export_presets.cfg").write_text(preset_text(), encoding="utf-8")
     if args.command == "export":
         engine = godot_path(args.godot)
+        technology_reports = {}
+        for key in ("logic", "native_1280x720", "native_1024x768", "assets"):
+            path = ROOT / f"reports/upgrades_{key}.json"
+            result = json.loads(path.read_text(encoding="utf-8"))
+            if not result.get("passed") or not result.get("source_hashes"):
+                raise RuntimeError(f"Technology acceptance failed: {path}")
+            for relative, expected in result["source_hashes"].items():
+                if hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() != expected:
+                    raise RuntimeError(f"Technology acceptance is stale: {relative}")
+            technology_reports[key] = {k: result[k] for k in ("passed", "checks", "source_patch_scenarios", "source_template_rows", "behavior_scenarios", "content_combinations", "native_input", "native_audio") if k in result}
         ui_reports = {}
         for key in ("logic", "1280x720", "1024x768", "assets"):
             path = ROOT / f"reports/battle_ui_{key}.json"
@@ -152,6 +168,8 @@ def main():
             "sixth_logic": {k: sixth_report.get(k) for k in ("passed", "checks", "independent_modes", "timeline_waves", "births", "full_replays")},
             "sixth_native": {k: native_report.get(k) for k in ("passed", "checks", "scope")},
             "battle_ui_acceptance": ui_reports,
+            "default_technology_acceptance": technology_reports,
+            "technology_scheme": "1",
             "challenge_acceptance_basis": challenge_report.get("acceptance_basis", "dove_configuration_and_functionality"),
             "challenge_victory_replays_required": False,
             "challenge_replays_run": challenge_report.get("replays_run", False),

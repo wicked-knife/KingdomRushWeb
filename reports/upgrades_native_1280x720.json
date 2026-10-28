@@ -1,0 +1,27 @@
+{
+	"browser_tested": false,
+	"checks": 2826,
+	"failures": [],
+	"native_audio": true,
+	"native_input": true,
+	"passed": true,
+	"resolution": "1280x720",
+	"source_hashes": {
+		"data/upgrades/definition.json": "0969a91d7255b5f2fd7edb8746a9c586d1c00f3075292be8081e18bf6012d597",
+		"scripts/app_root.gd": "819589b066d9d106fcd8a05c38d568f7cd8ff8a3926906c7d33b6e0ef29640c9",
+		"scripts/battle/battle_view.gd": "72d32bbac4954a88d7b64a9117416970fa6d2ec1876d8e63017ac567f720001b",
+		"scripts/battle/dove_arcane.gd": "03d840fea2a178795194e1e1bb0e98684c5559c6b65ceaf3c5dea6bd4efcda82",
+		"scripts/battle/dove_behaviors.gd": "dd7f324ad3454afd20236f3a71d1c4d60d60b5b98ef6a69c7c8ac7ad2696153b",
+		"scripts/battle/dove_modifiers.gd": "074d43cb8e0861a9c56179157a0934de84b8449e4f632a599ec29f47479590b6",
+		"scripts/battle/dove_upgrades.gd": "5ff1b0f19a8e3ea2e9aaffdc9697e2eb409d0f13fbd01ce8d8446af8946292eb",
+		"scripts/battle/level01_sim.gd": "050a9bc80861ca69ae187cf0b799f0e6fd926a390e94050c02327180743fe3aa",
+		"scripts/map/map_interface.gd": "81e753391d5fb2f7f6b4579bb3349c497d06fe9dbe8fd388912b8890027ff416",
+		"scripts/map/map_screen.gd": "16713179a9a97d74659daefbc11ef36299d03c2513a5e984e25e332e2110c0fb",
+		"scripts/map/upgrades_room.gd": "3316e9ef3a837015cf297aa4003fb52f1d7e3f2e4b93b8d8a32f7bb4f4806df8",
+		"scripts/services/battle_setup.gd": "5469d9f4cb36b6b2cecb29493c01fc77a2f0820b132adae3e7424c219f8653d1",
+		"scripts/services/campaign_levels.gd": "da30a1fdd2463ea40be1083c3a83215738985442037aac0d48b410352297c1af",
+		"scripts/services/campaign_progress.gd": "da38c3e65728f4f103e9f1229a432984a9ccc9f906759cdbbcc118ad5ef99cb8",
+		"tests/upgrades_native.gd": "ffea1c3fad97892934dbd03b568a8a170aa497ca7d6c19ea121832c2cc835d9f"
+	},
+	"text_boxes_checked": 619
+}

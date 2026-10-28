@@ -7,6 +7,7 @@ const DEFINITION := "res://data/map_kr1/definition.json"
 const SLOT_DEFINITION := "res://data/save/definition.json"
 const HERO_DEFINITION := "res://data/heroes/definition.json"
 const CampaignLevels = preload("res://scripts/services/campaign_levels.gd")
+const Upgrades = preload("res://scripts/battle/dove_upgrades.gd")
 var data := {}
 var rules := {}
 var definition: Dictionary
@@ -40,6 +41,7 @@ static func read_json(filename: String) -> Dictionary:
 
 static func valid(value: Dictionary) -> bool:
 	if value.get("schema_version", 0) != 1: return false
+	if not value.get("upgrade_list_id") is String: return false
 	for key in ["levels", "upgrades", "heroes", "seen", "bag"]:
 		if not value.get(key) is Dictionary: return false
 	if not value.heroes.get("selected") is Array or not value.get("locked_towers") is Array: return false
@@ -111,7 +113,34 @@ func deselect_hero(id: String) -> bool:
 	heroes.selected.erase(id); save(); changed.emit(); return true
 func is_unlocked(id: int) -> bool: return levels.has(id)
 func is_playable(id: int, mode: int = 1, difficulty: int = 2) -> bool:
-	return is_unlocked(id) and CampaignLevels.supports(id, mode, difficulty) and (mode == 1 or int(record(id).get("stars", 0)) >= 3)
+	return Upgrades.slot_error(data).is_empty() and is_unlocked(id) and CampaignLevels.supports(id, mode, difficulty) and (mode == 1 or int(record(id).get("stars", 0)) >= 3)
+
+func upgrade_summary() -> Dictionary:
+	var error := Upgrades.slot_error(data)
+	var bought := Upgrades.levels(data.upgrades) if error.is_empty() else {}
+	var spent := Upgrades.spent(bought)
+	var maximum := 0
+	for tech: Dictionary in Upgrades.definition().techs.values(): maximum += int(tech.price)
+	return {"supported": error.is_empty(), "error": error, "levels": bought, "spent": spent, "total": total_stars(), "available": maxi(0, total_stars() - spent), "hint_available": maxi(0, mini(total_stars(), maximum) - spent)}
+
+func set_upgrade_level(branch: String, target: int) -> bool:
+	if not Upgrades.slot_error(data).is_empty() or branch not in Upgrades.definition().classes or target < 0 or target > 6: return false
+	var next := Upgrades.levels(data.upgrades)
+	if int(next[branch]) == target: return false
+	next[branch] = target
+	return restore_upgrades(next)
+
+func restore_upgrades(snapshot: Dictionary) -> bool:
+	if not Upgrades.slot_error(data).is_empty(): return false
+	if not Upgrades.slot_error({"upgrades": snapshot}).is_empty(): return false
+	var next := Upgrades.levels(snapshot)
+	if Upgrades.spent(next) > total_stars(): return false
+	# Preserve unrecognized keys from other/future versions of the slot format.
+	data.upgrades.merge(next, true)
+	save(); changed.emit(); return true
+
+func reset_upgrades() -> bool:
+	return restore_upgrades({})
 func record(id: int) -> Dictionary: return levels.get(id, {})
 func mark_seen(id: String) -> bool:
 	if id.is_empty() or data.seen.get(id, false): return false

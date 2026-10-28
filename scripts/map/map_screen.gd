@@ -8,6 +8,7 @@ const Interface = preload("res://scripts/map/map_interface.gd")
 const HeroRoom = preload("res://scripts/map/hero_room.gd")
 const FlagAnimation = preload("res://scripts/map/dove_map_flag.gd")
 var hero_room: Control
+var upgrades_room: Control
 var catalog: RefCounted
 var progress: RefCounted
 var definition: Dictionary
@@ -305,7 +306,14 @@ func _click(point: Vector2) -> void:
 func _action(action: String, args: Dictionary = {}) -> void:
 	hits.clear(); volume_drag.clear()
 	_set_hovered("")
+	if action != "upgrades" and upgrades_room != null: upgrades_room.hide()
 	match action:
+		"upgrades":
+			overlay = "upgrades"; touches.clear()
+			if hero_room != null: hero_room.hide()
+			if upgrades_room == null:
+				upgrades_room = preload("res://scripts/map/upgrades_room.gd").new(); add_child(upgrades_room); upgrades_room.initialize(self)
+			upgrades_room.open()
 		"heroes":
 			overlay = "heroes"; touches.clear()
 			if hero_room == null:
@@ -327,6 +335,7 @@ func _action(action: String, args: Dictionary = {}) -> void:
 
 func close_overlay() -> void:
 	if hero_room != null: hero_room.hide()
+	if upgrades_room != null: upgrades_room.hide()
 	overlay = ""; pointer = Vector2(-1000, -1000); _set_hovered(""); hits.clear(); touches.clear(); volume_drag.clear(); queue_redraw()
 func show_message(value: String) -> void:
 	message = value; message_until = animation_player.time + 3; queue_redraw()

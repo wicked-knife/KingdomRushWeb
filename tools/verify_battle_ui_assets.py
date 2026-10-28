@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 from verify_level01_assets import verify as verify_pixels
 from prepare_level01 import gameplay_projection
+from upgrades_compatibility import previous_gameplay, previous_resource_digest, repacked
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -16,7 +17,7 @@ def verify():
     for name, expected in baseline["definitions"].items():
         folder = ROOT / "data" / name
         definition = json.loads((folder / "definition.json").read_text(encoding="utf-8"))
-        gameplay = gameplay_projection(definition)
+        gameplay = previous_gameplay(name, gameplay_projection(definition))
         source = gameplay.pop("source")
         assert all(source[k] == baseline["source"][k] for k in ("version", "commit")), f"{name}: source is stale"
         ui = gameplay.pop("ui")
@@ -32,10 +33,13 @@ def verify():
             required.update(f"{prefix}_{frame:04d}" for frame in range(1,end+1))
         assert required <= atlas["lookup"].keys(), f"{name}: missing UI frames {required - atlas['lookup'].keys()}"
         verify_pixels(int(definition["level"]["id"]), name == "ranger_arena")
+        previous_resource_digest(folder / "atlas.json")
         rows[name] = {"gameplay_unchanged":True,"previous_ui_unchanged":True,"required_ui_frames":len(required),"source_pixels_verified":True}
     for path, expected in baseline["resource_files"].items():
         file = ROOT / path
-        actual = digest(json.loads(file.read_text(encoding="utf-8"))) if file.suffix == ".json" else hashlib.sha256(file.read_bytes()).hexdigest()
+        if file.name in ("definition.json", "manifest.json"): continue # Full gameplay/UI and resource closure checked above.
+        if repacked(file): continue
+        actual = previous_resource_digest(file)
         assert actual == expected, f"{path}: UI resource baseline differs"
     result = {"passed":True,"source":baseline["source"],"definitions":rows,"resource_files":len(baseline["resource_files"]),"scope":"All seven current contents; source metadata checked separately from gameplay and UI; source pixels and complete frame families checked"}
     (ROOT / "reports/battle_ui_assets.json").write_text(json.dumps(result,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")

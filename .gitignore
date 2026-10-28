@@ -98,3 +98,9 @@ __pycache__/
 !/reports/ranged_animation_delivery.json
 !/reports/current_dove_update.json
 !/reports/current_dove_combat.json
+!/reports/upgrades_logic.json
+!/reports/upgrades_assets.json
+!/reports/upgrades_native_1280x720.json
+!/reports/upgrades_native_1024x768.json
+!/reports/upgrades_delivery.json
+!/reports/technology_slot_entry.json

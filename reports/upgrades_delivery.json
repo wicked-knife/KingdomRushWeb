@@ -1,0 +1,64 @@
+{
+  "implemented": true,
+  "source": {
+    "version": "2.1.0.3",
+    "commit": "1a863df00b08f6bf1018ae0b0e7e4e106b939082"
+  },
+  "technology_scheme": "1",
+  "branches": 6,
+  "technology_items": 36,
+  "scope": "Current six levels / 18 modes; no heroes in battle, other technology schemes, tower branching or level seven",
+  "logic": {
+    "passed": true,
+    "checks": 299,
+    "source_patch_scenarios": 40,
+    "source_template_rows": 3680,
+    "behavior_scenarios": 19,
+    "content_combinations": 18
+  },
+  "native": {
+    "1280x720": {
+      "passed": true,
+      "checks": 2826,
+      "text_boxes_checked": 619,
+      "native_input": true,
+      "native_audio": true
+    },
+    "1024x768": {
+      "passed": true,
+      "checks": 2823,
+      "text_boxes_checked": 619,
+      "native_input": true,
+      "native_audio": true
+    }
+  },
+  "assets": {
+    "passed": true,
+    "contents": 7,
+    "failure_probes": 7,
+    "source_pixels": "reports/battle_ui_assets.json"
+  },
+  "regression": {
+    "zero_technology_snapshots": "unchanged; reports/content_unification.json",
+    "current_source": "reports/current_dove_update.json",
+    "sixth": "reports/level06_logic.json",
+    "challenges": "reports/challenges_logic.json",
+    "saves": "reports/dove_saves_logic.json"
+  },
+  "web": {
+    "exported": true,
+    "build_type": "release",
+    "pck_passed": true,
+    "pck_files": 666,
+    "package": "build/KingdomRush-KR1-Levels01-06-Web.zip",
+    "package_bytes": 177153146,
+    "package_sha256": "9c4391a2a2fb4bfded8e4a4360f93c8a384ee8e0c50d817697d4aecdfedab31a",
+    "zip_integrity_passed": true,
+    "browser_tested": false,
+    "browser_acceptance": "manual"
+  },
+  "full_challenge_victory_replays_required": false,
+  "full_challenge_victory_replays_run": false,
+  "comparison": "reports/upgrades_source_comparison.json",
+  "documentation": "docs/DEFAULT_UPGRADES.md"
+}

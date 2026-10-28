@@ -222,7 +222,11 @@ func _draw() -> void:
 		_queue_template(unit.template, unit.pos, unit.state, unit.state_at, unit.flip, false, int(unit.get("variant", 1)), unit.hp <= 0, "", unit)
 	for p: Dictionary in sim.projectiles:
 		_queue_template(p.template, p.pos, "flying" if sim.templates[p.template].get("behavior", "") == "scripts.bolt.update" else "", p.at, false, false, 1, false, "", p)
+	for aura: Dictionary in sim.upgrades.auras: _queue_template(aura.template, aura.pos, "", aura.at, false, false, 1, false, "", aura)
 	for effect: Dictionary in sim.effects:
+		if effect.has("raw_frame"):
+			draw_list.append({"scale":Vector2.ONE,"frame":effect.raw_frame,"pos":effect.pos,"sort_y":effect.pos.y,"anchor":effect.anchor,"z":1000,"order":draw_list.size(),"flip":false,"rotation":effect.rotation,"tint":Color(1,1,1,1.0-float(sim.tick-effect.at)/effect.duration)})
+			continue
 		if effect.has("target"):
 			var target: Dictionary = sim.unit_by_id(effect.target)
 			if target.is_empty() or target.hp <= 0: continue
@@ -282,13 +286,13 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 			if layer.has("idle") and int(playback.elapsed) >= length:
 				playback.state = layer.idle; playback.elapsed -= length; playback.loop = true
 		elif state != "":
-			playback.loop = state not in ["attack", "attack2", "holystrike", "healing", "death", "play", "shoot", "heal", "jump", "small", "medium", "large"]
+			playback.loop = state not in ["attack", "attack2", "holystrike", "healing", "death", "play", "shoot", "ranged_attack", "heal", "jump", "small", "medium", "large"]
 			var shoot_angles: Array = sprite.get("angles", {}).get("shoot", [])
 			if state == "shoot" and not shoot_angles.is_empty(): playback.state = shoot_angles[0 if up else mini(1, shoot_angles.size() - 1)]
 			if state in ["attack", "attack2", "holystrike", "healing"] and int(playback.elapsed) >= SpriteAnimation.duration(animations, SpriteAnimation.key(sprite, state)):
 				playback.state = "idle"; playback.loop = true
 		if runtime.has("playback_loop"): playback.loop = runtime.playback_loop
-		if template_name == "re_farmer": playback.prefix = "re_farmer_%d" % variant
+		if template.has("reinforcement") and template.get("info", {}).has("portrait_idxs"): playback.prefix = "%s_%d" % [template_name, variant]
 		var frame_name := SpriteAnimation.frame(sprite, animations, playback)
 		var offset := Simulation.vec(sprite.get("offset", {"x": 0, "y": 0}))
 		var alpha := float(sprite.get("alpha", 255)) / 255.0
@@ -304,7 +308,13 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 			for property: Dictionary in tween.get("props", []):
 				if int(property.get("sprite_id", 1)) != order: continue
 				if property.name == "scale": sprite_scale *= SpriteAnimation.vector_track(property.keys, seconds)
-				elif property.name == "alpha": alpha *= SpriteAnimation.scalar_track(property.keys, seconds) / 255.0
+				elif property.name == "alpha":
+					var keys: Array = property.keys
+					if keys.any(func(k): return k[0] is String):
+						keys = keys.duplicate(true)
+						for k: Array in keys:
+							if k[0] is String: k[0] = float(runtime.get("duration", 0)) - (0.5 if k[0].ends_with("-0.5") else 0)
+					alpha *= SpriteAnimation.scalar_track(keys, fmod(seconds, float(keys[-1][0])) if property.get("loop", false) and float(keys[-1][0]) > 0 else seconds) / 255.0
 		var color: Array = sprite.get("color", [255, 255, 255])
 		draw_list.append({"scale": sprite_scale, "frame": frame_name, "pos": point + offset, "sort_y": float(sprite.get("sort_y",point.y + float(sprite.get("sort_y_offset", 0)))), "anchor": Simulation.vec(sprite.get("anchor", {"x": 0.5, "y": 0.5})), "z": int(sprite.get("z", 3000)), "order": draw_list.size(), "flip": layer.get("flip", flip), "rotation": float(runtime.get("rotation", sprite.get("r", 0))), "tint": Color(color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, alpha)})
 

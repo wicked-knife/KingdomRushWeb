@@ -20,11 +20,18 @@ func draw() -> void:
 	for item: Array in buttons:
 		var at := Vector2(float(item[3]) - 113, 898)
 		var hero_button: bool = item[2] == "英雄"
-		paint.image(item[1] if hero_button and view.hovered == "heroes{}" else item[0], at, Vector2.ZERO, Color.WHITE if hero_button else Color(0.65, 0.65, 0.65))
+		var available: bool = hero_button or item[2] == "科技"
+		var action: String = "heroes" if hero_button else "upgrades"
+		paint.image(item[1] if available and view.hovered == action + "{}" else item[0], at, Vector2.ZERO, Color.WHITE if available else Color(0.65, 0.65, 0.65))
 		if hero_button: _hero_icon(at)
+		if item[2] == "科技":
+			var points: int = view.progress.upgrade_summary().hint_available
+			if points > 0:
+				paint.image("mapUpgradePointsAvailable", at + Vector2(20, -10))
+				paint.display_label(str(points), Rect2(at + Vector2(24, -7), Vector2(50, 28)), 22, GOLD, "numbers_bold", "upgrade_points", 1)
 		paint.label(item[2], Rect2(at + Vector2(50, 121), Vector2(126, 30)), 18, Color("e4bc72"), "center", "middle", 1, 1, "", "h_map")
-		if not hero_button: paint.label("暂未开放", Rect2(at + Vector2(50, 151), Vector2(126, 24)), 15, Color("ccb58b"), "center", "middle", 1, 1)
-		if view.overlay == "": paint.hit(Rect2(at + Vector2(40, 20), Vector2(146, 152)), "heroes" if hero_button else "unavailable")
+		if not available: paint.label("暂未开放", Rect2(at + Vector2(50, 151), Vector2(126, 24)), 15, Color("ccb58b"), "center", "middle", 1, 1)
+		if view.overlay == "": paint.hit(Rect2(at + Vector2(40, 20), Vector2(146, 152)), action if available else "unavailable")
 	if view.overlay != "":
 		paint._apply(); view.draw_rect(Rect2(Vector2.ZERO, view.view_size), Color(0, 0, 0, 0.58))
 		# Underlying HUD is also inert while a modal is open.
@@ -124,6 +131,8 @@ func _level() -> void:
 	if record.has(view.mode): paint.image("levelSelect_difficultyCompleted_%04d" % int(record[view.mode]), Vector2(690, 520))
 	var playable: bool = view.progress.is_playable(view.selected_level, view.mode, 2)
 	var battle_args := {"reason": "战役获得三星后开放挑战" if view.mode != 1 and stars < 3 else "此关卡玩法暂未开放"}
+	var tech_error: String = view.progress.upgrade_summary().error
+	if not tech_error.is_empty(): battle_args.reason = tech_error
 	_button("levelSelect_startMode_notxt_%04d" % (2 * view.mode - 1), "levelSelect_startMode_notxt_%04d" % (2 * view.mode), Vector2(805, 470), "battle", battle_args, playable)
 	var over: bool = playable and view.hovered == "battle" + str(battle_args)
 	var ink := Color.WHITE if over else Color("f3c698")
@@ -132,7 +141,7 @@ func _level() -> void:
 	paint.display_label("进入", Rect2(805, 537, 122, 26), 15, ink, "h_noti", "battle_caption_top", 3, edge)
 	paint.display_label("战斗", Rect2(805, 557, 122, 36), 22, ink, "h_noti", "battle_caption_bottom", 3, edge)
 	if not playable:
-		paint.label("需要战役三星" if view.mode != 1 and stars < 3 else "暂未开放", Rect2(784, 593, 164, 30), 20, Color("a04423"), "center", "middle", 1, 0, "", "button")
+		paint.label("科技方案暂不支持" if not tech_error.is_empty() else ("需要战役三星" if view.mode != 1 and stars < 3 else "暂未开放"), Rect2(784, 593, 164, 30), 20, Color("a04423"), "center", "middle", 1, 0, "", "button")
 	paint.pop()
 
 func _title(value: String, at: Vector2, width: float, font_size: int, lines: int = 1, ink: Color = Color("645934")) -> void:

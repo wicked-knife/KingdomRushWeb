@@ -19,6 +19,9 @@ const Controller = preload("res://scripts/battle/dove_level_controller.gd")
 const Behaviors = preload("res://scripts/battle/dove_behaviors.gd")
 const Targets = preload("res://scripts/battle/dove_targeting.gd")
 const EnemyProjectiles = preload("res://scripts/battle/dove_enemy_projectiles.gd")
+const Upgrades = preload("res://scripts/battle/dove_upgrades.gd")
+var upgrades := Upgrades.new()
+var base_templates: Dictionary
 var controller: RefCounted
 var behaviors: RefCounted
 var modifiers := Modifiers.new()
@@ -72,6 +75,7 @@ var spatial_tick := -1
 func _init(definition: Dictionary = {}, seed_value: int = 1, allow_developer: bool = false) -> void:
 	developer_enabled = allow_developer and OS.is_debug_build()
 	data = definition.duplicate(true) if not definition.is_empty() else JSON.parse_string(FileAccess.get_file_as_string("res://data/level01/definition.json"))
+	base_templates = data.templates.duplicate(true)
 	templates = data.templates
 	var catalog := Content.catalog()
 	controller = Controller.create(data.level.get("controller", "default"), catalog)
@@ -84,6 +88,9 @@ func _init(definition: Dictionary = {}, seed_value: int = 1, allow_developer: bo
 
 func reset(seed_value: int = 1) -> void:
 	modifiers.clear(self)
+	data.templates = base_templates.duplicate(true)
+	templates = data.templates
+	upgrades.apply(data)
 	rng.seed = seed_value
 	tick = 0; gold = int(data.waves.cash); lives = int(data.waves.lives)
 	wave = 0; next_wave_tick = -1; wave_end_tick = -1; result = ""
@@ -118,6 +125,7 @@ func reset(seed_value: int = 1) -> void:
 			decals.append({"id": index, "template": e.template, "pos": vec(e.pos), "clicks": 0, "clicked_at": -1000, "removed": false,
 				"state": d.get("idle_animation", ""), "hidden": not d.has("idle_animation"), "fish": fish, "state_at": 0, "next_play": frames(rng.randf_range(d.min_delay, d.max_delay)),
 				"flip": rng.randf() < float(d.get("flip_chance", 0)), "alternate": rng.randf() < float(d.get("required_clicks_fx_alt_chance", 0))})
+	upgrades.refresh_mages(self)
 
 static func vec(v: Dictionary) -> Vector2:
 	return Vector2(v.x, v.y)
@@ -220,6 +228,7 @@ func command(kind: String, args: Dictionary = {}) -> bool:
 			behaviors.upgrade_tower(self, tower, upgraded)
 			gold -= price
 			towers[towers.find(tower)] = upgraded
+			upgrades.refresh_mages(self)
 			add_effect("fx_tower_buy_dust", tower.pos + Vector2(0, 10))
 			event.emit("sound", {"id": t.sound_events.insert}); return true
 		"upgrade_power":
@@ -246,6 +255,7 @@ func command(kind: String, args: Dictionary = {}) -> bool:
 				if s.home == tower.id: _retire(s)
 			add_effect("fx_tower_sell_dust", tower.pos)
 			towers[towers.find(tower)] = _holder(tower)
+			upgrades.refresh_mages(self)
 			event.emit("sound", {"id": "GUITowerSell"}); return true
 		"rally":
 			var tower := tower_by_id(str(args.get("id", "")))
@@ -281,11 +291,14 @@ func command(kind: String, args: Dictionary = {}) -> bool:
 			if power == "reinforcements":
 				cooldowns[power] = frames(templates.power_reinforcements_control.cooldown)
 				for slot in range(2):
-					var s := _soldier("re_farmer", "", slot, point + Vector2(-10 + slot * 20, 0), point)
+					var s := _soldier(upgrades.reinforcement, "", slot, point + Vector2(-10 + slot * 20, 0), point)
 					s.expires = tick + frames(templates.power_reinforcements_control.duration)
 				event.emit("sound", {"id": "ReinforcementTaunt"})
 			else:
 				cooldowns[power] = frames(templates.power_fireball_control.cooldown)
+				if not upgrades.get_tech("rain_blazing_skies").is_empty():
+					upgrades.cast_fire(self, point)
+					return true
 				for i in range(int(templates.power_fireball_control.fireball_count)):
 					var spread := float(templates.power_fireball_control.max_spread)
 					var aim := point + Vector2(rng.randf_range(-spread, spread), rng.randf_range(-spread, spread) * 0.7)
@@ -339,6 +352,13 @@ func _valid_node_nearby(point: Vector2, width_factor: float, flags: int) -> bool
 					valid = false; break
 			if valid: return true
 	return false
+
+func _path_node_valid(path: int, node: int, flags: int) -> bool:
+	var nodes: Array = data.paths.paths[path][0]
+	if node < 0 or node >= nodes.size() or not data.paths.active[path]: return false
+	for invalid: Dictionary in data.layout.get("invalid_path_ranges", []):
+		if int(invalid.path_id) == path + 1 and node + 1 >= int(invalid.get("from", 1)) and node + 1 <= int(invalid.get("to", nodes.size())) and (flags & ~int(invalid.get("flags", 0xffffffff))) == 0: return false
+	return true
 
 func valid_ground(point: Vector2, terrains: int = RALLY_TERRAINS) -> bool:
 	return point.is_finite() and (_terrain_flags(point) & ~terrains) == 0 and _valid_node_nearby(point, 1.0, NF_RALLY)
@@ -443,6 +463,8 @@ func step() -> void:
 	controller.step(self)
 	_decals_step()
 	behaviors.step_spawners(self)
+	upgrades.refresh_mages(self)
+	upgrades.step(self)
 	_sync_enemy_cells()
 	for tower: Dictionary in towers: _tower_step(tower)
 	for soldier: Dictionary in soldiers: _soldier_step(soldier)
@@ -631,7 +653,8 @@ func _soldier(type: String, home: String, slot: int, point: Vector2, rally: Vect
 	s.rallying = true
 	var names: Array = data.ui.unit_names.get(type, [])
 	if not names.is_empty(): s.display_name = names[rng.randi_range(0, names.size() - 1)]
-	if type == "re_farmer": s.portrait = "info_portraits_soldiers_%04d" % int(t.info.portrait_idxs[s.variant - 1])
+	if t.has("reinforcement") and t.info.has("portrait_idxs"): s.portrait = "info_portraits_soldiers_%04d" % int(t.info.portrait_idxs[s.variant - 1])
+	if t.has("reinforcement") and t.has("ranged"): s.ranged_at = tick; s.ranged_until = tick
 	next_id += 1; soldiers.append(s); return s
 
 func _formation(point: Vector2, slot: int, tower: Dictionary = {}) -> Vector2:
@@ -691,6 +714,7 @@ func _soldier_step(s: Dictionary) -> void:
 		if not _soldier_move(s, s.dest, t.motion.max_speed): s.rallying = false; _state(s, "idle")
 		return
 	if behaviors.soldier_step(self,s,t): return
+	if upgrades.reinforcement_step(self,s,t): return
 	if t.melee.attacks.size() > 1 and tick < int(s.get("melee_end",0)):
 		# A running source attack coroutine survives its original target's death.
 		# In particular holystrike still hits other enemies in its area.
@@ -764,9 +788,9 @@ func _melee(attacker: Dictionary, target: Dictionary, template: Dictionary) -> v
 			if attack.get("type", "") == "area":
 				var point: Vector2 = attacker.pos + vec(attack.get("hit_offset", {"x":0,"y":0})) * Vector2(-1 if attacker.flip else 1, 1)
 				var victims := Targets.soldiers(self, point, {"max_range":attack.damage_radius,"vis_flags":attack.get("damage_flags",0),"vis_bans":attack.get("damage_bans",0)})
-				for victim: Dictionary in victims.slice(0, int(attack.get("count", victims.size()))): damage(victim, float(rng.randi_range(int(attack.damage_min), int(attack.damage_max))) * attack_factor(attacker), int(attack.damage_type))
+				for victim: Dictionary in victims.slice(0, int(attack.get("count", victims.size()))): damage(victim, float(rng.randi_range(int(attack.damage_min), int(attack.damage_max))) * attack_factor(attacker), int(attack.damage_type), attacker.id)
 				add_effect(str(attack.get("hit_fx", "")), point)
-			else: damage(target, float(rng.randi_range(int(attack.damage_min), int(attack.damage_max))) * attack_factor(attacker), int(attack.damage_type))
+			else: damage(target, float(rng.randi_range(int(attack.damage_min), int(attack.damage_max))) * attack_factor(attacker), int(attack.damage_type), attacker.id)
 			if attacker.template == "soldier_elf" and target.hp > 0: modifiers.apply(self,"mod_elf_bleed",target,int(attacker.powers.bleed),str(attacker.id),-1,attack_factor(attacker))
 		attacker.pending = {}
 	if tick >= attacker.attack_at:
@@ -877,13 +901,15 @@ func unit_gold(unit: Dictionary) -> int:
 func attack_factor(actor: Dictionary) -> float:
 	return 1.0 if actor.is_empty() else DamageFactors.value(actor, templates[actor.template])
 
-func damage(unit: Dictionary, amount: float, type: int) -> float:
+func damage(unit: Dictionary, amount: float, type: int, source_id: int = 0, reduce_armor: float = 0.0) -> float:
 	if unit.is_empty() or unit.hp <= 0: return 0
 	var t: Dictionary = templates[unit.template]
+	if (type & 1024) != 0:
+		unit.armor = maxf(0, float(unit.get("armor", t.health.armor)) - amount); return 0
 	var armor := 0.0
 	if (type & 65536) != 0: armor = float(t.health.get("poison_armor",0))
 	elif (type & 1) != 0: armor = 0.0
-	elif (type & 2) != 0: armor = float(unit.get("armor", t.health.armor))
+	elif (type & 2) != 0: armor = clampf(float(unit.get("armor", t.health.armor)) - reduce_armor, 0, 1)
 	elif (type & 4) != 0: armor = float(unit.get("magic_armor", t.health.magic_armor))
 	elif (type & 32) != 0:
 		armor = float(unit.get("magic_armor", t.health.magic_armor)); armor *= 0.2 * armor + 0.4
@@ -892,6 +918,10 @@ func damage(unit: Dictionary, amount: float, type: int) -> float:
 	if (type & 8) != 0 and (type & (65536 | 1 | 2 | 4)) == 0: armor *= 0.2 * armor + 0.4
 	var actual := amount * DamageFactors.value(unit, t, true) * (1.0 - armor)
 	unit.hp = maxf(0, unit.hp - actual)
+	var reflection := float(t.health.get("spiked_armor", 0))
+	if reflection > 0 and source_id > 0:
+		var source := unit_by_id(source_id)
+		if not source.is_empty() and source.hp > 0: upgrades.reflected.append({"source":unit.id, "target":source_id, "amount":reflection * amount})
 	if unit.has("last_hit"): unit.last_hit = tick
 	if unit.hp <= 0:
 		unit.dead_at = tick; _unblock(unit); _state(unit, "death", true); unit.pending = {}
@@ -911,6 +941,11 @@ func _projectile(type: String, target: int, from: Vector2, to: Vector2, flight: 
 		"rotation": 0.0, "hidden": float(bullet.get("hide_radius", 0)) > 0}
 	b.source = attacker.get("id", 0)
 	b.damage_factor = attack_factor(attacker) * float(bullet.get("damage_factor", 1.0))
+	if upgrades.effective.values().any(func(value): return value > 0):
+		b.damage_min = float(bullet.damage_min); b.damage_max = float(bullet.damage_max)
+		var precision := upgrades.get_tech("archer_precision")
+		if attacker.get("type", "") == "archer" and not precision.is_empty() and rng.randf() < float(precision.chance):
+			b.damage_min *= float(precision.damage_factor); b.damage_max *= float(precision.damage_factor); b.critical = true
 	if behaviors.projectile_role(templates[type]) == "bolt":
 		b.speed = float(bullet.min_speed); b.last_step = tick; b.target_invalid = false
 	elif behaviors.projectile_role(templates[type]) == "arrow_missile":
@@ -939,25 +974,42 @@ func _bullet_step(p: Dictionary) -> void:
 		p.merge(Projectile.sample(p, b, (tick - p.at) / 30.0), true)
 	if behavior not in ["bolt","arrow_missile"] and ratio < 1: return
 	p.done = true
+	var did_hit := false
 	if float(b.damage_radius) > 0:
+		var fire_damage := -1.0
 		for e: Dictionary in enemies:
 			if Targets.matches(self, e, b, true) and distance(p.to, e.pos) <= float(b.damage_radius):
-				var amount: float = rng.randi_range(int(b.damage_min), int(b.damage_max))
+				if fire_damage < 0 and behavior == "fireball" and not upgrades.get_tech("rain_blazing_skies").is_empty(): fire_damage = rng.randi_range(int(b.damage_min), int(b.damage_max))
+				var amount: float = fire_damage if fire_damage >= 0 else rng.randi_range(int(b.damage_min), int(b.damage_max))
 				if behavior == "bomb":
 					var delta: Vector2 = e.pos - p.to
 					var angle := delta.angle()
 					var ellipse_radius := Vector2(cos(angle), 0.7 * sin(angle)).length() * float(b.damage_radius)
 					amount = lerpf(float(b.damage_max), float(b.damage_min), clampf(delta.length() / ellipse_radius, 0, 1))
+					if not upgrades.get_tech("engineer_efficiency").is_empty(): amount = float(b.damage_max)
 				damage(e, amount * float(p.damage_factor), int(b.damage_type))
-		var water: bool = behavior == "bomb" and (_terrain_flags(p.to) & 2) != 0 and templates.has(b.get("hit_fx_water", ""))
-		add_effect(str(b.get("hit_fx_water", "")) if water else str(b.get("hit_fx", "")), p.to)
+		var water: bool = (behavior == "bomb" or behavior == "fireball" and not upgrades.get_tech("rain_blazing_skies").is_empty()) and (_terrain_flags(p.to) & 2) != 0
+		var water_fx: String = "fx_explosion_water" if behavior == "fireball" else str(b.get("hit_fx_water", ""))
+		water = water and templates.has(water_fx)
+		add_effect(water_fx if water else str(b.get("hit_fx", "")), p.to)
 		if not water: add_effect(str(b.get("hit_decal", "")), p.to)
+		if behavior == "fireball": upgrades.scorched(self, p.to)
 	elif not target.is_empty() and target.hp > 0:
 		var hit: Vector2 = target.pos + vec(templates[target.template].unit.hit_offset)
 		if b.get("reset_to_target_pos",false) and behavior != "arrow_missile": p.to = hit
 		var missile_hit: bool = behavior == "arrow_missile" and p.pos.distance_to(hit) < float(p.hit_distance)
 		if behavior == "bolt" or missile_hit or (behavior != "arrow_missile" and p.to.distance_to(hit) < float(b.get("hit_distance", 22)) * 1.2):
-			damage(target, (rng.randi_range(int(b.damage_min), int(b.damage_max)) + float(b.get("damage_inc",0)) * int(p.get("elf_level",0))) * float(p.get("damage_factor",1.0)), int(b.damage_type))
+			did_hit = true
+			# The source missile script rolls precision at impact, including elf arrows.
+			if behavior == "arrow_missile":
+				var precision := upgrades.get_tech("archer_precision")
+				if not precision.is_empty() and rng.randf() < float(precision.chance):
+					p.damage_min = float(p.get("damage_min", b.damage_min)) * float(precision.damage_factor)
+					p.damage_max = float(p.get("damage_max", b.damage_max)) * float(precision.damage_factor); p.critical = true
+			var raw: float = (rng.randi_range(int(p.get("damage_min", b.damage_min)), int(p.get("damage_max", b.damage_max))) + float(b.get("damage_inc",0)) * int(p.get("elf_level",0))) * float(p.get("damage_factor",1.0))
+			# Ranged damage originates from a projectile, which has no health to reflect into.
+			damage(target, raw, int(b.damage_type), 0, float(b.get("reduce_armor", 0)))
+			if p.get("critical", false): add_effect("pop_crit", target.pos + Vector2(0, float(templates.pop_crit.pop_y_offset)))
 			if target.hp > 0 and p.has("elf_level"):
 				if b.has("mod"): modifiers.apply(self,b.mod,target,int(p.elf_level),str(p.source),-1,float(p.damage_factor))
 				if int(p.get("bleed_level",0)) > 0: modifiers.apply(self,"mod_elf_bleed",target,int(p.bleed_level),str(p.source),-1,float(p.damage_factor))
@@ -965,9 +1017,12 @@ func _bullet_step(p: Dictionary) -> void:
 				modifiers.apply(self,"mod_ranger_poison",target,int(p.poison_level),str(p.source),-1,float(p.damage_factor))
 			if not p.has("elf_level"):
 				for modifier_name: String in b.get("mods", [b.mod] if b.has("mod") else []):
-					modifiers.apply(self,modifier_name,target,maxi(1,int(p.get("level",b.get("level",0)))),str(p.source),-1,float(p.damage_factor))
+					modifiers.apply(self,modifier_name,target,maxi(1,int(p.get("level",b.get("level",0)))),str(p.source),-1,float(p.damage_factor), {"value":raw,"type":int(b.damage_type),"reduce_armor":float(b.get("reduce_armor",0))})
 			if behavior != "bolt": add_effect(str(b.get("hit_fx", "")), hit)
 			add_effect(str(b.get("hit_blood_fx", "")), hit, {"rotation": p.rotation})
+	if p.template == "spear_legionnaire" and not did_hit:
+		if (_terrain_flags(p.to) & 2) != 0: add_effect(b.miss_fx_water, p.to)
+		else: effects.append({"raw_frame":b.miss_decal,"pos":p.to,"at":tick,"duration":63,"rotation":-PI*0.5*(1+(0.5-rng.randf())*0.35),"anchor":vec(b.get("miss_decal_anchor",{"x":0.5,"y":0.5}))})
 	if behavior == "bolt": add_effect(str(b.get("hit_fx", "")), p.to)
 	var sounds: Dictionary = templates[p.template].get("sound_events", {})
 	var water_impact: bool = behavior == "bomb" and (_terrain_flags(p.to) & 2) != 0 and templates.has(b.get("hit_fx_water", ""))

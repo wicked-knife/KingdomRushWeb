@@ -80,7 +80,8 @@ static func projectile(sim, p: Dictionary, bullet: Dictionary) -> void:
 	p.sprite_scale = Vector2(p.from.distance_to(p.to) / float(sim.templates[p.template].image_width), 1)
 	if not p.get("applied", false):
 		p.applied = true
-		sim.modifiers.apply(sim, bullet.mod, target, int(p.get("level", 1)), str(p.get("source", "")), -1, float(p.get("damage_factor",1.0)))
+		for name: String in bullet.get("mods", [bullet.mod] if bullet.has("mod") else []):
+			sim.modifiers.apply(sim, name, target, int(p.get("level", 1)), str(p.get("source", "")), -1, float(p.get("damage_factor",1.0)))
 	if sim.tick - p.at >= p.duration: p.done = true
 
 static func apply(sim, template: String, target: Dictionary, level: int, source: String, damage_factor: float = 1.0) -> bool:

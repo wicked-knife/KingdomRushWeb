@@ -55,7 +55,11 @@ def package():
         "Bleed: 100/100/100; Cripple: 200/125/125. Hiring costs are excluded from sale refunds.\n"
         "Level 6: 700 gold, 17 waves, 15 sites, 7 permanent royal guards, flying gargoyles, shadow archers and Juggernaut.\n"
         "Paladins (185 from barracks3): Healing Light, Holy Strike, Shield. Arcane (290 from mage3): Death Ray, Teleport.\n"
-        "Level 6 Iron has 2 free mage3 towers; only barracks can be newly built. Heroes and technology remain disabled.\n"
+        "Level 6 Iron has 2 free mage3 towers; only barracks can be newly built. Heroes do not enter battle.\n"
+        "Default technology scheme 1: six branches and 36 upgrades, purchased with settled stars on the map.\n"
+        "Click a higher rank to buy missing prerequisites, or a purchased rank to refund it and later ranks.\n"
+        "Purchases save immediately. Undo restores this opening's levels; Reset clears levels and rebases Undo.\n"
+        "Each mode caps effective technology without changing purchased ranks. Other schemes remain preserved and block play.\n"
         "Three independent local save slots; volume settings remain global.\n"
         "Hero room: browse 79 heroes, view computed skills, select up to two unlocked heroes.\n"
         "Completing level 1 unlocks 12 heroes; selecting a third replaces slot two.\n"
@@ -73,7 +77,7 @@ def package():
         "1 = fire rain, 2 = reinforcements, Space = next wave. Skills unlock after wave 3/7 tutorials in level 1.\n"
         "In all challenges and campaigns 2-6 both skills unlock when wave 1 is sent; neither can be used during setup.\n"
         "Click enemy alerts for information.\n\n"
-        "Normal difficulty, no hero combat or technology. Campaigns start with 20 lives, challenges with 1.\n"
+        "Normal difficulty, no hero combat. Campaigns start with 20 lives, challenges with 1.\n"
         "Campaign level 1: 270 gold, 7 waves.\n"
         + ("Debug build: click DEV or press F8 in battle. +10000 gold / +100 lives / skip current wave.\n"
            "Debug victories save normally; skip preserves wave 3/7 teaching confirmations.\n" if debug else "Release build: developer commands are disabled.\n")
@@ -118,6 +122,8 @@ def package():
         "challenge_replays_verified": receipt.get("challenge_replays_verified", []),
         "pck_isolated_check": checked,
         "battle_ui_acceptance": receipt.get("battle_ui_acceptance", {}),
+        "default_technology_acceptance": receipt.get("default_technology_acceptance", {}),
+        "technology_scheme": receipt.get("technology_scheme"),
         "pck_files": len(report["files"]) if checked else None,
         "bundle": str(output.relative_to(ROOT)),
         "bytes": output.stat().st_size,

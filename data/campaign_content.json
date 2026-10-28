@@ -65,7 +65,8 @@
         "base",
         "wolf",
         "healer"
-      ]
+      ],
+      "layout_instance_base": 48
     },
     "4": {
       "id": 4,
@@ -94,7 +95,8 @@
           "paper": "notifications_newenemy",
           "adaptation": "Dove wave ID has no GUI definition in BASE"
         }
-      }
+      },
+      "layout_instance_base": 54
     },
     "5": {
       "id": 5,
@@ -127,7 +129,8 @@
       ],
       "exclude_templates": [
         "decal_background"
-      ]
+      ],
+      "layout_instance_base": 72
     },
     "6": {
       "id": 6,
@@ -161,7 +164,8 @@
       ],
       "frames": [
         "stage6_boss_corpse"
-      ]
+      ],
+      "layout_instance_base": 87
     }
   },
   "arenas": {
@@ -198,7 +202,8 @@
         "encyclopedia_creeps_0002",
         "encyclopedia_creeps_0008",
         "victoryBadges_notxt_0003"
-      ]
+      ],
+      "layout_instance_base": 61
     }
   },
   "features": {
@@ -272,7 +277,19 @@
         "timed_attacks",
         "modifier",
         "hps",
-        "vis"
+        "vis",
+        "ranged",
+        "damage_min",
+        "damage_max",
+        "damage_type",
+        "damage_factor",
+        "chance",
+        "dps",
+        "slow",
+        "aura",
+        "cataclysm_count",
+        "scorch_earth",
+        "pop_y_offset"
       ],
       "notification_ids": [
         "TUTORIAL_1",
@@ -282,6 +299,9 @@
         "TIP_RALLY",
         "POWER_REINFORCEMENT",
         "POWER_FIREBALL"
+      ],
+      "reference_fields": [
+        "fx"
       ]
     },
     "wolf": {
@@ -653,7 +673,9 @@
     "scripts.enemy_missile.update": "enemy_missile",
     "scripts.enemy_bomb.update": "enemy_bomb",
     "scripts.mod_tower_decal.update": "tower_decal",
-    "scripts.mod_tower_decal.insert": "tower_decal"
+    "scripts.mod_tower_decal.insert": "tower_decal",
+    "scripts.mod_damage.insert": "instant_damage",
+    "scripts.aura_apply_damage.update": "damage_aura"
   },
   "behavior_aliases": {
     "game_scripts.tower_archer.update": "scripts.tower_archer.update",
@@ -705,7 +727,10 @@
     "res://scripts/battle/dove_enemy_projectiles.gd",
     "res://scripts/battle/dove_spawner.gd",
     "res://scripts/battle/dove_juggernaut.gd",
-    "res://scripts/battle/dove_damage_factors.gd"
+    "res://scripts/battle/dove_damage_factors.gd",
+    "res://scripts/services/battle_setup.gd",
+    "res://scripts/battle/dove_upgrades.gd",
+    "res://scripts/map/upgrades_room.gd"
   ],
   "callbacks": [
     "game_scripts.aura_apply_mod.insert",
@@ -719,6 +744,7 @@
     "game_scripts.enemy_missile.update",
     "game_scripts.enemy_passive.update",
     "game_scripts.enemy_shaman.update",
+    "game_scripts.mod_blood_elves.insert",
     "game_scripts.mod_hps.insert",
     "game_scripts.mod_hps.update",
     "game_scripts.mod_ray_arcane.update",
@@ -726,6 +752,7 @@
     "game_scripts.mod_silence.insert",
     "game_scripts.mod_silence.remove",
     "game_scripts.mod_slow.remove",
+    "game_scripts.mod_slow_curse.insert",
     "game_scripts.mod_thorn.insert",
     "game_scripts.mod_thorn.remove",
     "game_scripts.mod_thorn.update",
@@ -751,16 +778,22 @@
     "kr1.game_templates.re_farmer.insert",
     "scripts.arrow.insert",
     "scripts.arrow.update",
+    "scripts.aura_apply_damage.update",
     "scripts.bolt.insert",
     "scripts.bolt.update",
     "scripts.bomb.insert",
     "scripts.bomb.update",
     "scripts.enemy_basic.insert",
     "scripts.enemy_mixed.update",
+    "scripts.mod_damage.insert",
+    "scripts.mod_dps.insert",
     "scripts.mod_dps.update",
+    "scripts.mod_slow.insert",
+    "scripts.mod_slow.remove",
     "scripts.mod_teleport.insert",
     "scripts.mod_teleport.remove",
     "scripts.mod_teleport.update",
+    "scripts.mod_track_target.update",
     "scripts.power_fireball.update",
     "scripts.power_fireball_control.update",
     "scripts.power_reinforcements_control.insert",

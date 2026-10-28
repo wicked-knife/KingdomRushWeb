@@ -75,6 +75,8 @@ def resolve_behavior(source_id, catalog=None):
 
 def validate_definition(data, spec):
     """Check reachable references, including all modes, before publishing a definition."""
+    from upgrades_contract import validate_technology_dependencies
+    validate_technology_dependencies(data)
     templates = data["templates"]
     identity = spec["folder"]
     catalog = read_catalog()
