@@ -3,6 +3,12 @@ extends RefCounted
 const Anim = preload("res://scripts/battle/dove_animation.gd")
 const Ranger = preload("res://scripts/battle/dove_ranger.gd")
 
+static func animation_error(template: Dictionary, animations: Dictionary) -> String:
+	for index in [0,2]:
+		var name := Anim.key(template.render.sprites[1], template.attacks.list[index].animation)
+		if not animations.has(name): return "arcane cast requires animation " + name
+	return ""
+
 static func initialize(sim, tower: Dictionary) -> void:
 	tower.powers = {"disintegrate": 0, "teleport": 0}; tower.layers = {}
 	tower.arcane = {"last": sim.tick, "timestamps": [sim.tick, 0, 0], "casting": {}, "resume": 0}
@@ -20,6 +26,7 @@ static func _target(sim, tower: Dictionary, index: int) -> Dictionary:
 static func step(sim, tower: Dictionary) -> void:
 	var template: Dictionary = sim.tower_template(tower)
 	var state: Dictionary = tower.arcane
+	var cooldown_factor := float(tower.get("cooldown_factor", template.tower.cooldown_factor))
 	var cast: Dictionary = state.casting
 	if not cast.is_empty():
 		var index = int(cast.index)
@@ -49,7 +56,8 @@ static func step(sim, tower: Dictionary) -> void:
 					sim._projectile(attack.bullet, enemy.id, from, enemy.pos, float(sim.templates[attack.bullet].ray_duration), tower)
 					sim.projectiles[-1].source = tower.id; sim.projectiles[-1].level = maxi(1, int(tower.powers.disintegrate))
 		if sim.tick < cast.end: return
-		state.casting = {}; state.resume = (int(cast.order) + 1) % 3
+		state.casting = {}; state.resume = int(cast.order) + 1
+	if tower.get("blocked", false): return
 	var order = [1, 0, 2]
 	for position in range(int(state.resume), 3):
 		var index: int = order[position]
@@ -59,7 +67,9 @@ static func step(sim, tower: Dictionary) -> void:
 			if tower.powers.disintegrate == 0: continue
 			cooldown = float(template.powers.disintegrate.cooldown_base) + float(template.powers.disintegrate.cooldown_inc) * int(tower.powers.disintegrate)
 		elif index == 2 and tower.powers.teleport == 0: continue
-		if sim.tick - state.last <= sim.frames(template.attacks.min_cooldown) or sim.tick - state.timestamps[index] < sim.frames(cooldown): continue
+		if sim.tick / 30.0 - float(state.last) / 30.0 <= float(template.attacks.min_cooldown) * cooldown_factor: continue
+		if sim.tick / 30.0 - float(state.timestamps[index]) / 30.0 <= cooldown * cooldown_factor: continue
+		if index != 0 and not tower.get("can_do_magic", template.tower.can_do_magic): continue
 		var enemy = _target(sim, tower, index)
 		if enemy.is_empty(): state.timestamps[index] += 5; continue
 		state.last = sim.tick
@@ -68,7 +78,12 @@ static func step(sim, tower: Dictionary) -> void:
 		tower.layers[2] = {"state": attack.animation, "at": sim.tick, "loop": false, "flip": false, "idle": "idle"}
 		tower.layers[3] = {"state": animation, "at": sim.tick, "loop": false, "flip": enemy.pos.x < tower.pos.x, "idle": "idleUp" if up else "idleDown"}
 		if index == 2: tower.layers[4] = {"state": "fx_tower_arcane_wizard_teleport", "at": sim.tick, "loop": false, "flip": false, "visible": true}
-		state.casting = {"index": index, "order": position, "at": sim.tick + sim.frames(attack.shoot_time), "end": sim.tick + Anim.duration(sim.animations, Anim.key(template.render.sprites[1], attack.animation)), "fired": false}
+		var fire_at: int = sim.tick
+		while fire_at / 30.0 < sim.tick / 30.0 + float(attack.shoot_time): fire_at += 1
+		var end_at: int = sim.tick
+		var length := Anim.duration(sim.animations, Anim.key(template.render.sprites[1], attack.animation))
+		while (end_at / 30.0 - sim.tick / 30.0) * 30.0 < length: end_at += 1
+		state.casting = {"index": index, "order": position, "at": fire_at, "end": end_at, "fired": false}
 		return
 	state.resume = 0
 

@@ -59,7 +59,7 @@ func transactions() -> void:
 	reject(sim,"upgrade_power",{"id":"03","power":"other"},"unknown skill")
 	for id in range(1,5):
 		var d: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/level%02d/definition.json" % id))
-		check(not d.templates.has("tower_ranger") and not d.has("upgrade_targets"),"campaign remains unchanged " + str(id))
+		check((d.templates.has("tower_ranger") == (id >= 4)),"campaign remains unchanged " + str(id))
 		var campaign = Sim.new(d)
 		check(not campaign.command("arena_gold") and not campaign.command("arena_spawn",{"type":"enemy_goblin"}),"no arena commands in campaign")
 

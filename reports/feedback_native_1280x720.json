@@ -1,0 +1,406 @@
+{
+	"browser_tested": false,
+	"captures": [
+		{
+			"path": "res://reports/feedback_dual_tower_notice_1280x720.png",
+			"state": "dual_tower_notice"
+		},
+		{
+			"path": "res://reports/feedback_grass_empty_1280x720.png",
+			"state": "grass_empty"
+		},
+		{
+			"path": "res://reports/feedback_grass_built_1280x720.png",
+			"state": "grass_built"
+		},
+		{
+			"path": "res://reports/feedback_disintegrate0_1280x720.png",
+			"state": "disintegrate0"
+		},
+		{
+			"path": "res://reports/feedback_disintegrate1_1280x720.png",
+			"state": "disintegrate1"
+		},
+		{
+			"path": "res://reports/feedback_disintegrate2_1280x720.png",
+			"state": "disintegrate2"
+		},
+		{
+			"path": "res://reports/feedback_disintegrate3_1280x720.png",
+			"state": "disintegrate3"
+		},
+		{
+			"path": "res://reports/feedback_teleport0_1280x720.png",
+			"state": "teleport0"
+		},
+		{
+			"path": "res://reports/feedback_teleport1_1280x720.png",
+			"state": "teleport1"
+		},
+		{
+			"path": "res://reports/feedback_teleport2_1280x720.png",
+			"state": "teleport2"
+		},
+		{
+			"path": "res://reports/feedback_teleport3_1280x720.png",
+			"state": "teleport3"
+		},
+		{
+			"path": "res://reports/feedback_healing0_1280x720.png",
+			"state": "healing0"
+		},
+		{
+			"path": "res://reports/feedback_healing1_1280x720.png",
+			"state": "healing1"
+		},
+		{
+			"path": "res://reports/feedback_healing2_1280x720.png",
+			"state": "healing2"
+		},
+		{
+			"path": "res://reports/feedback_healing3_1280x720.png",
+			"state": "healing3"
+		},
+		{
+			"path": "res://reports/feedback_holystrike0_1280x720.png",
+			"state": "holystrike0"
+		},
+		{
+			"path": "res://reports/feedback_holystrike1_1280x720.png",
+			"state": "holystrike1"
+		},
+		{
+			"path": "res://reports/feedback_holystrike2_1280x720.png",
+			"state": "holystrike2"
+		},
+		{
+			"path": "res://reports/feedback_holystrike3_1280x720.png",
+			"state": "holystrike3"
+		},
+		{
+			"path": "res://reports/feedback_shield0_1280x720.png",
+			"state": "shield0"
+		},
+		{
+			"path": "res://reports/feedback_shield1_1280x720.png",
+			"state": "shield1"
+		},
+		{
+			"path": "res://reports/feedback_poison0_1280x720.png",
+			"state": "poison0"
+		},
+		{
+			"path": "res://reports/feedback_poison1_1280x720.png",
+			"state": "poison1"
+		},
+		{
+			"path": "res://reports/feedback_poison2_1280x720.png",
+			"state": "poison2"
+		},
+		{
+			"path": "res://reports/feedback_poison3_1280x720.png",
+			"state": "poison3"
+		},
+		{
+			"path": "res://reports/feedback_thorn0_1280x720.png",
+			"state": "thorn0"
+		},
+		{
+			"path": "res://reports/feedback_thorn1_1280x720.png",
+			"state": "thorn1"
+		},
+		{
+			"path": "res://reports/feedback_thorn2_1280x720.png",
+			"state": "thorn2"
+		},
+		{
+			"path": "res://reports/feedback_thorn3_1280x720.png",
+			"state": "thorn3"
+		},
+		{
+			"path": "res://reports/feedback_guard_1_1_1280x720.png",
+			"state": "guard_1_1"
+		},
+		{
+			"path": "res://reports/feedback_guard_1_2_1280x720.png",
+			"state": "guard_1_2"
+		},
+		{
+			"path": "res://reports/feedback_guard_1_3_1280x720.png",
+			"state": "guard_1_3"
+		},
+		{
+			"path": "res://reports/feedback_guard_1_4_1280x720.png",
+			"state": "guard_1_4"
+		},
+		{
+			"path": "res://reports/feedback_guard_1_5_1280x720.png",
+			"state": "guard_1_5"
+		},
+		{
+			"path": "res://reports/feedback_guard_1_6_1280x720.png",
+			"state": "guard_1_6"
+		},
+		{
+			"path": "res://reports/feedback_guard_1_7_1280x720.png",
+			"state": "guard_1_7"
+		},
+		{
+			"path": "res://reports/feedback_guard_death_1_1280x720.png",
+			"state": "guard_death_1"
+		},
+		{
+			"path": "res://reports/feedback_guard_2_1_1280x720.png",
+			"state": "guard_2_1"
+		},
+		{
+			"path": "res://reports/feedback_guard_2_2_1280x720.png",
+			"state": "guard_2_2"
+		},
+		{
+			"path": "res://reports/feedback_guard_2_3_1280x720.png",
+			"state": "guard_2_3"
+		},
+		{
+			"path": "res://reports/feedback_guard_2_4_1280x720.png",
+			"state": "guard_2_4"
+		},
+		{
+			"path": "res://reports/feedback_guard_2_5_1280x720.png",
+			"state": "guard_2_5"
+		},
+		{
+			"path": "res://reports/feedback_guard_2_6_1280x720.png",
+			"state": "guard_2_6"
+		},
+		{
+			"path": "res://reports/feedback_guard_2_7_1280x720.png",
+			"state": "guard_2_7"
+		},
+		{
+			"path": "res://reports/feedback_guard_death_2_1280x720.png",
+			"state": "guard_death_2"
+		},
+		{
+			"path": "res://reports/feedback_cannon_flight_1280x720.png",
+			"state": "cannon_flight"
+		},
+		{
+			"path": "res://reports/feedback_cannon_impact_1280x720.png",
+			"state": "cannon_impact"
+		},
+		{
+			"path": "res://reports/feedback_bleed0_1280x720.png",
+			"state": "bleed0"
+		},
+		{
+			"path": "res://reports/feedback_bleed1_1280x720.png",
+			"state": "bleed1"
+		},
+		{
+			"path": "res://reports/feedback_bleed2_1280x720.png",
+			"state": "bleed2"
+		},
+		{
+			"path": "res://reports/feedback_bleed3_1280x720.png",
+			"state": "bleed3"
+		},
+		{
+			"path": "res://reports/feedback_snow_empty_1280x720.png",
+			"state": "snow_empty"
+		},
+		{
+			"path": "res://reports/feedback_snow_built_1280x720.png",
+			"state": "snow_built"
+		},
+		{
+			"path": "res://reports/feedback_sniper0_1280x720.png",
+			"state": "sniper0"
+		},
+		{
+			"path": "res://reports/feedback_sniper1_1280x720.png",
+			"state": "sniper1"
+		},
+		{
+			"path": "res://reports/feedback_sniper2_1280x720.png",
+			"state": "sniper2"
+		},
+		{
+			"path": "res://reports/feedback_sniper3_1280x720.png",
+			"state": "sniper3"
+		},
+		{
+			"path": "res://reports/feedback_shrapnel0_1280x720.png",
+			"state": "shrapnel0"
+		},
+		{
+			"path": "res://reports/feedback_shrapnel1_1280x720.png",
+			"state": "shrapnel1"
+		},
+		{
+			"path": "res://reports/feedback_shrapnel2_1280x720.png",
+			"state": "shrapnel2"
+		},
+		{
+			"path": "res://reports/feedback_shrapnel3_1280x720.png",
+			"state": "shrapnel3"
+		}
+	],
+	"checks": 782,
+	"failures": [],
+	"guard_scenes": [
+		{
+			"first_acquisition_tick": 99,
+			"guard": 1,
+			"mode": 1,
+			"path": [
+				2,
+				2,
+				86
+			]
+		},
+		{
+			"first_acquisition_tick": 277,
+			"guard": 2,
+			"mode": 1,
+			"path": [
+				0,
+				0,
+				76
+			]
+		},
+		{
+			"first_acquisition_tick": 452,
+			"guard": 3,
+			"mode": 1,
+			"path": [
+				4,
+				0,
+				193
+			]
+		},
+		{
+			"first_acquisition_tick": 623,
+			"guard": 4,
+			"mode": 1,
+			"path": [
+				4,
+				0,
+				200
+			]
+		},
+		{
+			"first_acquisition_tick": 793,
+			"guard": 5,
+			"mode": 1,
+			"path": [
+				2,
+				1,
+				148
+			]
+		},
+		{
+			"first_acquisition_tick": 980,
+			"guard": 6,
+			"mode": 1,
+			"path": [
+				2,
+				2,
+				151
+			]
+		},
+		{
+			"first_acquisition_tick": 1155,
+			"guard": 7,
+			"mode": 1,
+			"path": [
+				4,
+				2,
+				265
+			]
+		},
+		{
+			"first_acquisition_tick": 99,
+			"guard": 1,
+			"mode": 2,
+			"path": [
+				2,
+				2,
+				86
+			]
+		},
+		{
+			"first_acquisition_tick": 277,
+			"guard": 2,
+			"mode": 2,
+			"path": [
+				0,
+				0,
+				76
+			]
+		},
+		{
+			"first_acquisition_tick": 452,
+			"guard": 3,
+			"mode": 2,
+			"path": [
+				4,
+				0,
+				193
+			]
+		},
+		{
+			"first_acquisition_tick": 623,
+			"guard": 4,
+			"mode": 2,
+			"path": [
+				4,
+				0,
+				200
+			]
+		},
+		{
+			"first_acquisition_tick": 793,
+			"guard": 5,
+			"mode": 2,
+			"path": [
+				2,
+				1,
+				148
+			]
+		},
+		{
+			"first_acquisition_tick": 980,
+			"guard": 6,
+			"mode": 2,
+			"path": [
+				2,
+				2,
+				151
+			]
+		},
+		{
+			"first_acquisition_tick": 1155,
+			"guard": 7,
+			"mode": 2,
+			"path": [
+				4,
+				2,
+				265
+			]
+		}
+	],
+	"layout_only": false,
+	"passed": true,
+	"source_hashes": {
+		"scripts/battle/battle_ui.gd": "900c3a23548286aee0d8708106765eb509850aa2ec483f0c7690774f4474e9d2",
+		"scripts/battle/battle_view.gd": "d398bcdae9cb7f4524c58aad2c21d890c30e7b926c55bb035c730938ec2c568f",
+		"scripts/battle/dove_paladin.gd": "e222ca537c0febb079f368d44e7a2f9b19f6056aed49dc05bad8a3dd3010fc76",
+		"scripts/battle/dove_power_preview.gd": "8701b14ac3747b3f9409fdb93a168fa800b42e6b9679a8182e131369c67bd8fd",
+		"scripts/battle/dove_ui_layout.gd": "3b5f799a9db0ffe091ac8889bc9e5b431b5e80cedc4065fa1b05dbaaa45d3803",
+		"scripts/battle/level01_sim.gd": "bfe6e599b6b1ab76cc1ce0caffffe9da4bac06ace4acd61123e15f7c62c724e0",
+		"scripts/map/map_interface.gd": "2b074fceeb553c41510c5b3986c1d1590ce3e8ce0047ac67143514a943b0f37f",
+		"scripts/map/upgrades_room.gd": "cae4030b57d8d82b3c296a03024ce35c992aabf22552d210e803cbb63895eb76",
+		"tests/feedback_visual.gd": "f81ab490ee76aebfb07e408f4ed53f389f0ea95a3f34effd4bddf49c36e44492"
+	}
+}

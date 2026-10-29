@@ -86,7 +86,9 @@
         "wolf",
         "healer",
         "bandits",
-        "tier3"
+        "tier3",
+        "ranger",
+        "musketeer"
       ],
       "notification_overrides": {
         "TOWER_LEVEL3": {
@@ -119,7 +121,8 @@
         "tier3",
         "ranger",
         "elf",
-        "spider"
+        "spider",
+        "musketeer"
       ],
       "atlas_groups": [
         "go_stage05"
@@ -157,7 +160,8 @@
         "royal_guard",
         "paladin",
         "arcane",
-        "juggernaut"
+        "juggernaut",
+        "musketeer"
       ],
       "atlas_groups": [
         "go_stage06"
@@ -166,6 +170,44 @@
         "stage6_boss_corpse"
       ],
       "layout_instance_base": 87
+    },
+    "7": {
+      "id": 7,
+      "generation": 1,
+      "folder": "level07",
+      "modes": [
+        1,
+        2,
+        3
+      ],
+      "difficulties": [
+        2
+      ],
+      "controller": "default",
+      "features": [
+        "base",
+        "wolf",
+        "healer",
+        "bandits",
+        "tier3",
+        "ranger",
+        "flying",
+        "enemy_ranged",
+        "paladin",
+        "arcane",
+        "musketeer",
+        "snow"
+      ],
+      "atlas_groups": [
+        "go_stage07",
+        "go_stage07_bg",
+        "go_stages_ice",
+        "go_enemies_ice"
+      ],
+      "frames": [
+        "stage_7"
+      ],
+      "layout_instance_base": 100
     }
   },
   "arenas": {
@@ -630,6 +672,85 @@
       "constants": [
         "F_ALL"
       ]
+    },
+    "musketeer": {
+      "template_ids": [
+        "tower_musketeer",
+        "mod_van_helsing_crosshair",
+        "pop_headshot"
+      ],
+      "fields": [
+        "powers",
+        "particle_system"
+      ],
+      "inputs": [
+        "kr1/archer_towers.lua",
+        "kr1/heroes.lua",
+        "kr1/tower_scripts.lua"
+      ],
+      "reference_fields": [
+        "start_fx",
+        "miss_fx",
+        "particles_name",
+        "shoot_fx"
+      ],
+      "constants": [
+        "DAMAGE_SHOT",
+        "DAMAGE_INSTAKILL",
+        "DAMAGE_NO_DODGE",
+        "F_BOSS",
+        "F_INSTAKILL",
+        "F_RANGED"
+      ],
+      "notification_ids": [
+        "TOWER_MUSKETEER"
+      ],
+      "tower_menus": [
+        "musketeer"
+      ],
+      "upgrade_menus": [
+        "archer:3:2"
+      ],
+      "power_prefixes": [
+        "MUSKETEER"
+      ],
+      "upgrade_targets": [
+        "tower_archer_3:tower_musketeer"
+      ],
+      "animation_states": [
+        "sniperShootUp",
+        "sniperShootDown",
+        "sniperSeekUp",
+        "sniperSeekDown",
+        "cannonShootUp",
+        "cannonShootDown",
+        "cannonFuseUp",
+        "cannonFuseDown"
+      ]
+    },
+    "snow": {
+      "template_ids": [
+        "tower_holder_snow",
+        "aura_troll_regen",
+        "ps_stage_snow"
+      ],
+      "fields": [
+        "tunnel",
+        "auras",
+        "particle_system",
+        "track_names"
+      ],
+      "notification_ids": [
+        "enemy_troll",
+        "enemy_whitewolf"
+      ],
+      "inputs": [
+        "kr1/template_groups/decal_sheep.lua",
+        "kr1/template_groups/decal_tunnel_light.lua"
+      ],
+      "constants": [
+        "F_MOD"
+      ]
     }
   },
   "controllers": {
@@ -675,7 +796,11 @@
     "scripts.mod_tower_decal.update": "tower_decal",
     "scripts.mod_tower_decal.insert": "tower_decal",
     "scripts.mod_damage.insert": "instant_damage",
-    "scripts.aura_apply_damage.update": "damage_aura"
+    "scripts.aura_apply_damage.update": "damage_aura",
+    "tower_scripts.tower_musketeer.update": "musketeer",
+    "scripts.shotgun.update": "shotgun",
+    "scripts.tunnel.update": "tunnel",
+    "scripts.aura_unit_regen.update": "unit_regen"
   },
   "behavior_aliases": {
     "game_scripts.tower_archer.update": "scripts.tower_archer.update",
@@ -697,7 +822,9 @@
     "game_scripts.mod_tower_decal.update": "scripts.mod_tower_decal.update",
     "game_scripts.mod_track_target.update": "scripts.mod_track_target.update",
     "game_scripts.mod_silence.update": "scripts.mod_silence.update",
-    "game_scripts.mod_tower_decal.insert": "scripts.mod_tower_decal.insert"
+    "game_scripts.mod_tower_decal.insert": "scripts.mod_tower_decal.insert",
+    "game_scripts.aura_unit_regen.update": "scripts.aura_unit_regen.update",
+    "game_scripts.tower_musketeer.update": "tower_scripts.tower_musketeer.update"
   },
   "runtime_scripts": [
     "res://scripts/services/campaign_levels.gd",
@@ -730,7 +857,10 @@
     "res://scripts/battle/dove_damage_factors.gd",
     "res://scripts/services/battle_setup.gd",
     "res://scripts/battle/dove_upgrades.gd",
-    "res://scripts/map/upgrades_room.gd"
+    "res://scripts/map/upgrades_room.gd",
+    "res://scripts/battle/dove_musketeer.gd",
+    "res://scripts/battle/dove_snow.gd",
+    "res://scripts/battle/dove_power_preview.gd"
   ],
   "callbacks": [
     "game_scripts.aura_apply_mod.insert",
@@ -799,6 +929,27 @@
     "scripts.power_reinforcements_control.insert",
     "scripts.soldier_barrack.insert",
     "scripts.soldier_barrack.update",
-    "scripts.tower_build.update"
-  ]
+    "scripts.tower_build.update",
+    "kr1.decal_sheep_big.insert",
+    "game_scripts.aura_unit_regen.update",
+    "scripts.tunnel.update",
+    "scripts.decal_tunnel_light.update",
+    "tower_scripts.tower_musketeer.update",
+    "scripts.shotgun.insert",
+    "scripts.shotgun.update",
+    "game_scripts.tower_musketeer.update",
+    "game_scripts.decal_tunnel_light.update",
+    "scripts.delayed_play.update"
+  ],
+  "runtime_dependencies": {
+    "tower_musketeer": [
+      "pop_headshot",
+      "mod_van_helsing_crosshair",
+      "ps_shotgun_musketeer",
+      "fx_rifle_smoke"
+    ],
+    "enemy_troll": [
+      "aura_troll_regen"
+    ]
+  }
 }

@@ -64,11 +64,12 @@ func run() -> void:
 	lifecycle_cases()
 	source_behavior_cases(reference.behaviors)
 	var file := FileAccess.open("res://reports/upgrades_source_comparison.json", FileAccess.WRITE)
+	assert(file!=null,"Cannot write technology comparison: "+str(FileAccess.get_open_error()))
 	file.store_string(JSON.stringify(comparisons)); file.close()
 	var hashes := preload("res://tests/upgrades_test_support.gd").hashes()
 	for path: String in ["tests/verify_upgrades.gd","tests/fixtures/dove_upgrades_source.json"]:hashes[path]=FileAccess.get_sha256("res://"+path)
-	var report := {"passed":failures.is_empty(),"checks":checks,"source_patch_scenarios":reference.cases.size(),"source_template_rows":source_rows,"behavior_scenarios":behavior_scenarios,"content_combinations":18,"failures":failures,"source_hashes":hashes,"browser_tested":false}
-	file = FileAccess.open("res://reports/upgrades_logic.json",FileAccess.WRITE); file.store_string(JSON.stringify(report,"\t")); file.close()
+	var report := {"passed":failures.is_empty(),"checks":checks,"source_patch_scenarios":reference.cases.size(),"source_template_rows":source_rows,"behavior_scenarios":behavior_scenarios,"content_combinations":Levels.ids().size()*3,"failures":failures,"source_hashes":hashes,"browser_tested":false}
+	if not preload("res://tests/report_writer.gd").json_file("res://reports/upgrades_logic.json",report):quit(1);return
 	print("UPGRADES: ", JSON.stringify(report)); quit(0 if failures.is_empty() else 1)
 
 func project(t: Dictionary, fields: Dictionary) -> Dictionary:

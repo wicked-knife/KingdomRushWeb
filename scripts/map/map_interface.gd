@@ -27,8 +27,11 @@ func draw() -> void:
 		if item[2] == "科技":
 			var points: int = view.progress.upgrade_summary().hint_available
 			if points > 0:
-				paint.image("mapUpgradePointsAvailable", at + Vector2(20, -10))
-				paint.display_label(str(points), Rect2(at + Vector2(24, -7), Vector2(50, 28)), 22, GOLD, "numbers_bold", "upgrade_points", 1)
+				var star_size: Vector2 = paint.image_size("mapUpgradePointsAvailable")
+				paint.push(at+Vector2(133,42)-star_size*0.85/2,0.85)
+				paint.image("mapUpgradePointsAvailable")
+				paint.display_label(str(points),Rect2(0,19,star_size.x,24),22,Color("4e2b07"),"numbers","upgrade_points")
+				paint.pop()
 		paint.label(item[2], Rect2(at + Vector2(50, 121), Vector2(126, 30)), 18, Color("e4bc72"), "center", "middle", 1, 1, "", "h_map")
 		if not available: paint.label("暂未开放", Rect2(at + Vector2(50, 151), Vector2(126, 24)), 15, Color("ccb58b"), "center", "middle", 1, 1)
 		if view.overlay == "": paint.hit(Rect2(at + Vector2(40, 20), Vector2(146, 152)), action if available else "unavailable")

@@ -74,7 +74,7 @@ local function run()
     local a=assert(text:find('tt = RT("'..id..'"',1,true),spec.folder..": missing game template "..id)
     local b=text:find("\ntt = ",a+1,true) or #text+1
     local body=text:sub(a,b-1)
-    local base=body:match('^tt = RT%([^,]+,%s*"([^"]+)"')
+    local base=body:match('^tt = RT%([^,\n]+,%s*"([^"]+)"')
     if base and not E.entities[base] then load_game_template(base) end
     local header='local tt;local anchor_x,anchor_y,image_x,image_y=0,0,0,0;local scripts=require("game_scripts");local v=vec_2;local vv=vec_1;local function adx(x) return x-anchor_x*image_x end;local function ady(y) return y-anchor_y*image_y end;'
     chunk(path,header..body)
@@ -117,7 +117,7 @@ local function run()
     local start=assert(enemies:find('tt = RT("'..id..'"',1,true),spec.folder..": wave/template -> missing enemy "..id)
     local finish=enemies:find("\ntt = ",start+1,true) or #enemies+1
     local body=enemies:sub(start,finish-1)
-    local base=body:match('^tt = RT%([^,]+,%s*"([^"]+)"')
+    local base=body:match('^tt = RT%([^,\n]+,%s*"([^"]+)"')
     if base and not E.entities[base] then load_enemy(base) end
     chunk("kr1/enemies.lua",header..body)
   end
@@ -152,6 +152,7 @@ local function run()
   for _,name in ipairs(spec.export.constants or {}) do out.constants[name]=assert(_G[name]) end
   for key,value in pairs(source_tables) do out[key]=clean(value) end
   for _,id in ipairs(out.layout.required_templates or {}) do chunk("kr1/template_groups/"..id..".lua") end
+  if has("snow") then behavior_names[E.entities.decal_goat.main_script.insert]="kr1.decal_sheep_big.insert" end
   local template_ids=table.deepclone(spec.export.template_ids)
   for _,id in ipairs({"re_farmer_well_fed","re_conscript","re_warrior","re_legionnaire","re_legionnaire_ranged","spear_legionnaire","mod_arcane_shatter","mod_arcane_shatter_little","mod_slow_curse","mod_blood_elves","power_scorched_earth","power_scorched_water","pop_crit"}) do table.insert(template_ids,id) end
   for _,id in ipairs(enemy_ids) do table.insert(template_ids,id) end
@@ -167,7 +168,7 @@ local function run()
   local function export_template(id,origin)
     if out.templates[id] then return end
     if not E.entities[id] and id:match('^enemy_') then load_enemy(id) end
-    if not E.entities[id] and (has("arcane") or has("paladin") or has("juggernaut")) then load_game_template(id) end
+    if not E.entities[id] and (has("arcane") or has("paladin") or has("juggernaut") or has("musketeer") or has("snow")) then load_game_template(id) end
     assert(E.entities[id],spec.folder..": "..origin.." -> missing template "..id)
     local t=E:get_template(id);local filtered={};for _,key in ipairs(fields) do if t[key]~=nil then filtered[key]=clean(t[key]) end end
     if spec.export.validate_callbacks then
@@ -200,6 +201,7 @@ local function run()
       end
     end
     visit(filtered)
+    for _,a in ipairs(t.auras and t.auras.list or {}) do if a.name then found[a.name]=true end end
     -- miss_decal is a raw sprite, whereas miss_fx_water is an entity.
     if id=="spear_legionnaire" then found[t.bullet.miss_fx_water]=true end
     local dependencies={};for child in pairs(found) do dependencies[#dependencies+1]=child end;table.sort(dependencies)
@@ -260,6 +262,12 @@ local function run()
     elseif type(v)=="table" then for _,value in pairs(v) do collect(value) end end
   end
   collect(out.ui)
+  for _,notification in pairs(out.ui.notifications) do
+    local prefixes=notification.layout == "N_TOWER" and {notification.prefix} or notification.layout == "N_TOWER_2" and notification.prefixes or {}
+    for _,prefix in ipairs(prefixes) do
+      for _,suffix in ipairs({"_NAME","_EXTRA"}) do out.ui.strings[prefix..suffix]=assert(strings[prefix..suffix]) end
+    end
+  end
   for _,prefix in ipairs(spec.export.power_prefixes or {}) do
     out.ui.power_descriptions=out.ui.power_descriptions or {}
     for _,item in ipairs(out.ui.tower_menus[string.lower(prefix)] or {}) do
@@ -267,10 +275,12 @@ local function run()
         local descriptions={}
         for level,entry in ipairs(item.tt_list) do
           local description=assert(strings[entry.tt_desc],entry.tt_desc)
-          description=description:gsub("%%%$(.-)%%%$",function(expr)
+          description=description:gsub("%%%$(.-)%%%$(%%?)",function(expr,percent)
             local fn=assert(loadstring("return "..expr,"@power_description"))
             setfenv(fn,{T=function(id) return E:get_template(id) end,level=level,tdmg=1,tcd=1,math=math})
-            return string.format("%g",fn())
+            local value=fn() * (percent == "%" and 100 or 1)
+            local formatted=string.format("%.2f",value):gsub("%.?0+$", "")
+            return formatted..percent
           end)
           descriptions[level]=description
         end
@@ -291,10 +301,11 @@ local function run()
       for level=1,3 do
         local key="TOWER_"..((power == "bleed" or power == "cripple") and "ELF_" or "RANGER_")..string.upper(power).."_DESCRIPTION_"..level
         local text=assert(strings[key])
-        text=text:gsub("%%%$(.-)%%%$",function(expr)
+        text=text:gsub("%%%$(.-)%%%$(%%?)",function(expr,percent)
           local f=assert(loadstring("return "..expr,"@ranger_description"))
           setfenv(f,{T=function(id) return E:get_template(id) end,level=level,tdmg=1,tcd=1})
-          return string.format("%g",f())
+          local value=f() * (percent == "%" and 100 or 1)
+          return string.format("%.2f",value):gsub("%.?0+$", "")..percent
         end)
         descriptions[level]=text
       end

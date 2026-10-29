@@ -16,6 +16,8 @@ def template_dependencies(value, reference_fields=()):
             for key, child in node.items():
                 if key in fields and isinstance(child, str) and child: found.add(child)
                 if key == "mods" and isinstance(child, list): found.update(x for x in child if isinstance(x, str) and x)
+                if key == "auras" and isinstance(child, dict):
+                    found.update(a["name"] for a in child.get("list", []) if a.get("name"))
                 visit(child)
         elif isinstance(node, list):
             for child in node: visit(child)
@@ -75,11 +77,17 @@ def resolve_behavior(source_id, catalog=None):
 
 def validate_definition(data, spec):
     """Check reachable references, including all modes, before publishing a definition."""
+    from power_preview_contract import validate_ui
+    validate_ui(data)
     from upgrades_contract import validate_technology_dependencies
     validate_technology_dependencies(data)
     templates = data["templates"]
     identity = spec["folder"]
     catalog = read_catalog()
+    for owner, children in catalog.get("runtime_dependencies", {}).items():
+        if owner in templates:
+            for child in children:
+                if child not in templates: raise ValueError(f"{identity}: {owner} -> missing runtime dependency {child}")
     if any(data.get("source", {}).get(key) != catalog["source"][key] for key in ("version", "commit")):
         raise ValueError(f"{identity}: source differs from current Dove catalog")
     if data.get("level", {}).get("controller") != spec["controller"]:
@@ -124,7 +132,8 @@ def validate_definition(data, spec):
     waves = [data["waves"], *(row["waves"] for row in data.get("modes", {}).values())]
     for layout in layouts:
         for entity in layout["entities_list"]:
-            if "tower.holder_id" in entity and entity["template"] not in templates:
+            required = "tower.holder_id" in entity or entity["template"].startswith(("tunnel", "decal_tunnel_light", "ps_snow"))
+            if required and entity["template"] not in templates:
                 raise ValueError(f"{identity}: layout -> missing template {entity['template']}")
     for program in waves:
         for group in program["groups"]:

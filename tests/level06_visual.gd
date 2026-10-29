@@ -63,7 +63,7 @@ func _run() -> void:
 	battle.sim._finish("victory"); await capture("sixth_campaign_victory")
 	check(app.campaign.data.last_victory.level_idx==6,"native sixth pending settlement")
 	await action("map");await app.map_ready
-	check(app.campaign.record(6).stars==3 and app.campaign.is_playable(6,2) and app.campaign.is_playable(6,3) and not app.campaign.is_playable(7),"native sixth settlement unlocks challenges, seventh preview")
+	check(app.campaign.record(6).stars==3 and app.campaign.is_playable(6,2) and app.campaign.is_playable(6,3) and app.campaign.is_playable(7),"native sixth settlement unlocks challenges, seventh playable")
 	for mode in [2,3]:
 		await enter(6,mode);await capture("sixth_mode%d_opening" % mode)
 		check(battle.sim.soldiers.size()==(7 if mode==2 else 0),"native mode guard layout %d" % mode)

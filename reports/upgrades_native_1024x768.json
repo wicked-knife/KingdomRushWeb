@@ -1,27 +1,27 @@
 {
 	"browser_tested": false,
-	"checks": 2823,
+	"checks": 2749,
 	"failures": [],
 	"native_audio": true,
 	"native_input": true,
 	"passed": true,
 	"resolution": "1024x768",
 	"source_hashes": {
-		"data/upgrades/definition.json": "0969a91d7255b5f2fd7edb8746a9c586d1c00f3075292be8081e18bf6012d597",
+		"data/upgrades/definition.json": "e8091cf27cda2dbcdf5f787449c649c46a71a5082f6bac1f184e7350f94f73c3",
 		"scripts/app_root.gd": "819589b066d9d106fcd8a05c38d568f7cd8ff8a3926906c7d33b6e0ef29640c9",
-		"scripts/battle/battle_view.gd": "72d32bbac4954a88d7b64a9117416970fa6d2ec1876d8e63017ac567f720001b",
-		"scripts/battle/dove_arcane.gd": "03d840fea2a178795194e1e1bb0e98684c5559c6b65ceaf3c5dea6bd4efcda82",
-		"scripts/battle/dove_behaviors.gd": "dd7f324ad3454afd20236f3a71d1c4d60d60b5b98ef6a69c7c8ac7ad2696153b",
-		"scripts/battle/dove_modifiers.gd": "074d43cb8e0861a9c56179157a0934de84b8449e4f632a599ec29f47479590b6",
-		"scripts/battle/dove_upgrades.gd": "5ff1b0f19a8e3ea2e9aaffdc9697e2eb409d0f13fbd01ce8d8446af8946292eb",
-		"scripts/battle/level01_sim.gd": "050a9bc80861ca69ae187cf0b799f0e6fd926a390e94050c02327180743fe3aa",
-		"scripts/map/map_interface.gd": "81e753391d5fb2f7f6b4579bb3349c497d06fe9dbe8fd388912b8890027ff416",
+		"scripts/battle/battle_view.gd": "d398bcdae9cb7f4524c58aad2c21d890c30e7b926c55bb035c730938ec2c568f",
+		"scripts/battle/dove_arcane.gd": "5b58bd539c658a8022d7177a7655a4882511cfac47e573b47b8af455df9e9889",
+		"scripts/battle/dove_behaviors.gd": "e6384e77ff8e839a58bd8fe0e17f15cf134eef40ff67fcb74cfe4a40b8954db6",
+		"scripts/battle/dove_modifiers.gd": "283d9eff3d70039d4fb13be6185ed8f4dae43bcfa9df7476daa5ce049c822041",
+		"scripts/battle/dove_upgrades.gd": "04d0c6bb4dc35caaf7d26292e30c1a29fbb40a23e1394e797c88d38921da43d0",
+		"scripts/battle/level01_sim.gd": "bfe6e599b6b1ab76cc1ce0caffffe9da4bac06ace4acd61123e15f7c62c724e0",
+		"scripts/map/map_interface.gd": "2b074fceeb553c41510c5b3986c1d1590ce3e8ce0047ac67143514a943b0f37f",
 		"scripts/map/map_screen.gd": "16713179a9a97d74659daefbc11ef36299d03c2513a5e984e25e332e2110c0fb",
-		"scripts/map/upgrades_room.gd": "3316e9ef3a837015cf297aa4003fb52f1d7e3f2e4b93b8d8a32f7bb4f4806df8",
+		"scripts/map/upgrades_room.gd": "cae4030b57d8d82b3c296a03024ce35c992aabf22552d210e803cbb63895eb76",
 		"scripts/services/battle_setup.gd": "5469d9f4cb36b6b2cecb29493c01fc77a2f0820b132adae3e7424c219f8653d1",
 		"scripts/services/campaign_levels.gd": "da30a1fdd2463ea40be1083c3a83215738985442037aac0d48b410352297c1af",
-		"scripts/services/campaign_progress.gd": "da38c3e65728f4f103e9f1229a432984a9ccc9f906759cdbbcc118ad5ef99cb8",
-		"tests/upgrades_native.gd": "ffea1c3fad97892934dbd03b568a8a170aa497ca7d6c19ea121832c2cc835d9f"
+		"scripts/services/campaign_progress.gd": "63f8ea4460117fe0041ec0eccd9d57810a7b7c09022f74216e1ca00187e82827",
+		"tests/upgrades_native.gd": "a1fcd76208aba287c77805ee598631a6a5a82cf779874c411ff770c8bd937d8a"
 	},
-	"text_boxes_checked": 619
+	"text_boxes_checked": 582
 }

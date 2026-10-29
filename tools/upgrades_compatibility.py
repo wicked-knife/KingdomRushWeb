@@ -3,6 +3,8 @@ import copy
 import hashlib
 import json
 from pathlib import Path
+from level07_compatibility import before_seventh
+from feedback_compatibility import before_feedback
 
 ROOT = Path(__file__).resolve().parents[1]
 ADDITIONS = json.loads((ROOT / "tests/fixtures/upgrades_additions.json").read_text(encoding="utf-8"))
@@ -13,7 +15,7 @@ def digest(value):
 
 
 def previous_gameplay(name, gameplay):
-    value = copy.deepcopy(gameplay)
+    value = before_seventh(name, before_feedback(name, gameplay))
     additions = ADDITIONS["definitions"][name]
     for key in additions["templates"]:
         del value["templates"][key]
@@ -31,7 +33,7 @@ def previous_resource_digest(path):
     if not path.is_file(): return None
     if relative not in ADDITIONS["resources"]:
         return digest(json.loads(path.read_text(encoding="utf-8"))) if path.suffix == ".json" else hashlib.sha256(path.read_bytes()).hexdigest()
-    value = json.loads(path.read_text(encoding="utf-8"))
+    value = before_seventh(path.parent.name, before_feedback(path.parent.name, json.loads(path.read_text(encoding="utf-8")), path.stem), path.stem)
     for group, keys in ADDITIONS["resources"][relative].items():
         if group == "logical_sha256": continue
         owner = value if group == "root" else value[group]

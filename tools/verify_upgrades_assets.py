@@ -12,7 +12,8 @@ def read(path): return json.loads((ROOT / path).read_text(encoding="utf-8"))
 
 
 def verify():
-    definitions = [f"level{i:02}" for i in range(1, 7)] + ["ranger_arena"]
+    from campaign_content import level_ids
+    definitions = [f"level{i:02}" for i in level_ids()] + ["ranger_arena"]
     hashes, rows, probes = {}, [], []
     for name in definitions:
         data, animations, atlas, sounds = [read(f"data/{name}/{part}.json") for part in ("definition", "animations", "atlas", "sounds")]

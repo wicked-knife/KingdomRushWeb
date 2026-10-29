@@ -1,6 +1,7 @@
 extends RefCounted
 ## Frozen visibility bit tests. Candidate ordering remains owned by each attack.
 static func matches(sim, unit: Dictionary, rule: Dictionary, damage: bool = false) -> bool:
+	if unit.has("path") and not sim._path_node_valid(int(unit.path), int(unit.node), 0): return false
 	var vis: Dictionary = unit.get("vis", sim.templates[unit.template].get("vis", {}))
 	var flags = int(rule.get("damage_flags" if damage else "vis_flags", 0))
 	var bans = int(rule.get("damage_bans" if damage else "vis_bans", 0))

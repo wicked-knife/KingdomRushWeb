@@ -20,7 +20,7 @@ def verify(level_id=1, ranger_arena=False):
         assert set(data["modes"]) == {"2", "3"}
         for mode in (2, 3):
             selected=data["modes"][str(mode)]
-            assert selected["waves"]["cash"] == {2:[230,310,400,750,1000,1200],3:[360,275,660,1500,1500,800]}[mode][level_id-1]
+            assert selected["waves"]["cash"] == {2:[230,310,400,750,1000,1200,1000],3:[360,275,660,1500,1500,800,1200]}[mode][level_id-1]
             assert selected["waves"]["lives"] == 1 and len(selected["waves"]["groups"]) == (6 if mode==2 else 1)
             assert all(e.get("editor.game_mode",0) in (0,mode) for e in selected["layout"]["entities_list"])
             assert f"kr1/data/waves/level{level_id:02d}_waves_{'heroic' if mode==2 else 'iron'}.lua" in data["source"]["inputs"]
@@ -37,6 +37,9 @@ def verify(level_id=1, ranger_arena=False):
             assert {site for site,t in towers.items() if t=="tower_archer_3"}=={"1","3","4"}
             assert {site for site,t in towers.items() if t=="tower_elf_holder"}=={"5","7"}
     atlas=read(folder/"atlas.json"); animations=read(folder/"animations.json")["animations"]
+    assert {"range_circle","rally_circle"} <= atlas["lookup"].keys(), level_name
+    if "tower_arcane_wizard" in data["templates"]:
+        assert "tower_arcane_wizard_teleport" in animations, "Missing tower cast animation cancels teleport before emission"
     # Every default sprite must resolve, including suffixes such as explosion_big
     # and explode_small. Merely validating already-selected animations misses them.
     for template_name,template in data["templates"].items():

@@ -18,12 +18,16 @@ func dismiss(sim) -> void:
 func run() -> void:
 	var samples := {}
 	var baseline: Dictionary = Levels.read_json("res://tests/fixtures/content_combat_baseline.json")
+	var repairs: Dictionary=Levels.read_json("res://tests/fixtures/feedback_combat_adjustments.json")
+	check(FileAccess.get_sha256("res://tests/fixtures/content_combat_baseline.json")==repairs.historical_fixture_sha256,"historical zero-tech snapshot is unchanged")
+	check(FileAccess.get_sha256("res://tests/fixtures/feedback_source.json")==repairs.source_fixture_sha256,"repair expectations have independent source-function evidence")
+	check(FileAccess.get_sha256("res://tests/fixtures/followup_source.json")==repairs.followup_source_fixture_sha256,"default bomb simulation step has independent source-coroutine evidence")
 	var record_current := OS.get_cmdline_user_args().has("--record-current")
 	check(not baseline.is_empty(), "current combat snapshot exists")
 	if not record_current: check(baseline.get("source",{}).get("commit","") == Levels.catalog().source.commit, "combat snapshot uses current source")
 	var expected_timelines: Dictionary = Levels.read_json("res://tests/fixtures/content_timelines.json")
 	check(expected_timelines.size() == 15, "all pre-migration mode timelines exist")
-	check(not Levels.supports(7) and not Levels.supports(1, 1, 3), "preview and unsupported difficulty remain unavailable")
+	check(not Levels.supports(8) and not Levels.supports(1, 1, 3), "preview and unsupported difficulty remain unavailable")
 	var catalog := Levels.catalog()
 	check(Sim.Controller.create("unknown", catalog) == null, "unknown controller rejected")
 	var invalid := Levels.load_definition(5)
@@ -73,16 +77,21 @@ func run() -> void:
 				var state := [sim.tick,sim.gold,sim.lives,sim.kills,sim.leaks,sim.rng.state,sim.towers,sim.enemies,sim.soldiers,sim.projectiles,sim.modifiers.active,sim.eggs,sim.spawn_log]
 				hashes.append(var_to_str(state).sha256_text())
 		samples[str(id)] = hashes
-		if not record_current: check(hashes == baseline.get("samples", {}).get(str(id), []), "combat state matches current snapshot %d; first differing sample %d" % [id, first_difference(hashes, baseline.get("samples", {}).get(str(id), []))])
+		var expected: Array=baseline.get("samples",{}).get(str(id),[]).duplicate()
+		for repair: Dictionary in repairs.adjustments.get(str(id),[]):
+			check(expected[int(repair.sample)]==repair.before,"repair applies to exact historical sample %d/%d" % [id,repair.sample])
+			expected[int(repair.sample)]=repair.after
+		if not record_current: check(hashes == expected, "source-audited combat state %d; first differing sample %d" % [id, first_difference(hashes,expected)])
 	if record_current and failures.is_empty():
 		var snapshot := FileAccess.open("res://tests/fixtures/content_combat_baseline.json",FileAccess.WRITE)
 		snapshot.store_string(JSON.stringify({"source":Levels.catalog().source,"samples":samples},"\t")); snapshot.close()
 	var timeline_file := FileAccess.open("res://reports/content_timelines.json", FileAccess.WRITE)
 	timeline_file.store_string(JSON.stringify(timelines)); timeline_file.close()
-	var report := {"passed":failures.is_empty(),"checks":checks,"combinations":15,"timeline_waves":timeline_waves,"timeline_entries":timeline_entries,"timeline_report":"reports/content_timelines.json","combat_scenarios":3,"combat_ticks":3600,"samples":samples,"failures":failures}
+	var hashes:={}
+	for path in ["tests/verify_content_unification.gd","tests/fixtures/content_combat_baseline.json","tests/fixtures/feedback_combat_adjustments.json","tests/fixtures/feedback_source.json","tests/fixtures/followup_source.json","scripts/battle/level01_sim.gd","scripts/battle/dove_projectile.gd","scripts/battle/dove_paladin.gd"]:hashes[path]=FileAccess.get_sha256("res://"+path)
+	var report := {"passed":failures.is_empty(),"checks":checks,"combinations":15,"timeline_waves":timeline_waves,"timeline_entries":timeline_entries,"timeline_report":"reports/content_timelines.json","combat_scenarios":3,"combat_ticks":3600,"samples":samples,"failures":failures,"source_hashes":hashes,"historical_baseline_preserved":true,"source_backed_adjustments":"tests/fixtures/feedback_combat_adjustments.json","first_difference_audit":"reports/feedback_combat_audit.json"}
 	var suffix := "_before" if OS.get_cmdline_user_args().has("--before") else ""
-	var file := FileAccess.open("res://reports/content_unification" + suffix + ".json",FileAccess.WRITE)
-	file.store_string(JSON.stringify(report,"\t")); file.close()
+	if not preload("res://tests/report_writer.gd").json_file("res://reports/content_unification"+suffix+".json",report):quit(1);return
 	print("CONTENT_UNIFICATION: ", "PASS" if failures.is_empty() else JSON.stringify(failures), " checks=", checks, " waves=", timeline_waves, " births=", timeline_entries, " combat_ticks=3600")
 	quit(0 if failures.is_empty() else 1)
 

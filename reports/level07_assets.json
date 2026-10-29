@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "source_commit": "1a863df00b08f6bf1018ae0b0e7e4e106b939082",
+  "source_inputs": 49,
+  "frames": 4268,
+  "canonical_frames": 2255,
+  "animations": 338,
+  "resources": 96,
+  "sha256": {
+    "animations.json": "8deea65b27a626ca246c2a51b9be36ae123620cee34d94a7bd3c8270f3a916f9",
+    "atlas.json": "f879b08815b39419c30af8c41c9cf9126486e5817e08850efea1093812c9b611",
+    "atlas_0.png": "8a8e2d22733d3e7f831f2cc09eaa9d989f61a375106210d0b73fda4f050a1f65",
+    "atlas_1.png": "b622ff8a4cd08863ca944b8e8c6a5089e3e554ca7779e0f48901ef72ebad073e",
+    "atlas_10.png": "1c0ff37397547b2cd914dd357a6590f9359bd05a059f7301211dd292ca9257f6",
+    "atlas_11.png": "0ec974ccba7a21202dd1ebfb38ea42c2f5af7aaa54c74fd9e75d00bf362a48cc",
+    "atlas_2.png": "73735b8b8df2c9e9a8243890a26b12599e2e33e96f3b46e4fbbcf710db4025b7",
+    "atlas_3.png": "b13ecb3312ba4f05cbf06da42367fa35fc9ef1c836c10501cc3caf45cd40cb5c",
+    "atlas_4.png": "69852c498c19718bc09894428351491c93925e6029f096506ecd4db14e67438b",
+    "atlas_5.png": "c0394cf1ba9caadcd0d184c221ec43cf1c8005c4314ef007f5738017701384de",
+    "atlas_6.png": "7e06d4f18d33bdbe6b50646eccb58947db09cc928e460497416988c21e159bb2",
+    "atlas_7.png": "14859065e5ee48163472b50791d96849f7de705ac14e87b1400b3ab6e78fafe8",
+    "atlas_8.png": "84e15e761420db964ef3e75157d7c8d81347d9a88a931acb5b53970938db3888",
+    "atlas_9.png": "216f301cb4f734b9f67492cdf27aee42f7bcdea20e676d0c32668ca2a1b157ee",
+    "catalog.json": "20bfe1adc6b4a3417c695ca8412988e08c4b4ba8f5299effe2d16faa294285c7",
+    "definition.json": "bb5573bb531afc86398887db0f685d4aaed78d416697b99a6c1eeffb77ac85b2",
+    "manifest.json": "a2f275abf262f7a043e4d0877b496ed213859bd19f85923b722197e68622be95",
+    "sounds.json": "4df1ea389cbf3ac58cb957dcd584172c6b57e3d6e99b3de65f88d2de72c91917"
+  }
+}

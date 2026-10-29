@@ -1,0 +1,368 @@
+{
+	"captures": [
+		{
+			"path": "res://reports/followup_hover_empty_6_1280x720.png",
+			"state": "hover_empty_6"
+		},
+		{
+			"path": "res://reports/followup_range_build_6_1280x720.png",
+			"state": "range_build_6"
+		},
+		{
+			"path": "res://reports/followup_range_upgrade_6_1280x720.png",
+			"state": "range_upgrade_6"
+		},
+		{
+			"path": "res://reports/followup_hover_built_6_1280x720.png",
+			"state": "hover_built_6"
+		},
+		{
+			"path": "res://reports/followup_rally_upgrade_6_1280x720.png",
+			"state": "rally_upgrade_6"
+		},
+		{
+			"path": "res://reports/followup_hover_empty_7_1280x720.png",
+			"state": "hover_empty_7"
+		},
+		{
+			"path": "res://reports/followup_range_build_7_1280x720.png",
+			"state": "range_build_7"
+		},
+		{
+			"path": "res://reports/followup_range_upgrade_7_1280x720.png",
+			"state": "range_upgrade_7"
+		},
+		{
+			"path": "res://reports/followup_hover_built_7_1280x720.png",
+			"state": "hover_built_7"
+		},
+		{
+			"path": "res://reports/followup_rally_upgrade_7_1280x720.png",
+			"state": "rally_upgrade_7"
+		},
+		{
+			"path": "res://reports/followup_guard_engagement_1_1280x720.png",
+			"state": "guard_engagement_1"
+		},
+		{
+			"path": "res://reports/followup_guard_engagement_1_1280x720.png",
+			"state": "guard_engagement_1"
+		},
+		{
+			"path": "res://reports/followup_guard_engagement_1_1280x720.png",
+			"state": "guard_engagement_1"
+		},
+		{
+			"path": "res://reports/followup_guard_engagement_1_1280x720.png",
+			"state": "guard_engagement_1"
+		},
+		{
+			"path": "res://reports/followup_guard_engagement_1_1280x720.png",
+			"state": "guard_engagement_1"
+		},
+		{
+			"path": "res://reports/followup_guard_engagement_1_1280x720.png",
+			"state": "guard_engagement_1"
+		},
+		{
+			"path": "res://reports/followup_guard_engagement_1_1280x720.png",
+			"state": "guard_engagement_1"
+		},
+		{
+			"path": "res://reports/followup_guards_removed_1_1280x720.png",
+			"state": "guards_removed_1"
+		},
+		{
+			"path": "res://reports/followup_guard_engagement_2_1280x720.png",
+			"state": "guard_engagement_2"
+		},
+		{
+			"path": "res://reports/followup_guard_engagement_2_1280x720.png",
+			"state": "guard_engagement_2"
+		},
+		{
+			"path": "res://reports/followup_guard_engagement_2_1280x720.png",
+			"state": "guard_engagement_2"
+		},
+		{
+			"path": "res://reports/followup_guard_engagement_2_1280x720.png",
+			"state": "guard_engagement_2"
+		},
+		{
+			"path": "res://reports/followup_guard_engagement_2_1280x720.png",
+			"state": "guard_engagement_2"
+		},
+		{
+			"path": "res://reports/followup_guard_engagement_2_1280x720.png",
+			"state": "guard_engagement_2"
+		},
+		{
+			"path": "res://reports/followup_guard_engagement_2_1280x720.png",
+			"state": "guard_engagement_2"
+		},
+		{
+			"path": "res://reports/followup_guards_removed_2_1280x720.png",
+			"state": "guards_removed_2"
+		},
+		{
+			"path": "res://reports/followup_barracks_before_sale_1280x720.png",
+			"state": "barracks_before_sale"
+		},
+		{
+			"path": "res://reports/followup_barracks_after_sale_1280x720.png",
+			"state": "barracks_after_sale"
+		},
+		{
+			"path": "res://reports/followup_teleport_cast_1280x720.png",
+			"state": "teleport_cast"
+		},
+		{
+			"path": "res://reports/followup_teleport_hidden_1280x720.png",
+			"state": "teleport_hidden"
+		},
+		{
+			"path": "res://reports/followup_teleport_arrival_1280x720.png",
+			"state": "teleport_arrival"
+		},
+		{
+			"path": "res://reports/followup_teleport_finished_1280x720.png",
+			"state": "teleport_finished"
+		},
+		{
+			"path": "res://reports/feedback_cannon_flight_1280x720.png",
+			"state": "cannon_flight"
+		},
+		{
+			"path": "res://reports/feedback_cannon_impact_1280x720.png",
+			"state": "cannon_impact"
+		},
+		{
+			"path": "res://reports/followup_cannon_default_impact_1280x720.png",
+			"state": "cannon_default_impact"
+		}
+	],
+	"checks": 171,
+	"failures": [],
+	"guard_scenes": [
+		{
+			"blocker": 2,
+			"guard_post": 1,
+			"intercepted": true,
+			"live_position": [
+				318.886444091797,
+				365.95361328125
+			],
+			"mode": 1,
+			"path": [
+				2,
+				2,
+				86
+			]
+		},
+		{
+			"blocker": 1,
+			"guard_post": 2,
+			"intercepted": true,
+			"live_position": [
+				311.88623046875,
+				366.65478515625
+			],
+			"mode": 1,
+			"path": [
+				0,
+				0,
+				76
+			]
+		},
+		{
+			"blocker": 3,
+			"guard_post": 3,
+			"intercepted": true,
+			"live_position": [
+				658.435546875,
+				395.2607421875
+			],
+			"mode": 1,
+			"path": [
+				4,
+				0,
+				193
+			]
+		},
+		{
+			"blocker": 3,
+			"guard_post": 4,
+			"intercepted": true,
+			"live_position": [
+				706.0,
+				396.0
+			],
+			"mode": 1,
+			"path": [
+				4,
+				0,
+				200
+			]
+		},
+		{
+			"blocker": 5,
+			"guard_post": 5,
+			"intercepted": true,
+			"live_position": [
+				453.0,
+				557.0
+			],
+			"mode": 1,
+			"path": [
+				2,
+				1,
+				148
+			]
+		},
+		{
+			"blocker": 5,
+			"guard_post": 6,
+			"intercepted": true,
+			"live_position": [
+				484.70263671875,
+				550.62890625
+			],
+			"mode": 1,
+			"path": [
+				2,
+				2,
+				151
+			]
+		},
+		{
+			"blocker": 7,
+			"guard_post": 7,
+			"intercepted": true,
+			"live_position": [
+				565.0,
+				560.0
+			],
+			"mode": 1,
+			"path": [
+				4,
+				2,
+				265
+			]
+		},
+		{
+			"blocker": 2,
+			"guard_post": 1,
+			"intercepted": true,
+			"live_position": [
+				318.886444091797,
+				365.95361328125
+			],
+			"mode": 2,
+			"path": [
+				2,
+				2,
+				86
+			]
+		},
+		{
+			"blocker": 1,
+			"guard_post": 2,
+			"intercepted": true,
+			"live_position": [
+				311.88623046875,
+				366.65478515625
+			],
+			"mode": 2,
+			"path": [
+				0,
+				0,
+				76
+			]
+		},
+		{
+			"blocker": 3,
+			"guard_post": 3,
+			"intercepted": true,
+			"live_position": [
+				658.435546875,
+				395.2607421875
+			],
+			"mode": 2,
+			"path": [
+				4,
+				0,
+				193
+			]
+		},
+		{
+			"blocker": 3,
+			"guard_post": 4,
+			"intercepted": true,
+			"live_position": [
+				706.0,
+				396.0
+			],
+			"mode": 2,
+			"path": [
+				4,
+				0,
+				200
+			]
+		},
+		{
+			"blocker": 5,
+			"guard_post": 5,
+			"intercepted": true,
+			"live_position": [
+				453.0,
+				557.0
+			],
+			"mode": 2,
+			"path": [
+				2,
+				1,
+				148
+			]
+		},
+		{
+			"blocker": 5,
+			"guard_post": 6,
+			"intercepted": true,
+			"live_position": [
+				484.70263671875,
+				550.62890625
+			],
+			"mode": 2,
+			"path": [
+				2,
+				2,
+				151
+			]
+		},
+		{
+			"blocker": 7,
+			"guard_post": 7,
+			"intercepted": true,
+			"live_position": [
+				565.0,
+				560.0
+			],
+			"mode": 2,
+			"path": [
+				4,
+				2,
+				265
+			]
+		}
+	],
+	"layout_only": false,
+	"passed": true,
+	"source_hashes": {
+		"scripts/battle/battle_ui.gd": "900c3a23548286aee0d8708106765eb509850aa2ec483f0c7690774f4474e9d2",
+		"scripts/battle/battle_view.gd": "d398bcdae9cb7f4524c58aad2c21d890c30e7b926c55bb035c730938ec2c568f",
+		"scripts/battle/dove_arcane.gd": "5b58bd539c658a8022d7177a7655a4882511cfac47e573b47b8af455df9e9889",
+		"scripts/battle/dove_projectile.gd": "6dc4815a1561da7fd89fc732ec2115738883d09a9a1ea8505d234af256231c0c",
+		"scripts/battle/level01_sim.gd": "bfe6e599b6b1ab76cc1ce0caffffe9da4bac06ace4acd61123e15f7c62c724e0",
+		"tests/followup_visual.gd": "9b3e990208536a60ecf8b0a3efe67dc6c1aef97c8246e24655d5ba39ee58c3e2"
+	}
+}

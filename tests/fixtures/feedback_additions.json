@@ -1,0 +1,1469 @@
+{
+  "level01": {
+    "definition": {
+      "added": [
+        [
+          "ui",
+          "power_previews"
+        ]
+      ],
+      "converted": []
+    },
+    "atlas": {
+      "added": [
+        [
+          "frames",
+          "build_terrain_0001_over"
+        ],
+        [
+          "frames",
+          "build_terrain_0002_over"
+        ],
+        [
+          "frames",
+          "terrain_archer_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_artillery_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_barrack_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_mage_0001_over"
+        ],
+        [
+          "frames",
+          "tooltip_bg_small"
+        ],
+        [
+          "lookup",
+          "build_terrain_0001_over"
+        ],
+        [
+          "lookup",
+          "build_terrain_0002_over"
+        ],
+        [
+          "lookup",
+          "terrain_archer_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_artillery_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_barrack_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_mage_0001_over"
+        ],
+        [
+          "lookup",
+          "tooltip_bg_small"
+        ],
+        [
+          "frames",
+          "rally_circle"
+        ],
+        [
+          "frames",
+          "range_circle"
+        ],
+        [
+          "lookup",
+          "rally_circle"
+        ],
+        [
+          "lookup",
+          "range_circle"
+        ]
+      ],
+      "converted": []
+    },
+    "manifest": {
+      "added": [],
+      "converted": [
+        {
+          "path": [
+            "frames"
+          ],
+          "before": 1903,
+          "after": 1912
+        }
+      ]
+    },
+    "published_logical_sha256": {
+      "definition": "0d8a080f4fc0029c5f3a486d30504c93c7a6d362f831d4c379a52986c020dded",
+      "atlas": "5cb88165a293778f30b81f27ba754a74f62177e702fc4202b2cd05313fe3a5a6",
+      "manifest": "d7acb5131714dd60052e798b8f00b9ccfe97a8832350beb54e42e8c2162c0053",
+      "animations": "974d6f55361cc13c186e8ff6e814831ab2d5cdfdf6d364e00cbfdd1ffc98f0ca",
+      "sounds": "a222524ff664413751ed0e61df1194798b05e74c62511272a2bd41e7be366f3c",
+      "catalog": "db932e04b1b115568effd6a74448c77cf1a09711381df9f9c8d9bdc3644c6ddc"
+    }
+  },
+  "level02": {
+    "definition": {
+      "added": [
+        [
+          "ui",
+          "power_previews"
+        ]
+      ],
+      "converted": []
+    },
+    "atlas": {
+      "added": [
+        [
+          "frames",
+          "build_terrain_0001_over"
+        ],
+        [
+          "frames",
+          "build_terrain_0002_over"
+        ],
+        [
+          "frames",
+          "terrain_archer_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_artillery_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_barrack_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_mage_0001_over"
+        ],
+        [
+          "frames",
+          "tooltip_bg_small"
+        ],
+        [
+          "lookup",
+          "build_terrain_0001_over"
+        ],
+        [
+          "lookup",
+          "build_terrain_0002_over"
+        ],
+        [
+          "lookup",
+          "terrain_archer_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_artillery_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_barrack_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_mage_0001_over"
+        ],
+        [
+          "lookup",
+          "tooltip_bg_small"
+        ],
+        [
+          "frames",
+          "rally_circle"
+        ],
+        [
+          "frames",
+          "range_circle"
+        ],
+        [
+          "lookup",
+          "rally_circle"
+        ],
+        [
+          "lookup",
+          "range_circle"
+        ]
+      ],
+      "converted": []
+    },
+    "manifest": {
+      "added": [],
+      "converted": [
+        {
+          "path": [
+            "frames"
+          ],
+          "before": 1956,
+          "after": 1965
+        }
+      ]
+    },
+    "published_logical_sha256": {
+      "definition": "46e4f5d657c3c8cc8912e065ea7d5501cb8b627972ad3c5a0f4072dcb4bcba53",
+      "atlas": "bbc7781aeb9d56f46ef389ef33ce332d8b25afa688956c60fa479179b88f3ef9",
+      "manifest": "a69d2bf01f260a6feebffa90968c0d679c615e78e7dd296db24dd22ec9a10bea",
+      "animations": "cf992faeaa5c0df94fb73d49fbc8177699b10d40d2eee2b9fa1bc1469c2220cc",
+      "sounds": "855030430cbb5d0320011f138a115e1fc04b70abd151a63566f086d4d0914ce2",
+      "catalog": "29218d6db51a25498c94cf4c073fbc03fe5494b1ce922dcd0d049f8a9d8d0b9c"
+    }
+  },
+  "level03": {
+    "definition": {
+      "added": [
+        [
+          "ui",
+          "power_previews"
+        ]
+      ],
+      "converted": []
+    },
+    "atlas": {
+      "added": [
+        [
+          "frames",
+          "build_terrain_0001_over"
+        ],
+        [
+          "frames",
+          "build_terrain_0002_over"
+        ],
+        [
+          "frames",
+          "terrain_archer_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_artillery_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_barrack_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_mage_0001_over"
+        ],
+        [
+          "frames",
+          "tooltip_bg_small"
+        ],
+        [
+          "lookup",
+          "build_terrain_0001_over"
+        ],
+        [
+          "lookup",
+          "build_terrain_0002_over"
+        ],
+        [
+          "lookup",
+          "terrain_archer_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_artillery_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_barrack_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_mage_0001_over"
+        ],
+        [
+          "lookup",
+          "tooltip_bg_small"
+        ],
+        [
+          "frames",
+          "rally_circle"
+        ],
+        [
+          "frames",
+          "range_circle"
+        ],
+        [
+          "lookup",
+          "rally_circle"
+        ],
+        [
+          "lookup",
+          "range_circle"
+        ]
+      ],
+      "converted": []
+    },
+    "manifest": {
+      "added": [],
+      "converted": [
+        {
+          "path": [
+            "frames"
+          ],
+          "before": 2415,
+          "after": 2424
+        }
+      ]
+    },
+    "published_logical_sha256": {
+      "definition": "884f52f0b56bc0bc588e0c849c77a862437c537c45d883f7f315ef5785d44c13",
+      "atlas": "32283e0f55768a4a760b981cf82e01f32d9bd5c7593cdb3cb4792f2fd616ffb4",
+      "manifest": "18c6edff4d7ecc918bf3347d368d6f7921d91a3a6afea0e1c9eb561c43322fc3",
+      "animations": "c7b05f39e356e9e1ab3e206d79228702948365217ba9e21d754995f433c65ea1",
+      "sounds": "a0b0cb8ecd7b09619f781055ffd6c1f7b585ba3a88c492d38b5e68dc6626c28e",
+      "catalog": "b1dcf0cccac08b8d415e7b31c9fa854126e688f4fcfaea6896801f334660ef69"
+    }
+  },
+  "level04": {
+    "definition": {
+      "added": [
+        [
+          "ui",
+          "power_previews"
+        ]
+      ],
+      "converted": [
+        {
+          "path": [
+            "ui",
+            "power_descriptions",
+            "shrapnel"
+          ],
+          "before": [
+            "每隔9秒，发射霰弹，对一片区域造成总计60-252点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低0.4%，并使下次霰弹冷却降低0.4%。",
+            "每隔9秒，发射霰弹，对一片区域造成总计120-504点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低0.4%，并使下次霰弹冷却降低0.4%。",
+            "每隔9秒，发射霰弹，对一片区域造成总计180-756点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低0.4%，并使下次霰弹冷却降低0.4%。"
+          ],
+          "after": [
+            "每隔9秒，发射霰弹，对一片区域造成总计60-252点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低40%，并使下次霰弹冷却降低40%。",
+            "每隔9秒，发射霰弹，对一片区域造成总计120-504点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低40%，并使下次霰弹冷却降低40%。",
+            "每隔9秒，发射霰弹，对一片区域造成总计180-756点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低40%，并使下次霰弹冷却降低40%。"
+          ]
+        },
+        {
+          "path": [
+            "ui",
+            "power_descriptions",
+            "sniper"
+          ],
+          "before": [
+            "每隔14秒，精准瞄准生命值最高的敌人，具有0.15%几率秒杀或造成最大生命值0.2%的枪伤。若目标为boss，则造成普攻8倍伤害。",
+            "每隔14秒，精准瞄准生命值最高的敌人，具有0.3%几率秒杀或造成最大生命值0.4%的枪伤。若目标为boss，则造成普攻10倍伤害。",
+            "每隔14秒，精准瞄准生命值最高的敌人，具有0.45%几率秒杀或造成最大生命值0.6%的枪伤。若目标为boss，则造成普攻12倍伤害。"
+          ],
+          "after": [
+            "每隔14秒，精准瞄准生命值最高的敌人，具有15%几率秒杀或造成最大生命值20%的枪伤。若目标为boss，则造成普攻8倍伤害。",
+            "每隔14秒，精准瞄准生命值最高的敌人，具有30%几率秒杀或造成最大生命值40%的枪伤。若目标为boss，则造成普攻10倍伤害。",
+            "每隔14秒，精准瞄准生命值最高的敌人，具有45%几率秒杀或造成最大生命值60%的枪伤。若目标为boss，则造成普攻12倍伤害。"
+          ]
+        }
+      ]
+    },
+    "atlas": {
+      "added": [
+        [
+          "frames",
+          "build_terrain_0001_over"
+        ],
+        [
+          "frames",
+          "build_terrain_0002_over"
+        ],
+        [
+          "frames",
+          "terrain_archer_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_artillery_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_barrack_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_mage_0001_over"
+        ],
+        [
+          "frames",
+          "tooltip_bg_small"
+        ],
+        [
+          "lookup",
+          "build_terrain_0001_over"
+        ],
+        [
+          "lookup",
+          "build_terrain_0002_over"
+        ],
+        [
+          "lookup",
+          "terrain_archer_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_artillery_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_barrack_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_mage_0001_over"
+        ],
+        [
+          "lookup",
+          "tooltip_bg_small"
+        ],
+        [
+          "frames",
+          "rally_circle"
+        ],
+        [
+          "frames",
+          "range_circle"
+        ],
+        [
+          "lookup",
+          "rally_circle"
+        ],
+        [
+          "lookup",
+          "range_circle"
+        ]
+      ],
+      "converted": []
+    },
+    "manifest": {
+      "added": [],
+      "converted": [
+        {
+          "path": [
+            "frames"
+          ],
+          "before": 3332,
+          "after": 3341
+        }
+      ]
+    },
+    "published_logical_sha256": {
+      "definition": "989f926d18b6c4e4e3e9ab79a1ae33ef7a713acbd267e830aaa90d2b5523818a",
+      "atlas": "fa36c451bc75ee840834b902a8536115ac1ab485e0af0e06fa9cad0ea31cb6eb",
+      "manifest": "edab19ef92be0df044bb73ce7fc23fa3ab18ddbd9b4f990184212d9ab8e0e0ce",
+      "animations": "6530fabe1b61b23ee9857dc6d9db3b271fbefb5c124751b533095147c5156c5e",
+      "sounds": "fc6c26971b49fd19e48f0b540b3518b4bb5d857b9a7800eef7fad70d19a6ec0e",
+      "catalog": "261e6e6979e80c2075bdb219ff98d8978973dbae843c7aecf5c532c69e199a4f"
+    }
+  },
+  "level05": {
+    "definition": {
+      "added": [
+        [
+          "ui",
+          "power_previews"
+        ]
+      ],
+      "converted": [
+        {
+          "path": [
+            "ui",
+            "power_descriptions",
+            "cripple"
+          ],
+          "before": [
+            "游侠有0.3%几率射出精灵箭矢，造成70点真实伤害与0.4%的减速，持续2.5秒。",
+            "游侠有0.4%几率射出精灵箭矢，造成85点真实伤害与0.4%的减速，持续2.5秒。",
+            "游侠有0.5%几率射出精灵箭矢，造成100点真实伤害与0.4%的减速，持续2.5秒。"
+          ],
+          "after": [
+            "游侠有30%几率射出精灵箭矢，造成70点真实伤害与40%的减速，持续2.5秒。",
+            "游侠有40%几率射出精灵箭矢，造成85点真实伤害与40%的减速，持续2.5秒。",
+            "游侠有50%几率射出精灵箭矢，造成100点真实伤害与40%的减速，持续2.5秒。"
+          ]
+        },
+        {
+          "path": [
+            "ui",
+            "power_descriptions",
+            "shrapnel"
+          ],
+          "before": [
+            "每隔9秒，发射霰弹，对一片区域造成总计60-252点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低0.4%，并使下次霰弹冷却降低0.4%。",
+            "每隔9秒，发射霰弹，对一片区域造成总计120-504点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低0.4%，并使下次霰弹冷却降低0.4%。",
+            "每隔9秒，发射霰弹，对一片区域造成总计180-756点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低0.4%，并使下次霰弹冷却降低0.4%。"
+          ],
+          "after": [
+            "每隔9秒，发射霰弹，对一片区域造成总计60-252点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低40%，并使下次霰弹冷却降低40%。",
+            "每隔9秒，发射霰弹，对一片区域造成总计120-504点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低40%，并使下次霰弹冷却降低40%。",
+            "每隔9秒，发射霰弹，对一片区域造成总计180-756点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低40%，并使下次霰弹冷却降低40%。"
+          ]
+        },
+        {
+          "path": [
+            "ui",
+            "power_descriptions",
+            "sniper"
+          ],
+          "before": [
+            "每隔14秒，精准瞄准生命值最高的敌人，具有0.15%几率秒杀或造成最大生命值0.2%的枪伤。若目标为boss，则造成普攻8倍伤害。",
+            "每隔14秒，精准瞄准生命值最高的敌人，具有0.3%几率秒杀或造成最大生命值0.4%的枪伤。若目标为boss，则造成普攻10倍伤害。",
+            "每隔14秒，精准瞄准生命值最高的敌人，具有0.45%几率秒杀或造成最大生命值0.6%的枪伤。若目标为boss，则造成普攻12倍伤害。"
+          ],
+          "after": [
+            "每隔14秒，精准瞄准生命值最高的敌人，具有15%几率秒杀或造成最大生命值20%的枪伤。若目标为boss，则造成普攻8倍伤害。",
+            "每隔14秒，精准瞄准生命值最高的敌人，具有30%几率秒杀或造成最大生命值40%的枪伤。若目标为boss，则造成普攻10倍伤害。",
+            "每隔14秒，精准瞄准生命值最高的敌人，具有45%几率秒杀或造成最大生命值60%的枪伤。若目标为boss，则造成普攻12倍伤害。"
+          ]
+        }
+      ]
+    },
+    "atlas": {
+      "added": [
+        [
+          "frames",
+          "build_terrain_0001_over"
+        ],
+        [
+          "frames",
+          "build_terrain_0002_over"
+        ],
+        [
+          "frames",
+          "terrain_archer_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_artillery_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_barrack_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_mage_0001_over"
+        ],
+        [
+          "frames",
+          "tooltip_bg_small"
+        ],
+        [
+          "lookup",
+          "build_terrain_0001_over"
+        ],
+        [
+          "lookup",
+          "build_terrain_0002_over"
+        ],
+        [
+          "lookup",
+          "terrain_archer_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_artillery_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_barrack_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_mage_0001_over"
+        ],
+        [
+          "lookup",
+          "tooltip_bg_small"
+        ],
+        [
+          "frames",
+          "rally_circle"
+        ],
+        [
+          "frames",
+          "range_circle"
+        ],
+        [
+          "lookup",
+          "rally_circle"
+        ],
+        [
+          "lookup",
+          "range_circle"
+        ]
+      ],
+      "converted": []
+    },
+    "manifest": {
+      "added": [],
+      "converted": [
+        {
+          "path": [
+            "frames"
+          ],
+          "before": 3730,
+          "after": 3739
+        }
+      ]
+    },
+    "published_logical_sha256": {
+      "definition": "8765f3ee615bfa7846009dec44aba913467c3054afa5d26cce2383adfe88febd",
+      "atlas": "453aa3fa23326f2ed4e1d2aec92d48d5e84a26c4cacaa70c06b759f779651311",
+      "manifest": "590a599d24e8b6730891a2d4d56364903c8dd1827bfa869369e4b8f2359465f6",
+      "animations": "35a20adc9e4813a5d71b85649b5300821a6c5f5c450fdba149023416a5563790",
+      "sounds": "c6ebfed274edfab45f8be1812560bed760b1567c8a1abe35fa263ebdfc6e3970",
+      "catalog": "c51fe4d257ecd801f99324c5e1d2c6c3a8974421947cc5b3a777c3394aba3cd7"
+    }
+  },
+  "level06": {
+    "definition": {
+      "added": [
+        [
+          "ui",
+          "power_previews"
+        ],
+        [
+          "ui",
+          "strings",
+          "TOWER_ARCANE_WIZARD_EXTRA"
+        ],
+        [
+          "ui",
+          "strings",
+          "TOWER_PALADIN_EXTRA"
+        ]
+      ],
+      "converted": [
+        {
+          "path": [
+            "ui",
+            "power_descriptions",
+            "disintegrate"
+          ],
+          "before": [
+            "每隔20秒，将一个敌人解体为细尘。若敌人原始生命低于666点，则按比例恢复冷却。若目标为boss或免疫秒杀，则造成642+0.047%最大生命值的伤害。",
+            "每隔18秒，将一个敌人解体为细尘。若敌人原始生命低于733点，则按比例恢复冷却。若目标为boss或免疫秒杀，则造成642+0.047%最大生命值的伤害。",
+            "每隔16秒，将一个敌人解体为细尘。若敌人原始生命低于800点，则按比例恢复冷却。若目标为boss或免疫秒杀，则造成642+0.047%最大生命值的伤害。"
+          ],
+          "after": [
+            "每隔20秒，将一个敌人解体为细尘。若敌人原始生命低于666点，则按比例恢复冷却。若目标为boss或免疫秒杀，则造成642+4.7%最大生命值的伤害。",
+            "每隔18秒，将一个敌人解体为细尘。若敌人原始生命低于733点，则按比例恢复冷却。若目标为boss或免疫秒杀，则造成642+4.7%最大生命值的伤害。",
+            "每隔16秒，将一个敌人解体为细尘。若敌人原始生命低于800点，则按比例恢复冷却。若目标为boss或免疫秒杀，则造成642+4.7%最大生命值的伤害。"
+          ]
+        },
+        {
+          "path": [
+            "ui",
+            "power_descriptions",
+            "shrapnel"
+          ],
+          "before": [
+            "每隔9秒，发射霰弹，对一片区域造成总计60-252点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低0.4%，并使下次霰弹冷却降低0.4%。",
+            "每隔9秒，发射霰弹，对一片区域造成总计120-504点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低0.4%，并使下次霰弹冷却降低0.4%。",
+            "每隔9秒，发射霰弹，对一片区域造成总计180-756点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低0.4%，并使下次霰弹冷却降低0.4%。"
+          ],
+          "after": [
+            "每隔9秒，发射霰弹，对一片区域造成总计60-252点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低40%，并使下次霰弹冷却降低40%。",
+            "每隔9秒，发射霰弹，对一片区域造成总计120-504点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低40%，并使下次霰弹冷却降低40%。",
+            "每隔9秒，发射霰弹，对一片区域造成总计180-756点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低40%，并使下次霰弹冷却降低40%。"
+          ]
+        },
+        {
+          "path": [
+            "ui",
+            "power_descriptions",
+            "sniper"
+          ],
+          "before": [
+            "每隔14秒，精准瞄准生命值最高的敌人，具有0.15%几率秒杀或造成最大生命值0.2%的枪伤。若目标为boss，则造成普攻8倍伤害。",
+            "每隔14秒，精准瞄准生命值最高的敌人，具有0.3%几率秒杀或造成最大生命值0.4%的枪伤。若目标为boss，则造成普攻10倍伤害。",
+            "每隔14秒，精准瞄准生命值最高的敌人，具有0.45%几率秒杀或造成最大生命值0.6%的枪伤。若目标为boss，则造成普攻12倍伤害。"
+          ],
+          "after": [
+            "每隔14秒，精准瞄准生命值最高的敌人，具有15%几率秒杀或造成最大生命值20%的枪伤。若目标为boss，则造成普攻8倍伤害。",
+            "每隔14秒，精准瞄准生命值最高的敌人，具有30%几率秒杀或造成最大生命值40%的枪伤。若目标为boss，则造成普攻10倍伤害。",
+            "每隔14秒，精准瞄准生命值最高的敌人，具有45%几率秒杀或造成最大生命值60%的枪伤。若目标为boss，则造成普攻12倍伤害。"
+          ]
+        }
+      ]
+    },
+    "atlas": {
+      "added": [
+        [
+          "frames",
+          "build_terrain_0001_over"
+        ],
+        [
+          "frames",
+          "build_terrain_0002_over"
+        ],
+        [
+          "frames",
+          "terrain_archer_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_artillery_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_barrack_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_mage_0001_over"
+        ],
+        [
+          "frames",
+          "tooltip_bg_small"
+        ],
+        [
+          "lookup",
+          "build_terrain_0001_over"
+        ],
+        [
+          "lookup",
+          "build_terrain_0002_over"
+        ],
+        [
+          "lookup",
+          "terrain_archer_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_artillery_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_barrack_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_mage_0001_over"
+        ],
+        [
+          "lookup",
+          "tooltip_bg_small"
+        ],
+        [
+          "frames",
+          "arcane_tower_0041"
+        ],
+        [
+          "frames",
+          "arcane_tower_0043"
+        ],
+        [
+          "frames",
+          "arcane_tower_0045"
+        ],
+        [
+          "frames",
+          "arcane_tower_0047"
+        ],
+        [
+          "frames",
+          "arcane_tower_0049"
+        ],
+        [
+          "frames",
+          "rally_circle"
+        ],
+        [
+          "frames",
+          "range_circle"
+        ],
+        [
+          "lookup",
+          "arcane_tower_0040"
+        ],
+        [
+          "lookup",
+          "arcane_tower_0041"
+        ],
+        [
+          "lookup",
+          "arcane_tower_0042"
+        ],
+        [
+          "lookup",
+          "arcane_tower_0043"
+        ],
+        [
+          "lookup",
+          "arcane_tower_0044"
+        ],
+        [
+          "lookup",
+          "arcane_tower_0045"
+        ],
+        [
+          "lookup",
+          "arcane_tower_0046"
+        ],
+        [
+          "lookup",
+          "arcane_tower_0047"
+        ],
+        [
+          "lookup",
+          "arcane_tower_0048"
+        ],
+        [
+          "lookup",
+          "arcane_tower_0049"
+        ],
+        [
+          "lookup",
+          "rally_circle"
+        ],
+        [
+          "lookup",
+          "range_circle"
+        ],
+        [
+          "aliases",
+          "arcane_tower_0040"
+        ],
+        [
+          "aliases",
+          "arcane_tower_0042"
+        ],
+        [
+          "aliases",
+          "arcane_tower_0044"
+        ],
+        [
+          "aliases",
+          "arcane_tower_0046"
+        ],
+        [
+          "aliases",
+          "arcane_tower_0048"
+        ]
+      ],
+      "converted": []
+    },
+    "manifest": {
+      "added": [],
+      "converted": [
+        {
+          "path": [
+            "frames"
+          ],
+          "before": 4403,
+          "after": 4422
+        },
+        {
+          "path": [
+            "animations"
+          ],
+          "before": 345,
+          "after": 346
+        }
+      ]
+    },
+    "published_logical_sha256": {
+      "definition": "1ac1f7a904b6eac088c53dc70111adeed970daaeed723b96c0d7c867fb39938e",
+      "atlas": "6f9175f31b63e01960b332db998764584d024bcf5ccc6b0e4baa987314f06e02",
+      "manifest": "bcdd7e3118afe50d9ea216e9ef416860f35c1461f9f3de889da8107c80e4cc5e",
+      "animations": "b59772a32c76963c3ec0cd55c3ea52631345dc0c6e77029a7aa067b0df7944cf",
+      "sounds": "7b18ed1b86c40d979b20697cc533f232131722aea62ba8c9831f126fc67175c6",
+      "catalog": "eb821442feffa17dcf8b05ae5215769ef3dd7956571b09a2bc9f0536f5bf6f00"
+    },
+    "animations": {
+      "added": [
+        [
+          "animations",
+          "tower_arcane_wizard_teleport"
+        ]
+      ],
+      "converted": []
+    }
+  },
+  "level07": {
+    "definition": {
+      "added": [
+        [
+          "ui",
+          "power_previews"
+        ],
+        [
+          "ui",
+          "strings",
+          "TOWER_ARCANE_WIZARD_EXTRA"
+        ],
+        [
+          "ui",
+          "strings",
+          "TOWER_PALADIN_EXTRA"
+        ]
+      ],
+      "converted": [
+        {
+          "path": [
+            "ui",
+            "power_descriptions",
+            "disintegrate"
+          ],
+          "before": [
+            "每隔20秒，将一个敌人解体为细尘。若敌人原始生命低于666点，则按比例恢复冷却。若目标为boss或免疫秒杀，则造成642+0.047%最大生命值的伤害。",
+            "每隔18秒，将一个敌人解体为细尘。若敌人原始生命低于733点，则按比例恢复冷却。若目标为boss或免疫秒杀，则造成642+0.047%最大生命值的伤害。",
+            "每隔16秒，将一个敌人解体为细尘。若敌人原始生命低于800点，则按比例恢复冷却。若目标为boss或免疫秒杀，则造成642+0.047%最大生命值的伤害。"
+          ],
+          "after": [
+            "每隔20秒，将一个敌人解体为细尘。若敌人原始生命低于666点，则按比例恢复冷却。若目标为boss或免疫秒杀，则造成642+4.7%最大生命值的伤害。",
+            "每隔18秒，将一个敌人解体为细尘。若敌人原始生命低于733点，则按比例恢复冷却。若目标为boss或免疫秒杀，则造成642+4.7%最大生命值的伤害。",
+            "每隔16秒，将一个敌人解体为细尘。若敌人原始生命低于800点，则按比例恢复冷却。若目标为boss或免疫秒杀，则造成642+4.7%最大生命值的伤害。"
+          ]
+        },
+        {
+          "path": [
+            "ui",
+            "power_descriptions",
+            "shrapnel"
+          ],
+          "before": [
+            "每隔9秒，发射霰弹，对一片区域造成总计60-252点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低0.4%，并使下次霰弹冷却降低0.4%。",
+            "每隔9秒，发射霰弹，对一片区域造成总计120-504点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低0.4%，并使下次霰弹冷却降低0.4%。",
+            "每隔9秒，发射霰弹，对一片区域造成总计180-756点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低0.4%，并使下次霰弹冷却降低0.4%。"
+          ],
+          "after": [
+            "每隔9秒，发射霰弹，对一片区域造成总计60-252点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低40%，并使下次霰弹冷却降低40%。",
+            "每隔9秒，发射霰弹，对一片区域造成总计120-504点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低40%，并使下次霰弹冷却降低40%。",
+            "每隔9秒，发射霰弹，对一片区域造成总计180-756点爆炸伤害。敌人较远时，霰弹将会分散，伤害降低40%，并使下次霰弹冷却降低40%。"
+          ]
+        },
+        {
+          "path": [
+            "ui",
+            "power_descriptions",
+            "sniper"
+          ],
+          "before": [
+            "每隔14秒，精准瞄准生命值最高的敌人，具有0.15%几率秒杀或造成最大生命值0.2%的枪伤。若目标为boss，则造成普攻8倍伤害。",
+            "每隔14秒，精准瞄准生命值最高的敌人，具有0.3%几率秒杀或造成最大生命值0.4%的枪伤。若目标为boss，则造成普攻10倍伤害。",
+            "每隔14秒，精准瞄准生命值最高的敌人，具有0.45%几率秒杀或造成最大生命值0.6%的枪伤。若目标为boss，则造成普攻12倍伤害。"
+          ],
+          "after": [
+            "每隔14秒，精准瞄准生命值最高的敌人，具有15%几率秒杀或造成最大生命值20%的枪伤。若目标为boss，则造成普攻8倍伤害。",
+            "每隔14秒，精准瞄准生命值最高的敌人，具有30%几率秒杀或造成最大生命值40%的枪伤。若目标为boss，则造成普攻10倍伤害。",
+            "每隔14秒，精准瞄准生命值最高的敌人，具有45%几率秒杀或造成最大生命值60%的枪伤。若目标为boss，则造成普攻12倍伤害。"
+          ]
+        }
+      ]
+    },
+    "atlas": {
+      "added": [
+        [
+          "frames",
+          "build_terrain_0001_over"
+        ],
+        [
+          "frames",
+          "build_terrain_0002_over"
+        ],
+        [
+          "frames",
+          "terrain_archer_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_artillery_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_barrack_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_mage_0001_over"
+        ],
+        [
+          "frames",
+          "tooltip_bg_small"
+        ],
+        [
+          "lookup",
+          "build_terrain_0001_over"
+        ],
+        [
+          "lookup",
+          "build_terrain_0002_over"
+        ],
+        [
+          "lookup",
+          "terrain_archer_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_artillery_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_barrack_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_mage_0001_over"
+        ],
+        [
+          "lookup",
+          "tooltip_bg_small"
+        ],
+        [
+          "frames",
+          "arcane_tower_0041"
+        ],
+        [
+          "frames",
+          "arcane_tower_0043"
+        ],
+        [
+          "frames",
+          "arcane_tower_0045"
+        ],
+        [
+          "frames",
+          "arcane_tower_0047"
+        ],
+        [
+          "frames",
+          "arcane_tower_0049"
+        ],
+        [
+          "frames",
+          "rally_circle"
+        ],
+        [
+          "frames",
+          "range_circle"
+        ],
+        [
+          "lookup",
+          "arcane_tower_0040"
+        ],
+        [
+          "lookup",
+          "arcane_tower_0041"
+        ],
+        [
+          "lookup",
+          "arcane_tower_0042"
+        ],
+        [
+          "lookup",
+          "arcane_tower_0043"
+        ],
+        [
+          "lookup",
+          "arcane_tower_0044"
+        ],
+        [
+          "lookup",
+          "arcane_tower_0045"
+        ],
+        [
+          "lookup",
+          "arcane_tower_0046"
+        ],
+        [
+          "lookup",
+          "arcane_tower_0047"
+        ],
+        [
+          "lookup",
+          "arcane_tower_0048"
+        ],
+        [
+          "lookup",
+          "arcane_tower_0049"
+        ],
+        [
+          "lookup",
+          "rally_circle"
+        ],
+        [
+          "lookup",
+          "range_circle"
+        ],
+        [
+          "aliases",
+          "arcane_tower_0040"
+        ],
+        [
+          "aliases",
+          "arcane_tower_0042"
+        ],
+        [
+          "aliases",
+          "arcane_tower_0044"
+        ],
+        [
+          "aliases",
+          "arcane_tower_0046"
+        ],
+        [
+          "aliases",
+          "arcane_tower_0048"
+        ]
+      ],
+      "converted": []
+    },
+    "manifest": {
+      "added": [],
+      "converted": [
+        {
+          "path": [
+            "frames"
+          ],
+          "before": 4249,
+          "after": 4268
+        },
+        {
+          "path": [
+            "animations"
+          ],
+          "before": 337,
+          "after": 338
+        },
+        {
+          "path": [
+            "resources"
+          ],
+          "before": [
+            "res://data/level07/atlas_0.png",
+            "res://data/level07/atlas_1.png",
+            "res://data/level07/atlas_2.png",
+            "res://data/level07/atlas_3.png",
+            "res://data/level07/atlas_4.png",
+            "res://data/level07/atlas_5.png",
+            "res://data/level07/atlas_6.png",
+            "res://data/level07/atlas_7.png",
+            "res://data/level07/atlas_8.png",
+            "res://data/level07/atlas_9.png",
+            "res://data/level07/atlas_10.png",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Arcane_Ready.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Arcane_Taunt1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Arcane_Taunt2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Archer_Ready.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Archer_Taunt1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Archer_Taunt2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Artillery_Ready.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Artillery_Taunt1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Artillery_Taunt2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Barrack_Move.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Barrack_Ready.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Barrack_Taunt1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Barrack_Taunt2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Explosion_water.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Mage_Ready.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Mage_Taunt1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Mage_Taunt2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/MusicBattlePreparationsForest.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/MusicBattleUnderAttackForest1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/MusicMainMenu.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Muskateer_Event1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Muskateer_Event2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Muskateer_Ready.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Muskateer_Snipe.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Paladin_Move.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Paladin_Ready.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Paladin_Taunt1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Paladin_Taunt2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Ranger_Ready.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Ranger_Taunt1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Ranger_Taunt2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Reinforcements_Event1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Reinforcements_Event2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Reinforcements_Event3.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Reinforcements_Event4.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_ArcaneDesintegrate.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_ArrowHit2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_ArrowHit3.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_ArrowRelease2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_ArrowRelease3.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_BattleAxe.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_Bomb1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_Coins.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_EnemyBigDead.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_EnemyExplode1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_EnemyGoblinDead.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_EnemyHealing.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_EnemyOrcDead.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_EnemyPuffDead.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_EnemyTrollDead.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_EngineerShot.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_FireballHit.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_FireballUnleash.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_GUIButtonCommon.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_GUIMouseOverTowerIcon.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_GUIOpenTowerMenu.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_HumanDead1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_HumanDead2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_HumanDead3.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_HumanDead4.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_LooseLife.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_MageShot.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_NextWaveReady.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_QuestCompleted.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_RayArcane.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_Sheep.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_Shootgun.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_Shrapnel.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_Sniper.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_SoldiersFighting-01.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_SoldiersFighting-02.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_SoldiersFighting-03.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_SoldiersFighting-04.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_SoldiersFighting-05.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_SpellRefresh.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_Teleport.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_Thorn.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_TowerBuilding.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_TowerOpenDoor.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_TowerSell.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_WaveIncoming.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_WinStars.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_WolfAttack.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_WolfAttack2.ogg"
+          ],
+          "after": [
+            "res://data/level07/atlas_0.png",
+            "res://data/level07/atlas_1.png",
+            "res://data/level07/atlas_2.png",
+            "res://data/level07/atlas_3.png",
+            "res://data/level07/atlas_4.png",
+            "res://data/level07/atlas_5.png",
+            "res://data/level07/atlas_6.png",
+            "res://data/level07/atlas_7.png",
+            "res://data/level07/atlas_8.png",
+            "res://data/level07/atlas_9.png",
+            "res://data/level07/atlas_10.png",
+            "res://data/level07/atlas_11.png",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Arcane_Ready.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Arcane_Taunt1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Arcane_Taunt2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Archer_Ready.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Archer_Taunt1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Archer_Taunt2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Artillery_Ready.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Artillery_Taunt1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Artillery_Taunt2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Barrack_Move.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Barrack_Ready.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Barrack_Taunt1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Barrack_Taunt2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Explosion_water.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Mage_Ready.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Mage_Taunt1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Mage_Taunt2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/MusicBattlePreparationsForest.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/MusicBattleUnderAttackForest1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/MusicMainMenu.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Muskateer_Event1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Muskateer_Event2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Muskateer_Ready.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Muskateer_Snipe.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Paladin_Move.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Paladin_Ready.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Paladin_Taunt1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Paladin_Taunt2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Ranger_Ready.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Ranger_Taunt1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Ranger_Taunt2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Reinforcements_Event1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Reinforcements_Event2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Reinforcements_Event3.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Reinforcements_Event4.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_ArcaneDesintegrate.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_ArrowHit2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_ArrowHit3.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_ArrowRelease2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_ArrowRelease3.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_BattleAxe.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_Bomb1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_Coins.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_EnemyBigDead.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_EnemyExplode1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_EnemyGoblinDead.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_EnemyHealing.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_EnemyOrcDead.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_EnemyPuffDead.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_EnemyTrollDead.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_EngineerShot.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_FireballHit.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_FireballUnleash.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_GUIButtonCommon.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_GUIMouseOverTowerIcon.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_GUIOpenTowerMenu.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_HumanDead1.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_HumanDead2.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_HumanDead3.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_HumanDead4.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_LooseLife.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_MageShot.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_NextWaveReady.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_QuestCompleted.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_RayArcane.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_Sheep.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_Shootgun.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_Shrapnel.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_Sniper.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_SoldiersFighting-01.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_SoldiersFighting-02.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_SoldiersFighting-03.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_SoldiersFighting-04.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_SoldiersFighting-05.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_SpellRefresh.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_Teleport.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_Thorn.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_TowerBuilding.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_TowerOpenDoor.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_TowerSell.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_WaveIncoming.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_WinStars.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_WolfAttack.ogg",
+            "res://assets/kingdom_rush/kr1-desktop/sounds/files/Sound_WolfAttack2.ogg"
+          ]
+        }
+      ]
+    },
+    "published_logical_sha256": {
+      "definition": "b9d0bc2c2ce950eb1a3a8e6c285b0c3995942b4d538fbe01c525b902da0f6665",
+      "atlas": "dc0f642595bc1e1c988a64cc7fa8134453fea7e2b0b2c1cd6189f4a73cd7266f",
+      "manifest": "d9b949bafe1e851b94493b01f406bb0cda22823372f034dfde8ac05f408add92",
+      "animations": "29abb7989ca4dfd4be5a0a5caef70f7152a9af0757d2f6eaac970a6efa0a9df7",
+      "sounds": "9f9188d9209d259d638d274733285660d7c834c5a308efa8aa210390299e6c15",
+      "catalog": "f114f24304ffcd8402056bdc6e40fa3144c41f8b082c8112f0d507fcf5147193"
+    },
+    "animations": {
+      "added": [
+        [
+          "animations",
+          "tower_arcane_wizard_teleport"
+        ]
+      ],
+      "converted": []
+    }
+  },
+  "ranger_arena": {
+    "definition": {
+      "added": [
+        [
+          "ui",
+          "power_previews"
+        ]
+      ],
+      "converted": []
+    },
+    "atlas": {
+      "added": [
+        [
+          "frames",
+          "build_terrain_0001_over"
+        ],
+        [
+          "frames",
+          "build_terrain_0002_over"
+        ],
+        [
+          "frames",
+          "terrain_archer_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_artillery_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_barrack_0001_over"
+        ],
+        [
+          "frames",
+          "terrain_mage_0001_over"
+        ],
+        [
+          "frames",
+          "tooltip_bg_small"
+        ],
+        [
+          "lookup",
+          "build_terrain_0001_over"
+        ],
+        [
+          "lookup",
+          "build_terrain_0002_over"
+        ],
+        [
+          "lookup",
+          "terrain_archer_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_artillery_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_barrack_0001_over"
+        ],
+        [
+          "lookup",
+          "terrain_mage_0001_over"
+        ],
+        [
+          "lookup",
+          "tooltip_bg_small"
+        ],
+        [
+          "frames",
+          "rally_circle"
+        ],
+        [
+          "frames",
+          "range_circle"
+        ],
+        [
+          "lookup",
+          "rally_circle"
+        ],
+        [
+          "lookup",
+          "range_circle"
+        ]
+      ],
+      "converted": []
+    },
+    "manifest": {
+      "added": [],
+      "converted": [
+        {
+          "path": [
+            "frames"
+          ],
+          "before": 3043,
+          "after": 3052
+        }
+      ]
+    },
+    "published_logical_sha256": {
+      "definition": "ba8de186b07df1001acde47280c76255b6b8bbbff8c362535741155c5bc78e88",
+      "atlas": "c23f37a027a0b4a60b4cc84744b9cdd4ded8b07d0e8886b4b2170b6d56694f27",
+      "manifest": "0cd1f2705678ea51d60edbcd39f1f6c4138ce905654a97b4ae53e4d53f44e280",
+      "animations": "abb5193d295f1e1740f32cb2f03fd63f986fd04b0536590882718bb31306a51d",
+      "sounds": "fdaaf453e455e02002dfe97ec852f9b8d4b3c72b9b09095c49e21a76cddc6a62",
+      "catalog": "e8430a8656eb91084869853b5e1ee28007eda0ae52ec48efa04ee1198f610c72"
+    }
+  }
+}

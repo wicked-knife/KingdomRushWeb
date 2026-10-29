@@ -143,6 +143,58 @@ func label(value: String, rect: Rect2, font_size: float = 18, color: Color = Col
 		"box": region(rect), "extent": Vector2(maximum_width, p.get_size().y), "fits": p.get_size().y + 2 * absf(offset) <= rect.size.y + 0.1 and maximum_width <= rect.size.x + 0.1 and (max_lines == 0 or p.get_line_count() <= max_lines),
 		"lines": p.get_line_count()})
 
+func text_size(value: String, width: float, font_size: float, role: String="body") -> Vector2:
+	var paragraph:=TextParagraph.new();paragraph.width=width
+	paragraph.break_flags=TextServer.BREAK_MANDATORY | TextServer.BREAK_WORD_BOUND | TextServer.BREAK_ADAPTIVE
+	paragraph.add_string(value,fonts.font_for(role),fonts.size_for(role,font_size),"zh_CN")
+	return paragraph.get_size()
+
+func rich_label(runs: Array, rect: Rect2, font_size: float = 13, id: String = "power_description") -> void:
+	var value := ""
+	for run: Dictionary in runs: value += str(run.text)
+	var face: Font = fonts.font_for("body")
+	var key := str(["rich", value, rect.size, font_size])
+	if not measurements.has(key):
+		var actual: int = fonts.size_for("body", font_size)
+		var paragraph: TextParagraph
+		while true:
+			paragraph = TextParagraph.new(); paragraph.width = rect.size.x
+			paragraph.break_flags = TextServer.BREAK_MANDATORY | TextServer.BREAK_WORD_BOUND | TextServer.BREAK_ADAPTIVE
+			paragraph.add_string(value, face, actual, "zh_CN")
+			var widest:=0.0
+			# Colored spans are drawn as separate shaped runs. Include their actual
+			# advance widths when fitting; punctuation kerning can differ at a span edge.
+			for i in paragraph.get_line_count():
+				var bounds:=paragraph.get_line_range(i);var cursor:=0;var advance:=0.0
+				for run: Dictionary in runs:
+					var end:=cursor+str(run.text).length();var start:=maxi(cursor,bounds.x);var stop:=mini(end,bounds.y)
+					if stop>start:advance+=face.get_string_size(value.substr(start,stop-start).replace("\n",""),HORIZONTAL_ALIGNMENT_LEFT,-1,actual).x
+					cursor=end
+				widest=maxf(widest,advance)
+			if paragraph.get_size().y <= rect.size.y and widest<=rect.size.x+0.1 or actual <= 6: break
+			actual -= 1
+		measurements[key] = {"paragraph":paragraph,"font_size":actual}
+	var measured: Dictionary = measurements[key]
+	var paragraph: TextParagraph = measured.paragraph
+	var top := 0.0
+	var width := 0.0
+	_apply()
+	for i in paragraph.get_line_count():
+		var bounds := paragraph.get_line_range(i)
+		var cursor := 0; var x := 0.0
+		for run: Dictionary in runs:
+			var end := cursor + str(run.text).length()
+			var start := maxi(cursor, bounds.x); var stop := mini(end, bounds.y)
+			if stop > start:
+				var line := TextLine.new()
+				line.add_string(value.substr(start, stop-start).replace("\n", ""), face, measured.font_size, "zh_CN")
+				var ink: Color = run.color; ink.a *= opacity
+				line.draw(canvas.get_canvas_item(), rect.position + Vector2(x,top), ink)
+				x += line.get_size().x
+			cursor=end
+		width=maxf(width,x); top+=paragraph.get_line_size(i).y
+	audit.append({"id":id,"text":value,"font_size":measured.font_size,"font_role":"body","font_family":face.get_font_name(),"box":region(rect),"extent":Vector2(width,top),"fits":width<=rect.size.x+0.1 and top<=rect.size.y+0.1,"lines":paragraph.get_line_count(),"runs":runs})
+
 func source_label(definition: Dictionary, strings: Dictionary) -> void:
 	var colors := {"black": Color.BLACK, "white": Color.WHITE, "gray": Color("302923"), "red": Color("d83712"), "dark_red": Color("b73f0d"), "blue": Color("007cb2")}
 	var pos := Vector2(definition.pos.x, definition.pos.y)

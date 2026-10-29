@@ -13,4 +13,4 @@ func _append_notifications(sim, group: Dictionary) -> void:
 
 func can_finish(sim) -> bool:
 	# Unhatched eggs never block victory. Hatching has already run this tick.
-	return sim.wave == sim.data.waves.groups.size() and sim.spawn_queue.is_empty() and sim.enemies.all(func(e): return e.hp <= 0)
+	return sim.wave == sim.data.waves.groups.size() and sim.spawn_queue.is_empty() and sim.enemies.all(func(e): return e.hp <= 0) and sim.pending_entities.is_empty() and not sim.snow.occupied()

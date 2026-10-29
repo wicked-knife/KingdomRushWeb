@@ -56,7 +56,7 @@ func run() -> void:
 	var hashes := preload("res://tests/upgrades_test_support.gd").hashes()
 	hashes["tests/upgrades_native.gd"]=FileAccess.get_sha256("res://tests/upgrades_native.gd")
 	var report: Dictionary={"passed":failures.is_empty(),"checks":checks,"text_boxes_checked":text_checks,"resolution":suffix,"native_input":true,"native_audio":true,"source_hashes":hashes,"browser_tested":false,"failures":failures}
-	var file:=FileAccess.open("res://reports/upgrades_native_"+suffix+".json",FileAccess.WRITE);file.store_string(JSON.stringify(report,"\t"));file.close()
+	if not preload("res://tests/report_writer.gd").json_file("res://reports/upgrades_native_"+suffix+".json",report):quit(1);return
 	print("UPGRADES_NATIVE: ",JSON.stringify(report));app.queue_free();await process_frame
 	remove_tree(temporary);quit(0 if failures.is_empty() else 1)
 func combat_preview() -> void:

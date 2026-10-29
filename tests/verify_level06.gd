@@ -26,7 +26,7 @@ func ticks(sim, count: int) -> void:
 func run() -> void:
 	source = Levels.read_json("res://tests/fixtures/level06_source.json")
 	check(not source.is_empty(), "independent frozen-source oracle exists")
-	check(Levels.supports(6, 3) and not Levels.supports(7) and not Levels.supports(6, 1, 3), "published range and difficulty")
+	check(Levels.supports(6, 3) and not Levels.supports(8) and not Levels.supports(6, 1, 3), "published range and difficulty")
 	for mode in [1, 2, 3]:
 		var sim = fresh(mode)
 		check(sim.data.waves == source.modes[str(mode)], "all wave fields match frozen Lua mode %d" % mode)
@@ -310,7 +310,7 @@ func progression() -> void:
 	p.record_result({"generation":1,"level_id":5,"mode":1,"difficulty":2,"result":"victory","stars":3,"lives":20}); p.enter_map()
 	check(p.is_playable(6), "fifth victory opens sixth")
 	p.record_result({"generation":1,"level_id":6,"mode":1,"difficulty":2,"result":"victory","stars":3,"lives":20,"unlock_towers":["tower_paladin","tower_arcane_wizard"]}); p.enter_map()
-	check(p.is_playable(6, 2) and p.is_playable(6, 3) and not p.is_playable(7) and p.is_unlocked(7), "sixth three stars opens challenges and seventh stays preview")
+	check(p.is_playable(6, 2) and p.is_playable(6, 3) and p.is_playable(7) and not p.is_playable(8), "sixth three stars opens challenges and seventh becomes playable")
 	for mode in [2, 3]:
 		p.record_result({"generation":1,"level_id":6,"mode":mode,"difficulty":2,"result":"victory","lives":1}); p.enter_map()
 		check(p.record(6).get(mode, 0) == 2, "sixth challenge mode stored %d" % mode)

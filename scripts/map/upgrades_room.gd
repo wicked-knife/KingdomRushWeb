@@ -14,6 +14,7 @@ var bought_fx := {}
 var elapsed := 0.0
 var panel_at := Vector2.ZERO
 var panel_scale := 1.0
+var pointer := Vector2.ZERO
 
 func initialize(owner_map: Control) -> void:
 	map = owner_map; name = "UpgradesRoom"
@@ -44,11 +45,14 @@ func _draw() -> void:
 	if not summary.supported:
 		paint.label(summary.error, Rect2(170, 250, 580, 180), 24, Color("f7eaba"), "center", "middle")
 		paint.pop(); return
-	paint.image("Upgrades_StarContainer", Vector2(75, 640))
-	paint.display_label(str(summary.available), Rect2(88, 653, 110, 37), 30, Color("fff6cf"), "numbers_bold", "available_stars", 1)
+	paint.image("Upgrades_StarContainer", Vector2(100,637))
+	paint.display_label(str(summary.available), Rect2(145,648,72,38),32,Color("e7deaf"),"numbers","available_stars")
 	var classes: Array = Upgrades.definition().classes
 	for index in classes.size():
 		var x: float = [121, 243, 361, 483, 604, 724][index]
+		var level := int(summary.levels[classes[index]])
+		if level > 0:
+			paint.image("YellowBar",Vector2([152,274,394,514,636,755][index],538),Vector2(6,376)/paint.image_size("YellowBar"),Color.WHITE,Vector2(1,0.2*level*0.83))
 		paint.label(["弓箭", "兵营", "法师", "炮兵", "火雨", "援军"][index], Rect2(x - 6, 80, 80, 24), 17, Color("eac88d"), "center", "middle", 1, 1)
 	for id: String in Upgrades.definition().techs:
 		var tech: Dictionary = Upgrades.definition().techs[id]
@@ -59,12 +63,13 @@ func _draw() -> void:
 		var enabled: bool = bought or Upgrades.spent(candidate) <= int(summary.total)
 		paint.push(point, 0.83)
 		paint.image(tech.image, Vector2.ZERO, Vector2.ZERO, Color.WHITE if enabled else Color(0.45, 0.45, 0.45))
-		if bought: paint.image("Upgrades_Icons_Bought")
-		elif shown == id: paint.image("Upgrades_Icons_over")
+		var icon_size: Vector2 = paint.image_size(tech.image)
+		if bought: paint.image("Upgrades_Icons_Bought",icon_size/2,Vector2(0.5,0.5))
+		elif shown == id and enabled: paint.image("Upgrades_Icons_over",icon_size/2,Vector2(0.5,0.5))
 		if not bought:
 			var prefix := "" if enabled else "Disabled_"
 			paint.image(prefix + "Upgrades_Icons_PriceTag", Vector2(35, 55))
-			paint.image(prefix + "Upgrades_Icons_PriceTag_Nm_%04d" % int(tech.price), Vector2(51, 65), Vector2(0.5, 0.5))
+			paint.image(prefix + "Upgrades_Icons_PriceTag_Nm_%04d" % int(tech.price), Vector2(35,55)+paint.image_size(prefix+"Upgrades_Icons_PriceTag")/2+Vector2(4,0), Vector2(0.5, 0.5))
 		if bought_fx.has(id) and elapsed - float(bought_fx[id]) < 0.6:
 			paint.image("Upgrades_Icons_buyFx_%04d" % (1 + mini(17, int((elapsed - float(bought_fx[id])) * 30))), Vector2(-22, -22))
 		paint.hit(Rect2(0, 0, 82, 82), "upgrade", {"id":id}, enabled)
@@ -75,29 +80,26 @@ func _draw() -> void:
 	paint.pop()
 	if shown != "": _tooltip(summary, view_size)
 
-func _tooltip(summary: Dictionary, view_size: Vector2) -> void:
+func _tooltip(_summary: Dictionary, view_size: Vector2) -> void:
 	var tech: Dictionary = Upgrades.definition().techs[shown]
-	var column: int = Upgrades.definition().classes.find(tech.class)
-	var point := Vector2([121, 243, 361, 483, 604, 724][column], 520 - int(tech.level) * 80 * 0.83)
-	var tip_size := Vector2(330, 165)
-	var at := panel_at + (point + Vector2(85, -170)) * panel_scale
-	if at.x + tip_size.x * panel_scale > view_size.x - 20: at.x = panel_at.x + (point.x - tip_size.x - 5) * panel_scale
-	at.y = clampf(at.y, 24, view_size.y - tip_size.y * panel_scale - 24)
+	var text_height: float=paint.text_size(tech.description,280,18).y
+	var tip_size := Vector2(320,33+text_height+22)
+	# Source tooltip follows the pointer, anchored fifteen units right and above.
+	var at := pointer+Vector2(15,-tip_size.y-10)*panel_scale
+	at.x=clampf(at.x,20,view_size.x-tip_size.x*panel_scale-20)
+	at.y=clampf(at.y,20,view_size.y-tip_size.y*panel_scale-20)
 	paint.push(at, panel_scale); paint._apply()
-	draw_rect(Rect2(Vector2.ZERO, tip_size), Color(0.082, 0.067, 0.051, 0.96))
-	draw_rect(Rect2(Vector2.ZERO, tip_size), Color("92784b"), false, 1)
-	paint.display_label(tech.title, Rect2(16, 10, 240, 27), 20, Color.WHITE, "body", "tech_title")
-	paint.image("Upgrades_Tips_Star", Vector2(275, 13))
-	paint.display_label(str(int(tech.price)), Rect2(299, 10, 24, 27), 19, Color.WHITE, "numbers", "tech_price")
-	paint.label(tech.description, Rect2(16, 42, 298, 85), 18, Color("f5cb06"), "left", "top", 0, 0, "tech_description")
-	var bought: bool = int(summary.levels[tech.class]) >= int(tech.level)
-	var candidate: Dictionary = summary.levels.duplicate(); candidate[tech.class] = int(tech.level)
-	var cost := Upgrades.spent(candidate) - int(summary.spent)
-	paint.label("已购买 · 点击退还本级及之后等级" if bought else ("购买至此级共需 %d 星" % cost if cost <= int(summary.available) else "需要 %d 星，余额不足" % cost), Rect2(16, 134, 298, 22), 15, Color("ccb58e"), "left", "middle", 1)
+	draw_rect(Rect2(Vector2.ZERO, tip_size), Color(21.0/255,17.0/255,13.0/255,0.9))
+	paint.image("Upgrades_Tips_tip",Vector2(-14,tip_size.y-20))
+	paint.label(tech.title,Rect2(20,8,240,22),18,Color.WHITE,"left","top",1,0,"tech_title")
+	paint.image("Upgrades_Tips_Star",Vector2(270,10))
+	paint.label(str(int(tech.price)),Rect2(295,8,25,22),18,Color.WHITE,"left","top",1,0,"tech_price","numbers")
+	paint.label(tech.description,Rect2(20,33,280,text_height+1),18,Color("f5cb06"),"left","top",0,0,"tech_description")
 	paint.pop()
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
+		pointer=event.position/zoom
 		hovered = ""; shown = ""
 		for hit: Dictionary in hits:
 			if hit.rect.has_point(event.position / zoom):
@@ -106,6 +108,7 @@ func _gui_input(event: InputEvent) -> void:
 		mouse_default_cursor_shape = CURSOR_POINTING_HAND if hovered != "" else CURSOR_ARROW
 		queue_redraw()
 	elif event is InputEventMouseButton and event.pressed:
+		pointer=event.position/zoom
 		if event.button_index == MOUSE_BUTTON_RIGHT: map.close_overlay(); accept_event(); return
 		if event.button_index != MOUSE_BUTTON_LEFT: return
 		for hit: Dictionary in hits:

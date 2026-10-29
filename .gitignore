@@ -106,3 +106,17 @@ __pycache__/
 !/reports/technology_slot_entry.json
 !/reports/spider_summary.json
 !/reports/death_animation_summary.json
+!/reports/level07_logic.json
+!/reports/level07_native_1280x720.json
+!/reports/level07_native_1024x768.json
+!/reports/level07_assets.json
+!/reports/level07_delivery.json
+!/reports/feedback_logic.json
+!/reports/feedback_native_1280x720.json
+!/reports/feedback_native_1024x768.json
+!/reports/feedback_assets.json
+!/reports/feedback_combat_audit.json
+!/reports/feedback_delivery.json
+!/reports/followup_logic.json
+!/reports/followup_native_1280x720.json
+!/reports/followup_native_1024x768.json

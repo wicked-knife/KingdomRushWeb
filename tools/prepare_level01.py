@@ -3,6 +3,7 @@ from pathlib import Path
 import argparse, copy, hashlib, io, json, math, os, re, subprocess
 from PIL import Image
 from campaign_content import export_spec, level_ids, validate_definition, template_dependencies
+from power_preview_contract import prepare_ui
 
 ROOT = Path(__file__).resolve().parents[1]
 from dove_source import BASE, VERSION
@@ -64,6 +65,7 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
     data["locations"]={"entrances":[{"path_index":i,"source_path_id":int(e["editor.path_id"]),"pos":e["pos"],"r":e.get("editor.r",0)} for i,e in enumerate(entrances,1)]}
     # Compatibility adaptations are registered with the affected content entry.
     data["ui"]["notifications"].update(spec.get("notification_overrides", {}))
+    prepare_ui(data)
     # Resolve source layout overrides once, with isolated templates per instance.
     # Stable identities must not depend on how many technology/actor templates
     # are exported. Existing contents retain their original suffix base.
@@ -107,12 +109,13 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
                     creep=spawn["creep_aux"] if spawn.get("creep_aux") and spawn.get("max_same",0)>0 and (index//spawn["max_same"])%2 else spawn["creep"]
                     counts[creep]=counts.get(creep,0)+1
     if advanced:
-        data["upgrade_targets"]={"tower_archer_3":"tower_ranger"}
+        data["upgrade_targets"]={"tower_archer_3":["tower_ranger"]}
         data["ui"]["power_descriptions"]["poison"]=[s.replace("减速0.1%","减速10%").replace("可叠加3层","同级毒素最多叠加4层") for s in data["ui"]["power_descriptions"]["poison"]]
-    if "elf" in features: data["upgrade_targets"]["tower_elf_holder"]="tower_elf"
+    if "elf" in features: data["upgrade_targets"]["tower_elf_holder"]=["tower_elf"]
     for item in spec["export"].get("upgrade_targets", []):
         parent, child = item.split(":")
-        data.setdefault("upgrade_targets", {})[parent] = child
+        candidates = data.setdefault("upgrade_targets", {}).setdefault(parent, [])
+        if child not in candidates: candidates.append(child)
     if "paladin" in features:
         # The source Chinese formatter appends % to a fractional probability.
         # Display the actual source chance; combat values remain untouched.
@@ -149,14 +152,24 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
     states=["idle","idleUp","idleDown","shoot","shootingUp","shootingDown","walkingRightLeft","walkingUp","walkingDown","running","attack","death","open","close","play","flying","heal","jump","small","medium","large"]
     states += spec["export"].get("animation_states", [])
     for template in data["templates"].values():
+        action_states = {action["animation"]
+                         for component in ("attacks", "melee", "timed_actions")
+                         for action in template.get(component, {}).get("list", template.get(component, {}).get("attacks", []))
+                         if action.get("animation")}
         if template.get("template_name") == "spear_legionnaire": wanted.add(template["bullet"]["miss_decal"])
-        if template.get("particle_system",{}).get("name"): wanted.add(template["particle_system"]["name"])
+        particle = template.get("particle_system", {})
+        if particle.get("name"):
+            if particle.get("animated"):
+                key = particle["name"]
+                assert key in all_anims, f"Missing particle animation: {key}"
+                animations[key] = all_anims[key]
+            else: wanted.add(particle["name"])
         for sprite in template.get("render",{}).get("sprites",[]):
             name=sprite.get("name","");prefix=sprite.get("prefix","")
             if prefix:
                 if sprite.get("use_blood_color"):
                     animations.update({k: v for k, v in all_anims.items() if k.startswith(prefix + "_")})
-                sprite_states = [name] if template.get("template_name") == "fx_splash_small" else states + [name] + (sprite.get("size_names",[]) if advanced else [])
+                sprite_states = [name] if template.get("template_name") == "fx_splash_small" else states + list(action_states) + [name] + (sprite.get("size_names",[]) if advanced else [])
                 for suffix in set(sprite_states):
                     key=prefix+"_"+suffix
                     if key in all_anims: animations[key]=all_anims[key]
@@ -179,6 +192,15 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
         if key in all_anims: animations[key]=all_anims[key]
     for definition in animations.values(): wanted.update(f"{definition['prefix']}_{int(n):04d}" for n in definition["frames"])
     groups={p.stem:json.loads(p.read_text(encoding="utf-8")) for p in (assets/"data/atlases").glob("*.json")}
+    # U.set_terrain_style / PickView switch the first layer, including empty sites.
+    for template in data["templates"].values():
+        if template.get("tower",{}).get("can_hover"):
+            sprite=template["render"]["sprites"][0]
+            if not sprite.get("animated",False):
+                name=sprite.get("name","").replace("%04i","0001") + "_over"
+                if any(name in atlas.get("lookup",{}) for atlas in groups.values()): wanted.add(name)
+    for name in ("build_terrain_0001_over","build_terrain_0002_over"):
+        wanted.add(name)
     ui_groups=["gui_portraits","gui_common","gui_ico","gui_tutorial","gui_notifications_bg","gui_notifications","view_options","ballon"]
     wanted.update({"top_left","gui_ring","base_powers_bg","bg_bottom_nextwave","pause_base","tutorial_but_gotcha_bg_0001","tutorial_slide1_notxt","tutorial_slide2_notxt","tutorial_slide3_notxt","tutorial_powers_polaroids_0001","tutorial_powers_polaroids_0002","notifications_tips_slides_notxt_0001","notifications_tips_slides_notxt_0003","notifications_newenemy","defeat_bg_notxt","victoryBadges_notxt_0001","victory_star","pointer_set_rally_0001","pointer_power_reinforcements","pointer_power_rain_of_fire","in_game_icon_power_rain_of_fire","in_game_icon_power_reinforcements"})
     # UI uses the exact source layers, not substitutes stretched into arbitrary boxes.
@@ -188,6 +210,8 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
     wanted.update(f"{animations['decal_rally_feedback']['prefix']}_{int(n):04d}" for n in animations['decal_rally_feedback']['frames'])
     ui_names={"main_icons_0000","main_icons_0001","main_icons_0002","main_icons_0003","main_icons_0004","main_icons_0014","ico_sell_0001","sub_icons_0001","glow_ico_main","glow_ico_sell","glow_ico_sub","price_tag","bg_bottom_bar","bg_bottom_left","tutorial_tit_instructions_bg","notifications_tit_generics_bg_0001","notifications_tit_newpower_bg","notifications_polaroid_overlay","victoryBadges_notxt_0002","button_border_0001","button_border_0002","button_border_large_0001","button_border_large_0002","button_continue_chains","button_restart_chains","tooltip_bg_standard"}
     ui_names.update({"main_icons_0005","base","base_info_bar","base_info_bar_bg","info_portraits_0000","victoryBadges_notxt_0003"})
+    ui_names.add("tooltip_bg_small")
+    ui_names.update({"range_circle", "rally_circle"})
     ui_names.update(spec["export"].get("ui_frames", []))
     # Menus are source dependency roots, including newly registered towers.
     def menu_frames(node):

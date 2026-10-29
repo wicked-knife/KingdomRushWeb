@@ -1,7 +1,7 @@
 {
   "package_created": true,
   "source_commit": "1a863df00b08f6bf1018ae0b0e7e4e106b939082",
-  "content_catalog_sha256": "b97be7c3d948bcd792868b2313e42f5c038dbbd800c993fb8ddf28f807a4d73a",
+  "content_catalog_sha256": "40a725f115b3c5681a2ba12a09bbe1d30472e46295c258b2c8da041813285e65",
   "browser_tested": false,
   "build_type": "release",
   "developer_menu": false,
@@ -12,7 +12,8 @@
     3,
     4,
     5,
-    6
+    6,
+    7
   ],
   "playable_modes": [
     1,
@@ -109,6 +110,21 @@
       "level": 6,
       "mode": 3,
       "difficulty": 2
+    },
+    {
+      "level": 7,
+      "mode": 1,
+      "difficulty": 2
+    },
+    {
+      "level": 7,
+      "mode": 2,
+      "difficulty": 2
+    },
+    {
+      "level": 7,
+      "mode": 3,
+      "difficulty": 2
     }
   ],
   "challenge_validation_passed": true,
@@ -129,7 +145,9 @@
     "5/2",
     "5/3",
     "6/2",
-    "6/3"
+    "6/3",
+    "7/2",
+    "7/3"
   ],
   "challenge_replays_verified": [],
   "pck_isolated_check": true,
@@ -160,21 +178,21 @@
   "default_technology_acceptance": {
     "logic": {
       "passed": true,
-      "checks": 299,
+      "checks": 308,
       "source_patch_scenarios": 40,
       "source_template_rows": 3680,
       "behavior_scenarios": 19,
-      "content_combinations": 18
+      "content_combinations": 21
     },
     "native_1280x720": {
       "passed": true,
-      "checks": 2826,
+      "checks": 2752,
       "native_input": true,
       "native_audio": true
     },
     "native_1024x768": {
       "passed": true,
-      "checks": 2823,
+      "checks": 2749,
       "native_input": true,
       "native_audio": true
     },
@@ -182,11 +200,154 @@
       "passed": true
     }
   },
+  "feedback_acceptance": {
+    "passed": true,
+    "reports": {
+      "feedback_logic": {
+        "passed": true,
+        "checks": 473,
+        "content_combinations": 21,
+        "source_power_rows": 86,
+        "source_cannon_scenarios": 4,
+        "source_bomb_scenarios": 3,
+        "source_guard_scenarios": 8
+      },
+      "feedback_native_1280x720": {
+        "passed": true,
+        "checks": 782,
+        "layout_only": false
+      },
+      "feedback_native_1024x768": {
+        "passed": true,
+        "checks": 616,
+        "layout_only": true
+      },
+      "feedback_assets": {
+        "passed": true,
+        "content_combinations": 21
+      },
+      "feedback_combat_audit": {
+        "passed": true,
+        "independent_scenarios": 3,
+        "ticks": 3600
+      },
+      "followup_logic": {
+        "passed": true,
+        "checks": 45
+      },
+      "followup_native_1280x720": {
+        "passed": true,
+        "checks": 171,
+        "layout_only": false
+      },
+      "followup_native_1024x768": {
+        "passed": true,
+        "checks": 44,
+        "layout_only": true
+      }
+    },
+    "historical_baseline_preserved": true,
+    "content_combinations": 21,
+    "guard_scope": "14 isolated and 14 all-guards-present passing-enemy scenes on real placements/routes; original selection/movement functions; native render queue follows each live unit exactly once and removes all dead units; static layout duplicates fixed"
+  },
+  "feedback_report_sha256": {
+    "reports/feedback_assets.json": "b86e44bf975696736b56f9095fdb90cce9520b8fcc1da3e5adcd7f2820df5beb",
+    "reports/feedback_combat_audit.json": "d62d6642dfe9c6942bbf54e7a4ba1ed7c3fd6a8ab22c53444e36e36deda15f3c",
+    "reports/feedback_delivery.json": "969d569b87ec3ec3e8bcf42223e434e0f3f7bc7704c885330bc66bf96becdeef",
+    "reports/feedback_logic.json": "3004d98047e8fb16d5a010c6fa00fe2376d9204c60b44b097bdf93304c72168d",
+    "reports/feedback_native_1024x768.json": "fc22751dbcbc1d51001f5593709c99faf53270f16acf717bfba10f4b6d7ccf4c",
+    "reports/feedback_native_1280x720.json": "7726bba169ffb6fabb87501a9cb0956abbf633e37d347c9edfd14790738c69d4",
+    "reports/followup_logic.json": "9d28f532e085f28fc3a35ed3087ed18de22cd109a65af7e9dc9fe5fde174537b",
+    "reports/followup_native_1024x768.json": "622b4993776c38ba22abc3c6a8fbd90ec2f816752aa782431fc6ccc51239a159",
+    "reports/followup_native_1280x720.json": "cee5e655ecb1dab47252915872122168618c1673722b3b0f109ae68754648149"
+  },
+  "seventh_acceptance": {
+    "passed": true,
+    "playable_combinations": 21,
+    "reports": {
+      "level07_logic": {
+        "passed": true,
+        "checks": 227,
+        "independent_modes": 3,
+        "timeline_waves": 23,
+        "births": 708,
+        "content_combinations": 21,
+        "source_scenarios": 18,
+        "source_coroutines": [
+          "tower_musketeer",
+          "shotgun",
+          "bomb",
+          "tunnel",
+          "aura_unit_regen"
+        ],
+        "full_replays": false
+      },
+      "level07_native_1280x720": {
+        "passed": true,
+        "checks": 106,
+        "layout_only": false
+      },
+      "level07_native_1024x768": {
+        "passed": true,
+        "checks": 38,
+        "layout_only": true
+      },
+      "level07_assets": {
+        "passed": true,
+        "frames": 4268,
+        "animations": 338
+      },
+      "content_catalog": {
+        "passed": true,
+        "content_combinations": 21
+      },
+      "content_unification": {
+        "passed": true,
+        "checks": 329,
+        "timeline_waves": 88
+      }
+    },
+    "failure_probes": [
+      {
+        "missing": "pop_headshot",
+        "rejected": true,
+        "reason": "level07: tower_musketeer -> missing runtime dependency pop_headshot"
+      },
+      {
+        "missing": "mod_van_helsing_crosshair",
+        "rejected": true,
+        "reason": "level07: tower_musketeer -> missing runtime dependency mod_van_helsing_crosshair"
+      },
+      {
+        "missing": "ps_shotgun_musketeer",
+        "rejected": true,
+        "reason": "level07: tower_musketeer -> missing runtime dependency ps_shotgun_musketeer"
+      },
+      {
+        "missing": "aura_troll_regen",
+        "rejected": true,
+        "reason": "level07: enemy_troll -> missing runtime dependency aura_troll_regen"
+      },
+      {
+        "missing": "tunnel__101",
+        "rejected": true,
+        "reason": "level07: layout -> missing template tunnel__101"
+      }
+    ],
+    "additive_audit": "tests/fixtures/level07_additions.json; prior gameplay, UI metadata and source pixels retained"
+  },
+  "validation_report_sha256": {
+    "reports/level07_assets.json": "4c674f93a2e9cdb534efe0219ce6f981ba1982d79bf292fa01b9ba07dfb2b388",
+    "reports/level07_delivery.json": "0c95dc552dd291da43454ebdb3aaf053d9faf6c8a62a484a13a5690913bd874f",
+    "reports/level07_logic.json": "9f590ce5d277ebe2a5eafafa4430abe0a4002bbab43b32bd253aed080e58ac6e",
+    "reports/level07_native_1024x768.json": "3d0eb5e5b6f293f43388911e86f3f2ddfa248f4a4eeb01141f577e20641d8d08",
+    "reports/level07_native_1280x720.json": "f20623893c95034ce193fb00af80489f11cb9fb3deffbb4e82c2cdf812a96ae4"
+  },
   "technology_scheme": "1",
-  "pck_files": 666,
-  "bundle": "build\\KingdomRush-KR1-Levels01-06-Web.zip",
-  "bytes": 177153146,
-  "sha256": "9c4391a2a2fb4bfded8e4a4360f93c8a384ee8e0c50d817697d4aecdfedab31a",
+  "pck_files": 720,
+  "bundle": "build\\KingdomRush-KR1-Levels01-07-Web.zip",
+  "bytes": 203443450,
+  "sha256": "22ed3cc812bc65e560a889566c9d1d3776da9eb9becc6950e2e76fa795bb360a",
   "web_files": {
     "index.apple-touch-icon.png": {
       "bytes": 11939,
@@ -202,7 +363,7 @@
     },
     "index.html": {
       "bytes": 3146,
-      "sha256": "2c54f751db8a59500eee30b4135132bc200a5c7dd47a1eac84d481c90b37cec9"
+      "sha256": "10c72f53179db9c8f0407cae7dfdcb9b0cdce1a536bab8f061fb296fa0657fdf"
     },
     "index.icon.png": {
       "bytes": 5765,
@@ -213,8 +374,8 @@
       "sha256": "33c94cb3175f3333b82e2a3be5e8e86f77986f0aa2042b1631f6367a4e5bb6ba"
     },
     "index.pck": {
-      "bytes": 177078944,
-      "sha256": "71eb153575a91571465dfd228be7a028597e443e7a4b4c293c4cfd208e16efe0"
+      "bytes": 205410124,
+      "sha256": "7ff5a8ee119fd9ea52346c7fb36d4c733101394915c33c0f356890d45e94f805"
     },
     "index.png": {
       "bytes": 21443,
@@ -225,20 +386,20 @@
       "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
     },
     "export_receipt.json": {
-      "bytes": 4264,
-      "sha256": "b160592c27cca582d70f8e673825c13a64b45d04c0a630ff3c02ba86224c8471"
+      "bytes": 9807,
+      "sha256": "3f0c5b22a2e1a026778e710a3748ea5ad11cb94406f34c10b806b19b80d54f1d"
     },
     "README.txt": {
-      "bytes": 4819,
-      "sha256": "3c0d315bd3048b938cf7c896d81c69a2d99d04721611734735f994a28b0a9182"
+      "bytes": 5825,
+      "sha256": "172ae4358c5ce453522858cd18daedbb04db360e9c0045aef9bde7c11627db0f"
     },
     "start_server.cmd": {
       "bytes": 180,
       "sha256": "8f021ad5511504a288354fec02c4bf8514f054a2457cc229710e1d6069558b32"
     },
     "pack_files.json": {
-      "bytes": 48474,
-      "sha256": "1cdc23ba0dc53aaef05fa81d5f07c1da91d8dbe96b110e685abc8a2d45dc9a57"
+      "bytes": 51959,
+      "sha256": "0f71c59575c1d0cd43a4e02063024c011cbe82b368f60f9f583d28cfc43d375e"
     }
   }
 }

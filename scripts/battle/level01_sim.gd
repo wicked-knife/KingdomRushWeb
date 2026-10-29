@@ -9,6 +9,7 @@ const UPGRADES := {"tower_archer_1": "tower_archer_2", "tower_barrack_1": "tower
 const SpriteAnimation = preload("res://scripts/battle/dove_animation.gd")
 const Projectile = preload("res://scripts/battle/dove_projectile.gd")
 const DamageFactors = preload("res://scripts/battle/dove_damage_factors.gd")
+const PowerPreview = preload("res://scripts/battle/dove_power_preview.gd")
 const ArrowMissile = preload("res://scripts/battle/dove_arrow_missile.gd")
 const Ranger = preload("res://scripts/battle/dove_ranger.gd")
 const Modifiers = preload("res://scripts/battle/dove_modifiers.gd")
@@ -21,6 +22,8 @@ const Targets = preload("res://scripts/battle/dove_targeting.gd")
 const EnemyProjectiles = preload("res://scripts/battle/dove_enemy_projectiles.gd")
 const Upgrades = preload("res://scripts/battle/dove_upgrades.gd")
 var upgrades := Upgrades.new()
+const Snow = preload("res://scripts/battle/dove_snow.gd")
+var snow := Snow.new()
 var base_templates: Dictionary
 var controller: RefCounted
 var behaviors: RefCounted
@@ -84,6 +87,10 @@ func _init(definition: Dictionary = {}, seed_value: int = 1, allow_developer: bo
 	assert(behavior_error.is_empty(), behavior_error)
 	behaviors = Behaviors.new(data, catalog)
 	animations = JSON.parse_string(FileAccess.get_file_as_string(data.get("level", {}).get("root", "res://data/level01/") + "animations.json")).animations
+	for template_name: String in templates:
+		if behaviors.role(template_name) != "arcane": continue
+		var animation_error := Behaviors.Arcane.animation_error(templates[template_name], animations)
+		assert(animation_error.is_empty(), animation_error)
 	reset(seed_value)
 
 func reset(seed_value: int = 1) -> void:
@@ -110,7 +117,7 @@ func reset(seed_value: int = 1) -> void:
 	for index in range(data.layout.entities_list.size()):
 		var e: Dictionary = data.layout.entities_list[index]
 		if e.has("tower.holder_id") and templates.has(e.template):
-			var holder: String = e.template if str(e.template).begins_with("tower_holder") else "tower_holder_grass"
+			var holder: String = e.template if str(e.template).begins_with("tower_holder") else str(data.layout.get("level_terrain_style", "tower_holder_grass"))
 			var tower := _holder({"id": str(e["tower.holder_id"]), "pos": vec(e.pos), "rally": vec(e["tower.default_rally_pos"]), "holder": holder})
 			if not str(e.template).begins_with("tower_holder"):
 				tower.template = e.template; tower.type = "barrack" if templates[e.template].has("barrack") else str(templates[e.template].tower.type)
@@ -126,12 +133,21 @@ func reset(seed_value: int = 1) -> void:
 				"state": d.get("idle_animation", ""), "hidden": not d.has("idle_animation"), "fish": fish, "state_at": 0, "next_play": frames(rng.randf_range(d.min_delay, d.max_delay)),
 				"flip": rng.randf() < float(d.get("flip_chance", 0)), "alternate": rng.randf() < float(d.get("required_clicks_fx_alt_chance", 0))})
 	upgrades.refresh_mages(self)
+	snow.reset(self)
 
 static func vec(v: Dictionary) -> Vector2:
 	return Vector2(v.x, v.y)
 
+func power_preview(tower: Dictionary, power: String) -> Dictionary:
+	return PowerPreview.preview(self, tower, power)
+
 static func frames(seconds: float) -> int:
 	return maxi(1, roundi(seconds * 30.0))
+
+static func source_wait_ticks(start: int, seconds: float) -> int:
+	var count := maxi(1,floori(seconds*30))
+	while float(start+count)/30-float(start)/30 < seconds: count+=1
+	return count
 
 static func distance(a: Vector2, b: Vector2) -> float:
 	var delta := a - b
@@ -155,9 +171,17 @@ func _holder(tower: Dictionary) -> Dictionary:
 func tower_template(tower: Dictionary) -> Dictionary:
 	return templates[tower.template]
 
+func upgrade_options(tower: Dictionary) -> Array[String]:
+	if tower.is_empty(): return []
+	var raw: Variant = data.get("upgrade_targets", {}).get(tower.template, UPGRADES.get(tower.template, ""))
+	var result: Array[String] = []
+	for target: String in ([raw] if raw is String else raw):
+		if templates.has(target) and target not in result: result.append(target)
+	return result
+
 func upgrade_target(tower: Dictionary) -> String:
-	var target: String = data.get("upgrade_targets", {}).get(tower.template, UPGRADES.get(tower.template, ""))
-	return target if templates.has(target) else ""
+	var options := upgrade_options(tower)
+	return options[0] if options.size() == 1 else ""
 
 func _tower_period(tower: Dictionary) -> int:
 	return frames(tower_template(tower).attacks.list[0].cooldown) + (1 if tower.type == "mage" else 0)
@@ -218,7 +242,7 @@ func command(kind: String, args: Dictionary = {}) -> bool:
 		"upgrade":
 			var tower := tower_by_id(str(args.get("id", "")))
 			var target := str(args.get("upgrade_to", ""))
-			if tower.is_empty() or tower.ready > tick or target == "" or target != upgrade_target(tower) or tower_locked(target): return false
+			if tower.is_empty() or tower.ready > tick or target == "" or target not in upgrade_options(tower) or tower_locked(target): return false
 			var t: Dictionary = templates[target]
 			var price := int(t.tower.price)
 			if gold < price: return false
@@ -251,8 +275,14 @@ func command(kind: String, args: Dictionary = {}) -> bool:
 			var tower := tower_by_id(str(args.get("id", "")))
 			if tower.is_empty() or tower.type == "" or tower.ready > tick: return false
 			gold += sell_refund(tower)
-			for s: Dictionary in soldiers:
-				if s.home == tower.id: _retire(s)
+			for s: Dictionary in soldiers.duplicate():
+				if s.home != tower.id: continue
+				# tower_barrack.remove queues removal, not the death coroutine.
+				s.hp = 0; _unblock(s)
+				for modifier: Dictionary in modifiers.active.duplicate():
+					if modifier.target == s.id:
+						modifiers._release(self, modifier); modifiers.active.erase(modifier)
+				soldiers.erase(s)
 			add_effect("fx_tower_sell_dust", tower.pos)
 			towers[towers.find(tower)] = _holder(tower)
 			upgrades.refresh_mages(self)
@@ -461,6 +491,7 @@ func step() -> void:
 	if next_wave_tick >= 0 and tick >= next_wave_tick: _start_wave(false)
 	if not notices.is_empty(): return
 	controller.step(self)
+	snow.step(self)
 	_decals_step()
 	behaviors.step_spawners(self)
 	upgrades.refresh_mages(self)
@@ -519,6 +550,7 @@ func _tower_step(tower: Dictionary) -> void:
 	var attack: Dictionary = t.attacks.list[0]
 	if not tower.pending.is_empty() and tick >= tower.pending.at:
 		var target := unit_by_id(tower.pending.target)
+		if tower.type == "engineer": target = _target(tower.pos+vec(t.tower.range_offset),float(t.attacks.range),false,attack,true)
 		if tower.type in ["archer", "mage"]:
 			# Source firing selects flying targets first; ground-only encounters
 			# keep the existing target and their deterministic combat baseline.
@@ -541,14 +573,14 @@ func _tower_step(tower: Dictionary) -> void:
 				else: target_id = 0
 			elif not target.is_empty() and target.hp > 0:
 				if not bullet.has("flight_time"): flight = distance(tower.pos, target.pos) / float(bullet.get("max_speed", 300))
-				if tower.type == "engineer": aim = _predict(target, flight)
+				if tower.type == "engineer": aim = source_prediction(target,attack.get("node_prediction",false))
 				else:
 					aim = target.pos + vec(templates[target.template].unit.hit_offset)
 					if bullet.get("predict_target_pos", false) and target.blocker == 0: aim += target.last_dir * 30.0 * flight
 			_projectile(attack.bullet, target_id, tower.pos + offset, aim, flight, tower)
 		tower.pending = {}
 	if tick < tower.attack_at or not tower.pending.is_empty(): return
-	var target := _target(tower.pos + vec(t.tower.range_offset), float(t.attacks.range), false, attack)
+	var target := _target(tower.pos + vec(t.tower.range_offset), float(t.attacks.range), false, attack,tower.type=="engineer")
 	if target.is_empty(): return
 	var offsets = attack.bullet_start_offset
 	var shooter := 0
@@ -557,6 +589,9 @@ func _tower_step(tower: Dictionary) -> void:
 		shooter = int(tower.shot_count) % offsets.size() if tower.type == "archer" else (0 if target.pos.y > tower.pos.y + float(offsets[0].y) else mini(1, offsets.size() - 1))
 	var offset: Dictionary = offsets[shooter] if offsets is Array else offsets
 	tower.pending = {"at": tick + frames(attack.shoot_time), "target": target.id, "offset": offset, "aim": _predict(target, float(templates[attack.bullet].bullet.get("flight_time", 1)))}
+	if tower.type == "engineer":
+		tower.pending.aim = source_prediction(target,attack.get("node_prediction",false))
+		tower.pending.at = tick+source_wait_ticks(tick,float(attack.shoot_time))
 	if tower.type == "mage": tower.pending.aim = target.pos
 	tower.shot_at = tick; tower.shot_up = target.pos.y > tower.pos.y + float(offset.y)
 	tower.attack_at = tick + _tower_period(tower)
@@ -570,12 +605,14 @@ func _tower_step(tower: Dictionary) -> void:
 		var idle := "idleUp" if tower.shot_up else "idleDown"
 		tower.layers[sid] = {"state": state, "at": tick, "loop": false, "flip": tower.type == "archer" and target.pos.x < tower.pos.x + float(offset.x), "idle": idle if sprite.has("angles") else "idle"}
 
-func _target(point: Vector2, radius: float, unblocked: bool = false, rule: Dictionary = {}) -> Dictionary:
+func _target(point: Vector2, radius: float, unblocked: bool = false, rule: Dictionary = {}, source_nodes: bool=false) -> Dictionary:
 	var best := {}; var remaining := INF
 	for e: Dictionary in enemies:
 		if not Targets.matches(self, e, rule) or (unblocked and e.blockers.size() >= 3): continue
-		var nodes_left: float = data.paths.paths[e.get("path", 0)][e.subpath].size() - e.progress
-		if distance(point, e.pos) <= radius and nodes_left < remaining:
+		var nodes_left: float = data.paths.paths[e.get("path", 0)][e.subpath].size() - (int(e.node) if source_nodes else float(e.progress))
+		var mocking: bool=source_nodes and (int(e.get("vis",templates[e.template].vis).flags)&64)!=0
+		var previous_mocking: bool=source_nodes and not best.is_empty() and (int(best.get("vis",templates[best.template].vis).flags)&64)!=0
+		if distance(point, e.pos) <= radius and (best.is_empty() or mocking and not previous_mocking or mocking==previous_mocking and nodes_left < remaining):
 			best = e; remaining = nodes_left
 	return best
 
@@ -632,6 +669,14 @@ func add_effect(template_name: String, point: Vector2, extra: Dictionary = {}) -
 	var effect := {"template": template_name, "pos": point, "at": tick, "duration": lifetime}
 	effect.merge(extra, true); effects.append(effect)
 
+func source_prediction(e: Dictionary, prediction: Variant) -> Vector2:
+	if not prediction: return e.pos
+	var seconds := 1.0 if prediction is bool else float(prediction)
+	var speed_value: float = e.last_dir.length()*30 if e.blocker == 0 and int(e.get("stun_count",0)) == 0 else 0.0
+	var points: Array = data.paths.paths[e.path][e.subpath]
+	var node := mini(points.size()-1,int(e.node)+ceili(seconds*speed_value/8.0))
+	return vec(points[node])
+
 func _predict(e: Dictionary, seconds: float) -> Vector2:
 	if e.blocker != 0: return e.pos
 	var points: Array = data.paths.paths[e.get("path", 0)][e.subpath]
@@ -670,10 +715,12 @@ func _soldier_target(s: Dictionary, only_free: bool = false) -> Dictionary:
 	var remaining := INF
 	for e: Dictionary in enemies:
 		if e.hp <= 0 or (only_free and not e.blockers.is_empty()): continue
-		if not Targets.matches(self, e, templates[s.template].melee.attacks[0]): continue
+		if not Targets.matches(self, e, {"vis_flags":1,"vis_bans":256}) or (_terrain_flags(e.pos)&256) != 0: continue
 		if templates[e.template].enemy.has("max_blockers") and not e.blockers.is_empty(): continue
-		var nodes_left: float = data.paths.paths[e.path][e.subpath].size() - e.progress
-		if distance(s.rally_center, e.pos) <= float(templates[s.template].melee.range) and nodes_left < remaining:
+		var nodes_left: float = data.paths.paths[e.path][e.subpath].size() - int(e.node)
+		var mocking: bool = (int(e.get("vis",templates[e.template].vis).flags)&64) != 0
+		var previous_mocking: bool = not target.is_empty() and (int(target.get("vis",templates[target.template].vis).flags)&64) != 0
+		if distance(s.rally_center, e.pos) <= float(templates[s.template].melee.range) and (target.is_empty() or mocking and not previous_mocking or mocking == previous_mocking and nodes_left < remaining):
 			target = e; remaining = nodes_left
 	return target
 
@@ -720,7 +767,7 @@ func _soldier_step(s: Dictionary) -> void:
 		# In particular holystrike still hits other enemies in its area.
 		_melee(s,unit_by_id(int(s.get("melee_target",0))),t); return
 	var target := unit_by_id(s.target)
-	if target.is_empty() or target.hp <= 0 or not s.id in target.blockers:
+	if target.is_empty() or target.hp <= 0 or not s.id in target.blockers or (int(target.get("vis",templates[target.template].vis).bans)&1) != 0:
 		_unblock(s)
 		target = _soldier_target(s)
 	elif target.blockers.find(s.id) > 0 and s.pending.is_empty():
@@ -729,7 +776,12 @@ func _soldier_step(s: Dictionary) -> void:
 	if not target.is_empty() and s.target == 0:
 		s.target = target.id; target.blockers.append(s.id); target.blocker = target.blockers[0]
 	if not target.is_empty() and s.target != 0:
-		if _soldier_move(s, melee_slot(s, target), t.motion.max_speed): return
+		var slot:=melee_slot(s,target)
+		var was_at_slot: bool=s.pos.is_equal_approx(slot)
+		if _soldier_move(s, slot, t.motion.max_speed): return
+		# The barrack coroutine yields on the step that reaches the melee slot.
+		# Its timed multi-attack flow can start an attack on the following step.
+		if t.melee.attacks.size()>1 and not was_at_slot:return
 		s.flip = target.pos.x < s.pos.x
 		_melee(s, target, t)
 	else:
@@ -914,9 +966,11 @@ func damage(unit: Dictionary, amount: float, type: int, source_id: int = 0, redu
 	elif (type & 32) != 0:
 		armor = float(unit.get("magic_armor", t.health.magic_armor)); armor *= 0.2 * armor + 0.4
 	elif (type & 8) != 0: armor = float(unit.get("armor", t.health.armor))
+	elif (type & 64) != 0: armor = clampf(float(unit.get("armor",t.health.armor))-reduce_armor,0,1)*0.7
 	# Frozen Dove all/utils.lua U.calc_protection, including its explosion curve.
 	if (type & 8) != 0 and (type & (65536 | 1 | 2 | 4)) == 0: armor *= 0.2 * armor + 0.4
 	var actual := amount * DamageFactors.value(unit, t, true) * (1.0 - armor)
+	if (type & 4096) != 0: actual = float(unit.max_hp)*(1-float(t.health.get("instakill_resistance",0)))*maxf(1,DamageFactors.value(unit,t,true))
 	unit.hp = maxf(0, unit.hp - actual)
 	var reflection := float(t.health.get("spiked_armor", 0))
 	if reflection > 0 and source_id > 0:
@@ -940,14 +994,21 @@ func _projectile(type: String, target: int, from: Vector2, to: Vector2, flight: 
 		"velocity": Projectile.launch(from, to, duration / 30.0, bullet), "initial_rotation": rng.randf_range(-PI / 2, PI / 2) if bullet.has("rotation_speed") else 0.0,
 		"rotation": 0.0, "hidden": float(bullet.get("hide_radius", 0)) > 0}
 	b.source = attacker.get("id", 0)
+	if behaviors.projectile_role(templates[type]) == "bomb":
+		# Musketeer shrapnel retains its independent 30 Hz coroutine adapter.
+		b.merge(Projectile.bomb_timing(flight,tick/30.0,30 if type == "bomb_musketeer" else Projectile.BOMB_FPS),true)
+		b.velocity=Projectile.launch(from,to,flight,bullet)
 	b.damage_factor = attack_factor(attacker) * float(bullet.get("damage_factor", 1.0))
 	if upgrades.effective.values().any(func(value): return value > 0):
 		b.damage_min = float(bullet.damage_min); b.damage_max = float(bullet.damage_max)
 		var precision := upgrades.get_tech("archer_precision")
-		if attacker.get("type", "") == "archer" and not precision.is_empty() and rng.randf() < float(precision.chance):
+		if attacker.get("type", "") == "archer" and behaviors.projectile_role(templates[type]) != "shotgun" and type != "bomb_musketeer" and not precision.is_empty() and rng.randf() < float(precision.chance):
 			b.damage_min *= float(precision.damage_factor); b.damage_max *= float(precision.damage_factor); b.critical = true
 	if behaviors.projectile_role(templates[type]) == "bolt":
 		b.speed = float(bullet.min_speed); b.last_step = tick; b.target_invalid = false
+	elif behaviors.projectile_role(templates[type]) == "shotgun":
+		b.last_step=tick; b.target_invalid=false; b.damage_min=float(bullet.damage_min); b.damage_max=float(bullet.damage_max)
+		add_effect(str(bullet.get("start_fx","")),from,{"rotation":(to-from).angle()})
 	elif behaviors.projectile_role(templates[type]) == "arrow_missile":
 		b.last_step = tick; b.seeking = false; b.hit_distance = float(bullet.hit_distance)
 	projectiles.append(b)
@@ -958,6 +1019,8 @@ func _bullet_step(p: Dictionary) -> void:
 	var b: Dictionary = templates[p.template].bullet
 	var target := unit_by_id(p.target)
 	var behavior: String = behaviors.projectile_role(templates[p.template])
+	if p.template == "bomb_musketeer": Behaviors.Musketeer.shrapnel_projectile(self,p,b); return
+	if behavior == "shotgun": Behaviors.Musketeer.projectile(self,p,b); return
 	if behavior == "ray": Behaviors.Arcane.projectile(self, p, b); return
 	if EnemyProjectiles.step(self, p, b, behavior): return
 	var ratio := clampf(float(tick - p.at) / p.duration, 0, 1)
@@ -970,15 +1033,18 @@ func _bullet_step(p: Dictionary) -> void:
 	elif behavior == "fireball":
 		p.pos = p.from.lerp(p.to, ratio)
 		p.rotation = (p.to - p.from).angle()
+	elif behavior == "bomb":
+		p.merge(Projectile.sample_bomb(p,b,(tick-p.at)/30.0),true)
 	else:
 		p.merge(Projectile.sample(p, b, (tick - p.at) / 30.0), true)
 	if behavior not in ["bolt","arrow_missile"] and ratio < 1: return
 	p.done = true
 	var did_hit := false
 	if float(b.damage_radius) > 0:
+		var center: Vector2 = p.pos if behavior == "bomb" else p.to
 		var fire_damage := -1.0
 		for e: Dictionary in enemies:
-			if Targets.matches(self, e, b, true) and distance(p.to, e.pos) <= float(b.damage_radius):
+			if Targets.matches(self, e, b, true) and distance(center, e.pos) <= float(b.damage_radius):
 				if fire_damage < 0 and behavior == "fireball" and not upgrades.get_tech("rain_blazing_skies").is_empty(): fire_damage = rng.randi_range(int(b.damage_min), int(b.damage_max))
 				var amount: float = fire_damage if fire_damage >= 0 else rng.randi_range(int(b.damage_min), int(b.damage_max))
 				if behavior == "bomb":
@@ -988,11 +1054,11 @@ func _bullet_step(p: Dictionary) -> void:
 					amount = lerpf(float(b.damage_max), float(b.damage_min), clampf(delta.length() / ellipse_radius, 0, 1))
 					if not upgrades.get_tech("engineer_efficiency").is_empty(): amount = float(b.damage_max)
 				damage(e, amount * float(p.damage_factor), int(b.damage_type))
-		var water: bool = (behavior == "bomb" or behavior == "fireball" and not upgrades.get_tech("rain_blazing_skies").is_empty()) and (_terrain_flags(p.to) & 2) != 0
+		var water: bool = (behavior == "bomb" or behavior == "fireball" and not upgrades.get_tech("rain_blazing_skies").is_empty()) and (_terrain_flags(center) & 2) != 0
 		var water_fx: String = "fx_explosion_water" if behavior == "fireball" else str(b.get("hit_fx_water", ""))
 		water = water and templates.has(water_fx)
-		add_effect(water_fx if water else str(b.get("hit_fx", "")), p.to)
-		if not water: add_effect(str(b.get("hit_decal", "")), p.to)
+		add_effect(water_fx if water else str(b.get("hit_fx", "")), center)
+		if not water: add_effect(str(b.get("hit_decal", "")), center)
 		if behavior == "fireball": upgrades.scorched(self, p.to)
 	elif not target.is_empty() and target.hp > 0:
 		var hit: Vector2 = target.pos + vec(templates[target.template].unit.hit_offset)

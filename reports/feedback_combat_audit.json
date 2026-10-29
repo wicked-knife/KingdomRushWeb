@@ -1,0 +1,219 @@
+{
+  "passed": true,
+  "historical_baseline_preserved": true,
+  "old_pck_matches_all_36_historical_samples": true,
+  "independent_scenarios": 3,
+  "ticks": 3600,
+  "source_fixture_sha256": "c25f17f1b0e423a39838469c82bb41dc94aeea4a053d1892ccadc9d59b466f34",
+  "historical_fixture_sha256": "ccc12400ba08d7a3cbeba91bac30347d7d1ddd7c33efb5faf891d8552022efbe",
+  "published_pck_sha256": "bc7955e5281ccd332e6bc957dfb4daf57f293cbd70c84f6c3b1fa41daf22b596",
+  "summary": {
+    "1": {
+      "first_difference": {
+        "sample": 4,
+        "tick": 525,
+        "differences": [
+          {
+            "path": [
+              6,
+              3,
+              "pending",
+              "aim"
+            ],
+            "before": "(326.8087, 222.5957)",
+            "after": "(332.0, 220.0)"
+          },
+          {
+            "path": [
+              6,
+              3,
+              "pending",
+              "at"
+            ],
+            "before": 535,
+            "after": 536
+          },
+          {
+            "path": [
+              7,
+              0,
+              "hp"
+            ],
+            "before": 16.256003859161,
+            "after": 16.2204066988388
+          }
+        ]
+      },
+      "adjusted_samples": 8,
+      "unchanged_samples": 4,
+      "changed_field_counts": [
+        {
+          "sample": 4,
+          "fields": 3
+        },
+        {
+          "sample": 5,
+          "fields": 11
+        },
+        {
+          "sample": 6,
+          "fields": 22
+        },
+        {
+          "sample": 7,
+          "fields": 1
+        },
+        {
+          "sample": 8,
+          "fields": 1
+        },
+        {
+          "sample": 9,
+          "fields": 1
+        },
+        {
+          "sample": 10,
+          "fields": 4
+        },
+        {
+          "sample": 11,
+          "fields": 12
+        }
+      ]
+    },
+    "3": {
+      "first_difference": {
+        "sample": 8,
+        "tick": 925,
+        "differences": [
+          {
+            "path": [
+              7,
+              0,
+              "hp"
+            ],
+            "before": 16.1882164717139,
+            "after": 17.0626348674068
+          }
+        ]
+      },
+      "adjusted_samples": 4,
+      "unchanged_samples": 8,
+      "changed_field_counts": [
+        {
+          "sample": 8,
+          "fields": 1
+        },
+        {
+          "sample": 9,
+          "fields": 18
+        },
+        {
+          "sample": 10,
+          "fields": 18
+        },
+        {
+          "sample": 11,
+          "fields": 20
+        }
+      ]
+    },
+    "5": {
+      "first_difference": {
+        "sample": 1,
+        "tick": 225,
+        "differences": [
+          {
+            "path": [
+              6,
+              5,
+              "pending",
+              "aim"
+            ],
+            "before": "(489.5662, 222.1627)",
+            "after": "(490.0, 222.0)"
+          },
+          {
+            "path": [
+              6,
+              5,
+              "pending",
+              "at"
+            ],
+            "before": 235,
+            "after": 236
+          }
+        ]
+      },
+      "adjusted_samples": 11,
+      "unchanged_samples": 1,
+      "changed_field_counts": [
+        {
+          "sample": 1,
+          "fields": 2
+        },
+        {
+          "sample": 2,
+          "fields": 17
+        },
+        {
+          "sample": 3,
+          "fields": 11
+        },
+        {
+          "sample": 4,
+          "fields": 32
+        },
+        {
+          "sample": 5,
+          "fields": 126
+        },
+        {
+          "sample": 6,
+          "fields": 34
+        },
+        {
+          "sample": 7,
+          "fields": 15
+        },
+        {
+          "sample": 8,
+          "fields": 16
+        },
+        {
+          "sample": 9,
+          "fields": 58
+        },
+        {
+          "sample": 10,
+          "fields": 90
+        },
+        {
+          "sample": 11,
+          "fields": 42
+        }
+      ]
+    }
+  },
+  "full_comparisons": "output/followup_combat_comparisons.json",
+  "followup_source_fixture_sha256": "59bcb259d6065071bdd445657aa946d3431b0f11486caea1195dd38e4f5e3f35",
+  "full_comparisons_sha256": "ce31206d57fa9a99f735515b14f2de27aec92632377b120809fec3c62c9a4924",
+  "basis": [
+    "actual tower_engineer.update: retarget and float coroutine wait",
+    "actual path_db node prediction",
+    "actual bomb.insert/update: Euler flight, stop frame, hit center and intended-point falloff",
+    "actual soldier_pick_melee_target: block validity, terrain flags and integer nodes to goal",
+    "actual seek.foremost_enemy_cmp: integer nodes and mocking priority",
+    "actual main_utils.default_params: default simulation FPS=144 (animation FPS=30)",
+    "actual bomb.insert/update at 30/60/144 FPS: preserve sampled Euler impact without forcing bullet.to"
+  ],
+  "source_hashes": {
+    "tests/fixtures/content_combat_baseline.json": "ccc12400ba08d7a3cbeba91bac30347d7d1ddd7c33efb5faf891d8552022efbe",
+    "tests/fixtures/feedback_combat_adjustments.json": "f0038887ec479bbcab61e8b1164dbe6fb098566fba38cb3f36a9f6972b290f41",
+    "tests/fixtures/feedback_source.json": "c25f17f1b0e423a39838469c82bb41dc94aeea4a053d1892ccadc9d59b466f34",
+    "tests/fixtures/followup_source.json": "59bcb259d6065071bdd445657aa946d3431b0f11486caea1195dd38e4f5e3f35",
+    "tests/capture_feedback_combat.gd": "af7f074464e1802d08c595201e19524f751bfa32f86abbd811f6a78f893dbf67",
+    "scripts/battle/level01_sim.gd": "bfe6e599b6b1ab76cc1ce0caffffe9da4bac06ace4acd61123e15f7c62c724e0",
+    "scripts/battle/dove_projectile.gd": "6dc4815a1561da7fd89fc732ec2115738883d09a9a1ea8505d234af256231c0c"
+  }
+}

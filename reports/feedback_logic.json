@@ -1,0 +1,143 @@
+{
+	"checks": 473,
+	"comparisons": [
+		{
+			"behavior": "bomb",
+			"first_difference": -1,
+			"frames": 31
+		},
+		{
+			"behavior": "bomb_dynamite",
+			"first_difference": -1,
+			"frames": 31
+		},
+		{
+			"behavior": "bomb_black",
+			"first_difference": -1,
+			"frames": 31
+		},
+		{
+			"actual": [
+				103,
+				200.0,
+				250.0,
+				280.0,
+				300.0
+			],
+			"behavior": "cannon",
+			"expected": [
+				103.0,
+				200.0,
+				250.0,
+				280.0,
+				300.0
+			],
+			"first_difference": -1,
+			"scenario": "stationary"
+		},
+		{
+			"actual": [
+				103,
+				200.0,
+				250.0,
+				312.0,
+				300.0
+			],
+			"behavior": "cannon",
+			"expected": [
+				103.0,
+				200.0,
+				250.0,
+				312.0,
+				300.0
+			],
+			"first_difference": -1,
+			"scenario": "moving"
+		},
+		{
+			"actual": [
+				103,
+				200.0,
+				250.0,
+				296.0,
+				300.0
+			],
+			"behavior": "cannon",
+			"expected": [
+				103.0,
+				200.0,
+				250.0,
+				296.0,
+				300.0
+			],
+			"first_difference": -1,
+			"scenario": "reselect"
+		},
+		{
+			"actual": [
+				103,
+				200.0,
+				250.0,
+				280.0,
+				300.0
+			],
+			"behavior": "cannon",
+			"expected": [
+				103.0,
+				200.0,
+				250.0,
+				280.0,
+				300.0
+			],
+			"first_difference": -1,
+			"scenario": "dead_without_replacement"
+		},
+		{
+			"behavior": "guard_slot_movement",
+			"first_difference": -1,
+			"frames": 2,
+			"offset": 1.0
+		},
+		{
+			"behavior": "guard_slot_movement",
+			"first_difference": -1,
+			"frames": 3,
+			"offset": 4.0
+		},
+		{
+			"behavior": "guard_slot_movement",
+			"first_difference": -1,
+			"frames": 11,
+			"offset": 19.0
+		},
+		{
+			"behavior": "guard_slot_movement",
+			"first_difference": -1,
+			"frames": 26,
+			"offset": 50.0
+		}
+	],
+	"content_combinations": 21,
+	"failures": [],
+	"passed": true,
+	"source_bomb_scenarios": 3,
+	"source_cannon_scenarios": 4,
+	"source_guard_motion_scenarios": 4,
+	"source_guard_scenarios": 8,
+	"source_hashes": {
+		"scripts/battle/battle_ui.gd": "900c3a23548286aee0d8708106765eb509850aa2ec483f0c7690774f4474e9d2",
+		"scripts/battle/battle_view.gd": "d398bcdae9cb7f4524c58aad2c21d890c30e7b926c55bb035c730938ec2c568f",
+		"scripts/battle/dove_paladin.gd": "e222ca537c0febb079f368d44e7a2f9b19f6056aed49dc05bad8a3dd3010fc76",
+		"scripts/battle/dove_power_preview.gd": "8701b14ac3747b3f9409fdb93a168fa800b42e6b9679a8182e131369c67bd8fd",
+		"scripts/battle/dove_projectile.gd": "6dc4815a1561da7fd89fc732ec2115738883d09a9a1ea8505d234af256231c0c",
+		"scripts/battle/dove_ui_layout.gd": "3b5f799a9db0ffe091ac8889bc9e5b431b5e80cedc4065fa1b05dbaaa45d3803",
+		"scripts/battle/level01_sim.gd": "bfe6e599b6b1ab76cc1ce0caffffe9da4bac06ace4acd61123e15f7c62c724e0",
+		"scripts/map/map_interface.gd": "2b074fceeb553c41510c5b3986c1d1590ce3e8ce0047ac67143514a943b0f37f",
+		"scripts/map/upgrades_room.gd": "cae4030b57d8d82b3c296a03024ce35c992aabf22552d210e803cbb63895eb76",
+		"tests/fixtures/feedback_source.json": "c25f17f1b0e423a39838469c82bb41dc94aeea4a053d1892ccadc9d59b466f34",
+		"tests/verify_feedback.gd": "f656a07bf5e32180573811d8f0dc60cd915cd6568c232453ed3fc572e9f3ffa4"
+	},
+	"source_power_rows": 86,
+	"source_priority_scenarios": 3,
+	"source_slot_rows": 8
+}

@@ -58,6 +58,7 @@ func apply(sim: RefCounted, template: String, target: Dictionary, level: int, so
 		var health: Dictionary = sim.templates[target.template].health
 		var armor := 0.0
 		if (int(source_damage.type) & 2) != 0: armor = clampf(float(target.get("armor", health.armor)) - float(source_damage.get("reduce_armor",0)), 0, 1)
+		elif (int(source_damage.type) & 64) != 0: armor = clampf(float(target.get("armor", health.armor)) - float(source_damage.get("reduce_armor",0)), 0, 1) * 0.7
 		bleeding = maxf(1.0, float(source_damage.value) * (1 - armor) * sim.DamageFactors.value(target, sim.templates[target.template], true) * float(t.damage_factor))
 		for old: Dictionary in same: old.bleed_fx = false
 	for existing: Dictionary in active.duplicate():

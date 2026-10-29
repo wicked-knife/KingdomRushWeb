@@ -60,7 +60,7 @@ func next_wave(index: int = 1) -> void:
 func buy_advanced(id: String, kind: String) -> void:
 	battle.sim.gold = 10000
 	battle.sim.command("build",{"id":id,"type":kind}); battle.sim.tick += 30
-	for i in 3: check(battle.sim.command("upgrade",{"id":id,"upgrade_to":battle.sim.upgrade_target(battle.sim.tower_by_id(id))}),"fixture advanced tower upgrade")
+	for i in 3: check(battle.sim.command("upgrade",{"id":id,"upgrade_to":"tower_ranger" if kind == "archer" and i == 2 else battle.sim.upgrade_target(battle.sim.tower_by_id(id))}),"fixture advanced tower upgrade")
 	battle.selected = id
 
 func logic() -> void:
@@ -275,5 +275,5 @@ func run() -> void:
 	for script in ["battle_feedback","battle_victory","battle_view","battle_ui","battle_wave_flags","dove_ui_layout"]:
 		var path: String = "scripts/battle/"+script+".gd"; hashes[path] = FileAccess.get_sha256("res://"+path)
 	var report := {"passed":failures.is_empty(),"checks":checks,"failures":failures,"native":native,"captures":captures,"source_hashes":hashes,"layout_only":OS.get_cmdline_user_args().has("--layout-only"),"scope":"targeted UI/input with constructed battle states; no complete replays"}
-	var file := FileAccess.open("res://reports/battle_ui_"+suffix+".json",FileAccess.WRITE); file.store_string(JSON.stringify(report,"\t")); file.close()
+	if not preload("res://tests/report_writer.gd").json_file("res://reports/battle_ui_"+suffix+".json",report):quit(1);return
 	print("BATTLE_UI: ",JSON.stringify(report)); quit(0 if failures.is_empty() else 1)

@@ -27,6 +27,7 @@ var selected_unit := 0
 var targeting := ""
 var invalid_point_time := 0.0
 var hovered := ""
+var tower_hover_id := ""
 var pointer := Vector2(-1000, -1000)
 var hits: Array = []
 var frames_cache := {}
@@ -189,14 +190,20 @@ func _draw() -> void:
 	zoom = size.y / 768.0; view_width = size.x / zoom; margin = (view_width - 1024) / 2
 	draw_set_transform(Vector2.ZERO, 0, Vector2(zoom, zoom))
 	hits.clear(); draw_list.clear(); interface.begin()
+	tower_hover_id = hovered_tower()
 	_art(sim.data.get("level", {}).get("background", "stage_1"), Vector2(view_width / 2, 384))
 	for i in range(sim.data.layout.entities_list.size()):
 		var e: Dictionary = sim.data.layout.entities_list[i]
 		if not sim.templates.has(e.template): continue
 		if e.has("tower.holder_id"): continue
+		# Layout entries seed live units. Drawing them here leaves immortal,
+		# motionless copies behind after the actual guards move or die.
+		if sim.templates[e.template].has("soldier") or sim.templates[e.template].has("enemy"): continue
 		if e.get("render.sprites[1].name","") == sim.data.level.background: continue
 		if sim.templates[e.template].has("delayed_play") or sim.templates[e.template].template_name == "decal_fish": continue
+		if sim.templates[e.template].has("particle_system") or sim.templates[e.template].has("tunnel") or sim.templates[e.template].template_name == "decal_tunnel_light": continue
 		_queue_template(e.template, Simulation.vec(e.pos))
+	sim.snow.queue(self)
 	for decal: Dictionary in sim.decals:
 		if not decal.removed: _queue_template(decal.template, decal.pos, decal.state, decal.state_at, decal.flip, false, 1, false, "", decal)
 	for egg: Dictionary in sim.eggs:
@@ -224,6 +231,7 @@ func _draw() -> void:
 		_queue_template(p.template, p.pos, "flying" if sim.templates[p.template].get("behavior", "") == "scripts.bolt.update" else "", p.at, false, false, 1, false, "", p)
 	for aura: Dictionary in sim.upgrades.auras: _queue_template(aura.template, aura.pos, "", aura.at, false, false, 1, false, "", aura)
 	for effect: Dictionary in sim.effects:
+		if effect.has("owner") and sim.tick-int(effect.at)>=int(effect.duration): continue
 		if effect.has("raw_frame"):
 			draw_list.append({"scale":Vector2.ONE,"frame":effect.raw_frame,"pos":effect.pos,"sort_y":effect.pos.y,"anchor":effect.anchor,"z":1000,"order":draw_list.size(),"flip":false,"rotation":effect.rotation,"tint":Color(1,1,1,1.0-float(sim.tick-effect.at)/effect.duration)})
 			continue
@@ -283,7 +291,8 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 	var order := 0
 	for sprite: Dictionary in template.get("render", {}).get("sprites", []):
 		order += 1
-		if sprite.get("hidden", false) and sprite.get("name", "") != preview and not runtime.get("fish", false) and not runtime.get("layers",{}).get(order,{}).get("visible",false): continue
+		var tower_over: bool = template.has("tower") and order == 1 and str(runtime.get("id", "")) == tower_hover_id and tower_hover_id != ""
+		if sprite.get("hidden", false) and sprite.get("name", "") != preview and not runtime.get("fish", false) and not runtime.get("layers",{}).get(order,{}).get("visible",false) and not (tower_over and sprite.get("hover_off_hidden",false)): continue
 		var playback := {"state": state, "elapsed": maxi(0, sim.tick - at)}
 		if runtime.get("prefix", "") != "": playback.prefix = runtime.prefix
 		var layer: Dictionary = runtime.get("layers", {}).get(order, {})
@@ -301,12 +310,14 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 		if runtime.has("playback_loop"): playback.loop = runtime.playback_loop
 		if template.has("reinforcement") and template.get("info", {}).has("portrait_idxs"): playback.prefix = "%s_%d" % [template_name, variant]
 		var frame_name := SpriteAnimation.frame(sprite, animations, playback)
+		if order == 1 and runtime.has("holder") and sim.templates.has(runtime.holder) and not sprite.get("animated",false): frame_name = sim.templates[runtime.holder].render.sprites[0].name
+		if tower_over: frame_name += "_over"
 		var offset := Simulation.vec(sprite.get("offset", {"x": 0, "y": 0}))
 		var alpha := float(sprite.get("alpha", 255)) / 255.0
 		alpha *= float(runtime.get("alpha",1.0))
 		# Multi-attack soldiers use the source corpse lifetime (guards/paladins).
 		# Existing units retain their established presentation.
-		if dead and not (template.has("soldier") and template.melee.attacks.size() > 1): alpha *= clampf(1 - float(sim.tick - at - 24) / 36, 0, 1)
+		if dead and not template.get("unit", {}).get("hide_after_death", false) and not (template.has("soldier") and template.melee.attacks.size() > 1): alpha *= clampf(1 - float(sim.tick - at - 24) / 36, 0, 1)
 		var sprite_scale: Vector2 = runtime.get("sprite_scale", Simulation.vec(sprite.get("scale", {"x": 1, "y": 1})))
 		var tween: Dictionary = template.get("tween", {})
 		var clicked: bool = runtime.has("clicked_at") and sim.tick - int(runtime.clicked_at) <= 6
@@ -323,7 +334,7 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 							if k[0] is String: k[0] = float(runtime.get("duration", 0)) - (0.5 if k[0].ends_with("-0.5") else 0)
 					alpha *= SpriteAnimation.scalar_track(keys, fmod(seconds, float(keys[-1][0])) if property.get("loop", false) and float(keys[-1][0]) > 0 else seconds) / 255.0
 		var color: Array = sprite.get("color", [255, 255, 255])
-		draw_list.append({"scale": sprite_scale, "frame": frame_name, "pos": point + offset, "sort_y": float(sprite.get("sort_y",point.y + float(sprite.get("sort_y_offset", 0)))), "anchor": Simulation.vec(sprite.get("anchor", {"x": 0.5, "y": 0.5})), "z": int(sprite.get("z", 3000)), "order": draw_list.size(), "flip": layer.get("flip", flip), "rotation": float(runtime.get("rotation", sprite.get("r", 0))), "tint": Color(color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, alpha)})
+		draw_list.append({"scale": sprite_scale, "frame": frame_name, "pos": point + offset, "sort_y": float(sprite.get("sort_y",point.y + float(sprite.get("sort_y_offset", 0)))), "anchor": Simulation.vec(sprite.get("anchor", {"x": 0.5, "y": 0.5})), "z": int(sprite.get("z", 3000)), "order": draw_list.size() + int(layer.get("draw_order", order)) - order, "flip": layer.get("flip", runtime.get("flip", sprite.get("flip_x", flip))), "rotation": float(runtime.get("rotation", sprite.get("r", 0))), "tint": Color(color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, alpha)})
 
 func _draw_boss_bar() -> void:
 	for unit: Dictionary in sim.enemies:
@@ -404,9 +415,8 @@ func _gui_input(input: InputEvent) -> void:
 	selected_unit = UnitInfo.pick(sim.soldiers + sim.enemies, sim.templates, world_point)
 	if selected_unit != 0:
 		selected = ""; return
-	for tower: Dictionary in sim.towers:
-		var rect := Rect2(tower.pos + Vector2(-40, -12), Vector2(80, 70 if tower.type != "" else 46))
-		if rect.has_point(world_point) and tower.ready <= sim.tick: selected = tower.id; _sound("GUIQuickMenuOpen"); return
+	var picked := pick_tower(world_point)
+	if picked != "": selected = picked; _sound("GUIQuickMenuOpen"); return
 	selected = ""
 	for decal: Dictionary in sim.decals:
 		if decal.removed or decal.hidden: continue
@@ -415,19 +425,34 @@ func _gui_input(input: InputEvent) -> void:
 		if Rect2(decal.pos + Simulation.vec(area.pos), Simulation.vec(area.size)).has_point(world_point):
 			sim.command("decal_click", {"id": decal.id}); return
 
+func pick_tower(point: Vector2) -> String:
+	for tower: Dictionary in sim.towers:
+		var template: Dictionary = sim.tower_template(tower)
+		var area: Dictionary = template.ui.click_rect
+		if template.ui.get("can_click",true) and tower.ready <= sim.tick and Rect2(tower.pos+Simulation.vec(area.pos),Simulation.vec(area.size)).has_point(point): return str(tower.id)
+	return ""
+
+func hovered_tower() -> String:
+	if sim == null or sim.paused or not sim.notices.is_empty() or sim.result != "" or targeting != "" or pointer.x < -999: return ""
+	var id := selected if selected != "" else pick_tower(Vector2(pointer.x-margin,768-pointer.y))
+	var tower: Dictionary = sim.tower_by_id(id)
+	return id if not tower.is_empty() and sim.tower_template(tower).tower.get("can_hover",false) and tower.ready <= sim.tick else ""
+
 func _refresh_hover() -> void:
 	var previous := hovered
+	var previous_tower := tower_hover_id
+	tower_hover_id = hovered_tower()
 	hovered = ""
 	for hit: Dictionary in hits:
 		if hit.rect.has_point(pointer): hovered = hit.action + str(hit.args)
-	if previous != hovered:
-		if hovered.begins_with("build"): _sound("GUIQuickMenuOver")
-		mouse_default_cursor_shape = CURSOR_POINTING_HAND if hovered != "" else CURSOR_ARROW
+	if previous != hovered or previous_tower != tower_hover_id:
+		if hovered.begins_with("build") or tower_hover_id != "" and previous_tower != tower_hover_id: _sound("GUIQuickMenuOver")
+		mouse_default_cursor_shape = CURSOR_POINTING_HAND if hovered != "" or tower_hover_id != "" else CURSOR_ARROW
 		queue_redraw()
 
 func _notification(what: int) -> void:
 	if what in [NOTIFICATION_WM_MOUSE_EXIT, NOTIFICATION_APPLICATION_FOCUS_OUT]:
-		pointer = Vector2(-1000, -1000); hovered = ""; mouse_default_cursor_shape = CURSOR_ARROW
+		pointer = Vector2(-1000, -1000); hovered = ""; tower_hover_id = ""; mouse_default_cursor_shape = CURSOR_ARROW
 		if feedback != null:
 			if what == NOTIFICATION_WM_MOUSE_EXIT: feedback.inside = false
 			else: feedback.focused = false

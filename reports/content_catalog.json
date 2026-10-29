@@ -1,6 +1,6 @@
 {
   "passed": true,
-  "content_combinations": 18,
+  "content_combinations": 21,
   "definitions": {
     "level01": {
       "gameplay_unchanged": true,
@@ -31,16 +31,16 @@
       "changed_sections": [],
       "source_current": true,
       "controller": "default",
-      "behaviors": 51,
-      "dependency_owners": 93
+      "behaviors": 62,
+      "dependency_owners": 110
     },
     "level05": {
       "gameplay_unchanged": true,
       "changed_sections": [],
       "source_current": true,
       "controller": "default",
-      "behaviors": 68,
-      "dependency_owners": 87
+      "behaviors": 74,
+      "dependency_owners": 98
     },
     "ranger_arena": {
       "gameplay_unchanged": true,
@@ -78,8 +78,8 @@
       "reason": "technology source differs from current Dove catalog"
     }
   ],
-  "publication_resources": 303,
-  "publication_data": 56,
+  "publication_resources": 326,
+  "publication_data": 62,
   "resource_baseline": "battle_ui_baseline.json (source pixel verification in battle_ui_assets.json)",
   "verified_resource_files": 85,
   "unchanged_resource_files": 21,

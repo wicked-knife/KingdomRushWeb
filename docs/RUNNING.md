@@ -27,6 +27,8 @@ Python 依赖见 `tools/requirements.txt`。导出脚本默认使用本机源码
 
 ## 专项检查
 
+第七关的源协程、逻辑、原生与资源专项命令见 [第七关闭环](LEVEL07.md)。发布前须生成 `reports/level07_delivery.json`；导出会检查报告和实现文件哈希，旧报告不能直接用于新包。
+
 只运行与改动相关的检查，范围见 [验证约定](TEST_REDUNDANCY_REVIEW.md)。共用战斗变更的代表命令：
 
 ```powershell
@@ -74,4 +76,6 @@ python tools/package_level01.py
 python tools/web_bootstrap.py serve
 ```
 
-交付时集中导出一次。发布包在 `build/KingdomRush-KR1-Levels01-06-Web.zip`，目录在 `build/web`；使用 HTTP 服务访问，不能直接打开 HTML 文件。导出默认 release，开发者入口关闭；需要调试包时显式加 `--debug`。隔离 PCK 检查验证菜单、地图、英雄房间和全部 18 个组合的资源，不代替浏览器验收。浏览器由用户手动检查输入、声音解锁、后台标签页和持久化。
+交付时集中导出一次。发布包在 `build/KingdomRush-KR1-Levels01-07-Web.zip`，目录在 `build/web`；使用 HTTP 服务访问，不能直接打开 HTML 文件。导出默认 release，开发者入口关闭；需要调试包时显式加 `--debug`。隔离 PCK 检查验证菜单、地图、英雄房间和全部 21 个组合的资源，不代替浏览器验收。浏览器由用户手动检查输入、声音解锁、后台标签页和持久化。
+
+第七关修复包还要求当前八项反馈门禁 `python tools/verify_feedback_delivery.py` 通过；该检查自动纳入最终导出。专项重现、报告和历史战斗差异见 [FEEDBACK_REPAIRS.md](FEEDBACK_REPAIRS.md)。继续在 Godot 验证，最终集中导出一次；浏览器手动验收。

@@ -67,6 +67,11 @@ static func melee(sim, soldier: Dictionary, target: Dictionary, template: Dictio
 		var holy: Dictionary = template.melee.attacks[2] if template.melee.attacks.size() > 2 else {}
 		var level = int(soldier.get("powers", {}).get("holystrike", 0))
 		if level > 0 and Targets.matches(sim, target, holy) and sim.rng.randf() < float(holy.chance) + float(holy.chance_inc) * level: index = 2
+		elif template.get("powers",{}).is_empty():
+			# Preplaced guards inherit a second animation, but their source order
+			# contains only attack 1. Do not give them the Paladin power cursor.
+			for candidate in template.melee.order:
+				if sim.rng.randf() < float(template.melee.attacks[int(candidate)-1].chance): index=int(candidate)-1; break
 		elif sim.rng.randf() < float(template.melee.attacks[1].chance): index = 1
 		else:
 			# soldier_pick_melee_attack also rolls the guaranteed fallback.

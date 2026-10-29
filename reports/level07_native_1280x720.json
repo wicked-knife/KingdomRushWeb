@@ -1,0 +1,131 @@
+{
+	"captures": [
+		{
+			"path": "res://reports/challenges_level7_mode1_1280x720.png",
+			"state": "level7_mode1"
+		},
+		{
+			"gold": 700,
+			"path": "res://reports/towers_seventh_snow_opening_1280x720.png",
+			"state": "seventh_snow_opening",
+			"tick": 0
+		},
+		{
+			"gold": 9660,
+			"path": "res://reports/towers_seventh_branches_1280x720.png",
+			"state": "seventh_branches",
+			"tick": 30
+		},
+		{
+			"gold": 9660,
+			"path": "res://reports/towers_seventh_musketeer_tooltip_1280x720.png",
+			"state": "seventh_musketeer_tooltip",
+			"tick": 30
+		},
+		{
+			"gold": 9130,
+			"path": "res://reports/towers_seventh_power_sniper_1280x720.png",
+			"state": "seventh_power_sniper",
+			"tick": 30
+		},
+		{
+			"gold": 8855,
+			"path": "res://reports/towers_seventh_power_shrapnel_1280x720.png",
+			"state": "seventh_power_shrapnel",
+			"tick": 30
+		},
+		{
+			"gold": 8855,
+			"path": "res://reports/towers_seventh_sniper_aim_1280x720.png",
+			"state": "seventh_sniper_aim",
+			"tick": 510
+		},
+		{
+			"gold": 8855,
+			"path": "res://reports/towers_seventh_sniper_shot_1280x720.png",
+			"state": "seventh_sniper_shot",
+			"tick": 522
+		},
+		{
+			"gold": 8855,
+			"path": "res://reports/towers_seventh_sniper_trail_1280x720.png",
+			"state": "seventh_sniper_trail",
+			"tick": 525
+		},
+		{
+			"gold": 8855,
+			"path": "res://reports/towers_seventh_shrapnel_fire_1280x720.png",
+			"state": "seventh_shrapnel_fire",
+			"tick": 616
+		},
+		{
+			"gold": 8855,
+			"path": "res://reports/towers_seventh_shrapnel_finished_1280x720.png",
+			"state": "seventh_shrapnel_finished",
+			"tick": 646
+		},
+		{
+			"gold": 8855,
+			"path": "res://reports/towers_seventh_tunnel_inside_1280x720.png",
+			"state": "seventh_tunnel_inside",
+			"tick": 646
+		},
+		{
+			"gold": 8855,
+			"path": "res://reports/towers_seventh_tunnel_exit_1280x720.png",
+			"state": "seventh_tunnel_exit",
+			"tick": 909
+		},
+		{
+			"gold": 8890,
+			"path": "res://reports/towers_seventh_whitewolf_death_1280x720.png",
+			"state": "seventh_whitewolf_death",
+			"tick": 921
+		},
+		{
+			"gold": 8890,
+			"path": "res://reports/towers_seventh_whitewolf_hidden_1280x720.png",
+			"state": "seventh_whitewolf_hidden",
+			"tick": 925
+		},
+		{
+			"gold": 700,
+			"path": "res://reports/towers_seventh_victory_1280x720.png",
+			"state": "seventh_victory",
+			"tick": 0
+		},
+		{
+			"path": "res://reports/challenges_level7_mode2_1280x720.png",
+			"state": "level7_mode2"
+		},
+		{
+			"gold": 1000,
+			"path": "res://reports/towers_seventh_mode2_1280x720.png",
+			"state": "seventh_mode2",
+			"tick": 3
+		},
+		{
+			"path": "res://reports/challenges_level7_mode3_1280x720.png",
+			"state": "level7_mode3"
+		},
+		{
+			"gold": 1200,
+			"path": "res://reports/towers_seventh_mode3_1280x720.png",
+			"state": "seventh_mode3",
+			"tick": 3
+		}
+	],
+	"checks": 106,
+	"failures": [],
+	"layout_only": false,
+	"passed": true,
+	"scope": "native Godot input, source animation keyframes and endings, cave light/reinsertion, snow, goat, stage music and constructed-result settlement; no victory replay",
+	"source_hashes": {
+		"data/level07/definition.json": "bb5573bb531afc86398887db0f685d4aaed78d416697b99a6c1eeffb77ac85b2",
+		"scripts/battle/battle_ui.gd": "900c3a23548286aee0d8708106765eb509850aa2ec483f0c7690774f4474e9d2",
+		"scripts/battle/battle_view.gd": "d398bcdae9cb7f4524c58aad2c21d890c30e7b926c55bb035c730938ec2c568f",
+		"scripts/battle/dove_musketeer.gd": "554c8b503948455b154da32084ba4824d6b0c8947bd61c83e95e19813c612435",
+		"scripts/battle/dove_snow.gd": "12420bfd037c70ca34255fc8686493858dc63e932893d8949cc81f7b0ed7c467",
+		"tests/level07_visual.gd": "c99cf0796b0d96f0a6572aea49739209eca821123548e342f4248dd88239029c"
+	}
+}

@@ -64,6 +64,7 @@ static func commands(sim, driver: Callable = Callable()) -> void:
 		for entry: Array in plan:
 			var tower: Dictionary = sim.tower_by_id(entry[0])
 			var target: String = sim.upgrade_target(tower)
+			if target == "" and "tower_ranger" in sim.upgrade_options(tower): target = "tower_ranger" # Explicit replay strategy.
 			if target != "":
 				if not send(sim, "upgrade", {"id": tower.id, "upgrade_to": target}, driver): break
 	if sim.cooldowns.fire == 0:

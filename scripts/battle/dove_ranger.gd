@@ -16,7 +16,7 @@ static func initialize(sim: RefCounted, tower: Dictionary) -> void:
 static func candidates(sim: RefCounted, center: Vector2, radius: float, rule: Dictionary) -> Array:
 	var found: Array = []
 	for e: Dictionary in sim.enemies:
-		if e.hp > 0 and sim.distance(center, e.pos) <= radius and sim.modifiers.flags_match(sim, e, rule): found.append(e)
+		if sim.Targets.matches(sim, e, rule) and sim.distance(center, e.pos) <= radius: found.append(e)
 	found.sort_custom(func(a,b):
 		var af := (int(a.get("vis", sim.templates[a.template].vis).get("flags",0)) & 128) != 0
 		var bf := (int(b.get("vis", sim.templates[b.template].vis).get("flags",0)) & 128) != 0

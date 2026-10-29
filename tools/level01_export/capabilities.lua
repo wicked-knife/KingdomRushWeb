@@ -1,5 +1,17 @@
 -- Feature adapters evaluate frozen source templates without running gameplay.
 local adapters = {}
+  adapters.musketeer = function(ctx)
+    local text=ctx.read("kr1/archer_towers.lua")
+    local header=text:sub(1,assert(text:find('tt = RT(',1,true))-1)
+    local a=assert(text:find('tt = RT("tower_musketeer"',1,true))
+    local b=assert(text:find('tt = RT("tower_archer_dwarf"',a,true))
+    ctx.chunk("kr1/archer_towers.lua",header..text:sub(a,b-1))
+    text=ctx.read("kr1/heroes.lua")
+    a=assert(text:find('tt = RT("mod_van_helsing_crosshair"',1,true))
+    b=assert(text:find('\ntt = ',a+1,true))
+    ctx.chunk("kr1/heroes.lua",'local tt;local scripts=require("game_scripts");'..text:sub(a,b-1))
+  end
+  adapters.snow = function(ctx) ctx.template("aura_troll_regen");ctx.template("ps_stage_snow") end
   adapters.royal_guard = function(ctx) ctx.template("soldier_s6_imperial_guard") end
   adapters.enemy_ranged = function(ctx) ctx.template("arrow_shadow_archer") end
   adapters.paladin = function(ctx)
