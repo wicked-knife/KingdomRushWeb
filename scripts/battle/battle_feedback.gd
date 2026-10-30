@@ -41,7 +41,7 @@ func pointer_frame() -> String:
 func draw_pointer() -> void:
 	if not active(): return
 	view._art(view.target_pointer_frame(), view.pointer)
-	if view.invalid_point_time > 0 or view.targeting == "rally": return
+	if view.invalid_point_time > 0 or view.targeting in ["rally","hero"]: return
 	view._art("pointer_user_power_0001" if view.targeting == "fire" else "pointer_user_power_0002", view.pointer, Vector2(0.5, 0))
 
 func rallied(point: Vector2) -> void:

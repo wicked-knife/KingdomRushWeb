@@ -182,7 +182,7 @@ func _draw() -> void:
 		_button("heroroom_selectBtn_0001" if selected else "heroroom_selectBtn_0003", Vector2(612, 400), strings.MAP_HERO_ROOM_DESELECT if selected else strings.MAP_HERO_ROOM_SELECT, "deselect" if selected else "select")
 	_button("heroroom_btnDone_large_0001", Vector2(665.5, 662.5), strings.BUTTON_DONE, "close")
 	_button("heroroom_btnDone_large_0001", Vector2(151.5, 662.5), "英雄资料" if details_mode else "技能详情", "toggle")
-	paint.label("当前试玩版英雄尚不参战", Rect2(310, 695, 305, 25), 13, Color("ccb58b"), "center", "middle", 1, 0, "hero_preview_notice")
+	paint.label("马利克可参战，其他英雄可预览", Rect2(310, 695, 305, 25), 13, Color("ccb58b"), "center", "middle", 1, 0, "hero_preview_notice")
 	paint.image("levelSelect_closeBtn_0002" if hovered == "close_icon{}" else "levelSelect_closeBtn_0001", Vector2(869, 23))
 	paint.hit(Rect2(869, 23, 40, 38), "close_icon")
 	if progress.notice != "": paint.label(progress.notice, Rect2(90, 728, 740, 24), 12, GOLD, "center", "middle", 1)

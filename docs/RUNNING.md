@@ -19,6 +19,7 @@ python tools/prepare_level01.py --all
 python tools/prepare_level01.py --ranger-arena
 python tools/prepare_map.py
 python tools/prepare_heroes.py
+python tools/prepare_hero_combat.py
 python tools/prepare_saves.py
 python tools/prepare_upgrades.py --reference
 ```
@@ -59,6 +60,8 @@ python tools/verify_upgrades_assets.py
 ```
 
 `prepare_upgrades.py --reference` 会重新生成实际源补丁和行为样本；不需每次开发都执行。规则和保留的源行为见 [默认科技](DEFAULT_UPGRADES.md)。
+
+马利克的源协程、独立战斗资源包、逻辑与原生专项命令见 [马利克参战](HERO_MALIK.md)。选中后在源版允许英雄的关卡出场；点击头像或本人，再点道路可指挥移动。本局经验和等级在重开／换关后归零，英雄大厅的选择仍保留在所属槽位。
 
 ## 玩家操作与存档
 

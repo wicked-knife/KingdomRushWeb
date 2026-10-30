@@ -2,6 +2,22 @@
 
 基准：Dove 2.1.0.3，提交 `1a863df00b08f6bf1018ae0b0e7e4e106b939082`。覆盖第 1–7 关、21 个关卡／模式组合，普通难度 2。保持存档结构、解锁、两阶段结算及所有关卡／单位属性。
 
+## 2026-10-30 眩晕与超额血量专项修复
+
+- 源 `all/script_utils.lua:4421` 的 `SU.y_enemy_stun` 切换到循环 `idle`。当前实现原本只清空位移方向并返回，留下之前的行走动画。现由敌人更新流程统一切到待机，眩晕解除后恢复行走；死亡优先级保留。
+- 源 `kr1/barrack_towers.lua:112` 的 `mod_healing_paladin` 允许治疗溢出至基础血量的 5 倍；原有治疗数值已生效。源 `all/systems/render.lua:493–515` 仅在恰好满血时隐藏血条，溢出时使用正常宽度和 `HEALTH_BAR_COLORS.fg2` 青色（`all/constants.lua:369`）。当前实现原本隐藏所有大于等于上限的血条，现补齐溢出显示并限制宽度。
+- 源 `all/script_utils.lua:2965` 的 `SU.soldier_regen` 只在低于上限时回血，保留已有超额血量。当前脱战回血原本每次都执行上限截断，会抹去溢出，现补齐条件；普通回血和受伤抵扣继续生效。
+- 源 `all-desktop/game_gui.lua:3148–3149` 的选中信息条保留实际血量／基础上限，进度条最多满格；当前信息条已有该行为，保持不变。
+
+专项逻辑 `tests/verify_stun_overheal.gd` 覆盖 6 个独立场景、36 项断言：四类移动敌人的眩晕／恢复、眩晕中死亡、圣骑士真实施法到脱战回血和受伤。原生 `tests/stun_overheal_visual.gd` 覆盖两种敌人和一个治疗场景，检查实际渲染队列、青色／绿色血条像素、溢出宽度、满血隐藏与选中数值。截图与报告位于 `reports/stun_overheal_*` 和 `reports/towers_*`。马利克 161 项和科技 318 项相邻逻辑回归通过。
+
+```powershell
+& 'D:/godot/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script tests/verify_stun_overheal.gd
+& 'D:/godot/Godot_v4.7.2-stable_win64_console.exe' --path . --resolution 1280x720 --script tests/stun_overheal_visual.gd
+```
+
+本轮只修复上述差异并完成专项检查，没有重新导出 Web；已有 Web 构建不包含本轮修复，也不包含此前完成的马利克参战。
+
 ## 界面与说明
 
 - 单塔及双塔通知一起导出名称、说明和副标题。缺文案、内部键名、未展开表达式会阻止导出与运行时加载。

@@ -287,6 +287,23 @@ func source_behavior_cases(reference: Dictionary) -> void:
 	var precision_difference := first_difference(reference.precision,precision_samples,"precision")
 	check(precision_difference=="","actual source precision helper: "+precision_difference)
 	comparisons.source_precision={"expected":reference.precision,"actual":precision_samples,"first_difference":precision_difference}
+	var elf_samples: Array = []
+	for row: Dictionary in reference.elf_missile:
+		var elf_sim = battle({"archers":int(row.archers)},5)
+		var elf_target: Dictionary = elf_sim._spawn_enemy("enemy_fat_orc",0)
+		elf_target.pos=Vector2(440,540); elf_target.hp=10000; elf_target.max_hp=10000
+		elf_sim.rng.seed=13 # Previously reproduced the erroneous impact critical.
+		elf_sim._projectile("arrow_elf_cripple",elf_target.id,Vector2(350,540),elf_target.pos+Sim.vec(elf_sim.templates[elf_target.template].unit.hit_offset),8.0/30.0)
+		var missile: Dictionary=elf_sim.projectiles[-1]
+		missile.elf_level=int(row.level); missile.bleed_level=0; missile.source="elf"
+		for frame in range(180):
+			elf_sim.tick+=1; elf_sim._bullet_step(missile)
+			if missile.done: break
+		check(missile.done,"elf missile reaches its target")
+		elf_samples.append({"archers":row.archers,"level":row.level,"damage":10000-elf_target.hp,"critical":missile.get("critical",false)})
+	var elf_difference := first_difference(reference.elf_missile,elf_samples,"elf_missile")
+	check(elf_difference=="","actual source elf missile excludes precision: "+elf_difference)
+	comparisons.source_elf_missile={"expected":reference.elf_missile,"actual":elf_samples,"first_difference":elf_difference};behavior_scenarios+=1
 	var enemy: Dictionary = sim._spawn_enemy("enemy_dark_knight",0)
 	enemy.hp=10000; enemy.max_hp=10000; enemy.armor=0.8; enemy.received_damage_factor=1.2
 	var hp: float = enemy.hp

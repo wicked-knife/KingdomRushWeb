@@ -44,6 +44,11 @@ def resource_paths():
     heroes = json.loads((ROOT / "data/heroes/manifest.json").read_text(encoding="utf-8"))
     resources += heroes["resources"]
     data += heroes["data"] + ["res://data/heroes/manifest.json"]
+    for entry in content.get("combat_heroes", {}).values():
+        base = "res://data/" + entry["folder"] + "/"
+        combat = json.loads((ROOT / base.removeprefix("res://") / "manifest.json").read_text(encoding="utf-8"))
+        resources += combat["resources"]
+        data += combat["data"] + [base + "manifest.json"]
     resources = list(dict.fromkeys(resources)); data = list(dict.fromkeys(data))
     for path in resources + data:
         local = (ROOT / path.removeprefix("res://")).resolve()
@@ -115,6 +120,16 @@ def main():
         (ROOT / "export_presets.cfg").write_text(preset_text(), encoding="utf-8")
     if args.command == "export":
         engine = godot_path(args.godot)
+        hero_reports = {}
+        if read_catalog().get("combat_heroes"):
+            for name in ("hero_combat_logic", "hero_malik_native_1280x720", "hero_malik_assets"):
+                report = json.loads((ROOT / f"reports/{name}.json").read_text(encoding="utf-8"))
+                if not report.get("passed") or not report.get("source_hashes"):
+                    raise RuntimeError("Hero acceptance failed: " + name)
+                for path, expected in report["source_hashes"].items():
+                    if hashlib.sha256((ROOT / path).read_bytes()).hexdigest() != expected:
+                        raise RuntimeError("Hero acceptance is stale: " + path)
+                hero_reports[name] = {key: report[key] for key in ("passed", "checks", "behavior_scenarios", "frames", "animations", "native_input", "native_audio") if key in report}
         from verify_feedback_delivery import verify as verify_feedback
         feedback=verify_feedback()
         seventh = {}
@@ -165,6 +180,7 @@ def main():
             "developer_menu": args.debug,
             "includes_kr1_map": True,
             "includes_hero_room": True,
+            "hero_combat_acceptance": hero_reports,
             "playable_levels": level_ids(),
             "playable_modes": sorted({row["mode"] for row in combinations()}),
             "playable_combinations": combinations(),

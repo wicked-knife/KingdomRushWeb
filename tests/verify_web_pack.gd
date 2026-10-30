@@ -56,6 +56,10 @@ func _init() -> void:
 	expected.append_array(heroes.resources)
 	expected.append_array(heroes.data)
 	expected.append("res://data/heroes/manifest.json")
+	for entry: Dictionary in content.get("combat_heroes",{}).values():
+		var base: String="res://data/"+entry.folder+"/"
+		var combat: Dictionary=JSON.parse_string(FileAccess.get_file_as_string(base+"manifest.json"))
+		expected.append_array(combat.resources);expected.append_array(combat.data);expected.append(base+"manifest.json")
 	var allowed_data := expected.duplicate()
 	allowed_data.append("res://data/menu_manifest.json")
 	var failures: Array[String] = []
@@ -93,6 +97,16 @@ func _init() -> void:
 		if not ResourceLoader.exists(atlas.texture_directory + frame.sheet):
 			failures.append("Missing first-level atlas " + frame.sheet)
 	var sim_script = load("res://scripts/battle/level01_sim.gd")
+	var hero_levels = load("res://scripts/services/campaign_levels.gd")
+	var hero_stage: Dictionary=setup.create(hero_levels.load_definition(3),{"heroes":{"selected":["hero_malik"]}})
+	if hero_stage.is_empty():failures.append("Pack hero setup failed")
+	else:
+		var hero_sim=sim_script.new(hero_stage)
+		if hero_sim.soldiers.filter(func(s):return s.has("hero") and s.hero.level==1 and s.hp==450).size()!=1:failures.append("Pack Malik entry failed")
+		var hero_art=load("res://scripts/dove_asset_catalog.gd").new("res://data/hero_malik_combat/catalog.json")
+		for image: String in ["hero_reinforce_0001","hero_reinforce_0108","hero_reinforce_rocks_0017","hero_portraits_0003"]:
+			if hero_art.get_frame("hero_malik_combat",image).is_empty():failures.append("Pack hero image missing "+image)
+		if hero_art.get_sound("HeroReinforcementTauntIntro").is_empty():failures.append("Pack hero voice missing")
 	for script: String in ["res://scripts/map/dove_map_flag.gd", "res://scripts/battle/battle_wave_flags.gd", "res://scripts/battle/battle_feedback.gd", "res://scripts/battle/battle_victory.gd"]:
 		if not ResourceLoader.exists(script) or load(script) == null: failures.append("Interaction script missing: " + script)
 	for id: int in content.levels.keys().map(func(key): return int(key)):

@@ -36,7 +36,7 @@ func _release(sim: RefCounted, m: Dictionary) -> void:
 	if m.get("special", "") == "teleport":
 		var target: Dictionary = sim.unit_by_id(m.target)
 		if not target.is_empty(): target.hidden = false; target.stun_count = maxi(0, int(target.get("stun_count", 0)) - 1)
-	if m.template != "mod_thorn": return
+	if m.template != "mod_thorn" and not m.get("stun",false): return
 	var target: Dictionary = sim.unit_by_id(m.target)
 	if not target.is_empty(): target.stun_count = maxi(0, int(target.get("stun_count", 0)) - 1)
 
@@ -102,6 +102,10 @@ func apply(sim: RefCounted, template: String, target: Dictionary, level: int, so
 		sim._state(target, "idle", true)
 	elif t.has("render"):
 		m.state = t.render.sprites[0].get("size_names",["","",""])[size_index]
+	if sim.behaviors.role(template)=="stun_modifier":
+		m.stun=true;target.stun_count=int(target.get("stun_count",0))+1
+		m.prefix=str(t.render.sprites[0].prefix)+"_"+str(t.render.sprites[0].size_names[size_index]);m.state="loop"
+		target.pending={};target.last_dir=Vector2.ZERO
 	if template == "mod_paladin_silence":
 		m.silence = true
 		if int(target.get("silence_count", 0)) == 0: target.silence_at = sim.tick

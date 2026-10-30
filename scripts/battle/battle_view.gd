@@ -17,6 +17,7 @@ const VICTORY_STAR_INTERVAL := 0.7
 const INVALID_POINT_DURATION := 14.0 / 30.0
 var sim: RefCounted
 var catalog: RefCounted
+var combat_catalogs: Array = []
 var fonts: RefCounted
 var font: Font
 var interface: RefCounted
@@ -59,6 +60,8 @@ func initialize(boot: Node, sound: Node, definition: Dictionary = {}, simulation
 	sim = simulation_override if simulation_override != null else Simulation.new(definition, 1, OS.is_debug_build())
 	var base: String = sim.data.get("level", {}).get("root", "res://data/level01/")
 	catalog = Catalog.new(base + "catalog.json")
+	for extra: String in sim.data.get("combat_bundles",[]):
+		combat_catalogs.append({"catalog":Catalog.new(extra+"catalog.json"),"group":extra.trim_suffix("/").get_file()})
 	animations = sim.animations
 	sim.event.connect(_on_event)
 	interface = Interface.new(self)
@@ -68,6 +71,8 @@ func initialize(boot: Node, sound: Node, definition: Dictionary = {}, simulation
 		var player := AudioStreamPlayer.new()
 		player.playback_type = AudioServer.PLAYBACK_TYPE_STREAM
 		player.bus = "SFX"; add_child(player); fx_players.append(player)
+	for hero: Dictionary in sim.soldiers:
+		if hero.has("hero"):sim.Heroes.voice(sim,sim.templates[hero.template],"insert")
 	_music(sim.data.get("level", {}).get("prep_music", "Level01PrepMusic"))
 	queue_redraw()
 
@@ -78,7 +83,9 @@ func _process(delta: float) -> void:
 	interface.wave_flags.advance(delta)
 	interface.advance_rewards(delta)
 	_advance_victory_audio(delta)
-	if selected_unit != 0 and unit_info().is_empty(): selected_unit = 0
+	if selected_unit != 0 and unit_info().is_empty():
+		selected_unit=0
+		if targeting=="hero":targeting="";feedback.sync_cursor()
 	message_time = maxf(0, message_time - delta)
 	advance_target_feedback(delta)
 	queue_redraw()
@@ -138,12 +145,16 @@ func _music(id: String) -> void:
 func _sound(id: String, limit_repeats: bool = true) -> void:
 	if not is_inside_tree(): return
 	if DisplayServer.get_name() == "headless": return
-	if not catalog.get_static("sounds").has(id): return
+	var sound_catalog: RefCounted = catalog
+	if not sound_catalog.get_static("sounds").has(id):
+		for extra: Dictionary in combat_catalogs:
+			if extra.catalog.get_static("sounds").has(id):sound_catalog=extra.catalog;break
+		if not sound_catalog.get_static("sounds").has(id):return
 	var now := Time.get_ticks_msec()
 	if limit_repeats and now - int(sound_last.get(id, -1000)) < 90: return
 	sound_last[id] = now
 	if not sound_cache.has(id):
-		var definition: Dictionary = catalog.get_sound(id)
+		var definition: Dictionary = sound_catalog.get_sound(id)
 		sound_cache[id] = {"streams": [], "gain": definition.get("gain", 1.0)}
 		for path: String in definition.paths: sound_cache[id].streams.append(load(path))
 	var sound: Dictionary = sound_cache[id]
@@ -161,10 +172,18 @@ func _exit_tree() -> void:
 		audio.stop_music()
 	sound_cache.clear(); frames_cache.clear()
 	if catalog != null: catalog.clear_cache()
+	for extra: Dictionary in combat_catalogs:extra.catalog.clear_cache()
+	combat_catalogs.clear()
 	if sim != null and sim.event.is_connected(_on_event): sim.event.disconnect(_on_event)
 
 func _frame(name_value: String) -> Dictionary:
-	if not frames_cache.has(name_value): frames_cache[name_value] = catalog.get_frame(sim.data.get("level", {}).get("group", "level01"), name_value)
+	if not frames_cache.has(name_value):
+		var group: String=sim.data.get("level",{}).get("group","level01")
+		if not catalog.load_group(group).get("lookup",{}).has(name_value):
+			for extra: Dictionary in combat_catalogs:
+				if extra.catalog.load_group(extra.group).get("lookup",{}).has(name_value):
+					frames_cache[name_value]=extra.catalog.get_frame(extra.group,name_value);return frames_cache[name_value]
+		frames_cache[name_value]=catalog.get_frame(group,name_value)
 	return frames_cache[name_value]
 
 func _art(frame_name: String, at: Vector2, anchor: Vector2 = Vector2(0.5, 0.5), factor: float = 1.0, tint: Color = Color.WHITE, flip: bool = false, rotation_value: float = 0.0, sprite_scale: Vector2 = Vector2.ONE) -> void:
@@ -253,11 +272,13 @@ func _draw() -> void:
 		return a.order < b.order)
 	for item: Dictionary in draw_list: _art(item.frame, world(item.pos), item.anchor, 1.0, item.tint, item.flip, -item.rotation, item.scale)
 	for unit: Dictionary in sim.enemies + sim.soldiers:
-		if unit.hp <= 0 or unit.hp >= unit.max_hp or unit.get("hidden", false) or unit.has("boss"): continue
+		if unit.hp <= 0 or unit.hp == unit.max_hp or unit.get("hidden", false) or unit.get("health_bar_hidden",false) or unit.has("boss"): continue
 		var p := world(unit.pos + Simulation.vec(sim.templates[unit.template].health_bar.offset))
-		var width := 36.0 if sim.templates[unit.template].health_bar.type == "medium" else 24.0
+		var width := 36.0 if sim.templates[unit.template].health_bar.type == "medium" or unit.has("hero") and sim.templates[unit.template].health_bar.type=="med" else 24.0
 		draw_rect(Rect2(p + Vector2(-width / 2 - 1, -2), Vector2(width + 2, 4)), Color("362519"))
-		draw_rect(Rect2(p + Vector2(-width / 2, -1), Vector2(width * unit.hp / unit.max_hp, 2)), Color("67ce26"))
+		# Dove uses a full-width cyan bar (fg2) for HP above the normal maximum.
+		var color := Color.CYAN if unit.hp > unit.max_hp else Color("67ce26")
+		draw_rect(Rect2(p + Vector2(-width / 2, -1), Vector2(width * clampf(unit.hp / unit.max_hp, 0, 1), 2)), color)
 	_draw_selection()
 	feedback.draw_rally_feedback()
 	interface.wave_flags.draw_path()
@@ -308,6 +329,7 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 			if state in ["attack", "attack2", "holystrike", "healing"] and int(playback.elapsed) >= SpriteAnimation.duration(animations, SpriteAnimation.key(sprite, state)):
 				playback.state = "idle"; playback.loop = true
 		if runtime.has("playback_loop"): playback.loop = runtime.playback_loop
+		if sprite.has("hide_after_runs") and int(playback.elapsed)>=SpriteAnimation.duration(animations,SpriteAnimation.key(sprite,playback.state))*int(sprite.hide_after_runs):continue
 		if template.has("reinforcement") and template.get("info", {}).has("portrait_idxs"): playback.prefix = "%s_%d" % [template_name, variant]
 		var frame_name := SpriteAnimation.frame(sprite, animations, playback)
 		if order == 1 and runtime.has("holder") and sim.templates.has(runtime.holder) and not sprite.get("animated",false): frame_name = sim.templates[runtime.holder].render.sprites[0].name
@@ -405,15 +427,19 @@ func _gui_input(input: InputEvent) -> void:
 	if not sim.notices.is_empty() or sim.paused or sim.result != "": return
 	var world_point := Vector2(point.x - margin, 768 - point.y)
 	if targeting != "":
-		var success: bool = sim.command("rally", {"id": selected, "pos": world_point}) if targeting == "rally" else sim.command("cast", {"power": targeting, "pos": world_point})
+		var success: bool
+		if targeting=="hero":success=sim.command("move_hero",{"id":selected_unit,"pos":world_point})
+		else:success=sim.command("rally", {"id": selected, "pos": world_point}) if targeting == "rally" else sim.command("cast", {"power": targeting, "pos": world_point})
 		if success:
 			if targeting == "rally": feedback.rallied(sim.tower_by_id(selected).rally)
+			if targeting == "hero":feedback.rallied(world_point);selected_unit=0
 			targeting = ""; selected = ""; invalid_point_time = 0
 		else: invalid_point_time = INVALID_POINT_DURATION
 		feedback.sync_cursor()
 		return
 	selected_unit = UnitInfo.pick(sim.soldiers + sim.enemies, sim.templates, world_point)
 	if selected_unit != 0:
+		if sim.unit_by_id(selected_unit).has("hero"):targeting="hero";feedback.sync_cursor()
 		selected = ""; return
 	var picked := pick_tower(world_point)
 	if picked != "": selected = picked; _sound("GUIQuickMenuOpen"); return
@@ -491,6 +517,10 @@ func _action(action: String, args: Dictionary = {}) -> void:
 		queue_redraw(); return
 	if developer.opened: return
 	match action:
+		"hero_select":
+			var hero: Dictionary=sim.unit_by_id(int(args.id))
+			if hero.is_empty() or hero.hp<=0 or hero.hero_phase=="respawn":return
+			selected_unit=int(hero.id);selected="";targeting="hero";feedback.sync_cursor();return
 		"skip_tutorial":
 			while not sim.notices.is_empty() and str(sim.notices[0]).begins_with("TUTORIAL_"): sim.command("confirm")
 		"locked", "unit_info": return

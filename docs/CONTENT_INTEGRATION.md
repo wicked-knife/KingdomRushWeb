@@ -15,6 +15,8 @@
 | `scripts/services/campaign_levels.gd` | 验证当前基准并加载独立模式；目录查询缓存，运行实例深拷贝 |
 | `scripts/services/battle_setup.gd` | 地图／战斗边界：深拷贝通知、存档禁塔和购买科技；不改变关卡加载接口 |
 | `scripts/battle/dove_upgrades.gd` | 默认方案的显式 ID 适配、模板补丁、科技上限和运行时行为 |
+| `scripts/services/hero_combat.gd` | 按本槽选将和源模式限制加载独立英雄包，验证依赖，不改写存档 |
+| `scripts/battle/dove_heroes.gd` | 马利克的源战斗、经验、技能和生命周期；共用移动调用独立网格寻路 |
 | `tools/upgrades_contract.py` | 逐科技追踪可达模板、动画、帧与声音；缺项阻止导出 |
 | `scripts/battle/dove_behaviors.gd` | 显式源 ID 到 Godot 模块分派；只接受登记的等价名称 |
 | `tools/web_bootstrap.py` | 同一目录生成发布文件清单与组合回执 |

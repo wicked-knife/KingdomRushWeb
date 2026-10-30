@@ -74,7 +74,7 @@ func role(template: String) -> String:
 	return catalog.behaviors.get(canonical(bindings.get(template, ""), catalog), "")
 
 static func supported(value: String) -> bool:
-	return value in ROLES or value in ["musketeer","shotgun","tunnel","unit_regen"]
+	return value in ROLES or value in ["musketeer","shotgun","tunnel","unit_regen","hero_malik","fissure_aura","stun_modifier"]
 
 func projectile_role(template: Dictionary) -> String:
 	return catalog.behaviors.get(canonical(template.get("behavior", ""), catalog), "")

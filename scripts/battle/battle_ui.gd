@@ -311,6 +311,7 @@ func hud() -> void:
 	paint.button("options_button_bg_0001", Vector2.ZERO, "%d×" % sim.speed, "speed", {}, true, "options", "numbers_bold")
 	paint.pop()
 	paint.image("bg_bottom_bar", Vector2(0, 769), Vector2(0, 1))
+	_hero_portraits()
 	paint.push(Vector2(105, 733))
 	paint.image("base_powers_bg", Vector2(20.5, 36), Vector2(0, 1))
 	for i in range(2):
@@ -345,6 +346,31 @@ func hud() -> void:
 	if sim.notices.is_empty() and not sim.paused and sim.result == "": _balloons()
 	wave_flags.draw_tooltip()
 	_draw_wave_rewards()
+
+func _hero_portraits() -> void:
+	var index := 0
+	for hero: Dictionary in view.sim.soldiers:
+		if not hero.has("hero"):continue
+		var enabled: bool=hero.hp>0 and hero.hero_phase!="respawn"
+		var tint := Color.WHITE if enabled else Color(0.7843,0.7843,0.7843)
+		paint.push(Vector2(15+index*84,667))
+		paint.image(view.sim.templates[hero.template].info.hero_portrait,Vector2.ZERO,Vector2.ZERO,tint)
+		paint.image("hero_portraits_0000",Vector2.ZERO,Vector2.ZERO,tint)
+		paint.image("heroPortrait_0001",Vector2.ZERO,Vector2.ZERO,tint)
+		paint.label(str(hero.hero.level),Rect2(66,65,16,16),14,Color.WHITE,"center","middle",1,1,"hero_level","numbers_bold")
+		paint.image("hero_portrait_bars_0001",Vector2(23,83),Vector2.ZERO,Color.WHITE,Vector2(clampf(float(hero.hp)/float(hero.max_hp),0,1),1))
+		var level: int=int(hero.hero.level)
+		var thresholds: Array=view.sim.data.hero_rules.hero_xp_thresholds
+		var base: float=float(thresholds[level-2]) if level>1 else 0.0
+		var fraction: float=1.0 if level>=10 else clampf((float(hero.hero.xp)-base)/(float(thresholds[level-1])-base),0,1)
+		paint.image("hero_portrait_bars_0002",Vector2(23,89),Vector2.ZERO,Color.WHITE,Vector2(fraction,1))
+		if not enabled:
+			var remaining: float=1-clampf(float(view.sim.tick-int(hero.get("hero_death_at",hero.dead_at)))/(float(view.sim.templates[hero.template].health.dead_lifetime)*30),0,1)
+			paint._apply();view.draw_rect(Rect2(19,78-63*remaining,63,63*remaining),Color(0,0,0,0.59))
+		elif view.selected_unit==int(hero.id):paint.image("heroPortrait_selected")
+		elif view.hovered=="hero_select"+str({"id":hero.id}):paint.image("heroPortrait_0003")
+		paint.hit(Rect2(0,0,102,101),"hero_select",{"id":hero.id},enabled and not view.sim.paused and view.sim.notices.is_empty() and view.sim.result=="")
+		paint.pop();index+=1
 
 func _unit_info() -> void:
 	var info: Dictionary = view.unit_info()

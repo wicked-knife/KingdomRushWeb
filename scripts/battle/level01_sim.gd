@@ -22,6 +22,8 @@ const Targets = preload("res://scripts/battle/dove_targeting.gd")
 const EnemyProjectiles = preload("res://scripts/battle/dove_enemy_projectiles.gd")
 const Upgrades = preload("res://scripts/battle/dove_upgrades.gd")
 var upgrades := Upgrades.new()
+const Heroes = preload("res://scripts/battle/dove_heroes.gd")
+var heroes := Heroes.new()
 const Snow = preload("res://scripts/battle/dove_snow.gd")
 var snow := Snow.new()
 var base_templates: Dictionary
@@ -87,6 +89,8 @@ func _init(definition: Dictionary = {}, seed_value: int = 1, allow_developer: bo
 	assert(behavior_error.is_empty(), behavior_error)
 	behaviors = Behaviors.new(data, catalog)
 	animations = JSON.parse_string(FileAccess.get_file_as_string(data.get("level", {}).get("root", "res://data/level01/") + "animations.json")).animations
+	for base: String in data.get("combat_bundles",[]):
+		animations.merge(Content.read_json(base+"animations.json").animations,false)
 	for template_name: String in templates:
 		if behaviors.role(template_name) != "arcane": continue
 		var animation_error := Behaviors.Arcane.animation_error(templates[template_name], animations)
@@ -134,6 +138,7 @@ func reset(seed_value: int = 1) -> void:
 				"flip": rng.randf() < float(d.get("flip_chance", 0)), "alternate": rng.randf() < float(d.get("required_clicks_fx_alt_chance", 0))})
 	upgrades.refresh_mages(self)
 	snow.reset(self)
+	heroes.reset(self)
 
 static func vec(v: Dictionary) -> Vector2:
 	return Vector2(v.x, v.y)
@@ -228,6 +233,7 @@ func command(kind: String, args: Dictionary = {}) -> bool:
 		if notice == "POWER_FIREBALL": unlocked.fire = true
 		event.emit("notice_confirmed", {"notice": notice}); return true
 	if paused or not notices.is_empty(): return false
+	if kind=="move_hero":return Heroes.move_command(self,unit_by_id(int(args.get("id",0))),args.get("pos",Vector2.ZERO))
 	match kind:
 		"build":
 			var tower := tower_by_id(str(args.get("id", "")))
@@ -494,6 +500,7 @@ func step() -> void:
 	snow.step(self)
 	_decals_step()
 	behaviors.step_spawners(self)
+	heroes.step_auras(self)
 	upgrades.refresh_mages(self)
 	upgrades.step(self)
 	_sync_enemy_cells()
@@ -503,7 +510,7 @@ func step() -> void:
 	for bullet: Dictionary in projectiles: _bullet_step(bullet)
 	projectiles = projectiles.filter(func(p): return not p.done)
 	enemies = enemies.filter(func(e): return e.hp > 0 or tick - e.dead_at < frames(templates[e.template].health.dead_lifetime))
-	soldiers = soldiers.filter(func(s): return s.hp > 0 or tick - s.dead_at < (frames(templates[s.template].health.dead_lifetime) if templates[s.template].get("powers", {}).has("holystrike") or s.home == "" and not templates[s.template].has("reinforcement") else 60))
+	soldiers = soldiers.filter(func(s): return s.has("hero") or s.hp > 0 or tick - s.dead_at < (frames(templates[s.template].health.dead_lifetime) if templates[s.template].get("powers", {}).has("holystrike") or s.home == "" and not templates[s.template].has("reinforcement") else 60))
 	effects = effects.filter(func(e): return tick - e.at < e.duration)
 	if lives <= 0: _finish("defeat")
 	elif controller.can_finish(self): _finish("victory")
@@ -748,6 +755,7 @@ func _soldier_move(s: Dictionary, point: Vector2, speed_value: float) -> bool:
 	return true
 
 func _soldier_step(s: Dictionary) -> void:
+	if s.has("hero"):heroes.step(self,s);return
 	if s.hp <= 0: return
 	if s.expires >= 0 and tick >= s.expires: _retire(s); return
 	var t: Dictionary = templates[s.template]
@@ -788,13 +796,17 @@ func _soldier_step(s: Dictionary) -> void:
 		if not _soldier_move(s, s.dest, t.motion.max_speed):
 			_state(s, "idle")
 			if tick - s.last_hit >= frames(float(t.regen.last_hit_standoff_time)) and tick >= s.regen_at:
-				s.hp = minf(s.max_hp, s.hp + s.max_hp * float(data.rules.soldier_regen_factor)); s.regen_at = tick + frames(t.regen.cooldown)
+				# Source soldier_regen only heals below the cap; it preserves overflow.
+				if s.hp < s.max_hp: s.hp = minf(s.max_hp, s.hp + s.max_hp * float(data.rules.soldier_regen_factor))
+				s.regen_at = tick + frames(t.regen.cooldown)
 
 func _enemy_step(e: Dictionary) -> void:
 	if e.hp <= 0:
 		if e.has("boss"): behaviors.enemy_step(self, e, templates[e.template])
 		return
-	if int(e.get("stun_count",0)) > 0: e.last_dir = Vector2.ZERO; return
+	if int(e.get("stun_count",0)) > 0:
+		# SU.y_enemy_stun switches to idle, including enemies stunned while walking.
+		e.last_dir = Vector2.ZERO; _state(e, "idle"); return
 	var t: Dictionary = templates[e.template]
 	if behaviors.enemy_step(self,e,t): return
 	if e.blocker != 0:
@@ -924,6 +936,7 @@ func _healer_step(e: Dictionary, template: Dictionary) -> bool:
 
 func _state(unit: Dictionary, state: String, restart: bool = false) -> void:
 	if unit.state != state or restart: unit.state = state; unit.state_at = tick
+	if unit.has("hero"): unit.playback_loop = state in ["idle","running"]
 
 func _unblock(unit: Dictionary) -> void:
 	if unit.has("target") and unit.target != 0:
@@ -956,6 +969,10 @@ func attack_factor(actor: Dictionary) -> float:
 func damage(unit: Dictionary, amount: float, type: int, source_id: int = 0, reduce_armor: float = 0.0) -> float:
 	if unit.is_empty() or unit.hp <= 0: return 0
 	var t: Dictionary = templates[unit.template]
+	if unit.get("ignore_damage",false) or (type & int(unit.get("move_immune",0)))!=0:return 0
+	if unit.has("hero"):
+		unit.last_damage_types=(int(unit.get("last_damage_types",0)) if int(unit.get("last_damage_tick",-1))==tick else 0)|type
+		unit.last_damage_tick=tick
 	if (type & 1024) != 0:
 		unit.armor = maxf(0, float(unit.get("armor", t.health.armor)) - amount); return 0
 	var armor := 0.0
@@ -1066,12 +1083,6 @@ func _bullet_step(p: Dictionary) -> void:
 		var missile_hit: bool = behavior == "arrow_missile" and p.pos.distance_to(hit) < float(p.hit_distance)
 		if behavior == "bolt" or missile_hit or (behavior != "arrow_missile" and p.to.distance_to(hit) < float(b.get("hit_distance", 22)) * 1.2):
 			did_hit = true
-			# The source missile script rolls precision at impact, including elf arrows.
-			if behavior == "arrow_missile":
-				var precision := upgrades.get_tech("archer_precision")
-				if not precision.is_empty() and rng.randf() < float(precision.chance):
-					p.damage_min = float(p.get("damage_min", b.damage_min)) * float(precision.damage_factor)
-					p.damage_max = float(p.get("damage_max", b.damage_max)) * float(precision.damage_factor); p.critical = true
 			var raw: float = (rng.randi_range(int(p.get("damage_min", b.damage_min)), int(p.get("damage_max", b.damage_max))) + float(b.get("damage_inc",0)) * int(p.get("elf_level",0))) * float(p.get("damage_factor",1.0))
 			# Ranged damage originates from a projectile, which has no health to reflect into.
 			damage(target, raw, int(b.damage_type), 0, float(b.get("reduce_armor", 0)))
