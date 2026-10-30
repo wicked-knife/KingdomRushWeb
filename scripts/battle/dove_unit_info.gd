@@ -12,12 +12,12 @@ static func pick(units: Array, templates: Dictionary, point: Vector2) -> int:
 
 static func snapshot(unit: Dictionary, templates: Dictionary, strings: Dictionary) -> Dictionary:
 	if unit.is_empty() or unit.hp <= 0: return {}
-	var t: Dictionary = templates[unit.template]
+	var t: Dictionary = unit.get("combat_template",templates[unit.template])
 	var info: Dictionary = t.get("info", {})
 	var name_key: String = str(info.get("i18n_key", str(unit.template).to_upper())) + "_NAME"
 	var attack: Dictionary = t.get("melee", {}).get("attacks", [{}])[0]
 	return {"id": unit.id, "name": unit.get("display_name", strings.get(name_key, name_key)), "portrait": unit.get("portrait", info.get("portrait", "")),
-		"hp": unit.hp, "hp_max": unit.max_hp, "damage_min": attack.get("damage_min", 0), "damage_max": attack.get("damage_max", 0),
+		"hp": unit.hp, "hp_max": unit.max_hp, "damage_min": float(attack.get("damage_min", 0))+float(unit.get("melee_damage_min_bonus",0)), "damage_max": float(attack.get("damage_max", 0))+float(unit.get("melee_damage_max_bonus",0)),
 		"cooldown": attack.get("cooldown", 0), "armor": unit.get("armor", t.health.armor), "magic_armor": unit.get("magic_armor", t.health.magic_armor),
 		"enemy": t.has("enemy"), "lives": t.get("enemy", {}).get("lives_cost", 0),
-		"respawn": t.health.dead_lifetime, "speed": t.motion.max_speed}
+		"respawn": t.health.dead_lifetime, "speed": float(t.motion.max_speed)+float(unit.get("speed_bonus",0))}

@@ -10,6 +10,11 @@ const Spawner = preload("res://scripts/battle/dove_spawner.gd")
 const Juggernaut = preload("res://scripts/battle/dove_juggernaut.gd")
 const Upgrades = preload("res://scripts/battle/dove_upgrades.gd")
 const Musketeer = preload("res://scripts/battle/dove_musketeer.gd")
+const Bfg = preload("res://scripts/battle/dove_bfg.gd")
+const Missile = preload("res://scripts/battle/dove_missile.gd")
+const AdvancedBarrack = preload("res://scripts/battle/dove_advanced_barrack.gd")
+const Sasquash = preload("res://scripts/battle/dove_sasquash.gd")
+const Chieftain = preload("res://scripts/battle/dove_chieftain.gd")
 const ROLES := ["ground", "healer", "spider", "soldier", "reinforcement", "archer", "mage", "engineer", "barrack", "mercenary", "ranger", "building", "arrow", "bolt", "bomb", "fireball", "arrow_missile", "thorn_aura", "spawner", "dps", "track_modifier", "heal_modifier", "thorn_modifier", "fire_control", "passive", "juggernaut", "arcane", "ray", "arcane_damage", "disintegrate", "teleport", "mod_aura", "enemy_missile", "enemy_bomb", "tower_decal", "instant_damage", "damage_aura"]
 var catalog: Dictionary
 var bindings: Dictionary
@@ -74,19 +79,21 @@ func role(template: String) -> String:
 	return catalog.behaviors.get(canonical(bindings.get(template, ""), catalog), "")
 
 static func supported(value: String) -> bool:
-	return value in ROLES or value in ["musketeer","shotgun","tunnel","unit_regen","hero_malik","fissure_aura","stun_modifier"]
+	return value in ROLES or value in ["musketeer","shotgun","tunnel","unit_regen","hero_malik","fissure_aura","stun_modifier","bfg","missile","cluster","sasquash_holder","chieftain"]
 
 func projectile_role(template: Dictionary) -> String:
 	return catalog.behaviors.get(canonical(template.get("behavior", ""), catalog), "")
 
 func upgrade_tower(sim, old: Dictionary, upgraded: Dictionary) -> void:
 	var behavior := role(upgraded.template)
+	if upgraded.template == "tower_barbarian": AdvancedBarrack.initialize(sim,upgraded)
 	if behavior == "mercenary": Elf.initialize(upgraded)
 	elif old.type == "barrack": sim._upgrade_garrison(old, upgraded)
 	else: upgraded.attack_at = sim.tick + sim._tower_period(upgraded)
 	if behavior == "ranger": Ranger.initialize(sim, upgraded)
 	if behavior == "arcane": Arcane.initialize(sim, upgraded)
 	if behavior == "musketeer": Musketeer.initialize(sim, upgraded)
+	if behavior == "bfg": Bfg.initialize(sim,upgraded)
 	var t: Dictionary = sim.templates[upgraded.template]
 	if t.get("powers", {}).has("holystrike"):
 		Paladin.initialize(upgraded); Paladin.upgraded(sim, upgraded)
@@ -97,16 +104,23 @@ func power_upgraded(sim, tower: Dictionary, power: String) -> void:
 		"mercenary": Elf.power_upgraded(sim, tower)
 		"arcane": Arcane.power_upgraded(sim, tower, power)
 		"musketeer": Musketeer.power_upgraded(sim, tower, power)
+		"bfg": Bfg.power_upgraded(sim,tower,power)
 		"barrack":
-			if tower.has("powers"): Paladin.upgraded(sim, tower)
+			if tower.template == "tower_barbarian": AdvancedBarrack.upgraded(sim,tower,power)
+			elif tower.has("powers"): Paladin.upgraded(sim, tower)
 
 func recruit_price(sim, tower: Dictionary, type: String) -> int:
+	if tower.get("template","") == "tower_sasquash": return Sasquash.price(sim,tower,type)
 	return Elf.price(sim, tower, type) if role(tower.get("template", "")) == "mercenary" else -1
 
 func hire(sim, tower: Dictionary) -> void:
-	if role(tower.template) == "mercenary": Elf.hire(sim, tower)
+	if tower.template == "tower_sasquash": Sasquash.hire(sim,tower)
+	elif role(tower.template) == "mercenary": Elf.hire(sim, tower)
 
 func tower_step(sim, tower: Dictionary) -> bool:
+	if role(tower.template) == "sasquash_holder": Sasquash.frozen_step(sim,tower); return true
+	if tower.template == "tower_sasquash": Sasquash.step(sim,tower); return true
+	if role(tower.template) == "bfg": Bfg.step(sim,tower); return true
 	if role(tower.template) == "musketeer": Musketeer.step(sim,tower); return true
 	if role(tower.template) == "arcane": Arcane.step(sim, tower); return true
 	if role(tower.template) != "ranger": return false
@@ -116,7 +130,7 @@ func tower_step(sim, tower: Dictionary) -> bool:
 func soldier_inserted(sim, soldier: Dictionary, tower: Dictionary) -> void:
 	sim.DamageFactors.inherit(sim, soldier, tower)
 	if tower.get("powers", {}).has("holystrike"): Paladin.inherit(sim, soldier, tower)
-	if role(tower.template) == "mercenary":
+	if role(tower.template) == "mercenary" and tower.template != "tower_sasquash":
 		Elf.inherit(soldier, tower); sim.event.emit("sound", {"id":"ElfTaunt"})
 
 func soldier_step(sim, soldier: Dictionary, template: Dictionary) -> bool:
@@ -127,12 +141,14 @@ func enemy_inserted(sim, enemy: Dictionary) -> void:
 	sim.snow.enemy_inserted(sim,enemy)
 	if role(enemy.template) == "spider": Spider.initialize(sim, enemy)
 	if role(enemy.template) == "juggernaut": Juggernaut.initialize(sim, enemy)
+	if role(enemy.template) == "chieftain": Chieftain.initialize(sim,enemy)
 
 func enemy_step(sim, enemy: Dictionary, template: Dictionary) -> bool:
 	match role(enemy.template):
 		"juggernaut": return Juggernaut.step(sim, enemy, template)
 		"spider": Spider.lay(sim, enemy)
 		"healer": return sim._healer_step(enemy, template)
+		"chieftain": return Chieftain.step(sim,enemy,template)
 	return Ranged.step(sim, enemy, template) if template.has("ranged") else false
 
 func step_spawners(sim) -> void:

@@ -247,7 +247,7 @@ func _draw() -> void:
 	for unit: Dictionary in sim.enemies + sim.soldiers:
 		_queue_template(unit.template, unit.pos, unit.state, unit.state_at, unit.flip, false, int(unit.get("variant", 1)), unit.hp <= 0, "", unit)
 	for p: Dictionary in sim.projectiles:
-		_queue_template(p.template, p.pos, "flying" if sim.templates[p.template].get("behavior", "") == "scripts.bolt.update" else "", p.at, false, false, 1, false, "", p)
+		_queue_template(p.template, p.pos, p.get("playback_state","flying" if sim.templates[p.template].get("behavior", "") == "scripts.bolt.update" else ""), p.at, false, false, 1, false, "", p)
 	for aura: Dictionary in sim.upgrades.auras: _queue_template(aura.template, aura.pos, "", aura.at, false, false, 1, false, "", aura)
 	for effect: Dictionary in sim.effects:
 		if effect.has("owner") and sim.tick-int(effect.at)>=int(effect.duration): continue
@@ -264,7 +264,7 @@ func _draw() -> void:
 		if target.is_empty() or target.hp <= 0 or target.get("hidden", false): continue
 		# The original lifecycle hides older duplicate poison sprites.
 		if not modifier.get("visible",true) or not sim.templates[modifier.template].has("render"): continue
-		_queue_template(modifier.template, target.pos + (Vector2.ZERO if modifier.template == "mod_thorn" else Simulation.vec(sim.templates[target.template].unit.mod_offset)), modifier.state, modifier.at, target.flip, false, 1, false, "", {"prefix":modifier.prefix,"sprite_scale":modifier.scale,"playback_loop":modifier.phase == "loop"})
+		_queue_template(modifier.template, target.pos + (Vector2.ZERO if modifier.template == "mod_thorn" or not sim.templates[modifier.template].modifier.get("use_mod_offset",true) else Simulation.vec(sim.templates[target.template].unit.mod_offset)), modifier.state, modifier.at, target.flip, false, 1, false, "", {"prefix":modifier.prefix,"sprite_scale":modifier.scale,"playback_loop":modifier.phase == "loop" and sim.templates[modifier.template].render.sprites[0].get("loop",true)})
 	feedback.queue_markers()
 	draw_list.sort_custom(func(a, b):
 		if a.z != b.z: return a.z < b.z
@@ -300,7 +300,7 @@ func _queue_egg(egg: Dictionary) -> void:
 
 func _queue_template(template_name: String, point: Vector2, state: String = "", at: int = 0, flip: bool = false, up: bool = false, variant: int = 1, dead: bool = false, preview: String = "", runtime: Dictionary = {}) -> void:
 	if runtime.get("hidden", false): return
-	var template: Dictionary = sim.templates[template_name]
+	var template: Dictionary = runtime.get("combat_template",sim.templates[template_name])
 	if dead and template.get("unit", {}).get("hide_after_death", false):
 		var sprite: Dictionary = template.render.sprites[0]
 		if sim.tick - at >= SpriteAnimation.duration(animations, SpriteAnimation.key(sprite, state)): return
@@ -332,14 +332,14 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 		if sprite.has("hide_after_runs") and int(playback.elapsed)>=SpriteAnimation.duration(animations,SpriteAnimation.key(sprite,playback.state))*int(sprite.hide_after_runs):continue
 		if template.has("reinforcement") and template.get("info", {}).has("portrait_idxs"): playback.prefix = "%s_%d" % [template_name, variant]
 		var frame_name := SpriteAnimation.frame(sprite, animations, playback)
-		if order == 1 and runtime.has("holder") and sim.templates.has(runtime.holder) and not sprite.get("animated",false): frame_name = sim.templates[runtime.holder].render.sprites[0].name
+		if order == 1 and runtime.get("terrain_base",true) and runtime.has("holder") and sim.templates.has(runtime.holder) and not sprite.get("animated",false): frame_name = sim.templates[runtime.holder].render.sprites[0].name
 		if tower_over: frame_name += "_over"
 		var offset := Simulation.vec(sprite.get("offset", {"x": 0, "y": 0}))
 		var alpha := float(sprite.get("alpha", 255)) / 255.0
 		alpha *= float(runtime.get("alpha",1.0))
 		# Multi-attack soldiers use the source corpse lifetime (guards/paladins).
 		# Existing units retain their established presentation.
-		if dead and not template.get("unit", {}).get("hide_after_death", false) and not (template.has("soldier") and template.melee.attacks.size() > 1): alpha *= clampf(1 - float(sim.tick - at - 24) / 36, 0, 1)
+		if dead and not runtime.get("source_corpse",false) and not template.get("unit", {}).get("hide_after_death", false) and not (template.has("soldier") and template.melee.attacks.size() > 1): alpha *= clampf(1 - float(sim.tick - at - 24) / 36, 0, 1)
 		var sprite_scale: Vector2 = runtime.get("sprite_scale", Simulation.vec(sprite.get("scale", {"x": 1, "y": 1})))
 		var tween: Dictionary = template.get("tween", {})
 		var clicked: bool = runtime.has("clicked_at") and sim.tick - int(runtime.clicked_at) <= 6

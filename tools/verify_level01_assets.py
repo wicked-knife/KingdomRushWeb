@@ -2,6 +2,7 @@
 from pathlib import Path
 import argparse, hashlib, json, math
 from PIL import Image
+from campaign_content import export_spec
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -12,6 +13,7 @@ def verify(level_id=1, ranger_arena=False):
     if ranger_arena: level_id=4
     level_name="ranger_arena" if ranger_arena else f"level{level_id:02d}"
     folder=ROOT/f"data/{level_name}"; manifest=read(folder/"manifest.json"); data=read(folder/"definition.json")
+    spec=export_spec(level_id,ranger_arena)
     source=Path("D:/projects/KingdomRushDove")
     for name,digest in data["source"]["inputs"].items(): assert sha(source/name)==digest, name
     for name,digest in manifest["source_texture_hashes"].items(): assert sha(ROOT/name)==digest, name
@@ -20,7 +22,7 @@ def verify(level_id=1, ranger_arena=False):
         assert set(data["modes"]) == {"2", "3"}
         for mode in (2, 3):
             selected=data["modes"][str(mode)]
-            assert selected["waves"]["cash"] == {2:[230,310,400,750,1000,1200,1000],3:[360,275,660,1500,1500,800,1200]}[mode][level_id-1]
+            assert selected["waves"]["cash"] == {2:[230,310,400,750,1000,1200,1000,1100],3:[360,275,660,1500,1500,800,1200,1200]}[mode][level_id-1]
             assert selected["waves"]["lives"] == 1 and len(selected["waves"]["groups"]) == (6 if mode==2 else 1)
             assert all(e.get("editor.game_mode",0) in (0,mode) for e in selected["layout"]["entities_list"])
             assert f"kr1/data/waves/level{level_id:02d}_waves_{'heroic' if mode==2 else 'iron'}.lua" in data["source"]["inputs"]
@@ -46,13 +48,15 @@ def verify(level_id=1, ranger_arena=False):
         for sprite in template.get("render",{}).get("sprites",[]):
             name=sprite.get("name", "").replace("%04i","0001")
             key=sprite.get("prefix", "")+"_"+name if sprite.get("prefix") else name
-            assert key in animations or name in atlas["lookup"], (template_name,key)
+            script_states=[entry.split(":",1)[1] for entry in spec["export"].get("script_animation_starts",[]) if entry.split(":",1)[0]==template["template_name"]]
+            size_states=[variant+"_"+name for variant in sprite.get("size_names",[])]
+            assert key in animations or name in atlas["lookup"] or any(sprite.get("prefix","")+"_"+state in animations for state in script_states+size_states), (template_name,key)
             if ranger_arena or level_id >= 5:
                 for prefix in sprite.get("size_prefixes",[]):
                     for state in ("start","loop","end"): assert prefix+"_"+state in animations,(template_name,prefix,state)
                 for state in sprite.get("size_names",[]):
                     states=[state+"_"+c for c in ("red","green","gray","orange","violet")] if sprite.get("use_blood_color") else [state]
-                    for variant in states: assert sprite.get("prefix","")+"_"+variant in animations,(template_name,variant)
+                    for variant in states: assert sprite.get("prefix","")+"_"+variant in animations or sprite.get("prefix","")+"_"+variant+"_"+name in animations,(template_name,variant)
         info=template.get("info",{})
         if info.get("portrait"): assert info["portrait"] in atlas["lookup"],template_name
     for template_name,template in data["templates"].items():

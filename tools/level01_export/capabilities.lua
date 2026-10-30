@@ -1,5 +1,19 @@
 -- Feature adapters evaluate frozen source templates without running gameplay.
 local adapters = {}
+  adapters.barbarian = function(ctx)
+    local text=ctx.read("kr1/barrack_towers.lua")
+    local header=text:sub(1,assert(text:find('tt = RT(',1,true))-1)
+    local a=assert(text:find('tt = RT("tower_barbarian"',1,true))
+    local b=assert(text:find('tt = RT("tower_elf_holder"',a,true))
+    ctx.chunk("kr1/barrack_towers.lua",header..text:sub(a,b-1))
+  end
+  adapters.bfg = function(ctx)
+    local text=ctx.read("kr1/engineer_towers.lua")
+    ctx.chunk("kr1/engineer_towers.lua",text:sub(1,assert(text:find('tt = RT("tower_tesla"',1,true))-1))
+  end
+  adapters.sasquash = function(ctx)
+    for _,id in ipairs({"tower_sasquash_holder","tower_sasquash","soldier_sasquash"}) do ctx.template(id) end
+  end
   adapters.musketeer = function(ctx)
     local text=ctx.read("kr1/archer_towers.lua")
     local header=text:sub(1,assert(text:find('tt = RT(',1,true))-1)

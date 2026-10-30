@@ -76,7 +76,7 @@ local function run()
     local body=text:sub(a,b-1)
     local base=body:match('^tt = RT%([^,\n]+,%s*"([^"]+)"')
     if base and not E.entities[base] then load_game_template(base) end
-    local header='local tt;local anchor_x,anchor_y,image_x,image_y=0,0,0,0;local scripts=require("game_scripts");local v=vec_2;local vv=vec_1;local function adx(x) return x-anchor_x*image_x end;local function ady(y) return y-anchor_y*image_y end;'
+    local header='local tt;local anchor_x,anchor_y,image_x,image_y=0,0,0,0;local scripts=require("game_scripts");local RLU=require("all.rally_utils");local v=vec_2;local vv=vec_1;local function adx(x) return x-anchor_x*image_x end;local function ady(y) return y-anchor_y*image_y end;'
     chunk(path,header..body)
   end
   -- Source wave/layout tables are dependency roots, not hand-maintained enemy lists.
@@ -180,13 +180,19 @@ local function run()
     end
     if t.bullet then filtered.behavior=clean(t.main_script.update) end
     out.templates[id]=filtered
-    if spec.export.validate_callbacks then
+    if id=="soldier_barbarian" then
+      out.power_orders=out.power_orders or {};out.power_orders[id]={}
+      for name in pairs(t.powers) do table.insert(out.power_orders[id],name) end
+    end
+    local callback_root=false
+    for _,name in ipairs(spec.export.callback_templates or {}) do if name==id then callback_root=true end end
+    if spec.export.validate_callbacks or callback_root then
       out.callbacks[id]={}
       for key,fn in pairs(t.main_script or {}) do
         if type(fn)=="function" then out.callbacks[id][key]=assert(behavior_names[fn],spec.folder..": "..id..".main_script."..key.." -> unmapped source callback") end
       end
     end
-    if t.modifier or t.aura or t.spawner or t.fireball_count or t.enemy or t.soldier or t.bullet or (t.tower and not t.tower_holder) then
+    if t.modifier or t.aura or t.spawner or t.fireball_count or t.enemy or t.soldier or t.bullet or t.unfreeze_upgrade_to or (t.tower and not t.tower_holder) then
       local fn=t.main_script and (t.main_script.update or t.main_script.insert)
       assert(fn and behavior_names[fn],spec.folder..": "..id.." has an unmapped behavior")
       out.behaviors[id]=behavior_names[fn]

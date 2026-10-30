@@ -15,6 +15,8 @@ func count(target_id: int, template: String) -> int:
 
 func speed(target_id: int, sim: RefCounted) -> float:
 	var factor := 1.0
+	var target: Dictionary = sim.unit_by_id(target_id)
+	if not target.is_empty(): factor = (float(sim.templates[target.template].motion.max_speed)+float(target.get("speed_bonus",0)))/float(sim.templates[target.template].motion.max_speed)
 	for m: Dictionary in active:
 		if m.target == target_id: factor *= float(sim.templates[m.template].get("slow", {}).get("factor", 1.0))
 	return factor
@@ -24,6 +26,14 @@ func clear(sim: RefCounted) -> void:
 	active.clear()
 
 func _release(sim: RefCounted, m: Dictionary) -> void:
+	if m.get("rage",false):
+		var target: Dictionary = sim.unit_by_id(m.target)
+		if not target.is_empty():
+			var t: Dictionary = sim.templates[m.template]
+			target.speed_bonus=float(target.get("speed_bonus",0))-float(t.extra_speed)
+			target.melee_damage_min_bonus=float(target.get("melee_damage_min_bonus",0))-float(t.extra_damage_min)
+			target.melee_damage_max_bonus=float(target.get("melee_damage_max_bonus",0))-float(t.extra_damage_max)
+			target.armor=maxf(0,float(target.get("armor",sim.templates[target.template].health.armor))-float(m.get("armor_added",0)))
 	if m.get("silence", false):
 		var unit: Dictionary = sim.unit_by_id(m.target)
 		if not unit.is_empty():
@@ -45,6 +55,7 @@ func apply(sim: RefCounted, template: String, target: Dictionary, level: int, so
 	var t: Dictionary = sim.templates[template]
 	if sim.behaviors.role(template) in ["arcane_damage", "disintegrate", "teleport"]: return sim.Behaviors.Arcane.apply(sim, template, target, level, source, damage_factor)
 	var rule: Dictionary = t.modifier
+	if t.has("hps") and target.hp==target.max_hp:return false
 	if not flags_match(sim, target, rule): return false
 	if target.template in rule.get("excluded_templates", []): return false
 	if sim.behaviors.role(template) == "instant_damage":
@@ -110,6 +121,16 @@ func apply(sim: RefCounted, template: String, target: Dictionary, level: int, so
 		m.silence = true
 		if int(target.get("silence_count", 0)) == 0: target.silence_at = sim.tick
 		target.silence_count = int(target.get("silence_count", 0)) + 1
+	if template == "mod_troll_rage":
+		m.rage=true
+		target.speed_bonus=float(target.get("speed_bonus",0))+float(t.extra_speed)
+		target.melee_damage_min_bonus=float(target.get("melee_damage_min_bonus",0))+float(t.extra_damage_min)
+		target.melee_damage_max_bonus=float(target.get("melee_damage_max_bonus",0))+float(t.extra_damage_max)
+		if target.template not in ["enemy_troll_brute","enemy_troll_chieftain"]:
+			var previous:=float(target.get("armor",sim.templates[target.template].health.armor))
+			target.armor=clampf(previous+float(t.extra_armor),0,0.99)
+			m.armor_added=float(target.armor)-previous
+	if t.has("hps"):m.next_heal=sim.tick+1
 	active.append(m)
 	sim.event.emit("modifier_applied", {"template":template,"target":target.id,"level":level})
 	return true
@@ -135,7 +156,13 @@ func step(sim: RefCounted) -> void:
 				m.next_hit += sim.frames(t.damage_every)
 				sim.damage(target, float(t.damage_min) * float(m.get("damage_factor",1.0)), int(t.damage_type))
 		else:
-			if sim.tick >= m.expires: _release(sim, m); active.erase(m); continue
+			if (sim.tick > m.expires if m.get("rage",false) or t.has("hps") else sim.tick >= m.expires): _release(sim, m); active.erase(m); continue
+			if t.has("hps") and float(sim.tick)>=float(m.next_heal):
+				var hps:Dictionary=t.hps
+				m.next_heal=float(sim.tick)+float(hps.heal_every)*30
+				var minimum:=int(hps.heal_min)+int(hps.get("heal_min_inc",hps.get("heal_inc",0)))*int(m.level)
+				var maximum:=int(hps.heal_max)+int(hps.get("heal_max_inc",hps.get("heal_inc",0)))*int(m.level)
+				target.hp=minf(float(target.max_hp)*float(hps.get("overflow_factor",1)),float(target.hp)+sim.rng.randi_range(minimum,maximum))
 			if t.has("dps") and sim.tick >= m.next_hit:
 				if m.has("bleeding"):
 					m.damage_ts += float(t.dps.damage_every)

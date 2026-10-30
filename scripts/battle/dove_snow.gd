@@ -30,8 +30,9 @@ func occupied() -> bool:
 	return tunnels.any(func(t): return not t.queue.is_empty())
 
 func enemy_inserted(sim, enemy: Dictionary) -> void:
-	if sim.templates[enemy.template].get("auras",{}).get("list",[]).any(func(a): return a.get("name","") == "aura_troll_regen"):
-		enemy.regen_ts=float(sim.tick)/30
+	for a:Dictionary in sim.templates[enemy.template].get("auras",{}).get("list",[]):
+		if sim.behaviors.role(a.get("name",""))=="unit_regen":
+			enemy.regen_ts=float(sim.tick)/30;enemy.regen_template=a.name
 
 func step(sim) -> void:
 	for tunnel: Dictionary in tunnels:
@@ -58,7 +59,7 @@ func step(sim) -> void:
 			sim.event.emit("tunnel_exit",{"id":enemy.id,"tick":sim.tick,"name":tunnel.name})
 	for enemy: Dictionary in sim.enemies:
 		if enemy.hp<=0 or not enemy.has("regen_ts"): continue
-		var regen: Dictionary = sim.templates.aura_troll_regen.regen
+		var regen: Dictionary = sim.templates[enemy.get("regen_template","aura_troll_regen")].regen
 		if int(enemy.get("silence_count",0))>0: enemy.regen_ts=float(sim.tick)/30; continue
 		if float(sim.tick)/30-float(enemy.regen_ts)>=float(regen.cooldown):
 			enemy.regen_ts+=float(regen.cooldown)

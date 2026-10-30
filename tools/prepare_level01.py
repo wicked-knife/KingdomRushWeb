@@ -152,6 +152,8 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
     states=["idle","idleUp","idleDown","shoot","shootingUp","shootingDown","walkingRightLeft","walkingUp","walkingDown","running","attack","death","open","close","play","flying","heal","jump","small","medium","large"]
     states += spec["export"].get("animation_states", [])
     for template in data["templates"].values():
+        script_states = [entry.split(":", 1)[1] for entry in spec["export"].get("script_animation_starts", [])
+                         if entry.split(":", 1)[0] == template["template_name"]]
         action_states = {action["animation"]
                          for component in ("attacks", "melee", "timed_actions")
                          for action in template.get(component, {}).get("list", template.get(component, {}).get("attacks", []))
@@ -169,7 +171,8 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
             if prefix:
                 if sprite.get("use_blood_color"):
                     animations.update({k: v for k, v in all_anims.items() if k.startswith(prefix + "_")})
-                sprite_states = [name] if template.get("template_name") == "fx_splash_small" else states + list(action_states) + [name] + (sprite.get("size_names",[]) if advanced else [])
+                size_states = [variant + "_" + name for variant in sprite.get("size_names", [])]
+                sprite_states = [name] if template.get("template_name") == "fx_splash_small" else states + list(action_states) + [name] + script_states + size_states + (sprite.get("size_names",[]) if advanced else [])
                 for suffix in set(sprite_states):
                     key=prefix+"_"+suffix
                     if key in all_anims: animations[key]=all_anims[key]
@@ -179,7 +182,8 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
                             key=variant+"_"+suffix
                             if key in all_anims: animations[key]=all_anims[key]
                 default_key=prefix+"_"+name
-                if default_key not in all_anims: wanted.add(name.replace("%04i","0001"))
+                if default_key not in all_anims and not any(prefix+"_"+s in all_anims for s in script_states + size_states):
+                    wanted.add(name.replace("%04i","0001"))
             elif name:
                 name=name.replace("%04i","0001")
                 if name in all_anims: animations[name]=all_anims[name]

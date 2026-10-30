@@ -1,0 +1,27 @@
+{
+	"births": 1097,
+	"checks": 285,
+	"failures": [],
+	"full_replays": false,
+	"independent_modes": 3,
+	"passed": true,
+	"source_hashes": {
+		"data/campaign_content.json": "151234c97d7a09603568f7433a583739c36d5252878de8bb018121efa0159591",
+		"data/level08/definition.json": "61b2742cbbb218f8503e51af83bfb9ff01fb35cc592fb10e3c0d1a91f7041b85",
+		"scripts/battle/battle_ui.gd": "b12ad85f5b65083dc67e2bd78b19e5918f1ad55d0cf09432a8ba7b35bf98e61c",
+		"scripts/battle/battle_view.gd": "af6e4e0b109b538fe21e8d534f78c54acf7f23e7c86f78b13461b48fb16052ea",
+		"scripts/battle/dove_advanced_barrack.gd": "4761d400bde1e3260d1c10bc3dc9ee6f46ee559d1e9abf0f1c91781d737c611b",
+		"scripts/battle/dove_behaviors.gd": "7beab93012ee40bfcfeb943d83cb57cef9bc1287f36ea70d18859f9965f2cf00",
+		"scripts/battle/dove_bfg.gd": "0f8bc792f74af3e7fbb0b88c92f05be9e1369d5491dec95907b48dd0a2de111e",
+		"scripts/battle/dove_chieftain.gd": "497ff1d327ea5b592dd7a05bdf6690f9e946a37acef40ecd13f67a3f7a7f0d48",
+		"scripts/battle/dove_missile.gd": "c96703f9521dc1c7af80eeecafee18c786069746219b36072ab213de69e131aa",
+		"scripts/battle/dove_modifiers.gd": "8c52fef99fa869cef596be22e8b57560c1ec1927d9b0c70aa74f64b38ac38acf",
+		"scripts/battle/dove_sasquash.gd": "681297953dde1d6c89c8d495c8d3964951aecb96b83bbefac724308cfb992a5d",
+		"scripts/battle/dove_snow.gd": "27a19fdd8a56f3d5f747cfc588727d2e386b69920e1f6598723afea08cc52b1f",
+		"scripts/battle/level01_sim.gd": "89accb466e6112de6bc7ce5f673efefdb62d7690f99414e490849fbb4483050b",
+		"tests/fixtures/level08_source.json": "49905af5ce6d88c0e5040a8e8255caa5766b938c41e26bd3fc43b882fc571789",
+		"tests/verify_level08.gd": "7e80ac62e40d8863b5bfb1eb0c0fc9befec73963ebd55ea52cd26cd309710849"
+	},
+	"source_scenarios": 17,
+	"timeline_waves": 25
+}

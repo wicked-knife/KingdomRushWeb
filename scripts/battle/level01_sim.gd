@@ -126,6 +126,7 @@ func reset(seed_value: int = 1) -> void:
 			if not str(e.template).begins_with("tower_holder"):
 				tower.template = e.template; tower.type = "barrack" if templates[e.template].has("barrack") else str(templates[e.template].tower.type)
 				tower.inserted = true # Preplaced towers have no purchased investment or insertion sound.
+				if templates[e.template].has("unfreeze_upgrade_to"): tower.terrain_base = false
 			towers.append(tower)
 		elif templates.has(e.template) and templates[e.template].has("soldier"):
 			var soldier := _soldier(e.template, "", 0, vec(e.pos), vec(e["nav_rally.center"]))
@@ -154,6 +155,11 @@ static func source_wait_ticks(start: int, seconds: float) -> int:
 	while float(start+count)/30-float(start)/30 < seconds: count+=1
 	return count
 
+static func source_unconditional_wait_ticks(start: int, seconds: float) -> int:
+	var count := maxi(1,floori(seconds*30))
+	while float(start+count)/30 < float(start)/30+seconds: count+=1
+	return count
+
 static func distance(a: Vector2, b: Vector2) -> float:
 	var delta := a - b
 	return Vector2(delta.x, delta.y / 0.7).length()
@@ -175,6 +181,9 @@ func _holder(tower: Dictionary) -> Dictionary:
 
 func tower_template(tower: Dictionary) -> Dictionary:
 	return templates[tower.template]
+
+func unit_template(unit: Dictionary) -> Dictionary:
+	return unit.get("combat_template",templates[unit.template])
 
 func upgrade_options(tower: Dictionary) -> Array[String]:
 	if tower.is_empty(): return []
@@ -280,6 +289,7 @@ func command(kind: String, args: Dictionary = {}) -> bool:
 		"sell":
 			var tower := tower_by_id(str(args.get("id", "")))
 			if tower.is_empty() or tower.type == "" or tower.ready > tick: return false
+			if not tower_template(tower).tower.get("can_be_sold",true) or tower_template(tower).has("unfreeze_upgrade_to"): return false
 			gold += sell_refund(tower)
 			for s: Dictionary in soldiers.duplicate():
 				if s.home != tower.id: continue
@@ -430,7 +440,7 @@ func valid_power_point(power: String, point: Vector2) -> bool:
 	var terrain := _terrain_flags(point)
 	# The first four levels have no fn_can_power override. Fire additionally
 	# accepts water, and uses a wider path radius than troop deployment.
-	return (terrain & FIRE_EXCLUDED_TERRAINS) == 0 and ((terrain & 2) != 0 or _valid_node_nearby(point, FIRE_PATH_WIDTH_FACTOR, NF_POWER_1))
+	return (terrain & FIRE_EXCLUDED_TERRAINS) == 0 and ((terrain & 2) != 0 or _valid_node_nearby(point, FIRE_PATH_WIDTH_FACTOR, NF_POWER_1) or Behaviors.Sasquash.extra_fire_point(self,point))
 
 func can_send_wave() -> bool:
 	return wave < data.waves.groups.size() and spawn_queue.is_empty() and (wave == 0 or next_wave_tick >= 0)
@@ -507,10 +517,10 @@ func step() -> void:
 	for tower: Dictionary in towers: _tower_step(tower)
 	for soldier: Dictionary in soldiers: _soldier_step(soldier)
 	for enemy: Dictionary in enemies: _enemy_step(enemy)
-	for bullet: Dictionary in projectiles: _bullet_step(bullet)
+	for bullet: Dictionary in projectiles.duplicate(): _bullet_step(bullet)
 	projectiles = projectiles.filter(func(p): return not p.done)
 	enemies = enemies.filter(func(e): return e.hp > 0 or tick - e.dead_at < frames(templates[e.template].health.dead_lifetime))
-	soldiers = soldiers.filter(func(s): return s.has("hero") or s.hp > 0 or tick - s.dead_at < (frames(templates[s.template].health.dead_lifetime) if templates[s.template].get("powers", {}).has("holystrike") or s.home == "" and not templates[s.template].has("reinforcement") else 60))
+	soldiers = soldiers.filter(func(s): return s.has("hero") or s.hp > 0 or tick - s.dead_at < (frames(templates[s.template].health.dead_lifetime) if s.get("source_corpse",false) or templates[s.template].get("powers", {}).has("holystrike") or s.home == "" and not templates[s.template].has("reinforcement") else 60))
 	effects = effects.filter(func(e): return tick - e.at < e.duration)
 	if lives <= 0: _finish("defeat")
 	elif controller.can_finish(self): _finish("victory")
@@ -707,10 +717,12 @@ func _soldier(type: String, home: String, slot: int, point: Vector2, rally: Vect
 	if not names.is_empty(): s.display_name = names[rng.randi_range(0, names.size() - 1)]
 	if t.has("reinforcement") and t.info.has("portrait_idxs"): s.portrait = "info_portraits_soldiers_%04d" % int(t.info.portrait_idxs[s.variant - 1])
 	if t.has("reinforcement") and t.has("ranged"): s.ranged_at = tick; s.ranged_until = tick
-	next_id += 1; soldiers.append(s); return s
+	next_id += 1; soldiers.append(s)
+	if Behaviors.AdvancedBarrack.supports(type): Behaviors.AdvancedBarrack.insert(self,s,tower_by_id(home))
+	return s
 
 func _formation(point: Vector2, slot: int, tower: Dictionary = {}) -> Vector2:
-	var count := int(tower.get("hired",3))
+	var count := int(tower.get("hired",tower_template(tower).get("barrack",{}).get("max_soldiers",3) if not tower.is_empty() else 3))
 	if count == 1: return point
 	var angle := slot * TAU / maxi(1,count) - PI / 2.0
 	var radius: float = tower_template(tower).barrack.rally_radius if not tower.is_empty() and tower.type == "barrack" else 25.0
@@ -739,7 +751,7 @@ func melee_slot(s: Dictionary, e: Dictionary) -> Vector2:
 	if forward == Vector2.ZERO:
 		var route: Array = data.paths.paths[e.path][e.subpath]
 		forward = vec(route[mini(e.node + 1, route.size() - 1)]) - e.pos
-	var slot := vec(templates[e.template].enemy.melee_slot) + offset + vec(templates[s.template].soldier.melee_slot_offset)
+	var slot := vec(templates[e.template].enemy.melee_slot) + offset + vec(unit_template(s).soldier.melee_slot_offset)
 	slot.x *= 1 if forward.x > 0 else -1
 	return e.pos + slot
 
@@ -756,6 +768,7 @@ func _soldier_move(s: Dictionary, point: Vector2, speed_value: float) -> bool:
 
 func _soldier_step(s: Dictionary) -> void:
 	if s.has("hero"):heroes.step(self,s);return
+	if Behaviors.AdvancedBarrack.supports(s.template): Behaviors.AdvancedBarrack.step(self,s); return
 	if s.hp <= 0: return
 	if s.expires >= 0 and tick >= s.expires: _retire(s); return
 	var t: Dictionary = templates[s.template]
@@ -806,6 +819,7 @@ func _enemy_step(e: Dictionary) -> void:
 		return
 	if int(e.get("stun_count",0)) > 0:
 		# SU.y_enemy_stun switches to idle, including enemies stunned while walking.
+		if e.has("rage_job"): e.rage_job = {}
 		e.last_dir = Vector2.ZERO; _state(e, "idle"); return
 	var t: Dictionary = templates[e.template]
 	if behaviors.enemy_step(self,e,t): return
@@ -852,9 +866,9 @@ func _melee(attacker: Dictionary, target: Dictionary, template: Dictionary) -> v
 			if attack.get("type", "") == "area":
 				var point: Vector2 = attacker.pos + vec(attack.get("hit_offset", {"x":0,"y":0})) * Vector2(-1 if attacker.flip else 1, 1)
 				var victims := Targets.soldiers(self, point, {"max_range":attack.damage_radius,"vis_flags":attack.get("damage_flags",0),"vis_bans":attack.get("damage_bans",0)})
-				for victim: Dictionary in victims.slice(0, int(attack.get("count", victims.size()))): damage(victim, float(rng.randi_range(int(attack.damage_min), int(attack.damage_max))) * attack_factor(attacker), int(attack.damage_type), attacker.id)
+				for victim: Dictionary in victims.slice(0, int(attack.get("count", victims.size()))): damage(victim, float(rng.randi_range(int(attack.damage_min)+int(attacker.get("melee_damage_min_bonus",0)), int(attack.damage_max)+int(attacker.get("melee_damage_max_bonus",0)))) * attack_factor(attacker), int(attack.damage_type), attacker.id)
 				add_effect(str(attack.get("hit_fx", "")), point)
-			else: damage(target, float(rng.randi_range(int(attack.damage_min), int(attack.damage_max))) * attack_factor(attacker), int(attack.damage_type), attacker.id)
+			else: damage(target, float(rng.randi_range(int(attack.damage_min)+int(attacker.get("melee_damage_min_bonus",0)), int(attack.damage_max)+int(attacker.get("melee_damage_max_bonus",0)))) * attack_factor(attacker), int(attack.damage_type), attacker.id)
 			if attacker.template == "soldier_elf" and target.hp > 0: modifiers.apply(self,"mod_elf_bleed",target,int(attacker.powers.bleed),str(attacker.id),-1,attack_factor(attacker))
 		attacker.pending = {}
 	if tick >= attacker.attack_at:
@@ -935,6 +949,7 @@ func _healer_step(e: Dictionary, template: Dictionary) -> bool:
 	return true
 
 func _state(unit: Dictionary, state: String, restart: bool = false) -> void:
+	if unit.get("source_corpse",false) or unit.has("rage_job"): unit.playback_loop = state in ["idle","idle2","running","running2","walkingRightLeft","walkingUp","walkingDown"]
 	if unit.state != state or restart: unit.state = state; unit.state_at = tick
 	if unit.has("hero"): unit.playback_loop = state in ["idle","running"]
 
@@ -1028,6 +1043,9 @@ func _projectile(type: String, target: int, from: Vector2, to: Vector2, flight: 
 		add_effect(str(bullet.get("start_fx","")),from,{"rotation":(to-from).angle()})
 	elif behaviors.projectile_role(templates[type]) == "arrow_missile":
 		b.last_step = tick; b.seeking = false; b.hit_distance = float(bullet.hit_distance)
+	elif behaviors.projectile_role(templates[type]) == "cluster":
+		Behaviors.Bfg.cluster_insert(self,b,bullet)
+	elif behaviors.projectile_role(templates[type]) == "missile": b.playback_state = "flying"
 	projectiles.append(b)
 	var sounds: Dictionary = templates[type].get("sound_events", {})
 	if sounds.has("insert"): event.emit("sound", {"id": sounds.insert})
@@ -1036,6 +1054,8 @@ func _bullet_step(p: Dictionary) -> void:
 	var b: Dictionary = templates[p.template].bullet
 	var target := unit_by_id(p.target)
 	var behavior: String = behaviors.projectile_role(templates[p.template])
+	if behavior == "missile": Behaviors.Missile.step(self,p,b); return
+	if behavior == "cluster": Behaviors.Bfg.cluster_step(self,p,b); return
 	if p.template == "bomb_musketeer": Behaviors.Musketeer.shrapnel_projectile(self,p,b); return
 	if behavior == "shotgun": Behaviors.Musketeer.projectile(self,p,b); return
 	if behavior == "ray": Behaviors.Arcane.projectile(self, p, b); return
@@ -1071,6 +1091,8 @@ func _bullet_step(p: Dictionary) -> void:
 					amount = lerpf(float(b.damage_max), float(b.damage_min), clampf(delta.length() / ellipse_radius, 0, 1))
 					if not upgrades.get_tech("engineer_efficiency").is_empty(): amount = float(b.damage_max)
 				damage(e, amount * float(p.damage_factor), int(b.damage_type))
+				for modifier_name: String in b.get("mods",[b.mod] if b.has("mod") else []):
+					modifiers.apply(self,modifier_name,e,maxi(1,int(p.get("level",1))),str(p.source),-1,float(p.damage_factor))
 		var water: bool = (behavior == "bomb" or behavior == "fireball" and not upgrades.get_tech("rain_blazing_skies").is_empty()) and (_terrain_flags(center) & 2) != 0
 		var water_fx: String = "fx_explosion_water" if behavior == "fireball" else str(b.get("hit_fx_water", ""))
 		water = water and templates.has(water_fx)
@@ -1083,7 +1105,7 @@ func _bullet_step(p: Dictionary) -> void:
 		var missile_hit: bool = behavior == "arrow_missile" and p.pos.distance_to(hit) < float(p.hit_distance)
 		if behavior == "bolt" or missile_hit or (behavior != "arrow_missile" and p.to.distance_to(hit) < float(b.get("hit_distance", 22)) * 1.2):
 			did_hit = true
-			var raw: float = (rng.randi_range(int(p.get("damage_min", b.damage_min)), int(p.get("damage_max", b.damage_max))) + float(b.get("damage_inc",0)) * int(p.get("elf_level",0))) * float(p.get("damage_factor",1.0))
+			var raw: float = (rng.randi_range(int(p.get("damage_min", b.damage_min)), int(p.get("damage_max", b.damage_max))) + float(b.get("damage_inc",0)) * int(p.get("level",p.get("elf_level",0)))) * float(p.get("damage_factor",1.0))
 			# Ranged damage originates from a projectile, which has no health to reflect into.
 			damage(target, raw, int(b.damage_type), 0, float(b.get("reduce_armor", 0)))
 			if p.get("critical", false): add_effect("pop_crit", target.pos + Vector2(0, float(templates.pop_crit.pop_y_offset)))

@@ -11,6 +11,7 @@ __pycache__/
 !/build/.gdignore
 
 # Validation output is reproducible. Track source manifests and compact summaries.
+/tests/fixtures/*.json.error
 /reports/*
 !/reports/.gdignore
 !/reports/ASSET_REPORT.md
@@ -111,6 +112,8 @@ __pycache__/
 !/reports/level07_native_1024x768.json
 !/reports/level07_assets.json
 !/reports/level07_delivery.json
+!/reports/level08_logic.json
+!/reports/level08_assets.json
 !/reports/feedback_logic.json
 !/reports/feedback_native_1280x720.json
 !/reports/feedback_native_1024x768.json

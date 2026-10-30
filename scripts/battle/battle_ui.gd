@@ -155,7 +155,7 @@ func _selection(id: String, closing: bool) -> void:
 	if closing: tower = tower.duplicate(); tower.type = closing_type; tower.template = closing_template
 	var t: Dictionary = sim.tower_template(tower)
 	var range_pos: Vector2 = view.world(tower.pos + view.Simulation.vec(t.tower.range_offset))
-	if tower.type not in ["","holder_elf"] and not closing:
+	if tower.type not in ["","holder_elf","holder_sasquash"] and not closing:
 		var barrack: bool = t.has("barrack")
 		var upgrade_preview: Dictionary = {}
 		for target: String in sim.upgrade_options(tower):
@@ -190,6 +190,9 @@ func _selection(id: String, closing: bool) -> void:
 			var price: int = sim.templates["tower_" + type + "_1"].tower.price
 			var pos := Vector2(data.tower_menu_button_places[int(item.place) - 1].x, data.tower_menu_button_places[int(item.place) - 1].y)
 			_menu_icon(item.image, pos, "build", {"id": id, "type": type}, price, sim.gold >= price and enabled)
+	elif tower.type == "holder_sasquash":
+		for item:Dictionary in data.tower_menus.get("holder_sasquash",[]):
+			_menu_icon(item.image,view.Simulation.vec(data.tower_menu_button_places[int(item.place)-1]),"frozen",{},-1,enabled)
 	else:
 		var options: Array = sim.upgrade_options(tower)
 		for target: String in options:
@@ -215,10 +218,12 @@ func _selection(id: String, closing: bool) -> void:
 					var age: float = feedback_time - power_fx.powers[power]
 					if age < 23.0 / 30.0: paint.image("effect_powerbuy_%04d" % (1 + int(age * 30)), pos, Vector2(0.5, 0.5))
 		if tower.type == "barrack": _menu_icon("sub_icons_0001", Vector2(128, 118), "target", {"power": "rally"}, -1, enabled)
-		if t.get("mercenary",false):
-			var price: int = sim.Elf.price(sim,tower,"soldier_elf")
-			_menu_icon("main_icons_0016",Vector2(74,6),"buy_soldier",{"id":id,"type":"soldier_elf"},int(sim.templates.soldier_elf.unit.price),enabled and price >= 0 and sim.gold >= price)
-		_menu_icon("ico_sell_0001", Vector2(74, 140), "sell", {"id": id}, -1, enabled)
+		for item:Dictionary in data.tower_menus.get(str(t.tower.type),[]):
+			if item.get("action","")!="tw_buy_soldier":continue
+			var type:String=item.action_arg
+			var price:int=sim.behaviors.recruit_price(sim,tower,type)
+			_menu_icon(item.image,view.Simulation.vec(data.tower_menu_button_places[int(item.place)-1]),"buy_soldier",{"id":id,"type":type},int(sim.templates[type].unit.price),enabled and price>=0 and sim.gold>=price)
+		if t.tower.get("can_be_sold",true):_menu_icon("ico_sell_0001", Vector2(74, 140), "sell", {"id": id}, -1, enabled)
 	paint.pop(); paint.pop()
 	if not closing and enabled: _tower_tooltip(tower)
 
@@ -260,6 +265,11 @@ func _tower_tooltip(tower: Dictionary) -> void:
 		title = "出售防御塔"; description = "返还 %d 金币" % view.sim.sell_refund(tower)
 	if view.hovered == "buy_soldier" + str({"id":tower.id,"type":"soldier_elf"}):
 		title = text("TOWER_ELF_NAME"); description = text("TOWER_ELF_DESCRIPTION") + "\n已招募 %d/4 个兵位；阵亡后自动补员。" % int(tower.get("hired",0))
+	if view.hovered=="frozen"+str({}):
+		var item:Dictionary=data.tower_menus.holder_sasquash[0]
+		title=text(item.tt_title);description=text(item.tt_desc)
+	if view.hovered=="buy_soldier"+str({"id":tower.id,"type":"soldier_sasquash"}):
+		title=text("TOWER_SASQUASH_NAME");description=text("TOWER_SASQUASH_DESCRIPTION")
 	for item: Dictionary in data.tower_menus.get(str(view.sim.tower_template(tower).tower.type), []):
 		var power: String = item.get("action_arg", "")
 		if not tower.get("powers",{}).has(power) or view.hovered != "upgrade_power" + str({"id":tower.id,"power":power}): continue

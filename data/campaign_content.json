@@ -88,7 +88,9 @@
         "bandits",
         "tier3",
         "ranger",
-        "musketeer"
+        "musketeer",
+        "barbarian",
+        "bfg"
       ],
       "notification_overrides": {
         "TOWER_LEVEL3": {
@@ -122,7 +124,9 @@
         "ranger",
         "elf",
         "spider",
-        "musketeer"
+        "musketeer",
+        "barbarian",
+        "bfg"
       ],
       "atlas_groups": [
         "go_stage05"
@@ -161,7 +165,9 @@
         "paladin",
         "arcane",
         "juggernaut",
-        "musketeer"
+        "musketeer",
+        "barbarian",
+        "bfg"
       ],
       "atlas_groups": [
         "go_stage06"
@@ -196,7 +202,9 @@
         "paladin",
         "arcane",
         "musketeer",
-        "snow"
+        "snow",
+        "barbarian",
+        "bfg"
       ],
       "atlas_groups": [
         "go_stage07",
@@ -208,6 +216,49 @@
         "stage_7"
       ],
       "layout_instance_base": 100
+    },
+    "8": {
+      "id": 8,
+      "generation": 1,
+      "folder": "level08",
+      "modes": [
+        1,
+        2,
+        3
+      ],
+      "difficulties": [
+        2
+      ],
+      "controller": "default",
+      "features": [
+        "base",
+        "wolf",
+        "healer",
+        "bandits",
+        "tier3",
+        "ranger",
+        "flying",
+        "enemy_ranged",
+        "paladin",
+        "arcane",
+        "musketeer",
+        "snow",
+        "spider",
+        "barbarian",
+        "bfg",
+        "ice_enemies",
+        "sasquash"
+      ],
+      "atlas_groups": [
+        "go_stage08",
+        "go_stage08_bg",
+        "go_stages_ice",
+        "go_enemies_ice"
+      ],
+      "frames": [
+        "stage_8"
+      ],
+      "layout_instance_base": 120
     }
   },
   "arenas": {
@@ -501,6 +552,9 @@
         "big_gray",
         "big_orange",
         "big_violet"
+      ],
+      "fields": [
+        "spawner"
       ]
     },
     "arena_spider": {
@@ -751,6 +805,122 @@
       "constants": [
         "F_MOD"
       ]
+    },
+    "barbarian": {
+      "template_ids": [
+        "tower_barbarian",
+        "axe_barbarian_rude"
+      ],
+      "fields": [
+        "powers"
+      ],
+      "animation_states": [
+        "twister",
+        "twister2",
+        "attack2",
+        "shoot2",
+        "idle2",
+        "running2"
+      ],
+      "tower_menus": [
+        "barbarian"
+      ],
+      "upgrade_menus": [
+        "barrack:3:2"
+      ],
+      "power_prefixes": [
+        "BARBARIAN"
+      ],
+      "upgrade_targets": [
+        "tower_barrack_3:tower_barbarian"
+      ],
+      "constants": [
+        "DAMAGE_RUDE"
+      ]
+    },
+    "bfg": {
+      "template_ids": [
+        "tower_bfg",
+        "missile_bfg_second"
+      ],
+      "fields": [
+        "powers"
+      ],
+      "animation_states": [
+        "missile"
+      ],
+      "tower_menus": [
+        "bfg"
+      ],
+      "upgrade_menus": [
+        "engineer:3:1"
+      ],
+      "power_prefixes": [
+        "BFG"
+      ],
+      "upgrade_targets": [
+        "tower_engineer_3:tower_bfg"
+      ],
+      "reference_fields": [
+        "fragment_name",
+        "particles_name"
+      ],
+      "inputs": [
+        "kr1/engineer_towers.lua",
+        "kr1/tower_scripts.lua"
+      ],
+      "script_animation_starts": [
+        "missile_bfg:flying",
+        "missile_bfg_second:flying"
+      ],
+      "atlas_groups": [
+        "go_towers_group5"
+      ],
+      "callback_templates": [
+        "missile_bfg"
+      ]
+    },
+    "ice_enemies": {
+      "fields": [
+        "extra_armor",
+        "extra_damage_max",
+        "extra_damage_min",
+        "extra_speed"
+      ],
+      "notification_ids": [
+        "enemy_troll_axe_thrower",
+        "enemy_troll_chieftain",
+        "enemy_yeti",
+        "TOWER_BARBARIAN_BGF"
+      ],
+      "animation_states": [
+        "special"
+      ],
+      "constants": [
+        "DAMAGE_RUDE",
+        "MOD_TYPE_RAGE",
+        "MOD_TYPE_SLOW"
+      ]
+    },
+    "sasquash": {
+      "template_ids": [
+        "tower_sasquash_holder",
+        "tower_sasquash"
+      ],
+      "fields": [
+        "unfreeze_radius",
+        "unfreeze_fx",
+        "unfreeze_upgrade_to",
+        "unfreeze_rect"
+      ],
+      "reference_fields": [
+        "unfreeze_fx",
+        "unfreeze_upgrade_to"
+      ],
+      "tower_menus": [
+        "holder_sasquash",
+        "sasquash"
+      ]
     }
   },
   "controllers": {
@@ -803,7 +973,12 @@
     "scripts.aura_unit_regen.update": "unit_regen",
     "game_scripts.hero_malik.update": "hero_malik",
     "game_scripts.aura_malik_fissure.update": "fissure_aura",
-    "scripts.mod_stun.update": "stun_modifier"
+    "scripts.mod_stun.update": "stun_modifier",
+    "game_scripts.tower_bfg.update": "bfg",
+    "game_scripts.bomb_cluster.update": "cluster",
+    "scripts.missile.update": "missile",
+    "game_scripts.tower_sasquash_holder.update": "sasquash_holder",
+    "game_scripts.enemy_troll_chieftain.update": "chieftain"
   },
   "behavior_aliases": {
     "game_scripts.tower_archer.update": "scripts.tower_archer.update",
@@ -827,7 +1002,8 @@
     "game_scripts.mod_silence.update": "scripts.mod_silence.update",
     "game_scripts.mod_tower_decal.insert": "scripts.mod_tower_decal.insert",
     "game_scripts.aura_unit_regen.update": "scripts.aura_unit_regen.update",
-    "game_scripts.tower_musketeer.update": "tower_scripts.tower_musketeer.update"
+    "game_scripts.tower_musketeer.update": "tower_scripts.tower_musketeer.update",
+    "game_scripts.missile.update": "scripts.missile.update"
   },
   "runtime_scripts": [
     "res://scripts/services/campaign_levels.gd",
@@ -952,7 +1128,23 @@
     "scripts.hero_basic.insert",
     "scripts.mod_stun.insert",
     "scripts.mod_stun.remove",
-    "scripts.mod_stun.update"
+    "scripts.mod_stun.update",
+    "game_scripts.bomb_cluster.insert",
+    "game_scripts.bomb_cluster.update",
+    "game_scripts.tower_bfg.update",
+    "game_scripts.missile_bfg.remove",
+    "game_scripts.soldier_sasquash.insert",
+    "game_scripts.tower_sasquash_holder.update",
+    "game_scripts.enemy_troll_chieftain.update",
+    "scripts.missile.insert",
+    "scripts.missile.update",
+    "game_scripts.mod_troll_rage.insert",
+    "game_scripts.mod_troll_rage.remove",
+    "game_scripts.axe_barbarian.insert",
+    "game_scripts.missile.insert",
+    "game_scripts.missile.update",
+    "game_scripts.enemy_spider_big.update",
+    "game_scripts.tower_barrack_mercenaries.update"
   ],
   "runtime_dependencies": {
     "tower_musketeer": [
@@ -963,6 +1155,15 @@
     ],
     "enemy_troll": [
       "aura_troll_regen"
+    ],
+    "missile_bfg": [
+      "missile_bfg_second"
+    ],
+    "enemy_troll_axe_thrower": [
+      "aura_troll_axe_thrower_regen"
+    ],
+    "enemy_troll_chieftain": [
+      "aura_troll_chieftain_regen"
     ]
   },
   "combat_heroes": {
