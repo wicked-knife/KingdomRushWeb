@@ -31,6 +31,9 @@
 ```powershell
 python tools/prepare_level08_reference.py
 & 'D:/godot/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script tests/verify_level08.gd
+& 'D:/godot/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script tests/verify_advanced_barrack_cooldown.gd
+python tools/prepare_upgrades.py --check --reference --reference-level 8
+& 'D:/godot/Godot_v4.7.2-stable_win64_console.exe' --headless --path . --script tests/verify_level08_upgrades.gd
 & 'D:/godot/Godot_v4.7.2-stable_win64_console.exe' --path . --resolution 1280x720 --script tests/level08_visual.gd
 & 'D:/godot/Godot_v4.7.2-stable_win64_console.exe' --path . --resolution 1024x768 --script tests/level08_visual.gd -- --layout-only
 python tools/verify_level01_assets.py --level 8
@@ -49,3 +52,19 @@ python tools/verify_level08_delivery.py
 最终集中导出 release 包 `build/KingdomRush-KR1-Levels01-08-Web.zip`，执行隔离 PCK 与 ZIP 完整性检查。浏览器的实际运行、输入、音频和存档由用户手动验收，不将资源包检查描述为浏览器验收。
 
 导出前逐项核对脚本和场景中的显式运行时引用，拒绝清单遗漏；第八关的六个新增运行时模块均列入 `runtime_scripts`。隔离 PCK 检查会在缺件或脚本编译失败时立即记录失败并退出，同时保留异常中断后的退出计时器。旧缺件包已用于负向回归，避免将开发目录中的资源误算为发布包自带资源。
+
+## 野蛮人共用冷却修复（2026-10-31）
+
+原选招表达式把 `a.cooldown` 用作 `Dictionary.get` 的默认参数。Godot 会提前求值这个参数，而旋风仅配置共用冷却，没有独立字段，因此连尚未解锁旋风的普通接战也会报错。现在按 Dove 的 `SU.soldier_pick_melee_attack` 依次使用适用的共用冷却、独立冷却、零值回退，保留严格冷却边界。
+
+`tests/verify_advanced_barrack_cooldown.gd` 通过真实 `sim.step()` 进入士兵更新和选招，覆盖未解锁旋风、双斧、旋风、双斧旋风、雪人，以及三种冷却回退分支。修改前能复现缺少字段的报错；修改后 8 个代表场景、71 项断言通过，包括实际命中、共用时间戳和连续两次攻击的时刻。运行命令为 `Godot --headless --path . --script tests/verify_advanced_barrack_cooldown.gd`，简报为 `reports/advanced_barrack_cooldown.json`，后续发布检查会核对该证据及其源哈希。
+
+原生主分辨率现在先用未购买技能的真实兵营生成野蛮人，让其自行走出兵营、接敌、选招、命中并再次攻击，再进行技能与生命周期抽样；不通过 `_begin` 注入这段普通接战。1280×720 通过 208 项断言，1024×768 布局通过 104 项。隔离 PCK 也新增正常士兵更新的选招探针。
+
+## 第八关科技完整性补查（2026-10-31）
+
+补查发现两项之前未被科技样本覆盖的适配缺项：二级炮兵射程科技除炮塔攻击范围外，还应增加大贝莎导弹的 `range_base`；六级炮兵科技应将导弹／集束弹冷却基数和每级减量同时乘以 0.88。现按 Dove `patch_engineer_range` 与 `patch_engineer_power_cooldown` 修复，回玩第 4–7 关时也生效。挑战的五级科技上限继续阻止六级冷却加成。
+
+`level08_upgrades_source.json` 独立执行冻结 Dove 的实际科技补丁和大贝莎技能升级回调；16 组科技／上限配置、1472 条模板投影分别计数。投影包括健康、射程、攻击参数、技能价格和冷却，运行时重算的攻击排序由行为专项核对。Godot 通过 418 项检查，购买导弹／集束弹各三级，实际调用攻击选择消费者核对射程、冷却及地面目标的混合冷却。原 40 组默认科技样本和历史战斗快照未改写。
+
+此次完整交付已替换 `657c3bd` 的旧 Web 包，隔离 PCK 实际选招探针和 ZIP 完整性检查均通过；新的包哈希及检查结果记录在 `reports/map_kr1_web.json` 和 `docs/PROGRESSION_MILESTONES.md`。浏览器由用户手动验收。

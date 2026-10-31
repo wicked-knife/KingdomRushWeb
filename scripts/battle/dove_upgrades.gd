@@ -115,13 +115,24 @@ func apply(data: Dictionary) -> void:
 				if templates.has("mod_ray_arcane"): _multiply_damage(templates.mod_ray_arcane.dps, u.damage_factor)
 			"mage_slow_curse": _mods(templates, "bolts", [u.mod], true)
 			"engineer_concentrated_fire": _damage(templates, "engineer_bombs", u.damage_factor)
-			"engineer_range_finder": _scale(templates, "engineer_towers", ["attacks", "range"], u.range_factor)
+			"engineer_range_finder":
+				_scale(templates, "engineer_towers", ["attacks", "range"], u.range_factor)
+				if templates.has("tower_bfg"): templates.tower_bfg.attacks.list[1].range_base *= float(u.range_factor)
 			"engineer_field_logistics": _scale(templates, "engineer_towers", ["tower", "price"], u.cost_factor, "floor")
 			"engineer_industrialization":
 				for name: String in group("engineer_advanced_tower", templates):
 					for power: Dictionary in templates[name].get("powers", {}).values():
 						for key in ["price_base", "price_inc"]:
 							if power.has(key): power[key] = floorf(float(power[key]) * float(u.cost_factor))
+			"engineer_gnomish_tinkering":
+				if templates.has("tower_bfg"):
+					var bfg: Dictionary=templates.tower_bfg
+					var factor: float=u.cooldown_factor
+					for key: String in ["cooldown_base","cooldown_mixed_base","cooldown_flying"]: bfg.attacks.list[1][key] *= factor
+					bfg.attacks.list[2].cooldown_base *= factor
+					bfg.attacks.min_cooldown *= factor
+					for key: String in ["cooldown_dec","cooldown_mixed_dec"]: bfg.powers.missile[key] *= factor
+					bfg.powers.cluster.cooldown_dec *= factor
 			"rain_blazing_skies", "rain_bigger_and_meaner", "rain_cataclysm", "rain_armaggedon":
 				var control: Dictionary = templates.power_fireball_control
 				control.fireball_count += int(u.get("fireball_count_increase", 0))

@@ -368,7 +368,7 @@
       },
       "level08_native_1280x720": {
         "passed": true,
-        "checks": 200,
+        "checks": 208,
         "layout_only": false
       },
       "level08_native_1024x768": {
@@ -403,7 +403,20 @@
       "upgrades_logic": {
         "passed": true,
         "checks": 327,
+        "source_patch_scenarios": 40,
+        "source_template_rows": 3880,
         "content_combinations": 24
+      },
+      "advanced_barrack_cooldown": {
+        "passed": true,
+        "checks": 71,
+        "independent_scenarios": 8
+      },
+      "level08_upgrades": {
+        "passed": true,
+        "checks": 418,
+        "source_patch_scenarios": 16,
+        "source_template_rows": 1472
       }
     },
     "failure_probes": [
@@ -452,16 +465,17 @@
     "reports/level07_native_1280x720.json": "cc9eeaf7fdb1d2595cec7ba2bd8f9c5de8a3c1266d73f6769e5f534be6b59135",
     "reports/level08_assets.json": "d52fc1bf88e800155137f71337617f3df9f8075e0a6125b54dcc7b274c81086d",
     "reports/level08_compatibility.json": "3f3111820acd3739b651baf9e46be219a786b49260d33d70b8e3c2f8a074f7ad",
-    "reports/level08_delivery.json": "62744e33c457ffe5d138d86c42808d0789c09fb5809905d853b5a1b59910dee0",
-    "reports/level08_logic.json": "9a17a1b62ce06161a33e2935a186d0f9b78acf59612ea9d2ce456e27e762528f",
-    "reports/level08_native_1024x768.json": "722f0d2ad14ddb6ff07c18b725a50e6b67e53499f4361c0c42e26859215364e2",
-    "reports/level08_native_1280x720.json": "05559e269a1d35932fab2121c6454da5a659c30612620e3b0787175d00029288"
+    "reports/level08_delivery.json": "ee68d2cf48c9d5c83f6cd24eb150d9d4b0ab3cd136ba18be541cdc70f13fe754",
+    "reports/level08_logic.json": "5ac1a87e51262399acd0821b0b25e07c2cd31ad62d71af2f8117bc62702aea30",
+    "reports/level08_native_1024x768.json": "b50a255c02e7acae4df653926da7823dcbeef4f6eab942dda43fe69ca5e199be",
+    "reports/level08_native_1280x720.json": "9d541a4ac4bf5ff7519f9e8c98986ec93dd6b0c71f46d124b3db531e5a8ab9a1",
+    "reports/level08_upgrades.json": "d959c2ba5ad00aed3e7468513051e49f82661c5ee40c126acd4c1856c27239bf"
   },
   "technology_scheme": "1",
   "pck_files": 834,
   "bundle": "build\\KingdomRush-KR1-Levels01-08-Web.zip",
-  "bytes": 257767009,
-  "sha256": "6012e0a6d1d8b8d076faf66f7b326bae5c229ec5d0f7e6bea706e8854fe727d5",
+  "bytes": 257767598,
+  "sha256": "55232723a9ebdee5b3003eeefb0014de84f543312d0eb2665414139f6be0cd42",
   "web_files": {
     "index.apple-touch-icon.png": {
       "bytes": 11939,
@@ -477,7 +491,7 @@
     },
     "index.html": {
       "bytes": 3146,
-      "sha256": "2928a14aab30f99b4e69bc945bcf5b11c78b480cc99da7ef66475f882fdb0513"
+      "sha256": "95b9fa4f5dab06a3a94e7ff3b620ee3f7ad2c749337226be471f49592e202a03"
     },
     "index.icon.png": {
       "bytes": 5765,
@@ -488,8 +502,8 @@
       "sha256": "33c94cb3175f3333b82e2a3be5e8e86f77986f0aa2042b1631f6367a4e5bb6ba"
     },
     "index.pck": {
-      "bytes": 262843488,
-      "sha256": "f783f860205586aeaec86b02d5b88b2bf09f06c5ce149a4541176e35e097446d"
+      "bytes": 262844032,
+      "sha256": "5300d4be15ff9a8cdf1b0f110eff80151f3b0953f521793c054a097382ee9ed2"
     },
     "index.png": {
       "bytes": 21443,
@@ -500,8 +514,8 @@
       "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
     },
     "export_receipt.json": {
-      "bytes": 13671,
-      "sha256": "419f587471c5393d297f8887683d8361e29f88ab1783bad433ad9da36d1abf10"
+      "bytes": 14152,
+      "sha256": "b736b72020996dd50b8f831dab08261b6dd7b00fe7666f8b07cb48ef334fcd35"
     },
     "README.txt": {
       "bytes": 6661,

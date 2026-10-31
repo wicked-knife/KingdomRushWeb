@@ -27,26 +27,33 @@ def verify():
     hashes = {}
     names = ('level08_logic', 'level08_native_1280x720', 'level08_native_1024x768',
              'level08_assets', 'level08_compatibility', 'level07_logic',
-             'content_catalog', 'content_unification', 'upgrades_logic')
+             'content_catalog', 'content_unification', 'upgrades_logic',
+             'advanced_barrack_cooldown', 'level08_upgrades')
     for name in names:
         path = f'reports/{name}.json'
         report = read(path)
         assert report['passed'], path
         for file, expected in report.get('source_hashes', {}).items():
             assert sha(file) == expected, (name, 'stale', file)
-        reports[name] = {key: report[key] for key in ('passed', 'checks', 'independent_modes',
-            'births', 'timeline_waves', 'source_scenarios', 'content_combinations', 'layout_only') if key in report}
+        reports[name] = {key: report[key] for key in ('passed', 'checks', 'independent_modes', 'independent_scenarios',
+            'births', 'timeline_waves', 'source_scenarios', 'source_patch_scenarios', 'source_template_rows', 'content_combinations', 'layout_only') if key in report}
         hashes[path] = sha(path)
     logic = read('reports/level08_logic.json')
     assert logic['independent_modes'] == 3 and logic['births'] == 1097
     assert logic['source_scenarios'] == 72 and not logic['full_replays']
+    cooldown = read('reports/advanced_barrack_cooldown.json')
+    assert cooldown['independent_scenarios'] == 8 and cooldown['checks'] >= 71
+    assert read('reports/level08_upgrades.json')['source_patch_scenarios'] == 16
     native = read('reports/level08_native_1280x720.json')
     assert not native['layout_only'] and native['checks'] >= 180
     captured = {row['state'] for row in native['captures']}
-    assert {'eighth_opening', 'eighth_barbarian_twister', 'eighth_barbarian_corpse',
+    assert {'eighth_opening', 'eighth_barbarian_melee', 'eighth_barbarian_twister', 'eighth_barbarian_corpse',
             'eighth_chieftain_rage', 'eighth_thawed_camp', 'eighth_sasquash_attack',
             'eighth_sasquash_corpse', 'eighth_sasquash_respawn', 'eighth_yeti_area',
             'eighth_axe_thrower_shoot', 'eighth_mode2', 'eighth_mode3'} <= captured
+    assert len(native['normal_barrack_attacks']) >= 2
+    assert any(sum(other['id'] == row['id'] for other in native['normal_barrack_attacks']) >= 2
+               for row in native['normal_barrack_attacks'])
     assert read('reports/level08_native_1024x768.json')['layout_only']
     assert len(combinations()) == 24
     for file, expected in read('reports/level08_assets.json')['sha256'].items():

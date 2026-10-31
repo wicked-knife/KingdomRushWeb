@@ -244,7 +244,7 @@
     "data/ranger_arena/sounds.json": "8039f365ad0d6f9a7183390daccf1cc7cb2ab25bd89fd8baa51a2e565b456832",
     "data/upgrades/definition.json": "e8091cf27cda2dbcdf5f787449c649c46a71a5082f6bac1f184e7350f94f73c3",
     "tools/upgrades_contract.py": "ef3ea4b4b7ec501aaebc3eee1305ba1c8bc0a1aa6738cd0aa613c9b18c74907f",
-    "tools/prepare_upgrades.py": "47eaf8c94a25fc76ce4a480a96eb7227262a1a67b5c0953adabb0a5d558faca6",
+    "tools/prepare_upgrades.py": "c3eb06d49d6acd55be51a4e3fb53add729961442961b209b6c797771e31d670f",
     "tools/prepare_level01.py": "391a4709abf057c7498f043eb3d33f57ad6ae894f3ead197bbc65490ede80f10",
     "tools/level01_export/main.lua": "b0f498258423efc5fe9ca554ea8c094f8a0707579d955392e0b022ac72181659"
   }

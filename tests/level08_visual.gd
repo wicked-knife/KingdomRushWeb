@@ -1,5 +1,6 @@
 extends "res://tests/level07_visual.gd"
 ## Native input and representative lifecycle frames; constructed results, no victory search.
+var normal_barrack_attacks: Array = []
 
 func menu(id:String="11") -> void:
 	if battle.selected==id:await draw_frame();return
@@ -13,11 +14,43 @@ func new_tower(id:String,kind:String,target:String) -> void:
 		await menu(id);await capture("eighth_branch_"+name)
 		await action("upgrade",{"id":id,"upgrade_to":name})
 	check(battle.sim.tower_by_id(id).template==target,"native new tower branch "+target)
+	if target=="tower_barbarian" and not layout_only:await barbarian_contact(id)
 	for power:String in battle.sim.tower_by_id(id).powers:
 		for rank in 3:await menu(id);await action("upgrade_power",{"id":id,"power":power})
 		await menu(id);await hover(hit("upgrade_power",{"id":id,"power":power}).rect.get_center());await capture("eighth_power_"+power)
 		check(battle.interface.paint.audit.all(func(row):return row.fits),"native new tower tooltip fits "+power)
 	battle.selected="";battle.hovered=""
+
+func barbarian_contact(id: String) -> void:
+	var sim=battle.sim
+	var tower: Dictionary=sim.tower_by_id(id)
+	check(tower.powers.values().all(func(rank):return rank==0),"native ordinary contact starts with locked barbarian powers")
+	var enemy: Dictionary=sim._spawn_enemy("enemy_troll",0)
+	enemy.node=60;enemy.pos=tower.rally;enemy.hp=100000;enemy.max_hp=enemy.hp;enemy.stun_count=1
+	var observer: Callable=func(kind: String,payload: Dictionary):
+		if kind=="advanced_barrack_attack" and sim.unit_by_id(int(payload.id)).get("home","")==id:normal_barrack_attacks.append(payload.duplicate(true))
+	sim.event.connect(observer)
+	var first: Dictionary={}
+	var end_tick: int=-1
+	var captured:=false
+	var finished:=false
+	var hp: float=enemy.hp
+	for frame in 240:
+		sim.step()
+		if first.is_empty() and not normal_barrack_attacks.is_empty():
+			first=sim.unit_by_id(int(normal_barrack_attacks[0].id))
+			end_tick=int(first.advanced_job.end_at)
+		if not first.is_empty() and not captured and not first.advanced_job.is_empty() and first.advanced_job.hit:
+			await unit_frame(first,"attack",sim.tick-first.state_at,"barbarian_melee")
+			captured=true
+		if not finished and sim.tick==end_tick:
+			check(first.state=="idle" and first.playback_loop and first.advanced_job.is_empty(),"native ordinary melee finishes in looping idle")
+			finished=true
+		if finished and normal_barrack_attacks.filter(func(row):return int(row.id)==int(first.id)).size()>=2:break
+	sim.event.disconnect(observer)
+	check(captured and finished and enemy.hp<hp,"native barbarian walks from its barrack, selects melee and hits")
+	check(normal_barrack_attacks.size()>=2 and normal_barrack_attacks.all(func(row):return row.kind=="melee" and row.index==0 and row.state=="attack"),"native locked twister never prevents repeated ordinary attacks")
+	sim.enemies.erase(enemy);sim.projectiles.clear()
 
 func unit_frame(unit:Dictionary,state:String,elapsed:int,label:String) -> void:
 	var t:Dictionary=battle.sim.unit_template(unit);var sprite:Dictionary=t.render.sprites[0]
@@ -148,6 +181,6 @@ func _run() -> void:
 			check(app.campaign.record(8).get(mode,0)==2,"native eighth challenge settlement %d"%mode)
 	var hashes:Dictionary={}
 	for path:String in ["tests/level08_visual.gd","tests/level07_visual.gd","tests/challenges_visual.gd","tests/tower_upgrade_visual.gd","scripts/battle/battle_view.gd","scripts/battle/battle_ui.gd","scripts/battle/dove_bfg.gd","scripts/battle/dove_advanced_barrack.gd","scripts/battle/dove_chieftain.gd","scripts/battle/dove_sasquash.gd","scripts/battle/dove_enemy_melee.gd","scripts/battle/dove_enemy_ranged.gd","scripts/battle/level01_sim.gd","data/level08/definition.json"]:hashes[path]=FileAccess.get_sha256("res://"+path)
-	preload("res://tests/report_writer.gd").json_file("res://reports/level08_native_%s.json"%suffix,{"passed":failures.is_empty(),"checks":checks,"failures":failures,"captures":captures,"layout_only":layout_only,"source_hashes":hashes,"scope":"native Godot input, advanced tower skills and animation endpoints, camp fire/hire, chief effects, restart and constructed settlement; no victory replay"})
+	preload("res://tests/report_writer.gd").json_file("res://reports/level08_native_%s.json"%suffix,{"passed":failures.is_empty(),"checks":checks,"failures":failures,"captures":captures,"layout_only":layout_only,"normal_barrack_attacks":normal_barrack_attacks,"source_hashes":hashes,"scope":"native Godot input, ordinary barrack departure/contact/selection/hits, advanced tower skills and animation endpoints, camp fire/hire, chief effects, restart and constructed settlement; no victory replay"})
 	print("LEVEL08_NATIVE: ","PASS" if failures.is_empty() else JSON.stringify(failures)," checks=",checks)
 	app.queue_free();await process_frame;quit(0 if failures.is_empty() else 1)

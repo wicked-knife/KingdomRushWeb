@@ -118,6 +118,8 @@ __pycache__/
 !/reports/level08_native_1280x720.json
 !/reports/level08_native_1024x768.json
 !/reports/level08_delivery.json
+!/reports/advanced_barrack_cooldown.json
+!/reports/level08_upgrades.json
 !/reports/feedback_logic.json
 !/reports/feedback_native_1280x720.json
 !/reports/feedback_native_1024x768.json

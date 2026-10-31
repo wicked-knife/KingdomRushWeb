@@ -1,0 +1,19 @@
+{
+	"checks": 418,
+	"failures": [],
+	"passed": true,
+	"source_hashes": {
+		"data/level08/definition.json": "61b2742cbbb218f8503e51af83bfb9ff01fb35cc592fb10e3c0d1a91f7041b85",
+		"data/upgrades/definition.json": "e8091cf27cda2dbcdf5f787449c649c46a71a5082f6bac1f184e7350f94f73c3",
+		"scripts/battle/dove_bfg.gd": "0f8bc792f74af3e7fbb0b88c92f05be9e1369d5491dec95907b48dd0a2de111e",
+		"scripts/battle/dove_upgrades.gd": "b7967644407b14b0cac1e48fbf256e0a71e5a2bec6c53689a9e419b455e1d8d7",
+		"scripts/services/battle_setup.gd": "ecc0636937834eaeb63af06ab9068f86235cc00597644c56713189dcc44ea9d3",
+		"tests/fixtures/level08_upgrades_source.json": "56ed03fd74dcce8a68b2916ffa00de2a28ab141afa55dd3e35f035a0d1a6763d",
+		"tests/verify_level08_upgrades.gd": "1fa878157a6c1745c61da4bef01a8a01aa2bae3a2da2cbe5d777b917aab94b4b",
+		"tests/verify_upgrades.gd": "a9f169e0fa0bd67dd8430e3d92e33c2ccd0b571c308b49826e75f48acf989c5e",
+		"tools/prepare_upgrades.py": "c3eb06d49d6acd55be51a4e3fb53add729961442961b209b6c797771e31d670f",
+		"tools/upgrade_reference/main.lua": "ccf197053c1122c063174c97a1277050d6d4f2b0e26539304748e17d17f576b3"
+	},
+	"source_patch_scenarios": 16,
+	"source_template_rows": 1472
+}

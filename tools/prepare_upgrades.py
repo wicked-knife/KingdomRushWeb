@@ -54,11 +54,20 @@ if __name__ == "__main__":
     parser.add_argument("--love", type=Path, default=Path("D:/王国保卫战Dove版/love.exe"))
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--reference", action="store_true", help="Run actual Dove patch functions and behavior coroutines to regenerate the independent reference")
+    parser.add_argument("--reference-level", type=int, help="Generate a separate template-patch reference for one registered level")
     args = parser.parse_args()
+    if args.reference_level is not None:
+        from campaign_content import level_ids
+        if not args.reference or args.reference_level not in level_ids():
+            parser.error("--reference-level requires --reference and a registered level")
     prepare(args.source, args.love, args.check)
     if args.reference:
+        reference_env = dict(os.environ, DOVE_SOURCE_DIR=str(args.source), DOVE_PROJECT=str(ROOT))
+        if args.reference_level is not None:
+            reference_env["DOVE_UPGRADE_LEVEL"] = str(args.reference_level)
+            reference_env["DOVE_UPGRADE_REFERENCE_OUTPUT"] = str(ROOT / f"tests/fixtures/level{args.reference_level:02d}_upgrades_source.json")
         result = subprocess.run([str(args.love), str(ROOT / "tools/upgrade_reference")],
-            env=dict(os.environ, DOVE_SOURCE_DIR=str(args.source), DOVE_PROJECT=str(ROOT)), capture_output=True, timeout=60)
+            env=reference_env, capture_output=True, timeout=60)
         error = ROOT / "output/upgrade_reference.error"
         if result.returncode: raise RuntimeError(error.read_text(encoding="utf-8") if error.exists() else result.stderr.decode("utf-8", errors="replace"))
         error.unlink(missing_ok=True)

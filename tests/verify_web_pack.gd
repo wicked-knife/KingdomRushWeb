@@ -242,6 +242,15 @@ func _run() -> void:
 					while not campaign.notices.is_empty(): campaign.command("confirm")
 					campaign.step()
 				if campaign.tower_by_id("91").template!="tower_sasquash" or not campaign.command("buy_soldier",{"id":"91","type":"soldier_sasquash"}): failures.append("Pack eighth thaw or hire failed")
+				# Run the normal soldier update in the mounted pack, including a locked
+				# twister that has no individual cooldown in the source template.
+				var contact: Dictionary=campaign._spawn_enemy("enemy_goblin",0)
+				contact.node=40;contact.pos=campaign.vec(stage.paths.paths[0][0][40]);contact.hp=100000;contact.stun_count=1
+				var barb: Dictionary=campaign._soldier("soldier_barbarian","",0,contact.pos,contact.pos)
+				barb.target=contact.id;contact.blockers=[barb.id];contact.blocker=barb.id
+				barb.pos=campaign.melee_slot(barb,contact);barb.dest=barb.pos;barb.rallying=false
+				campaign.step()
+				if barb.advanced_job.is_empty() or barb.advanced_job.kind!="melee" or barb.advanced_job.index!=0:failures.append("Pack eighth normal barbarian attack selection failed")
 				for name: String in ["enemy_yeti","enemy_troll_axe_thrower","enemy_troll_chieftain"]:
 					var enemy: Dictionary=campaign._spawn_enemy(name,0)
 					if not enemy.has("rage_job" if name=="enemy_troll_chieftain" else "mixed_melee_job"): failures.append("Pack eighth enemy coroutine missing "+name)

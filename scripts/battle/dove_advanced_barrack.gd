@@ -130,7 +130,10 @@ static func _melee(sim, s:Dictionary, target:Dictionary, t:Dictionary) -> bool:
 	var order:Array=[1,0] if t.melee.attacks.size()>1 else [0]
 	for index:int in order:
 		var a:Dictionary=t.melee.attacks[index]
-		var cooldown:float=t.melee.get("cooldown",a.cooldown) if a.get("shared_cooldown",false) else a.cooldown
+		# Shared area attacks can omit their own cooldown. Dictionary.get evaluates
+		# its default eagerly, so never use a.cooldown as that fallback.
+		var cooldown:float=a.get("cooldown",0.0)
+		if a.get("shared_cooldown",false) and t.melee.has("cooldown"):cooldown=float(t.melee.cooldown)
 		if a.get("disabled",false) or float(sim.tick-int(s.melee_ts[index]))/30<=cooldown*float(t.unit.cooldown_factor) or not sim.Targets.matches(sim,target,a):continue
 		if sim.rng.randf()>=float(a.chance):s.melee_ts[index]=sim.tick;continue
 		_begin(sim,s,t,a,{"kind":"melee","target":target.id,"entity":target,"index":index},float(a.hit_time))

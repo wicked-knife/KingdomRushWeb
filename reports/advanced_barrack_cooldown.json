@@ -1,0 +1,175 @@
+{
+	"checks": 71,
+	"failures": [],
+	"independent_scenarios": 8,
+	"observations": [
+		{
+			"attacks": [
+				{
+					"id": 2,
+					"index": 0,
+					"kind": "melee",
+					"state": "attack",
+					"tick": 42
+				},
+				{
+					"id": 2,
+					"index": 0,
+					"kind": "melee",
+					"state": "attack",
+					"tick": 84
+				}
+			],
+			"damage": 23.0,
+			"first_tick": 42,
+			"scenario": "locked twister"
+		},
+		{
+			"attacks": [
+				{
+					"id": 2,
+					"index": 0,
+					"kind": "melee",
+					"state": "attack2",
+					"tick": 42
+				},
+				{
+					"id": 2,
+					"index": 0,
+					"kind": "melee",
+					"state": "attack2",
+					"tick": 84
+				}
+			],
+			"damage": 35.0,
+			"first_tick": 42,
+			"scenario": "dual axes"
+		},
+		{
+			"attacks": [
+				{
+					"id": 2,
+					"index": 1,
+					"kind": "melee",
+					"state": "twister",
+					"tick": 42
+				},
+				{
+					"id": 2,
+					"index": 1,
+					"kind": "melee",
+					"state": "twister",
+					"tick": 84
+				}
+			],
+			"damage": 29.0,
+			"first_tick": 42,
+			"scenario": "twister"
+		},
+		{
+			"attacks": [
+				{
+					"id": 2,
+					"index": 1,
+					"kind": "melee",
+					"state": "twister2",
+					"tick": 42
+				},
+				{
+					"id": 2,
+					"index": 1,
+					"kind": "melee",
+					"state": "twister2",
+					"tick": 84
+				}
+			],
+			"damage": 35.0,
+			"first_tick": 42,
+			"scenario": "dual twister"
+		},
+		{
+			"attacks": [
+				{
+					"id": 2,
+					"index": 0,
+					"kind": "melee",
+					"state": "attack",
+					"tick": 76
+				},
+				{
+					"id": 2,
+					"index": 0,
+					"kind": "melee",
+					"state": "attack",
+					"tick": 152
+				}
+			],
+			"damage": 108.0,
+			"first_tick": 76,
+			"scenario": "Sasquatch own cooldown"
+		},
+		{
+			"attacks": [
+				{
+					"id": 2,
+					"index": 0,
+					"kind": "melee",
+					"state": "attack",
+					"tick": 31
+				},
+				{
+					"id": 2,
+					"index": 0,
+					"kind": "melee",
+					"state": "attack",
+					"tick": 62
+				}
+			],
+			"damage": 18.0,
+			"first_tick": 31,
+			"scenario": "missing parent cooldown"
+		},
+		{
+			"attacks": [
+				{
+					"id": 2,
+					"index": 0,
+					"kind": "melee",
+					"state": "attack",
+					"tick": 31
+				},
+				{
+					"id": 2,
+					"index": 0,
+					"kind": "melee",
+					"state": "attack",
+					"tick": 62
+				}
+			],
+			"damage": 18.0,
+			"first_tick": 31,
+			"scenario": "non-shared cooldown"
+		},
+		{
+			"attacks": [
+				{
+					"id": 2,
+					"index": 0,
+					"kind": "melee",
+					"state": "attack",
+					"tick": 1
+				}
+			],
+			"damage": 18.0,
+			"first_tick": 1,
+			"scenario": "source zero fallback"
+		}
+	],
+	"passed": true,
+	"source_hashes": {
+		"data/level08/definition.json": "61b2742cbbb218f8503e51af83bfb9ff01fb35cc592fb10e3c0d1a91f7041b85",
+		"scripts/battle/dove_advanced_barrack.gd": "d5ce27a5c0629962469ccc0c3bd28d3d37e343bc5cf5b1b37949ec6e38898667",
+		"scripts/battle/level01_sim.gd": "1f509b601c944c8db9916627ac124a1322b3f74192533ea2c3108bb714fd3069",
+		"tests/verify_advanced_barrack_cooldown.gd": "c28e29c24b3500a812c5e1142cce8cc7dfba8ab380df9c4651f30dcea24ac960"
+	}
+}

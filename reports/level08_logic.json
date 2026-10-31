@@ -10,7 +10,7 @@
 		"data/level08/definition.json": "61b2742cbbb218f8503e51af83bfb9ff01fb35cc592fb10e3c0d1a91f7041b85",
 		"scripts/battle/battle_ui.gd": "b12ad85f5b65083dc67e2bd78b19e5918f1ad55d0cf09432a8ba7b35bf98e61c",
 		"scripts/battle/battle_view.gd": "af6e4e0b109b538fe21e8d534f78c54acf7f23e7c86f78b13461b48fb16052ea",
-		"scripts/battle/dove_advanced_barrack.gd": "b8e86a156eb80f0231650cc4ba28a0bd9b74d6cf40788424d26798d5dc425f63",
+		"scripts/battle/dove_advanced_barrack.gd": "d5ce27a5c0629962469ccc0c3bd28d3d37e343bc5cf5b1b37949ec6e38898667",
 		"scripts/battle/dove_behaviors.gd": "417397aea04b5a58a8c6806b465b65d40fe4d8da8c07b5a8480582119b0dfe42",
 		"scripts/battle/dove_bfg.gd": "0f8bc792f74af3e7fbb0b88c92f05be9e1369d5491dec95907b48dd0a2de111e",
 		"scripts/battle/dove_chieftain.gd": "7b5fb215dbfbd9951cc4d802faeabb1774fdae2c5cee619f1c5b17d32a388524",
