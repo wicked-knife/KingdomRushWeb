@@ -192,7 +192,8 @@ func _selection(id: String, closing: bool) -> void:
 			_menu_icon(item.image, pos, "build", {"id": id, "type": type}, price, sim.gold >= price and enabled)
 	elif tower.type == "holder_sasquash":
 		for item:Dictionary in data.tower_menus.get("holder_sasquash",[]):
-			_menu_icon(item.image,view.Simulation.vec(data.tower_menu_button_places[int(item.place)-1]),"frozen",{},-1,enabled)
+			# Dove's tw_none icon has neither click nor hover callbacks.
+			_menu_icon(item.image,view.Simulation.vec(data.tower_menu_button_places[int(item.place)-1]),"frozen",{},-1,false)
 	else:
 		var options: Array = sim.upgrade_options(tower)
 		for target: String in options:
@@ -229,6 +230,7 @@ func _selection(id: String, closing: bool) -> void:
 
 func _menu_icon(image: String, center: Vector2, action: String, args: Dictionary, price: int, enabled: bool, maxed: bool = false, halo: String = "") -> void:
 	var border := "special_icons_0000" if action == "upgrade_power" else ("main_icons_0000" if image.begins_with("main_icons") else "")
+	if action == "frozen": border = "" # Source tw_none has no purchase-button frame.
 	var dimensions := _size(border) if border != "" else _size(image)
 	var pos := center - dimensions / 2
 	var over: bool = view.hovered == action + str(args)
@@ -265,9 +267,6 @@ func _tower_tooltip(tower: Dictionary) -> void:
 		title = "出售防御塔"; description = "返还 %d 金币" % view.sim.sell_refund(tower)
 	if view.hovered == "buy_soldier" + str({"id":tower.id,"type":"soldier_elf"}):
 		title = text("TOWER_ELF_NAME"); description = text("TOWER_ELF_DESCRIPTION") + "\n已招募 %d/4 个兵位；阵亡后自动补员。" % int(tower.get("hired",0))
-	if view.hovered=="frozen"+str({}):
-		var item:Dictionary=data.tower_menus.holder_sasquash[0]
-		title=text(item.tt_title);description=text(item.tt_desc)
 	if view.hovered=="buy_soldier"+str({"id":tower.id,"type":"soldier_sasquash"}):
 		title=text("TOWER_SASQUASH_NAME");description=text("TOWER_SASQUASH_DESCRIPTION")
 	for item: Dictionary in data.tower_menus.get(str(view.sim.tower_template(tower).tower.type), []):
@@ -464,42 +463,52 @@ func _title(image: String, caption: String, at: Vector2, center: bool = true) ->
 	paint.image(image, pos)
 	paint.label(caption, Rect2(pos + Vector2((dimensions.x - 208) / 2, 16), Vector2(208, 38)), 24, Color("f7f4b9"), "center", "middle", 1, 1, "", "h_noti")
 
+func _tower_notice_card(image: String, prefix: String, subtitle: String, y: float) -> void:
+	# NotificationView.create_layout(N_TOWER), including the zh-Hans subtitle offset.
+	paint.image("notifications_newenemy", Vector2(0, y))
+	paint.label(text(subtitle), Rect2(257, 74 + y, 320, 20), 15, Color("181a0f"), "left", "top", 0, 0, "", "body_slides")
+	paint.label(text(prefix + "_NAME"), Rect2(255, 90 + y, 320, 40), 28, Color("181a0f"), "left", "top", 1, 0, "", "body_slides")
+	paint.label(text(prefix + "_EXTRA"), Rect2(255, 130 + y, 320, 100), 17, Color("181a0f"), "left", "top", 0, 0, "", "body_slides")
+	# KView.draw rotates by -r; Godot canvas transforms use the opposite sign.
+	paint.push(Vector2(134, 160 + y), 1, 1, -PI / 24)
+	paint.image(image, Vector2.ZERO, Vector2(0.5, 0.5))
+	paint.image("notifications_polaroid_overlay", Vector2.ZERO, Vector2(0.5, 0.5))
+	paint.pop()
+
+func _tower_notice(id: String, notification: Dictionary) -> void:
+	var dimensions := _size("notifications_newenemy")
+	var dual: bool = notification.layout == "N_TOWER_2"
+	var height := dimensions.y * 2 - 30 if dual else dimensions.y
+	var button_size := _size("notifications_but_dark_bg_0001")
+	var button_center := Vector2(450, height - 40) if dual else Vector2(475, 254)
+	# Fit the title and protruding button without moving either within the source layout.
+	var top := maxf(0, _size("notifications_tit_towers_bg").y - 40)
+	var bottom := maxf(height, button_center.y + button_size.y)
+	_panel(id, Vector2(dimensions.x, top + bottom))
+	paint.push(Vector2(0, top))
+	# Source adds the title and button before the papers, which cover their edges.
+	_title("notifications_tit_towers_bg", "新防御塔解锁", Vector2(80, 40), false)
+	paint.button("notifications_but_dark_bg_0001", button_center - Vector2(button_size.x / 2, 0), "好的！", "confirm", {}, true, "notice", "body")
+	if dual:
+		for i in range(2):
+			_tower_notice_card(notification.images[i], notification.prefixes[i], notification.subs[i], i * (dimensions.y - 30))
+	else:
+		_tower_notice_card(notification.image, notification.prefix, notification.sub, 0)
+	paint.pop()
+	_end_panel()
+
 func notice(id: String) -> void:
 	view._dim()
 	var notification: Dictionary = data.notifications[id]
+	if notification.get("layout", "") in ["N_TOWER", "N_TOWER_2"]:
+		_tower_notice(id, notification)
+		return
 	var power := id.begins_with("POWER_")
 	var enemy := id.begins_with("enemy_")
 	var paper: String = "notifications_newenemy" if power or enemy else notification.get("paper","notifications_newenemy")
 	var dimensions := _size(paper)
-	var dual_tower: bool = notification.get("layout", "") == "N_TOWER_2"
-	_panel(id, Vector2(dimensions.x, dimensions.y * 2 + 34) if dual_tower else dimensions + Vector2(0, 48))
-	if notification.get("layout", "") == "N_TOWER_2":
-		# Include the title above the source cards in the viewport fitting bounds.
-		paint.push(Vector2(0,64))
-		for i in range(2):
-			var y := i * (dimensions.y - 30)
-			paint.image(paper,Vector2(0,y))
-			paint.push(Vector2(134,160 + y),1,1,PI / 24)
-			paint.image(notification.images[i],Vector2.ZERO,Vector2(0.5,0.5))
-			paint.image("notifications_polaroid_overlay",Vector2.ZERO,Vector2(0.5,0.5))
-			paint.pop()
-			paint.label(text(notification.subs[i]),Rect2(257,70 + y,320,20),15,Color("181a0f"),"left","top")
-			paint.label(text(notification.prefixes[i] + "_NAME"),Rect2(255,90 + y,320,40),28,Color("181a0f"),"left","top",1,0,"","body_slides")
-			paint.label(text(notification.prefixes[i] + "_EXTRA"),Rect2(255,130 + y,320,100),17,Color("181a0f"),"left","top")
-		_title("notifications_tit_towers_bg","新防御塔",Vector2.ZERO,false)
-		paint.button("notifications_but_dark_bg_0001",Vector2(450,dimensions.y * 2 - 70),"知道了","confirm",{},true,"notice")
-		paint.pop()
-	elif notification.get("layout", "") == "N_TOWER":
-		_title("notifications_tit_towers_bg", "新防御塔", Vector2(80,40), false)
-		paint.image(paper)
-		paint.push(Vector2(134,160),1,1,PI/24)
-		paint.image(notification.image,Vector2.ZERO,Vector2(0.5,0.5))
-		paint.image("notifications_polaroid_overlay",Vector2.ZERO,Vector2(0.5,0.5));paint.pop()
-		paint.label(text(notification.sub),Rect2(255,50,320,25),15,Color("181a0f"),"left","top")
-		paint.label(text(notification.prefix+"_NAME"),Rect2(255,80,320,40),28,Color("181a0f"),"left","top",1,0,"","body_slides")
-		paint.label(text(notification.prefix+"_EXTRA"),Rect2(255,125,320,110),17,Color("181a0f"),"left","top")
-		paint.button("notifications_but_dark_bg_0001",Vector2(400,254),"知道了","confirm",{},true,"notice")
-	elif notification.get("layout", "") == "upgrade":
+	_panel(id, dimensions + Vector2(0, 48))
+	if notification.get("layout", "") == "upgrade":
 		var tier: String = "三级" if int(notification.get("tier", 2)) == 3 else "二级"
 		_title("notifications_tit_towers_bg", tier + "防御塔", Vector2(80, 40), false)
 		paint.image(paper)
