@@ -114,6 +114,10 @@ __pycache__/
 !/reports/level07_delivery.json
 !/reports/level08_logic.json
 !/reports/level08_assets.json
+!/reports/level08_compatibility.json
+!/reports/level08_native_1280x720.json
+!/reports/level08_native_1024x768.json
+!/reports/level08_delivery.json
 !/reports/feedback_logic.json
 !/reports/feedback_native_1280x720.json
 !/reports/feedback_native_1024x768.json

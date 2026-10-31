@@ -18,6 +18,10 @@ static func step(sim, enemy:Dictionary, t:Dictionary) -> bool:
 	var a:Dictionary=t.timed_attacks.list[0]
 	var job:Dictionary=enemy.rage_job
 	if not job.is_empty():
+		# y_enemy_wait checks interruption only while tick_ts < stop_ts.
+		# The animation wait after applying the effects is unconditional.
+		if not job.hit and sim.tick<int(job.at) and int(enemy.get("stun_count",0))>0:
+			enemy.rage_job={};sim._state(enemy,"idle",true);return true
 		if not job.hit and sim.tick>=job.at:
 			job.hit=true
 			sim.event.emit("sound",{"id":a.cast_sound})
@@ -29,6 +33,7 @@ static func step(sim, enemy:Dictionary, t:Dictionary) -> bool:
 		if int(job.loop)<int(a.loops):_begin(sim,enemy,t,int(job.loop)+1);return true
 		enemy.rage_job={}
 		return false
+	if int(enemy.get("stun_count",0))>0:sim._state(enemy,"idle");return true
 	if enemy.blocker!=0:enemy.rage_ts=sim.tick;return false
 	if int(enemy.get("silence_count",0))>0 or float(sim.tick)/30-float(enemy.rage_ts)/30<=float(a.cooldown):return false
 	if targets(sim,enemy,a).is_empty():enemy.rage_ts=sim.tick-(float(a.cooldown)-0.5)*30-0.00003;return false
@@ -41,3 +46,6 @@ static func _begin(sim, enemy:Dictionary, t:Dictionary, loop:int) -> void:
 	enemy.rage_job={"loop":loop,"hit":false,"at":sim.tick+sim.source_unconditional_wait_ticks(sim.tick,float(a.cast_time)),"end":sim.tick+Anim.duration(sim.animations,Anim.key(t.render.sprites[0],a.animation))}
 	enemy.last_dir=Vector2.ZERO;enemy.playback_loop=false
 	sim._state(enemy,a.animation,true)
+	sim.event.emit("chieftain_animation",{"tick":sim.tick,"state":a.animation})
+	if int(enemy.get("stun_count",0))>0:
+		enemy.rage_job={};sim._state(enemy,"idle",true)

@@ -73,4 +73,6 @@ python tools/verify_feedback_assets.py
 python tools/verify_feedback_delivery.py
 ```
 
-最终集中导出 release `build/KingdomRush-KR1-Levels01-07-Web.zip`，隔离 PCK 及压缩包完整性由脚本检查。浏览器画面、输入、音频解锁及持久化由用户手动验收。交付字节数和 SHA256 见 `reports/map_kr1_web.json`，构建内回执包含本轮专项报告摘要与哈希。
+本阶段原交付为 release `build/KingdomRush-KR1-Levels01-07-Web.zip`。后续已纳入 [第八关](LEVEL08.md) 的 24 组合集中交付，当前发布包路径见 [运行说明](RUNNING.md)。隔离 PCK 及压缩包完整性由脚本检查，浏览器画面、输入、音频解锁及持久化由用户手动验收。交付字节数和 SHA256 见 `reports/map_kr1_web.json`，构建内回执包含专项报告摘要与哈希。
+
+历史战斗审计可独立重现：先执行 Godot headless 的 `tests/verify_content_unification.gd`，再执行 `python tools/verify_feedback_combat.py`。工具要求当前 3 个场景、3600 tick、36 个采样点与冻结历史快照及已声明源修正完全一致，同时检查输入和实现哈希；未经声明的当前状态或错误历史输入必须被拒绝。该工具已纳入反馈发布检查，不修改历史预期，不将旧 PCK 的历史出处描述为本次重新运行。

@@ -5,6 +5,7 @@ import http.server
 import hashlib
 import json
 from pathlib import Path
+import re
 import shutil
 import subprocess
 from campaign_content import read_catalog, level_ids, combinations, export_spec, validate_definition
@@ -12,6 +13,19 @@ from upgrades_contract import validate_technology_resources
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "data/menu_manifest.json"
+
+
+def validate_runtime_resources(resources):
+    """Reject explicit script/scene dependencies omitted from the export manifest."""
+    included = set(resources)
+    references = re.compile(r"[\"'](res://[^\"'\n]+\.(?:gd|tscn|tres))[\"']")
+    for name in resources:
+        local = ROOT / name.removeprefix("res://")
+        if local.suffix not in {".gd", ".tscn", ".tres"}:
+            continue
+        for dependency in sorted(set(references.findall(local.read_text(encoding="utf-8")))):
+            if dependency not in included:
+                raise ValueError(f"Runtime dependency missing from export manifest: {name} -> {dependency}")
 
 
 def resource_paths():
@@ -54,6 +68,7 @@ def resource_paths():
         local = (ROOT / path.removeprefix("res://")).resolve()
         if not path.startswith("res://") or not local.is_relative_to(ROOT) or not local.is_file():
             raise ValueError(f"Invalid or missing bootstrap resource: {path}")
+    validate_runtime_resources(resources)
     return resources, data
 
 
@@ -137,6 +152,10 @@ def main():
             from verify_level07_delivery import verify as verify_seventh
             verify_seventh()
             seventh = json.loads((ROOT / "reports/level07_delivery.json").read_text(encoding="utf-8"))
+        eighth = {}
+        if 8 in level_ids():
+            from verify_level08_delivery import verify as verify_eighth
+            eighth = verify_eighth()
         technology_reports = {}
         for key in ("logic", "native_1280x720", "native_1024x768", "assets"):
             path = ROOT / f"reports/upgrades_{key}.json"
@@ -185,13 +204,14 @@ def main():
             "playable_modes": sorted({row["mode"] for row in combinations()}),
             "playable_combinations": combinations(),
             "content_catalog_sha256": hashlib.sha256((ROOT / "data/campaign_content.json").read_bytes()).hexdigest(),
-            "challenge_validation_passed": challenge_report.get("passed", False) and (not sixth_required or sixth_report.get("passed", False) and native_report.get("passed", False)) and (7 not in level_ids() or seventh.get("passed", False)),
+            "challenge_validation_passed": challenge_report.get("passed", False) and (not sixth_required or sixth_report.get("passed", False) and native_report.get("passed", False)) and (7 not in level_ids() or seventh.get("passed", False)) and (8 not in level_ids() or eighth.get("passed", False)),
             "challenge_checks": challenge_report.get("checks", 0),
-            "challenge_check_scope": "levels 1-5; sixth and seventh source data/mechanisms and native flow are reported separately",
+            "challenge_check_scope": "levels 1-5; sixth, seventh and eighth source data/mechanisms and native flow are reported separately",
             "sixth_logic": {k: sixth_report.get(k) for k in ("passed", "checks", "independent_modes", "timeline_waves", "births", "full_replays")},
             "sixth_native": {k: native_report.get(k) for k in ("passed", "checks", "scope")},
             "seventh_acceptance": {k: seventh.get(k) for k in ("passed", "playable_combinations", "reports", "failure_probes", "additive_audit")},
-            "validation_report_sha256": {path.relative_to(ROOT).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest() for path in sorted((ROOT / "reports").glob("level07_*.json")) if path.name not in ("level07_timelines.json", "level07_comparisons.json")},
+            "eighth_acceptance": {k: eighth.get(k) for k in ("passed", "playable_combinations", "reports", "failure_probes")},
+            "validation_report_sha256": {path.relative_to(ROOT).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest() for path in sorted([*(ROOT / "reports").glob("level07_*.json"), *(ROOT / "reports").glob("level08_*.json")]) if not path.name.endswith(("_timelines.json", "_comparisons.json"))},
             "battle_ui_acceptance": ui_reports,
             "default_technology_acceptance": technology_reports,
             "feedback_acceptance": {k:feedback[k] for k in ('passed','reports','historical_baseline_preserved','content_combinations','guard_scope')},

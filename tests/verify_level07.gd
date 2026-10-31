@@ -10,7 +10,7 @@ func fresh(mode: int = 1):
 func run() -> void:
 	source = Levels.read_json("res://tests/fixtures/level07_source.json")
 	check(not source.is_empty(),"actual frozen Lua samples exist")
-	check(Levels.ids().size()==7 and not Levels.supports(8) and not Levels.supports(7,1,3),"seven stages; eighth preview; normal only")
+	check(Levels.ids().size()==8 and not Levels.supports(9) and not Levels.supports(7,1,3),"eight stages; ninth preview; normal only")
 	for mode in [1,2,3]:
 		var sim = fresh(mode)
 		check(sim.data.waves==source.modes[str(mode)],"all seventh source wave fields mode %d" % mode)
@@ -37,7 +37,7 @@ func run() -> void:
 			var data := Levels.load_definition(id,mode)
 			check(not data.is_empty(),"load combination %d/%d" % [id,mode])
 			var sim = Sim.new(data,42); dismiss(sim); ticks(sim,2)
-	var report := {"passed":failures.is_empty(),"checks":checks,"independent_modes":3,"timeline_waves":23,"births":births,"content_combinations":21,"source_coroutines":["tower_musketeer","shotgun","bomb","tunnel","aura_unit_regen"],"source_scenarios":source.towers.size()+source.shotguns.size()+source.bombs.size()+source.tunnels.size()+1,"failures":failures,"full_replays":false,"source_hashes":hashes7()}
+	var report := {"passed":failures.is_empty(),"checks":checks,"independent_modes":3,"timeline_waves":23,"births":births,"content_combinations":24,"source_coroutines":["tower_musketeer","shotgun","bomb","tunnel","aura_unit_regen"],"source_scenarios":source.towers.size()+source.shotguns.size()+source.bombs.size()+source.tunnels.size()+1,"failures":failures,"full_replays":false,"source_hashes":hashes7()}
 	write7("level07_logic",report); write7("level07_timelines",timeline_report); write7("level07_comparisons",comparisons)
 	print("LEVEL07: ","PASS" if failures.is_empty() else JSON.stringify(failures)," checks=",checks," births=",births)
 	quit(0 if failures.is_empty() else 1)
@@ -217,7 +217,7 @@ func progression7() -> void:
 	p.record_result(result)
 	check("tower_musketeer" in p.data.locked_towers and p.data.has("last_victory"),"victory pending retains permanent lock")
 	p.enter_map()
-	check(p.record(7).stars==3 and p.is_playable(7,2) and p.is_playable(7,3) and not p.is_playable(8) and p.is_unlocked(8),"three stars opens challenges; eighth preview")
+	check(p.record(7).stars==3 and p.is_playable(7,2) and p.is_playable(7,3) and p.is_playable(8) and not p.is_playable(9),"three stars opens challenges and eighth; ninth preview")
 	check(not "tower_musketeer" in p.data.locked_towers,"map settlement commits Musketeer unlock")
 	var restored=Progress.new();restored.initialize(path)
 	check(restored.record(7).stars==3 and not "tower_musketeer" in restored.data.locked_towers,"reload preserves stage and unlock")

@@ -73,7 +73,7 @@ func _run() -> void:
 		check("tower_musketeer" in app.campaign.data.locked_towers,"native victory leaves unlock pending")
 		battle.set_process(true);await create_timer(4.2).timeout;battle.set_process(false)
 		await capture("seventh_victory");await action("map");await app.map_ready
-		check(not "tower_musketeer" in app.campaign.data.locked_towers and app.campaign.is_playable(7,2) and not app.campaign.is_playable(8),"native map commits unlock and keeps eighth preview")
+		check(not "tower_musketeer" in app.campaign.data.locked_towers and app.campaign.is_playable(7,2) and app.campaign.is_playable(8) and not app.campaign.is_playable(9),"native map commits unlock and opens eighth; ninth preview")
 		for mode in [2,3]:
 			await enter(7,mode);await capture("seventh_mode%d" % mode)
 			if mode==3:

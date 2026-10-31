@@ -26,4 +26,4 @@ if __name__ == '__main__':
                             DOVE_PROJECT=str(ROOT), DOVE_REFERENCE_OUTPUT=str(ROOT / 'tests/fixtures/level08_source.json')),
                    check=True, timeout=45)
     result = json.loads((ROOT / 'tests/fixtures/level08_source.json').read_text(encoding='utf-8'))
-    print({key: len(result[key]) for key in ('modes', 'towers', 'powers', 'clusters', 'missiles', 'melee', 'chieftains')})
+    print({key: len(result[key]) for key in ('modes', 'towers', 'powers', 'clusters', 'missiles', 'melee', 'melee_interrupts', 'ranged', 'enemy_melee', 'enemy_ranged', 'chieftains')})

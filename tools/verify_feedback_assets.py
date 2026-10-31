@@ -7,6 +7,7 @@ from campaign_content import validate_definition,export_spec
 from power_preview_contract import validate_ui
 from feedback_compatibility import before_feedback
 from level07_compatibility import logical_atlas
+from level08_compatibility import before_eighth
 
 ROOT=Path(__file__).resolve().parents[1]
 def read(path):return json.loads((ROOT/path).read_text(encoding='utf-8'))
@@ -33,7 +34,7 @@ def verify():
         atlas=read(f'data/{name}/atlas.json');assert required<=atlas['lookup'].keys(),name
         validate_followup_resources(definition,read(f'data/{name}/animations.json')['animations'],atlas)
         for part,expected in spec['published_logical_sha256'].items():
-            current=before_feedback(name,read(f'data/{name}/{part}.json'),part)
+            current=before_feedback(name,before_eighth(name,read(f'data/{name}/{part}.json'),part),part)
             if part=='atlas':current=logical_atlas(current)
             assert digest(current)==expected,(name,part,'pre-existing data changed')
         report=read(f'reports/{name}_assets.json');assert report['passed'],name

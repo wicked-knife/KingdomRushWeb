@@ -817,12 +817,14 @@ func _enemy_step(e: Dictionary) -> void:
 	if e.hp <= 0:
 		if e.has("boss"): behaviors.enemy_step(self, e, templates[e.template])
 		return
+	var t: Dictionary = templates[e.template]
+	# These source coroutines own the interrupt/animation waits of active attacks.
+	var coroutine_owned: bool = e.has("rage_job") or e.has("mixed_melee_job")
+	if coroutine_owned and behaviors.enemy_step(self,e,t): return
 	if int(e.get("stun_count",0)) > 0:
 		# SU.y_enemy_stun switches to idle, including enemies stunned while walking.
-		if e.has("rage_job"): e.rage_job = {}
 		e.last_dir = Vector2.ZERO; _state(e, "idle"); return
-	var t: Dictionary = templates[e.template]
-	if behaviors.enemy_step(self,e,t): return
+	if not coroutine_owned and behaviors.enemy_step(self,e,t): return
 	if e.blocker != 0:
 		var s := unit_by_id(e.blocker)
 		if s.is_empty() or s.hp <= 0 or s.target != e.id: e.blocker = 0; e.pending = {}
@@ -853,6 +855,8 @@ func _enemy_step(e: Dictionary) -> void:
 		event.emit("sound", {"id": "GUILooseLife"})
 
 func _melee(attacker: Dictionary, target: Dictionary, template: Dictionary) -> void:
+	if attacker.has("mixed_melee_job"):
+		Behaviors.EnemyMelee.melee(self,attacker,target,template); return
 	if template.has("soldier") and template.melee.attacks.size() > 1:
 		Behaviors.Paladin.melee(self, attacker, target, template); return
 	var attack: Dictionary = template.melee.attacks[0]
@@ -949,7 +953,7 @@ func _healer_step(e: Dictionary, template: Dictionary) -> bool:
 	return true
 
 func _state(unit: Dictionary, state: String, restart: bool = false) -> void:
-	if unit.get("source_corpse",false) or unit.has("rage_job"): unit.playback_loop = state in ["idle","idle2","running","running2","walkingRightLeft","walkingUp","walkingDown"]
+	if unit.get("source_corpse",false) or unit.has("rage_job") or unit.has("mixed_melee_job"): unit.playback_loop = state in ["idle","idle2","running","running2","walkingRightLeft","walkingUp","walkingDown"]
 	if unit.state != state or restart: unit.state = state; unit.state_at = tick
 	if unit.has("hero"): unit.playback_loop = state in ["idle","running"]
 

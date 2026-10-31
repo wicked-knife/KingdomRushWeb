@@ -15,6 +15,7 @@ const Missile = preload("res://scripts/battle/dove_missile.gd")
 const AdvancedBarrack = preload("res://scripts/battle/dove_advanced_barrack.gd")
 const Sasquash = preload("res://scripts/battle/dove_sasquash.gd")
 const Chieftain = preload("res://scripts/battle/dove_chieftain.gd")
+const EnemyMelee = preload("res://scripts/battle/dove_enemy_melee.gd")
 const ROLES := ["ground", "healer", "spider", "soldier", "reinforcement", "archer", "mage", "engineer", "barrack", "mercenary", "ranger", "building", "arrow", "bolt", "bomb", "fireball", "arrow_missile", "thorn_aura", "spawner", "dps", "track_modifier", "heal_modifier", "thorn_modifier", "fire_control", "passive", "juggernaut", "arcane", "ray", "arcane_damage", "disintegrate", "teleport", "mod_aura", "enemy_missile", "enemy_bomb", "tower_decal", "instant_damage", "damage_aura"]
 var catalog: Dictionary
 var bindings: Dictionary
@@ -33,6 +34,12 @@ static func validate(definition: Dictionary, content_catalog: Dictionary) -> Str
 	if not tech_error.is_empty(): return tech_error
 	var content: String = definition.get("level", {}).get("root", "unknown")
 	var templates: Dictionary = definition.get("templates", {})
+	for owner: String in content_catalog.get("runtime_callbacks", {}):
+		if not templates.has(owner): continue
+		for callback_event: String in content_catalog.runtime_callbacks[owner]:
+			var required_callback: String=content_catalog.runtime_callbacks[owner][callback_event]
+			if definition.get("callbacks",{}).get(owner,{}).get(callback_event,"")!=required_callback:
+				return "%s: %s.%s -> missing required runtime callback %s"%[content,owner,callback_event,required_callback]
 	for owner: String in content_catalog.get("runtime_dependencies", {}):
 		if not templates.has(owner): continue
 		for child: String in content_catalog.runtime_dependencies[owner]:
@@ -139,11 +146,13 @@ func soldier_step(sim, soldier: Dictionary, template: Dictionary) -> bool:
 
 func enemy_inserted(sim, enemy: Dictionary) -> void:
 	sim.snow.enemy_inserted(sim,enemy)
+	if enemy.template in ["enemy_yeti","enemy_troll_axe_thrower"]: enemy.mixed_melee_job = {}
 	if role(enemy.template) == "spider": Spider.initialize(sim, enemy)
 	if role(enemy.template) == "juggernaut": Juggernaut.initialize(sim, enemy)
 	if role(enemy.template) == "chieftain": Chieftain.initialize(sim,enemy)
 
 func enemy_step(sim, enemy: Dictionary, template: Dictionary) -> bool:
+	if enemy.has("mixed_melee_job"): return EnemyMelee.step(sim,enemy,template)
 	match role(enemy.template):
 		"juggernaut": return Juggernaut.step(sim, enemy, template)
 		"spider": Spider.lay(sim, enemy)

@@ -12,6 +12,17 @@ func fresh(mode:int=1):
 func run() -> void:
 	source=Levels.read_json("res://tests/fixtures/level08_source.json")
 	check(not source.is_empty(),"actual frozen source fixture exists")
+	if OS.get_cmdline_user_args().has("--enemies-only"):
+		for scenario:String in source.enemy_melee:enemy_melee_sample(scenario)
+		for scenario:String in source.enemy_ranged:enemy_ranged_sample(scenario)
+		write8("level08_enemy_comparisons",comparisons)
+		print("LEVEL08_ENEMIES: ","PASS" if failures.is_empty() else JSON.stringify(failures)," checks=",checks)
+		quit(0 if failures.is_empty() else 1);return
+	var missing:=Levels.load_definition(8)
+	missing.callbacks.missile_bfg.erase("remove")
+	check(Sim.Behaviors.validate(missing,Levels.catalog()).contains("required runtime callback"),"runtime rejects missing source missile removal callback")
+	missing=Levels.load_definition(8);missing.templates.erase("axe_barbarian_rude")
+	check(Sim.Behaviors.validate(missing,Levels.catalog()).contains("axe_barbarian_rude"),"runtime rejects missing dual-axe projectile")
 	check(Levels.supports(8,3) and not Levels.supports(9) and not Levels.supports(8,1,3),"eight levels, three modes, normal difficulty")
 	for mode in [1,2,3]:
 		var sim=fresh(mode)
@@ -35,17 +46,26 @@ func run() -> void:
 	for count:String in source.clusters:cluster_sample(count)
 	for scenario:String in source.missiles:missile_sample(scenario)
 	for name:String in source.melee:melee_sample(name)
+	for scenario:String in source.melee_interrupts:melee_interrupt_sample(scenario)
+	for scenario:String in source.ranged:ranged_sample(scenario)
+	for scenario:String in source.enemy_melee:enemy_melee_sample(scenario)
+	for scenario:String in source.enemy_ranged:enemy_ranged_sample(scenario)
+	for scenario:String in source.chieftains:chieftain_sample(scenario)
 	modifiers_and_regen()
+	chief_target_filters()
+	tunnel_rage_lifecycle()
 	sasquash()
 	progression8()
-	var report:Dictionary={"passed":failures.is_empty(),"checks":checks,"independent_modes":3,"births":births,"timeline_waves":source.timelines["1"].size()+7,"source_scenarios":source.towers.size()+source.powers.size()+source.clusters.size()+source.missiles.size()+source.melee.size(),"failures":failures,"full_replays":false,"source_hashes":hashes8()}
+	var source_scenarios:int=0
+	for key:String in ["towers","powers","clusters","missiles","melee","melee_interrupts","ranged","enemy_melee","enemy_ranged","chieftains"]:source_scenarios+=source[key].size()
+	var report:Dictionary={"passed":failures.is_empty(),"checks":checks,"independent_modes":3,"births":births,"timeline_waves":source.timelines["1"].size()+7,"source_scenarios":source_scenarios,"failures":failures,"full_replays":false,"source_hashes":hashes8()}
 	write8("level08_logic",report);write8("level08_timelines",timeline_report);write8("level08_comparisons",comparisons)
 	print("LEVEL08: ","PASS" if failures.is_empty() else JSON.stringify(failures)," checks=",checks," births=",births)
 	quit(0 if failures.is_empty() else 1)
 
 func hashes8() -> Dictionary:
 	var result:Dictionary={}
-	for path:String in ["scripts/battle/dove_bfg.gd","scripts/battle/dove_missile.gd","scripts/battle/dove_advanced_barrack.gd","scripts/battle/dove_sasquash.gd","scripts/battle/dove_chieftain.gd","scripts/battle/dove_modifiers.gd","scripts/battle/dove_snow.gd","scripts/battle/dove_behaviors.gd","scripts/battle/level01_sim.gd","scripts/battle/battle_view.gd","scripts/battle/battle_ui.gd","data/campaign_content.json","data/level08/definition.json","tests/fixtures/level08_source.json","tests/verify_level08.gd"]:result[path]=FileAccess.get_sha256("res://"+path)
+	for path:String in ["scripts/battle/dove_bfg.gd","scripts/battle/dove_missile.gd","scripts/battle/dove_advanced_barrack.gd","scripts/battle/dove_sasquash.gd","scripts/battle/dove_chieftain.gd","scripts/battle/dove_enemy_melee.gd","scripts/battle/dove_enemy_ranged.gd","scripts/battle/dove_modifiers.gd","scripts/battle/dove_snow.gd","scripts/battle/dove_behaviors.gd","scripts/battle/level01_sim.gd","scripts/battle/battle_view.gd","scripts/battle/battle_ui.gd","data/campaign_content.json","data/level08/definition.json","tests/fixtures/level08_source.json","tests/verify_level08.gd"]:result[path]=FileAccess.get_sha256("res://"+path)
 	return result
 
 func write8(name:String,value:Variant) -> void:
@@ -149,24 +169,171 @@ func missile_sample(scenario:String) -> void:
 	var sim=fresh();sim.tick=0
 	var enemy:Dictionary=sim._spawn_enemy("enemy_troll",0);enemy.pos=Vector2(300,350);enemy.node=60;enemy.hp=10000
 	var other:Dictionary=sim._spawn_enemy("enemy_troll",0);other.pos=Vector2(340,350);other.node=59;other.hp=10000
-	if scenario=="efficiency":sim.upgrades.effective.engineer=5
+	if scenario=="efficiency":sim.upgrades.effective.engineers=5
 	sim._projectile("missile_bfg",enemy.id,Vector2(100,350),Vector2(112,460),1)
 	var p:Dictionary=sim.projectiles[-1];p.damage_min=126;p.damage_max=154;p.damage_factor=0.6
-	var actual:Array=[]
+	var actual:Array=[];var hits:Array=[]
 	for frame in 251:
 		sim.tick=frame
 		if frame==15:
 			if scenario=="retarget":enemy.hp=0
 			elif scenario=="banned":enemy.vis={"flags":2048,"bans":2}
+		var before:=[enemy.hp,other.hp]
 		sim._bullet_step(p);actual.append([frame,p.pos.x,p.pos.y,p.rotation])
+		for i in 2:
+			var e:Dictionary=[enemy,other][i]
+			if e.hp!=before[i]:hits.append([frame,e.id,before[i]-e.hp,sim.templates[p.template].bullet.damage_type])
 		if p.done:break
 	compare8("missile trajectory "+scenario,source.missiles[scenario].samples,actual,0.08)
+	compare8("missile damage "+scenario,source.missiles[scenario].hits,hits)
 	check(p.done==source.missiles[scenario].removed,"missile removal "+scenario)
 	var children:Array=sim.projectiles.filter(func(child):return child!=p)
 	check(children.size()==3,"BFG source removal spawns three secondary missiles "+scenario)
 	for child:Dictionary in children:
 		check(child.template=="missile_bfg_second" and is_equal_approx(child.damage_min,42) and is_equal_approx(child.damage_max,154.0/3) and is_equal_approx(child.damage_factor,0.6),"secondary missile inherited damage "+scenario)
 	comparisons["missile children "+scenario]={"expected":source.missiles[scenario].children,"actual":children}
+
+func melee_interrupt_sample(name:String) -> void:
+	var split:int=name.find("_");var kind:String=name.substr(0,split);var scenario:String=name.substr(split+1)
+	var sim=fresh();sim.tick=100
+	var s:Dictionary=sim._soldier("soldier_sasquash" if kind=="sasquash" else "soldier_barbarian","",0,Vector2(500,350),Vector2(500,350));s.id=5;s.rallying=false;s.dest=s.pos
+	var target:Dictionary=sim._spawn_enemy("enemy_troll",0);target.id=1;target.pos=Vector2(520,350);target.node=60;target.hp=10000;target.blockers=[5];target.blocker=5;s.target=1
+	var t:Dictionary=s.combat_template;var index:int=1 if kind=="twister" else 0;var a:Dictionary=t.melee.attacks[index];a.damage_min=40;a.damage_max=40;a.disabled=false
+	Sim.Behaviors.AdvancedBarrack._begin(sim,s,t,a,{"kind":"melee","target":1,"entity":target,"index":index},float(a.hit_time))
+	var hit_tick:int=s.advanced_job.hit_at;var actual:Array=[];var finished:int=-1
+	for frame in range(100,161):
+		sim.tick=frame
+		s.stun_count=1 if (scenario=="stun_before" and frame>=103) or (scenario=="stun_after" and frame>=hit_tick+1) or (scenario=="stun_endpoint" and frame>=hit_tick) else 0
+		s.rally_pending=(scenario=="rally_before" and frame>=103) or (scenario=="rally_after" and frame>=hit_tick+1)
+		if scenario=="unblocked" and frame>=103:target.blockers=[]
+		var before:float=target.hp;sim._soldier_step(s)
+		if target.hp!=before:actual.append([frame,1,before-target.hp,a.damage_type])
+		if s.advanced_job.is_empty():finished=frame;break
+	var expected:Dictionary=source.melee_interrupts[name]
+	compare8("melee interruption "+name,expected.hits if expected.hits is Array else [],actual)
+	check(finished==int(expected.finished) and is_equal_approx(float(s.melee_ts[index]),float(expected.cooldown)),"source melee completion and cooldown "+name+" actual=%d/%s expected=%s/%s"%[finished,s.melee_ts[index],expected.finished,expected.cooldown])
+
+func chief_target_filters() -> void:
+	var sim=fresh();var chief:Dictionary=sim._spawn_enemy("enemy_troll_chieftain",0);chief.pos=Vector2(500,350);chief.node=60
+	var slow:Dictionary=sim._spawn_enemy("enemy_troll",0);slow.pos=chief.pos;slow.node=60
+	var raged:Dictionary=sim._spawn_enemy("enemy_troll",0);raged.pos=chief.pos;raged.node=60
+	var banned:Dictionary=sim._spawn_enemy("enemy_troll",0);banned.pos=chief.pos;banned.node=60;banned.vis={"flags":2048,"bans":4}
+	var spider:Dictionary=sim._spawn_enemy("enemy_spider_small",0);spider.pos=chief.pos;spider.node=60
+	check(sim.modifiers.apply(sim,"mod_slow_curse",slow,1,"10") and sim.modifiers.apply(sim,"mod_troll_rage",raged,1,"10"),"chief filtering setup")
+	var found:Array=Sim.Behaviors.Chieftain.targets(sim,chief,sim.templates[chief.template].timed_attacks.list[0])
+	check(found.size()==1 and found[0].id==chief.id,"chief can buff itself and excludes slow/rage/banned/unlisted targets")
+
+func tunnel_rage_lifecycle() -> void:
+	var sim=fresh();var tunnel:Dictionary=sim.snow.tunnels[0]
+	var chief:Dictionary=sim._spawn_enemy("enemy_troll_chieftain",1,int(tunnel.pick_pi))
+	chief.node=int(tunnel.pick_ni);chief.pos=sim.vec(sim.data.paths.paths[chief.path][chief.subpath][chief.node]);chief.hp-=100
+	check(sim.modifiers.apply(sim,"mod_troll_rage",chief,1,"10"),"source rage before eighth tunnel")
+	sim.snow.step(sim)
+	check(sim.unit_by_id(chief.id).is_empty() and tunnel.queue.size()==1 and not chief.has("regen_ts"),"tunnel removes chief and regeneration aura")
+	check(sim.modifiers.active.is_empty() and is_zero_approx(chief.speed_bonus) and is_zero_approx(chief.melee_damage_min_bonus),"tunnel removes modifiers and reverses rage bonuses")
+	sim.tick=ceili(tunnel.queue[0].release);sim.snow.step(sim)
+	check(sim.unit_by_id(chief.id)==chief and chief.path==tunnel.place_pi and chief.node==tunnel.place_ni and chief.subpath==1,"eighth source tunnel destination preserves subpath")
+	check(chief.has("regen_ts") and chief.regen_template=="aura_troll_chieftain_regen" and chief.rage_ts==sim.tick and chief.rage_job.is_empty(),"tunnel reinsertion recreates chief aura and attack coroutine")
+
+func ranged_sample(scenario:String) -> void:
+	var sim=fresh();sim.tick=100
+	var s:Dictionary=sim._soldier("soldier_barbarian","",0,Vector2(500,350),Vector2(500,350));s.id=5;s.rallying=false;s.dest=s.pos
+	var target:Dictionary=sim._spawn_enemy("enemy_troll",0);target.id=1;target.pos=Vector2(560,350);target.node=60;target.hp=10000
+	var t:Dictionary=s.combat_template;var a:Dictionary=t.ranged.attacks[0];a.disabled=false;a.level=1
+	if scenario=="dual":a.animation="shoot2";a.bullet="axe_barbarian_rude"
+	var actual:Array=[];var finished:int=-1
+	for frame in range(100,151):
+		sim.tick=frame
+		s.stun_count=1 if (scenario=="stun_before" and frame>=103) or (scenario=="stun_after" and frame>=110) or (scenario=="stun_endpoint" and frame>=107) else 0
+		s.rally_pending=(scenario=="rally_before" and frame>=103) or (scenario=="rally_after" and frame>=110)
+		if scenario=="escaped" and frame>=103:target.pos.x=800
+		sim._soldier_step(s)
+		for p:Dictionary in sim.projectiles:
+			var b:Dictionary=sim.templates[p.template].bullet
+			actual.append([frame,p.template,b.damage_min,b.damage_max,b.damage_type,p.level,p.damage_factor,p.from.x,p.from.y,p.to.x,p.to.y,0,p.target,b.flight_time])
+		sim.projectiles.clear()
+		if s.advanced_job.is_empty():finished=frame;break
+	var expected:Dictionary=source.ranged[scenario]
+	compare8("barbarian ranged "+scenario,expected.bullets if expected.bullets is Array else [],actual)
+	check(finished==int(expected.finished) and is_equal_approx(float(s.ranged_ts),float(expected.cooldown)),"source ranged completion and cooldown "+scenario)
+
+func enemy_melee_sample(key:String) -> void:
+	var name:String=key.split(":")[0];var scenario:String=key.split(":")[1]
+	var sim=fresh();sim.tick=100
+	var enemy:Dictionary=sim._spawn_enemy(name,0);enemy.pos=Vector2(500,350);enemy.node=60;enemy.id=100
+	var t:Dictionary=sim.templates[name];var a:Dictionary=t.melee.attacks[0];a.damage_min=40;a.damage_max=40
+	var point:=Vector2(500+(-30 if scenario=="flipped" else 30),350)
+	for i in (12 if scenario=="capped" else 4):
+		var pos:=Vector2(point.x+12-i,350) if scenario=="capped" else Vector2(point.x+[0,10,40,0][i],390 if i==3 else 350)
+		var soldier:Dictionary=sim._soldier("soldier_militia","",0,pos,pos);soldier.id=i+1;soldier.hp=1000;soldier.armor=0;soldier.vis={"flags":0,"bans":0}
+		if scenario=="visibility" and i==1:soldier.vis.flags=128
+		if scenario=="visibility" and i==2:soldier.vis.bans=2
+	var target:Dictionary=sim.soldiers[0];enemy.blocker=1;enemy.blockers=[1];target.target=enemy.id
+	if scenario=="dodged":sim.templates[target.template].dodge={"chance":1}
+	var hit_tick:int=100+sim.source_wait_ticks(100,float(a.hit_time))
+	var actual:Array=[];var effects:Array=[];var finished:int=-1
+	for frame in range(100,171):
+		sim.tick=frame
+		enemy.stun_count=1 if (scenario=="stun_before" and frame>=103) or (scenario=="stun_endpoint" and frame>=hit_tick) or (scenario=="stun_after" and frame>=hit_tick+1) else 0
+		if frame>=103 and scenario=="primary_dead":target.hp=0;enemy.blocker=0;enemy.blockers=[]
+		if frame>=103 and scenario=="unblocked":enemy.blocker=0;enemy.blockers=[]
+		var before:Array=sim.soldiers.map(func(s):return s.hp)
+		if frame==100:sim._melee(enemy,target,t)
+		else:Sim.Behaviors.EnemyMelee.step(sim,enemy,t)
+		for i in sim.soldiers.size():
+			if sim.soldiers[i].hp!=before[i]:actual.append([frame,i+1,before[i]-sim.soldiers[i].hp,a.damage_type])
+		for effect:Dictionary in sim.effects:effects.append([frame,effect.template,effect.pos.x,effect.pos.y])
+		sim.effects.clear()
+		if enemy.mixed_melee_job.is_empty():finished=frame;break
+	var expected:Dictionary=source.enemy_melee[key]
+	compare8("enemy melee hits "+key,expected.hits if expected.hits is Array else [],actual)
+	compare8("enemy melee effects "+key,expected.effects if expected.effects is Array else [],effects)
+	check(finished==int(expected.finished) and enemy.mixed_melee_ts==int(expected.cooldown),"enemy source melee completion/cooldown "+key)
+	if scenario not in ["stun_before"]:check(enemy.state=="idle" and enemy.playback_loop,"enemy melee returns to looping idle "+key)
+
+func enemy_ranged_sample(scenario:String) -> void:
+	var sim=fresh();sim.tick=100
+	var enemy:Dictionary=sim._spawn_enemy("enemy_troll_axe_thrower",0);enemy.id=100;enemy.pos=Vector2(500,350);enemy.node=60
+	var target:Dictionary=sim._soldier("soldier_militia","",0,Vector2(560,350),Vector2(560,350));target.id=1;target.hp=1000
+	sim.templates[target.template].unit.hit_offset={"x":0,"y":13}
+	var t:Dictionary=sim.templates[enemy.template];var actual:Array=[];var finished:int=-1
+	for frame in range(100,151):
+		sim.tick=frame
+		enemy.stun_count=1 if (scenario=="stun_before" and frame>=103) or (scenario=="stun_endpoint" and frame>=107) or (scenario=="stun_after" and frame>=110) else 0
+		if scenario=="escaped" and frame>=103:target.pos.x=800
+		if scenario=="dead_target" and frame>=103:target.hp=0
+		Sim.Behaviors.EnemyMelee.step(sim,enemy,t)
+		for p:Dictionary in sim.projectiles:
+			var b:Dictionary=sim.templates[p.template].bullet
+			actual.append([frame,p.template,b.damage_min,b.damage_max,b.damage_type,p.get("level",b.get("level",0)),p.damage_factor,p.from.x,p.from.y,p.to.x,p.to.y,0,p.target,b.flight_time])
+		sim.projectiles.clear()
+		if enemy.get("ranged_cast",{}).is_empty():finished=frame;break
+	var expected:Dictionary=source.enemy_ranged[scenario]
+	compare8("enemy axe ranged "+scenario,expected.bullets if expected.bullets is Array else [],actual)
+	check(finished==int(expected.finished) and enemy.ranged_at==int(expected.cooldown),"enemy source ranged completion/cooldown "+scenario)
+
+func chieftain_sample(scenario:String) -> void:
+	var sim=fresh();sim.tick=0
+	for i in 8:
+		var target:Dictionary=sim._spawn_enemy("enemy_troll",0)
+		target.pos=Vector2(511+i,350);target.node=60;target.hp=1;target.max_hp=10000
+		if scenario=="no_targets":target.vis={"flags":2048,"bans":4}
+	var chief:Dictionary=sim._spawn_enemy("enemy_troll_chieftain",0)
+	chief.pos=Vector2(500,350);chief.node=60;chief.vis={"flags":2048,"bans":4}
+	var actual:Array=[];var animations:Array=[];var clock:Array=[0]
+	sim.event.connect(func(kind:String,payload:Dictionary):
+		if kind=="modifier_applied":actual.append([clock[0],payload.template,payload.target])
+		elif kind=="chieftain_animation":animations.append([clock[0],1,payload.state]))
+	for frame in 501:
+		sim.tick=frame;clock[0]=frame;sim.modifiers.step(sim);chief.pos=Vector2(500,350)
+		chief.blocker=100 if scenario=="blocked" and frame<200 else 0
+		chief.stun_count=1 if (scenario=="stunned" and frame>=185 and frame<=195) or (scenario=="after_hit_stun" and frame>=192 and frame<=205) or (scenario=="cast_tick_stun" and frame>=190 and frame<=195) else 0
+		chief.silence_count=1 if (scenario=="silenced" and frame>=175 and frame<=250) or (scenario=="mid_cast_silence" and frame>=185 and frame<=250) else 0
+		sim._enemy_step(chief)
+	var expected:Array=source.chieftains[scenario].casts if source.chieftains[scenario].casts is Array else []
+	compare8("chieftain casts "+scenario,expected,actual)
+	var expected_animations:Array=source.chieftains[scenario].animations if source.chieftains[scenario].animations is Array else []
+	compare8("chieftain animations "+scenario,expected_animations,animations)
 
 func melee_sample(name:String) -> void:
 	var sim=fresh();sim.tick=0
@@ -224,6 +391,14 @@ func sasquash() -> void:
 	sim.tick+=1;sim._tower_step(tower)
 	check(sim.soldiers.size()==2 and sim.soldiers[-1].hp==2500 and sim.gold==600,"free automatic camp respawn")
 	sim.reset();check(sim.tower_by_id("91").template=="tower_sasquash_holder" and sim.soldiers.is_empty(),"restart resets frozen camp and hire")
+	var real=fresh()
+	check(real.command("wave"),"real fire scenario starts first wave")
+	dismiss(real)
+	check(real.command("cast",{"power":"fire","pos":real.tower_by_id("91").pos}),"real fire rain accepts frozen camp rectangle")
+	for frame in 150:
+		ticks(real,1)
+		if real.tower_by_id("91").template=="tower_sasquash":break
+	check(real.tower_by_id("91").template=="tower_sasquash" and real.tower_by_id("91").get("hired",0)==0,"actual fire projectile explosion thaws camp without free hire")
 
 func progression8() -> void:
 	var progress:=Progress.new();progress.initialize("user://level08_logic_%d.json"%Time.get_ticks_usec())
@@ -233,6 +408,10 @@ func progression8() -> void:
 	progress.enter_map()
 	check(progress.levels[8].stars==3 and progress.levels.has(9),"map commits eighth stars and ninth preview")
 	check("tower_bfg" not in progress.data.locked_towers and "tower_barbarian" not in progress.data.locked_towers,"permanent eighth tower unlock")
+	for id in [4,5,6,7]:
+		var replay=Sim.new(Setup8.create(Levels.load_definition(id),{"locked_towers":progress.data.locked_towers,"upgrades":{"engineers":6,"barracks":6}}),42)
+		check(not replay.tower_locked("tower_bfg") and not replay.tower_locked("tower_barbarian"),"permanent new tower replay availability %d"%id)
+		check(replay.data.callbacks.missile_bfg.remove.ends_with("missile_bfg.remove") and replay.templates.has("soldier_barbarian") and replay.templates.has("mod_bfg_stun"),"replay tower callbacks and skill dependencies %d"%id)
 	for mode in [1,2,3]:
 		var data:=Setup8.create(Levels.load_definition(8,mode),{"heroes":{"selected":["hero_malik"]},"upgrades":{"engineers":6,"barracks":6}})
 		var sim=Sim.new(data,42)

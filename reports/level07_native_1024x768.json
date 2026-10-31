@@ -41,11 +41,11 @@
 	"passed": true,
 	"scope": "native Godot input, source animation keyframes and endings, cave light/reinsertion, snow, goat, stage music and constructed-result settlement; no victory replay",
 	"source_hashes": {
-		"data/level07/definition.json": "bb5573bb531afc86398887db0f685d4aaed78d416697b99a6c1eeffb77ac85b2",
-		"scripts/battle/battle_ui.gd": "900c3a23548286aee0d8708106765eb509850aa2ec483f0c7690774f4474e9d2",
-		"scripts/battle/battle_view.gd": "d398bcdae9cb7f4524c58aad2c21d890c30e7b926c55bb035c730938ec2c568f",
+		"data/level07/definition.json": "a0b7822ff12d7167ceb30a13ee0ac2bc96a46f8248f0e7d606cce892ca884039",
+		"scripts/battle/battle_ui.gd": "b12ad85f5b65083dc67e2bd78b19e5918f1ad55d0cf09432a8ba7b35bf98e61c",
+		"scripts/battle/battle_view.gd": "af6e4e0b109b538fe21e8d534f78c54acf7f23e7c86f78b13461b48fb16052ea",
 		"scripts/battle/dove_musketeer.gd": "554c8b503948455b154da32084ba4824d6b0c8947bd61c83e95e19813c612435",
-		"scripts/battle/dove_snow.gd": "12420bfd037c70ca34255fc8686493858dc63e932893d8949cc81f7b0ed7c467",
-		"tests/level07_visual.gd": "c99cf0796b0d96f0a6572aea49739209eca821123548e342f4248dd88239029c"
+		"scripts/battle/dove_snow.gd": "27a19fdd8a56f3d5f747cfc588727d2e386b69920e1f6598723afea08cc52b1f",
+		"tests/level07_visual.gd": "548f84f1d2e0251dd9855e4723b7721f3b7192a069e4f3894b29b8a86d69a2c4"
 	}
 }

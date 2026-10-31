@@ -4,7 +4,7 @@ import hashlib
 import json
 from campaign_content import ROOT, read_catalog, export_spec, validate_definition, combinations
 from prepare_level01 import gameplay_projection
-from web_bootstrap import resource_paths
+from web_bootstrap import resource_paths, validate_runtime_resources
 from upgrades_compatibility import previous_gameplay, previous_resource_digest, repacked
 
 
@@ -57,6 +57,12 @@ def verify():
         else:
             failures.append(f"Publication accepted {label}")
     resources, data = resource_paths()
+    try:
+        validate_runtime_resources([path for path in resources if path != "res://scripts/battle/dove_bfg.gd"])
+    except ValueError as error:
+        probes.append({"case": "missing_runtime_script", "rejected": True, "reason": str(error)})
+    else:
+        failures.append("Publication accepted missing_runtime_script")
     # Definitions are checked field by field above; their source metadata and
     # manifests necessarily change when advancing the current source baseline.
     expected_resources = {p: h for p, h in (baseline["resource_files"] | ui_baseline["resource_files"]).items()

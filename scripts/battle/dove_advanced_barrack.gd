@@ -63,22 +63,35 @@ static func _idle(sim, s:Dictionary) -> void:
 	sim._state(s,"idle2" if s.get("dual_applied",false) else "idle")
 	s.playback_loop=true
 
+static func _changes(sim,s:Dictionary) -> void:
+	for change:Dictionary in s.power_changes:_apply_power(sim,s,change.power,int(change.level))
+	s.power_changes.clear()
+
+static func _interrupt(sim,s:Dictionary,t:Dictionary) -> void:
+	var job:Dictionary=s.advanced_job
+	# The source checks stun/rally only inside the pre-hit wait. At its endpoint
+	# the hit still occurs; a completed throw also commits its cooldown on return.
+	if not job.is_empty() and not job.hit and sim.tick>=int(job.hit_at):_job(sim,s,t)
+	job=s.advanced_job
+	if not job.is_empty() and job.kind=="ranged" and job.get("done",false):s.ranged_ts=int(job.started)
+	s.advanced_job={}
+
 static func step(sim, s:Dictionary) -> void:
 	if not s.has("combat_template"):insert(sim,s,sim.tower_by_id(s.home))
 	if s.hp<=0:return
 	var t:Dictionary=s.combat_template
 	if s.get("rally_pending",false):
-		sim._unblock(s);s.rally_pending=false;s.rallying=true;s.advanced_job={}
-	if int(s.get("stun_count",0))>0:s.advanced_job={};_idle(sim,s);return
+		_interrupt(sim,s,t);sim._unblock(s);s.rally_pending=false;s.rallying=true
+	if int(s.get("stun_count",0))>0:_interrupt(sim,s,t);_changes(sim,s);_idle(sim,s);return
 	if s.rallying:
-		s.advanced_job={}
+		_interrupt(sim,s,t);_changes(sim,s)
 		if not _move(sim,s,s.dest,t):s.rallying=false;_idle(sim,s)
 		return
 	if not s.advanced_job.is_empty():
+		var previous_job:Dictionary=s.advanced_job
 		_job(sim,s,t)
-		if not s.advanced_job.is_empty():return
-	for change:Dictionary in s.power_changes:_apply_power(sim,s,change.power,int(change.level))
-	s.power_changes.clear()
+		if not s.advanced_job.is_empty() or previous_job.kind!="ranged" or not previous_job.get("done",false):return
+	_changes(sim,s)
 	# range_while_blocking is checked before melee even when a blocker exists.
 	if t.has("ranged") and _ranged(sim,s,t):return
 	var target:Dictionary=sim.unit_by_id(int(s.target))
@@ -144,6 +157,8 @@ static func _job(sim, s:Dictionary, t:Dictionary) -> void:
 				sim._projectile(a.bullet,int(job.target),s.pos+offset,to,float(sim.templates[a.bullet].bullet.flight_time),s)
 				sim.projectiles[-1].level=int(a.level)
 				job.done=true
+			else:
+				s.advanced_job={};_idle(sim,s);return
 		else:
 			s.melee_ts[int(job.index)]=int(job.started)
 			if a.get("shared_cooldown",false):
@@ -157,7 +172,7 @@ static func _job(sim, s:Dictionary, t:Dictionary) -> void:
 				for target:Dictionary in targets.slice(0,int(a.get("count",targets.size()))):
 					sim.damage(target,sim.rng.randi_range(int(a.damage_min),int(a.damage_max))*sim.attack_factor(s),int(a.damage_type),int(s.id))
 				for name in ["hit_fx","hit_decal"]:sim.add_effect(a.get(name,""),point)
-			elif not job.entity.is_empty() and job.entity.hp>0:
+			elif not job.entity.is_empty() and job.entity.hp>0 and s.id in job.entity.blockers:
 				var dodge:Dictionary=sim.templates[job.entity.template].get("dodge",{})
 				if dodge.is_empty() or int(job.entity.get("stun_count",0))>0 or sim.rng.randf()>float(dodge.chance):
 					sim.damage(job.entity,sim.rng.randi_range(int(a.damage_min),int(a.damage_max))*sim.attack_factor(s),int(a.damage_type),int(s.id))

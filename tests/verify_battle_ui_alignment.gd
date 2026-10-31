@@ -60,7 +60,10 @@ func next_wave(index: int = 1) -> void:
 func buy_advanced(id: String, kind: String) -> void:
 	battle.sim.gold = 10000
 	battle.sim.command("build",{"id":id,"type":kind}); battle.sim.tick += 30
-	for i in 3: check(battle.sim.command("upgrade",{"id":id,"upgrade_to":"tower_ranger" if kind == "archer" and i == 2 else battle.sim.upgrade_target(battle.sim.tower_by_id(id))}),"fixture advanced tower upgrade")
+	var advanced: String = {"archer":"tower_ranger","barrack":"tower_paladin","mage":"tower_arcane_wizard"}[kind]
+	for i in 3:
+		var target: String = advanced if i == 2 else battle.sim.upgrade_target(battle.sim.tower_by_id(id))
+		check(battle.sim.command("upgrade",{"id":id,"upgrade_to":target}),"fixture advanced tower upgrade")
 	battle.selected = id
 
 func logic() -> void:

@@ -2,6 +2,7 @@ extends "res://tests/level06_visual.gd"
 ## Native feedback acceptance, using an isolated slot and bounded combat scenes.
 var temporary: String
 var guard_scenes: Array=[]
+var native_phase := "bootstrap"
 func map_balance(expected: int,label: String) -> void:
 	await map_draw()
 	var rows: Array=app.campaign_map.paint.audit.filter(func(r):return r.id=="upgrade_points")
@@ -22,10 +23,12 @@ func star_refresh() -> void:
 	app._return_to_menu();app.menu._select_slot(2);await app.map_ready;await map_balance(0,"empty slot")
 	app._return_to_menu();app.menu._select_slot(1);await app.map_ready;await map_balance(21,"return to original test slot")
 func open_stage(id: int, mode: int=1) -> void:
+	native_phase="open_stage %d/%d" % [id,mode];print("FEEDBACK_PHASE: ",native_phase)
 	if is_instance_valid(app.battle):app._return_to_map();await app.map_ready
 	app._start_level(id,mode,2);battle=app.battle;battle.set_process(false)
 	await process_frame
 func photograph(label: String) -> void:
+	native_phase=label
 	await draw_frame()
 	if label=="dual_tower_notice":await create_timer(0.35).timeout;await draw_frame()
 	var path:="res://reports/feedback_%s_%s.png" % [label,suffix]
@@ -33,6 +36,14 @@ func photograph(label: String) -> void:
 	check(battle.draw_list.all(func(d):return not battle._frame(d.frame).is_empty()),"feedback frames resolve "+label)
 	for row: Dictionary in battle.interface.paint.audit:check(row.fits,"feedback text fits "+str(row.id)+" "+label)
 	captures.append({"state":label,"path":path})
+func dismiss() -> void:
+	for attempt in 16:
+		if battle.sim.notices.is_empty():return
+		await action("confirm")
+	if not battle.sim.notices.is_empty():
+		await photograph("unresponsive_notice")
+		check(false,"native notice input made no progress: "+str(battle.sim.notices)+" pointer="+str(battle.pointer))
+		quit(1)
 func site_hover(id: String,label: String) -> void:
 	battle.selected="";await hover(battle.world(battle.sim.tower_by_id(id).pos))
 	check(battle.tower_hover_id==id and battle.pick_tower(battle.sim.tower_by_id(id).pos)==id,"same hover and click picker "+label)
@@ -122,7 +133,7 @@ func cannon_scene() -> void:
 	await photograph("cannon_impact")
 	check(not sim.effects.is_empty() and sim.effects.all(func(fx):return fx.pos.is_equal_approx(p.pos)),"native actual explosion and crater share impact")
 func _run() -> void:
-	create_timer(180).timeout.connect(func():push_error("Feedback native timeout");quit(1))
+	create_timer(180).timeout.connect(func():push_error("Feedback native timeout at "+native_phase+" window_mode="+str(DisplayServer.window_get_mode())+" focused="+str(DisplayServer.window_is_focused()));quit(1))
 	suffix="%dx%d" % [root.size.x,root.size.y];layout_only=OS.get_cmdline_user_args().has("--layout-only")
 	temporary="user://feedback_%d" % Time.get_ticks_usec()
 	app=AppScene.instantiate();app.settings_path=temporary+"_settings.json";app.slots_path=temporary+"_slots.json";root.add_child(app)

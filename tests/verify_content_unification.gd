@@ -27,7 +27,7 @@ func run() -> void:
 	if not record_current: check(baseline.get("source",{}).get("commit","") == Levels.catalog().source.commit, "combat snapshot uses current source")
 	var expected_timelines: Dictionary = Levels.read_json("res://tests/fixtures/content_timelines.json")
 	check(expected_timelines.size() == 15, "all pre-migration mode timelines exist")
-	check(not Levels.supports(8) and not Levels.supports(1, 1, 3), "preview and unsupported difficulty remain unavailable")
+	check(not Levels.supports(9) and not Levels.supports(1, 1, 3), "preview and unsupported difficulty remain unavailable")
 	var catalog := Levels.catalog()
 	check(Sim.Controller.create("unknown", catalog) == null, "unknown controller rejected")
 	var invalid := Levels.load_definition(5)

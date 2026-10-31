@@ -55,12 +55,12 @@
 	"source_hashes": {
 		"scripts/battle/dove_paladin.gd": "e222ca537c0febb079f368d44e7a2f9b19f6056aed49dc05bad8a3dd3010fc76",
 		"scripts/battle/dove_projectile.gd": "6dc4815a1561da7fd89fc732ec2115738883d09a9a1ea8505d234af256231c0c",
-		"scripts/battle/level01_sim.gd": "773d7c885667490d8cbc571cb56d37217b720995e77ff36701c87da1c26a1648",
+		"scripts/battle/level01_sim.gd": "1f509b601c944c8db9916627ac124a1322b3f74192533ea2c3108bb714fd3069",
 		"tests/fixtures/content_combat_baseline.json": "ccc12400ba08d7a3cbeba91bac30347d7d1ddd7c33efb5faf891d8552022efbe",
 		"tests/fixtures/feedback_combat_adjustments.json": "f0038887ec479bbcab61e8b1164dbe6fb098566fba38cb3f36a9f6972b290f41",
 		"tests/fixtures/feedback_source.json": "c25f17f1b0e423a39838469c82bb41dc94aeea4a053d1892ccadc9d59b466f34",
 		"tests/fixtures/followup_source.json": "59bcb259d6065071bdd445657aa946d3431b0f11486caea1195dd38e4f5e3f35",
-		"tests/verify_content_unification.gd": "b8faa1acdf92bc7180bdf058f074bcd81bbf126005647f2e196313cd645534b7"
+		"tests/verify_content_unification.gd": "ab6b492dfe015855a0f00c8123b17218b2581fca2b66af948ae8ff939ea55353"
 	},
 	"timeline_entries": 2794,
 	"timeline_report": "reports/content_timelines.json",

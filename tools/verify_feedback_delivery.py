@@ -3,6 +3,8 @@ import hashlib
 import json
 from pathlib import Path
 from verify_feedback_assets import verify as verify_assets
+from verify_feedback_combat import verify as verify_combat
+from campaign_content import combinations
 
 ROOT=Path(__file__).resolve().parents[1]
 def read(path):return json.loads((ROOT/path).read_text(encoding='utf-8'))
@@ -10,6 +12,7 @@ def sha(path):return hashlib.sha256((ROOT/path).read_bytes()).hexdigest()
 
 def verify():
     verify_assets()
+    verify_combat()
     names=['feedback_logic','feedback_native_1280x720','feedback_native_1024x768','feedback_assets','feedback_combat_audit','followup_logic','followup_native_1280x720','followup_native_1024x768']
     reports={};hashes={}
     for name in names:
@@ -33,7 +36,7 @@ def verify():
     assert read('reports/content_unification.json')['passed']
     for path in ['tools/verify_feedback_delivery.py','tools/feedback_reference/main.lua','tools/feedback_reference/conf.lua','tools/prepare_feedback_reference.py','tools/followup_reference/main.lua','tools/followup_reference/conf.lua','tools/prepare_followup_reference.py','tests/capture_feedback_combat.gd','tests/report_writer.gd','tests/fixtures/feedback_source.json','tests/fixtures/followup_source.json','tests/fixtures/feedback_combat_adjustments.json','docs/FEEDBACK_REPAIRS.md','tools/web_bootstrap.py','tools/package_level01.py']:
         hashes[path]=sha(path)
-    result={'passed':True,'reports':reports,'source_hashes':hashes,'historical_baseline_preserved':True,'content_combinations':21,'browser_tested':False,'guard_scope':'14 isolated and 14 all-guards-present passing-enemy scenes on real placements/routes; original selection/movement functions; native render queue follows each live unit exactly once and removes all dead units; static layout duplicates fixed'}
+    result={'passed':True,'reports':reports,'source_hashes':hashes,'historical_baseline_preserved':True,'content_combinations':len(combinations()),'browser_tested':False,'guard_scope':'14 isolated and 14 all-guards-present passing-enemy scenes on real placements/routes; original selection/movement functions; native render queue follows each live unit exactly once and removes all dead units; static layout duplicates fixed'}
     (ROOT/'reports/feedback_delivery.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     print({'passed':True,'reports':len(reports),'hashed_files':len(hashes)})
     return result

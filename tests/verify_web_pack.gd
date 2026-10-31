@@ -2,6 +2,14 @@ extends SceneTree
 ## Verify the mounted pack itself, rather than accidentally resolving files from the dev tree.
 
 func _init() -> void:
+	call_deferred("_run")
+
+func _run() -> void:
+	# A script error can abort this method without exiting the SceneTree.
+	# Keep an isolated failed check from leaving its OS.execute parent waiting forever.
+	create_timer(120.0).timeout.connect(func():
+		push_error("Isolated PCK verification did not finish within 120 seconds")
+		quit(1))
 	var args := OS.get_cmdline_user_args()
 	if args.is_empty():
 		push_error("Pass the exported PCK after --")
@@ -69,8 +77,21 @@ func _init() -> void:
 				failures.append("Missing JSON: " + path)
 		elif not ResourceLoader.exists(path):
 			failures.append("Missing resource: " + path)
+	if not failures.is_empty():
+		_finish(args[0], failures)
+		return
+	for path: String in expected:
+		if not path.ends_with(".gd"):
+			continue
+		var script := load(path) as Script
+		if script == null or not script.can_instantiate():
+			failures.append("Exported script dependencies failed to load: " + path)
+			_finish(args[0], failures)
+			return
 	if load("res://scenes/app_root.tscn") == null:
 		failures.append("Exported main scene or script dependencies failed to load")
+		_finish(args[0], failures)
+		return
 	var upgrades = load("res://scripts/battle/dove_upgrades.gd")
 	var setup = load("res://scripts/services/battle_setup.gd")
 	if upgrades == null or setup == null or upgrades.definition().techs.size()!=36: failures.append("Default technology registry missing in pack")
@@ -111,7 +132,7 @@ func _init() -> void:
 		if not ResourceLoader.exists(script) or load(script) == null: failures.append("Interaction script missing: " + script)
 	for id: int in content.levels.keys().map(func(key): return int(key)):
 		var stage: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/level%02d/definition.json" % id))
-		if stage.get("locations", {}).get("entrances", []).size() != {1:1, 2:1, 3:2, 4:2, 5:3, 6:5, 7:3}[id]: failures.append("Exported entrances incomplete %d" % id)
+		if stage.get("locations", {}).get("entrances", []).size() != {1:1, 2:1, 3:2, 4:2, 5:3, 6:5, 7:3, 8:4}[id]: failures.append("Exported entrances incomplete %d" % id)
 		var art = load("res://scripts/dove_asset_catalog.gd").new(stage.level.root + "catalog.json")
 		for image: String in ["nextwaveTimer_Full", "nextwaveTimer_0001", "nextwaveTimer_0002", "nextwaveTimer_0020", "nextwaveTimer_glow_0001"]:
 			if art.get_frame(stage.level.group, image).is_empty(): failures.append("Exported wave flag art missing: " + image)
@@ -138,7 +159,7 @@ func _init() -> void:
 			for run: Dictionary in preview.runs:copy+=run.text
 			if not copy.contains("20→18") or not copy.contains("666→733") or not copy.contains("4.7%"):
 				failures.append("Exported safe skill comparison or percentage incorrect")
-		var grass: Vector2 = {1:Vector2(256,424), 2:Vector2(256,328), 3:Vector2(256,376), 4:Vector2(100,100), 5:Vector2(100,100), 6:Vector2(100,100), 7:Vector2(100,100)}[id]
+		var grass: Vector2 = {1:Vector2(256,424), 2:Vector2(256,328), 3:Vector2(256,376), 4:Vector2(100,100), 5:Vector2(100,100), 6:Vector2(100,100), 7:Vector2(100,100), 8:Vector2(100,100)}[id]
 		if placement.valid_power_point("reinforcements", grass) or not placement.valid_power_point("reinforcements", placement.towers[0].rally): failures.append("Exported troop placement rules invalid %d" % id)
 		if id == 2:
 			placement.notices.clear(); placement.command("build", {"id":"5", "type":"barrack"})
@@ -181,7 +202,7 @@ func _init() -> void:
 				var art=load("res://scripts/dove_asset_catalog.gd").new(active.level.root+"catalog.json")
 				if art.get_frame(active.level.group,"victoryBadges_notxt_%04d" % {1:2,2:3,3:1}[mode]).is_empty():failures.append("Exported mode victory badge missing %d/%d" % [id,mode])
 				if mode==1:continue
-				if challenge.lives!=1 or challenge.gold!={2:[230,310,400,750,1000,1200,1000],3:[360,275,660,1500,1500,800,1200]}[mode][id-1] or active.waves.groups.size()!=(6 if mode==2 else 1):failures.append("Exported challenge initial state invalid %d/%d" % [id,mode])
+				if challenge.lives!=1 or challenge.gold!={2:[230,310,400,750,1000,1200,1000,1100],3:[360,275,660,1500,1500,800,1200,1200]}[mode][id-1] or active.waves.groups.size()!=(6 if mode==2 else 1):failures.append("Exported challenge initial state invalid %d/%d" % [id,mode])
 				while not challenge.notices.is_empty():challenge.command("confirm")
 				for kind: String in sim_script.TYPES:
 					if not challenge.tower_locked("tower_build_"+kind):continue
@@ -193,15 +214,37 @@ func _init() -> void:
 					if not challenge.command("upgrade",{"id":"8","upgrade_to":"tower_arcane_wizard"}): failures.append("Pack sixth advanced tower transaction failed")
 				if id==7 and mode==3:
 					if challenge.towers.filter(func(t):return t.template=="tower_barrack_2" and t.spent==0).size()!=3 or not challenge.tower_locked("tower_build_barrack") or not challenge.tower_locked("tower_build_engineer"): failures.append("Pack seventh iron barracks or restrictions invalid")
+				if id==8 and mode==3:
+					if challenge.tower_by_id("20").template!="tower_mage_2" or challenge.tower_by_id("20").spent!=0 or not challenge.tower_locked("tower_build_archer") or not challenge.tower_locked("tower_build_mage"): failures.append("Pack eighth iron mage or restrictions invalid")
 				if id==5 and mode==3:
 					if challenge.towers.filter(func(t):return t.template=="tower_archer_3" and t.spent==0).size()!=3:failures.append("Pack fifth iron free archers invalid")
 					for site in ["5","7"]:
 						if not challenge.command("upgrade",{"id":site,"upgrade_to":"tower_elf"}) or not challenge.command("buy_soldier",{"id":site,"type":"soldier_elf"}):failures.append("Pack fifth iron camp transaction failed "+site)
-		for id in [2, 3, 4, 5, 6, 7]:
+		for id in [2, 3, 4, 5, 6, 7, 8]:
 			var stage: Dictionary = levels.load_definition(id)
 			if stage.is_empty(): failures.append("Exported campaign dependencies invalid %d" % id); continue
 			var campaign = sim_script.new(stage)
-			if campaign.towers.size() != {2: 7, 3: 12, 4: 15, 5:14, 6:15, 7:11}[id] or campaign.data.waves.groups.size() != {2: 7, 3: 11, 4: 13, 5:15, 6:17, 7:16}[id]: failures.append("Exported campaign initialization invalid %d" % id)
+			if campaign.towers.size() != {2: 7, 3: 12, 4: 15, 5:14, 6:15, 7:11, 8:13}[id] or campaign.data.waves.groups.size() != {2: 7, 3: 11, 4: 13, 5:15, 6:17, 7:16, 8:18}[id]: failures.append("Exported campaign initialization invalid %d" % id)
+			if id == 8:
+				campaign.notices.clear(); campaign.gold=10000
+				if campaign.snow.tunnels.size()!=1 or campaign.tower_by_id("91").template!="tower_sasquash_holder": failures.append("Pack eighth tunnel or frozen camp missing")
+				for branch: Array in [["09","barrack","tower_barbarian"],["11","engineer","tower_bfg"]]:
+					if not campaign.command("build",{"id":branch[0],"type":branch[1]}): failures.append("Pack eighth build failed "+branch[1])
+					campaign.tick+=30
+					for target: String in ["tower_"+branch[1]+"_2","tower_"+branch[1]+"_3",branch[2]]:
+						if not campaign.command("upgrade",{"id":branch[0],"upgrade_to":target}): failures.append("Pack eighth upgrade failed "+target)
+					for power: String in campaign.tower_by_id(branch[0]).get("powers",{}):
+						if not campaign.command("upgrade_power",{"id":branch[0],"power":power}): failures.append("Pack eighth power failed "+power)
+				if not campaign.command("wave"): failures.append("Pack eighth first wave failed")
+				while not campaign.notices.is_empty(): campaign.command("confirm")
+				if not campaign.command("cast",{"power":"fire","pos":campaign.tower_by_id("91").pos}): failures.append("Pack eighth camp fire rejected")
+				for frame in 150:
+					while not campaign.notices.is_empty(): campaign.command("confirm")
+					campaign.step()
+				if campaign.tower_by_id("91").template!="tower_sasquash" or not campaign.command("buy_soldier",{"id":"91","type":"soldier_sasquash"}): failures.append("Pack eighth thaw or hire failed")
+				for name: String in ["enemy_yeti","enemy_troll_axe_thrower","enemy_troll_chieftain"]:
+					var enemy: Dictionary=campaign._spawn_enemy(name,0)
+					if not enemy.has("rage_job" if name=="enemy_troll_chieftain" else "mixed_melee_job"): failures.append("Pack eighth enemy coroutine missing "+name)
 			if id == 7:
 				campaign.notices.clear(); campaign.gold=10000
 				if campaign.snow.tunnels.size()!=2 or not campaign.command("build",{"id":"1","type":"archer"}): failures.append("Pack seventh tunnel or build dependencies failed")
@@ -241,9 +284,17 @@ func _init() -> void:
 		for excluded: String in ["source_assets", "reports", "tests", "tools", "docs"]:
 			if path.begins_with("res://" + excluded + "/"):
 				failures.append("Excluded directory found: " + path)
-	var report := {"passed": failures.is_empty(), "failures": failures, "mode_combinations_checked":content.levels.size() * 3, "files": files}
-	var report_path := args[0].get_base_dir().path_join("pack_files.json")
+	_finish(args[0], failures, content.levels.size() * 3, files)
+
+
+func _finish(pack_path: String, failures: Array[String], combinations: int = 0, files: Array[String] = []) -> void:
+	var report := {"passed": failures.is_empty(), "failures": failures, "mode_combinations_checked": combinations, "files": files}
+	var report_path := pack_path.get_base_dir().path_join("pack_files.json")
 	var report_file := FileAccess.open(report_path, FileAccess.WRITE)
+	if report_file == null:
+		push_error("Cannot write PCK verification report: " + report_path)
+		quit(1)
+		return
 	report_file.store_string(JSON.stringify(report, "\t"))
 	report_file.close()
 	print("WEB_PACK_VERIFICATION: ", "PASS" if failures.is_empty() else JSON.stringify(failures), " (", files.size(), " files)")

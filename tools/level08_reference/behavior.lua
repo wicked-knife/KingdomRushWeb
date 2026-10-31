@@ -33,8 +33,8 @@ return function(root,result,read,V,json,bit)
   function E:create_entity(name)local t=template(name);t.pos=V.v(0,0);return t end
   function E.assign_damage(kind,value,source,target)return {damage_type=kind,value=value,source_id=source,target_id=target}end
   scripts.soldier_barbarian={};scripts.bomb_cluster={};scripts.missile={};scripts.bomb={}
-  for _,name in ipairs({'y_wait_unconditional','y_wait_conditional','ready_to_attack','tower_ready_to_use_power','attack_order','enemy_ready_to_magic_attack'})do fn('all/utils.lua','U.'..name)end
-  for _,name in ipairs({'soldier_power_upgrade','soldier_pick_melee_attack','y_soldier_do_single_area_attack','y_soldier_do_single_melee_attack','y_soldier_do_ranged_attack','attack_interrupted','delay_attack','y_enemy_wait','enemy_interrupted'})do fn('all/script_utils.lua','SU.'..name)end
+  for _,name in ipairs({'y_wait_unconditional','y_wait_conditional','ready_to_attack','tower_ready_to_use_power','attack_order','enemy_ready_to_magic_attack','is_inside_ellipse'})do fn('all/utils.lua','U.'..name)end
+  for _,name in ipairs({'soldier_power_upgrade','soldier_pick_melee_attack','y_soldier_do_single_area_attack','y_soldier_do_single_melee_attack','y_soldier_do_ranged_attack','y_soldier_ranged_attacks','attack_interrupted','delay_attack','y_enemy_wait','enemy_interrupted','y_enemy_melee_attacks','y_enemy_do_ranged_attack','y_enemy_range_attacks'})do fn('all/script_utils.lua','SU.'..name)end
   fn('kr1/game_scripts.lua','scripts.soldier_barbarian.on_power_upgrade')
   fn('kr1/game_scripts.lua','scripts.bomb_cluster.insert');fn('kr1/game_scripts.lua','scripts.bomb_cluster.update')
   fn('all/scripts.lua','scripts.missile.update');fn('all/scripts.lua','scripts.bomb.insert')
@@ -128,7 +128,12 @@ return function(root,result,read,V,json,bit)
     local candidates={target,other}
     U.detect_foremost_enemy_in_range_filter_off=function()return target.health.dead and other or target end
     U.detect_foremost_enemy_in_range_filter_on=function(_,_,_,_,filter)for _,e in ipairs(candidates)do if not e.health.dead and U.flags_pass(e.vis,b) and filter(e)then return e end end end
-    U.find_enemies_in_range_filter_off=function()return {target,other}end
+    U.find_enemies_in_range_filter_off=function(pos,radius,flags,bans)
+      local out={};for _,e in ipairs(candidates)do
+        local dx,dy=e.pos.x-pos.x,(e.pos.y-pos.y)/.7
+        if not e.health.dead and bit.band(e.vis.bans,flags)==0 and bit.band(e.vis.flags,bans)==0 and dx*dx+dy*dy<=radius*radius then out[#out+1]=e end
+      end;return #out>0 and out or nil
+    end
     U.dist_factor_inside_ellipse=function(pos,center,radius)
       local dx,dy=pos.x-center.x,pos.y-center.y;local angle=math.atan2(dy,dx)
       return math.min(1,math.sqrt(dx*dx+dy*dy)/(radius*math.sqrt(math.cos(angle)^2+.49*math.sin(angle)^2)))
@@ -157,12 +162,96 @@ return function(root,result,read,V,json,bit)
     for n=0,60 do run(co,n);if coroutine.status(co)=='dead' then break end end
     result.melee[name]={hits=hits,animations=events,finished=tick}
   end
+  result.melee_interrupts={}
+  for _,kind in ipairs({'basic','twister','sasquash'})do
+    for _,scenario in ipairs({'normal','stun_before','stun_after','rally_before','rally_after','stun_endpoint','unblocked'})do
+      local this=template(kind=='sasquash' and 'soldier_sasquash' or 'soldier_barbarian');this.id=5;this.pos=V.v(500,350);this.nav_rally={new=false};this.unit.is_stunned=false;this.health.dead=false
+      local index=kind=='twister' and 2 or 1;local a=this.melee.attacks[index];a.damage_min=40;a.damage_max=40;a.disabled=false
+      local target={id=1,pos=V.v(520,350),vis={bans=0,flags=F_ENEMY},health={dead=false},unit={},enemy={blockers={5}}}
+      U.find_enemies_in_range_filter_off=function()return {target}end
+      store={tick_ts=100/30,tick_length=1/30,entities={[1]=target}};events={};hits={};draw=.5
+      local co=coroutine.create(function()
+        if a.type=='area' then SU.y_soldier_do_single_area_attack(store,this,target,a)else SU.y_soldier_do_single_melee_attack(store,this,target,a)end
+      end)
+      local hit_tick=100;while hit_tick/30-100/30<a.hit_time do hit_tick=hit_tick+1 end
+      for n=100,160 do
+        this.unit.is_stunned=(scenario=='stun_before' and n>=103) or (scenario=='stun_after' and n>=hit_tick+1) or (scenario=='stun_endpoint' and n>=hit_tick)
+        this.nav_rally.new=(scenario=='rally_before' and n>=103) or (scenario=='rally_after' and n>=hit_tick+1)
+        if scenario=='unblocked' and n>=103 then target.enemy.blockers={}end
+        run(co,n);if coroutine.status(co)=='dead' then break end
+      end
+      result.melee_interrupts[kind..'_'..scenario]={hits=hits,finished=tick,cooldown=a.ts*30}
+    end
+  end
+  result.ranged={}
+  for _,scenario in ipairs({'normal','dual','stun_before','stun_after','stun_endpoint','rally_before','rally_after','escaped'})do
+    local this=template('soldier_barbarian');this.id=5;this.pos=V.v(500,350);this.nav_rally={new=false};this.unit.is_stunned=false;this.health.dead=false
+    local a=this.ranged.attacks[1];a.disabled=false;a.level=1
+    if scenario=='dual' then a.animation='shoot2';a.bullet='axe_barbarian_rude' end
+    local target={id=1,pos=V.v(560,350),health={dead=false},unit={hit_offset=V.v(0,13)}}
+    store={tick_ts=100/30,tick_length=1/30,entities={[1]=target}};events={};bullets={}
+    SU.soldier_pick_ranged_target_and_attack=function()return target,a,V.vclone(target.pos)end
+    local co=coroutine.create(function()SU.y_soldier_ranged_attacks(store,this)end)
+    for n=100,150 do
+      this.unit.is_stunned=(scenario=='stun_before' and n>=103) or (scenario=='stun_after' and n>=110) or (scenario=='stun_endpoint' and n>=107)
+      this.nav_rally.new=(scenario=='rally_before' and n>=103) or (scenario=='rally_after' and n>=110)
+      if scenario=='escaped' and n>=103 then target.pos.x=800 end
+      run(co,n);if coroutine.status(co)=='dead' then break end
+    end
+    result.ranged[scenario]={bullets=bullets,animations=events,finished=tick,cooldown=a.ts*30}
+  end
+  result.enemy_melee={}
+  for _,name in ipairs({'enemy_yeti','enemy_troll_axe_thrower'})do
+    local scenarios=name=='enemy_yeti' and {'normal','flipped','capped','visibility','primary_dead','dodged','stun_before','stun_endpoint','stun_after'} or {'normal','unblocked','stun_before'}
+    for _,scenario in ipairs(scenarios)do
+      local this=template(name);this.id=100;this.pos=V.v(500,350);this.unit.is_stunned=false;this.health.dead=false;this.enemy.blockers={1}
+      local a=this.melee.attacks[1];a.damage_min=40;a.damage_max=40
+      local point=V.v(500+(scenario=='flipped' and -30 or 30),350)
+      local soldiers={}
+      for i=1,(scenario=='capped' and 12 or 4)do
+        local pos=scenario=='capped' and V.v(point.x+13-i,350) or V.v(point.x+({0,10,40,0})[i],i==4 and 390 or 350)
+        soldiers[i]={id=i,pos=pos,vis={flags=0,bans=0},health={dead=false},unit={}}
+      end
+      if scenario=='visibility' then soldiers[2].vis.flags=128;soldiers[3].vis.bans=2 end
+      if scenario=='dodged' then soldiers[1].dodge={chance=1}end
+      SU.unit_dodges=function()return scenario=='dodged'end
+      local entities={};for _,s in ipairs(soldiers)do entities[s.id]=s end
+      store={tick_ts=100/30,tick_length=1/30,entities=entities,soldiers=soldiers};events={};hits={};local effects={}
+      env.simulation.queue_insert_entity=function(_,e)effects[#effects+1]={tick,e.template_name,e.pos.x,e.pos.y}end
+      local co=coroutine.create(function()SU.y_enemy_melee_attacks(store,this,soldiers[1])end)
+      local hit_tick=100;while hit_tick/30-100/30<a.hit_time do hit_tick=hit_tick+1 end
+      for n=100,170 do
+        this.unit.is_stunned=(scenario=='stun_before' and n>=103) or (scenario=='stun_endpoint' and n>=hit_tick) or (scenario=='stun_after' and n>=hit_tick+1)
+        if n>=103 and scenario=='primary_dead' then soldiers[1].health.dead=true;this.enemy.blockers={}end
+        if n>=103 and scenario=='unblocked' then this.enemy.blockers={}end
+        run(co,n);if coroutine.status(co)=='dead' then break end
+      end
+      result.enemy_melee[name..':'..scenario]={hits=hits,effects=effects,animations=events,finished=tick,cooldown=a.ts*30}
+    end
+  end
+  SU.unit_dodges=function()return false end
+  result.enemy_ranged={}
+  for _,scenario in ipairs({'normal','escaped','dead_target','stun_before','stun_endpoint','stun_after'})do
+    local this=template('enemy_troll_axe_thrower');this.id=100;this.pos=V.v(500,350);this.unit.is_stunned=false;this.health.dead=false
+    local a=this.ranged.attacks[1]
+    local target={id=1,pos=V.v(560,350),health={dead=false},vis={flags=0,bans=0},unit={hit_offset=V.v(0,13)}}
+    store={tick_ts=100/30,tick_length=1/30,entities={[1]=target}};events={};bullets={}
+    env.simulation.queue_insert_entity=function(_,e)local b=e.bullet;bullets[#bullets+1]={tick,e.template_name,b.damage_min,b.damage_max,b.damage_type,b.level or 0,b.damage_factor,e.pos.x,e.pos.y,b.to.x,b.to.y,0,b.target_id,b.flight_time}end
+    local co=coroutine.create(function()SU.y_enemy_range_attacks(store,this,target)end)
+    for n=100,150 do
+      this.unit.is_stunned=(scenario=='stun_before' and n>=103) or (scenario=='stun_endpoint' and n>=107) or (scenario=='stun_after' and n>=110)
+      if scenario=='escaped' and n>=103 then target.pos.x=800 end
+      if scenario=='dead_target' and n>=103 then target.health.dead=true end
+      run(co,n);if coroutine.status(co)=='dead' then break end
+    end
+    result.enemy_ranged[scenario]={bullets=bullets,finished=tick,cooldown=a.ts*30}
+  end
   result.chieftains={}
   local chief=assert(read('kr1/game_scripts.lua'):match('scripts.enemy_troll_chieftain = (.-)\nscripts.enemy_demon_mage ='))
   chunk=assert(loadstring('scripts.enemy_troll_chieftain = '..chief));setfenv(chunk,env);chunk()
   SU.y_enemy_stun=function()coroutine.yield()end
   SU.y_enemy_mixed_walk_melee_ranged=function(_,_,_,ready)while not ready()do coroutine.yield()end;return false end
-  for _,scenario in ipairs({'normal','blocked','stunned','silenced','no_targets'})do
+  for _,scenario in ipairs({'normal','blocked','stunned','after_hit_stun','cast_tick_stun','silenced','mid_cast_silence','no_targets'})do
     local this=template('enemy_troll_chieftain');this.id=10;this.pos=V.v(500,350);this.unit.is_stunned=false;this.health.dead=false;this.enemy.can_do_magic=true
     this.timed_attacks.list[1].max_count=this.timed_attacks.list[1].max_count[2]
     store={tick_ts=0,tick_length=1/30,entities={}};events={};local targets={}
@@ -177,7 +266,10 @@ return function(root,result,read,V,json,bit)
     env.enemy_ready_to_magic_attack=U.enemy_ready_to_magic_attack
     env.simulation.queue_insert_entity=function(_,e)casts[#casts+1]={tick,e.template_name,e.modifier.target_id};if e.template_name=='mod_troll_rage' then marked[e.modifier.target_id]=tick+180 end end
     local co=coroutine.create(function()scripts.enemy_troll_chieftain.update(this,store)end)
-    for n=0,500 do this.unit.is_stunned=scenario=='stunned' and n>=185 and n<=195;this.enemy.can_do_magic=not(scenario=='silenced' and n>=175 and n<=250);run(co,n)end
+    for n=0,500 do
+      this.unit.is_stunned=(scenario=='stunned' and n>=185 and n<=195) or (scenario=='after_hit_stun' and n>=192 and n<=205) or (scenario=='cast_tick_stun' and n>=190 and n<=195)
+      this.enemy.can_do_magic=not((scenario=='silenced' and n>=175 and n<=250) or (scenario=='mid_cast_silence' and n>=185 and n<=250));run(co,n)
+    end
     result.chieftains[scenario]={casts=casts,animations=events}
   end
 end

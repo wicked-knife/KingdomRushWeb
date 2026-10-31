@@ -1,0 +1,223 @@
+{
+	"captures": [
+		{
+			"path": "res://reports/challenges_level8_mode1_1280x720.png",
+			"state": "level8_mode1"
+		},
+		{
+			"gold": 800,
+			"path": "res://reports/towers_eighth_opening_1280x720.png",
+			"state": "eighth_opening",
+			"tick": 0
+		},
+		{
+			"gold": 800,
+			"path": "res://reports/towers_eighth_frozen_camp_1280x720.png",
+			"state": "eighth_frozen_camp",
+			"tick": 0
+		},
+		{
+			"gold": 19875,
+			"path": "res://reports/towers_eighth_branch_tower_engineer_2_1280x720.png",
+			"state": "eighth_branch_tower_engineer_2",
+			"tick": 30
+		},
+		{
+			"gold": 19655,
+			"path": "res://reports/towers_eighth_branch_tower_engineer_3_1280x720.png",
+			"state": "eighth_branch_tower_engineer_3",
+			"tick": 30
+		},
+		{
+			"gold": 19335,
+			"path": "res://reports/towers_eighth_branch_tower_bfg_1280x720.png",
+			"state": "eighth_branch_tower_bfg",
+			"tick": 30
+		},
+		{
+			"gold": 18460,
+			"path": "res://reports/towers_eighth_power_missile_1280x720.png",
+			"state": "eighth_power_missile",
+			"tick": 30
+		},
+		{
+			"gold": 17865,
+			"path": "res://reports/towers_eighth_power_cluster_1280x720.png",
+			"state": "eighth_power_cluster",
+			"tick": 30
+		},
+		{
+			"gold": 19930,
+			"path": "res://reports/towers_eighth_branch_tower_barrack_2_1280x720.png",
+			"state": "eighth_branch_tower_barrack_2",
+			"tick": 60
+		},
+		{
+			"gold": 19820,
+			"path": "res://reports/towers_eighth_branch_tower_barrack_3_1280x720.png",
+			"state": "eighth_branch_tower_barrack_3",
+			"tick": 60
+		},
+		{
+			"gold": 19670,
+			"path": "res://reports/towers_eighth_branch_tower_barbarian_1280x720.png",
+			"state": "eighth_branch_tower_barbarian",
+			"tick": 60
+		},
+		{
+			"gold": 19050,
+			"path": "res://reports/towers_eighth_power_dual_1280x720.png",
+			"state": "eighth_power_dual",
+			"tick": 60
+		},
+		{
+			"gold": 18700,
+			"path": "res://reports/towers_eighth_power_twister_1280x720.png",
+			"state": "eighth_power_twister",
+			"tick": 60
+		},
+		{
+			"gold": 18350,
+			"path": "res://reports/towers_eighth_power_throwing_1280x720.png",
+			"state": "eighth_power_throwing",
+			"tick": 60
+		},
+		{
+			"gold": 18350,
+			"path": "res://reports/towers_eighth_barbarian_dual_idle_1280x720.png",
+			"state": "eighth_barbarian_dual_idle",
+			"tick": 160
+		},
+		{
+			"gold": 18350,
+			"path": "res://reports/towers_eighth_barbarian_twister_1280x720.png",
+			"state": "eighth_barbarian_twister",
+			"tick": 167
+		},
+		{
+			"gold": 18350,
+			"path": "res://reports/towers_eighth_barbarian_corpse_1280x720.png",
+			"state": "eighth_barbarian_corpse",
+			"tick": 222
+		},
+		{
+			"gold": 18350,
+			"path": "res://reports/towers_eighth_bfg_fire1_1280x720.png",
+			"state": "eighth_bfg_fire1",
+			"tick": 1491
+		},
+		{
+			"gold": 18350,
+			"path": "res://reports/towers_eighth_bfg_fire2_1280x720.png",
+			"state": "eighth_bfg_fire2",
+			"tick": 2528
+		},
+		{
+			"gold": 18350,
+			"path": "res://reports/towers_eighth_bfg_fire0_1280x720.png",
+			"state": "eighth_bfg_fire0",
+			"tick": 3577
+		},
+		{
+			"gold": 18350,
+			"path": "res://reports/towers_eighth_chieftain_rage_1280x720.png",
+			"state": "eighth_chieftain_rage",
+			"tick": 3792
+		},
+		{
+			"gold": 18350,
+			"path": "res://reports/towers_eighth_rage_and_heal_1280x720.png",
+			"state": "eighth_rage_and_heal",
+			"tick": 3792
+		},
+		{
+			"gold": 18350,
+			"path": "res://reports/towers_eighth_yeti_area_1280x720.png",
+			"state": "eighth_yeti_area",
+			"tick": 3905
+		},
+		{
+			"gold": 18350,
+			"path": "res://reports/towers_eighth_axe_thrower_shoot_1280x720.png",
+			"state": "eighth_axe_thrower_shoot",
+			"tick": 4027
+		},
+		{
+			"gold": 800,
+			"path": "res://reports/towers_eighth_thawed_camp_1280x720.png",
+			"state": "eighth_thawed_camp",
+			"tick": 28
+		},
+		{
+			"gold": 400,
+			"path": "res://reports/towers_eighth_sasquash_hired_1280x720.png",
+			"state": "eighth_sasquash_hired",
+			"tick": 28
+		},
+		{
+			"gold": 400,
+			"path": "res://reports/towers_eighth_sasquash_attack_1280x720.png",
+			"state": "eighth_sasquash_attack",
+			"tick": 43
+		},
+		{
+			"gold": 400,
+			"path": "res://reports/towers_eighth_sasquash_corpse_1280x720.png",
+			"state": "eighth_sasquash_corpse",
+			"tick": 140
+		},
+		{
+			"gold": 400,
+			"path": "res://reports/towers_eighth_sasquash_respawn_1280x720.png",
+			"state": "eighth_sasquash_respawn",
+			"tick": 416
+		},
+		{
+			"gold": 400,
+			"path": "res://reports/towers_eighth_victory_1280x720.png",
+			"state": "eighth_victory",
+			"tick": 416
+		},
+		{
+			"path": "res://reports/challenges_level8_mode2_1280x720.png",
+			"state": "level8_mode2"
+		},
+		{
+			"gold": 1100,
+			"path": "res://reports/towers_eighth_mode2_1280x720.png",
+			"state": "eighth_mode2",
+			"tick": 4
+		},
+		{
+			"path": "res://reports/challenges_level8_mode3_1280x720.png",
+			"state": "level8_mode3"
+		},
+		{
+			"gold": 1200,
+			"path": "res://reports/towers_eighth_mode3_1280x720.png",
+			"state": "eighth_mode3",
+			"tick": 4
+		}
+	],
+	"checks": 200,
+	"failures": [],
+	"layout_only": false,
+	"passed": true,
+	"scope": "native Godot input, advanced tower skills and animation endpoints, camp fire/hire, chief effects, restart and constructed settlement; no victory replay",
+	"source_hashes": {
+		"data/level08/definition.json": "61b2742cbbb218f8503e51af83bfb9ff01fb35cc592fb10e3c0d1a91f7041b85",
+		"scripts/battle/battle_ui.gd": "b12ad85f5b65083dc67e2bd78b19e5918f1ad55d0cf09432a8ba7b35bf98e61c",
+		"scripts/battle/battle_view.gd": "af6e4e0b109b538fe21e8d534f78c54acf7f23e7c86f78b13461b48fb16052ea",
+		"scripts/battle/dove_advanced_barrack.gd": "b8e86a156eb80f0231650cc4ba28a0bd9b74d6cf40788424d26798d5dc425f63",
+		"scripts/battle/dove_bfg.gd": "0f8bc792f74af3e7fbb0b88c92f05be9e1369d5491dec95907b48dd0a2de111e",
+		"scripts/battle/dove_chieftain.gd": "7b5fb215dbfbd9951cc4d802faeabb1774fdae2c5cee619f1c5b17d32a388524",
+		"scripts/battle/dove_enemy_melee.gd": "ee6ff31a3e5ac32f3b247a0b7ba5b306bb3fa2e5aa6125969338b45d364524a0",
+		"scripts/battle/dove_enemy_ranged.gd": "17c47ae1e1b472315b4f95205bd786fd18f4b79ef7b8e210288d46213108e531",
+		"scripts/battle/dove_sasquash.gd": "681297953dde1d6c89c8d495c8d3964951aecb96b83bbefac724308cfb992a5d",
+		"scripts/battle/level01_sim.gd": "1f509b601c944c8db9916627ac124a1322b3f74192533ea2c3108bb714fd3069",
+		"tests/challenges_visual.gd": "263e3ee6ab31587b3fa4ac26764346f2a25f3ecbdb1d55d480e3f0367fd7f64d",
+		"tests/level07_visual.gd": "548f84f1d2e0251dd9855e4723b7721f3b7192a069e4f3894b29b8a86d69a2c4",
+		"tests/level08_visual.gd": "99098865e3c0e6cbfd25fb2412b16e8ebecabccb2cce93ed712eb0b6e2b3d2ea",
+		"tests/tower_upgrade_visual.gd": "4537b9a4f1d1fd7f67a9065e2420496fb9ca5f0722e8948e51e361833a1e9edf"
+	}
+}

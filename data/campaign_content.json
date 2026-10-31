@@ -1042,7 +1042,13 @@
     "res://scripts/battle/dove_power_preview.gd",
     "res://scripts/battle/dove_heroes.gd",
     "res://scripts/battle/dove_grid_path.gd",
-    "res://scripts/services/hero_combat.gd"
+    "res://scripts/services/hero_combat.gd",
+    "res://scripts/battle/dove_bfg.gd",
+    "res://scripts/battle/dove_missile.gd",
+    "res://scripts/battle/dove_advanced_barrack.gd",
+    "res://scripts/battle/dove_sasquash.gd",
+    "res://scripts/battle/dove_chieftain.gd",
+    "res://scripts/battle/dove_enemy_melee.gd"
   ],
   "callbacks": [
     "game_scripts.aura_apply_mod.insert",
@@ -1146,7 +1152,15 @@
     "game_scripts.enemy_spider_big.update",
     "game_scripts.tower_barrack_mercenaries.update"
   ],
+  "runtime_callbacks": {
+    "missile_bfg": {
+      "remove": "game_scripts.missile_bfg.remove"
+    }
+  },
   "runtime_dependencies": {
+    "soldier_barbarian": [
+      "axe_barbarian_rude"
+    ],
     "tower_musketeer": [
       "pop_headshot",
       "mod_van_helsing_crosshair",

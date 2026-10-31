@@ -1,7 +1,7 @@
 {
 	"births": 708,
-	"checks": 227,
-	"content_combinations": 21,
+	"checks": 230,
+	"content_combinations": 24,
 	"failures": [],
 	"full_replays": false,
 	"independent_modes": 3,
@@ -14,18 +14,18 @@
 		"aura_unit_regen"
 	],
 	"source_hashes": {
-		"data/campaign_content.json": "40a725f115b3c5681a2ba12a09bbe1d30472e46295c258b2c8da041813285e65",
-		"data/level07/definition.json": "bb5573bb531afc86398887db0f685d4aaed78d416697b99a6c1eeffb77ac85b2",
-		"scripts/battle/battle_ui.gd": "900c3a23548286aee0d8708106765eb509850aa2ec483f0c7690774f4474e9d2",
-		"scripts/battle/battle_view.gd": "d398bcdae9cb7f4524c58aad2c21d890c30e7b926c55bb035c730938ec2c568f",
+		"data/campaign_content.json": "74229ab22af76a29221a777ea72dcf0a327035a978d4aefedf95bbac4dbfe1f3",
+		"data/level07/definition.json": "a0b7822ff12d7167ceb30a13ee0ac2bc96a46f8248f0e7d606cce892ca884039",
+		"scripts/battle/battle_ui.gd": "b12ad85f5b65083dc67e2bd78b19e5918f1ad55d0cf09432a8ba7b35bf98e61c",
+		"scripts/battle/battle_view.gd": "af6e4e0b109b538fe21e8d534f78c54acf7f23e7c86f78b13461b48fb16052ea",
 		"scripts/battle/controllers/default_level.gd": "729f34ba27941e516abc7fa76f9081885ea9a8f6d19840630e53abf5ab2067e7",
-		"scripts/battle/dove_behaviors.gd": "e6384e77ff8e839a58bd8fe0e17f15cf134eef40ff67fcb74cfe4a40b8954db6",
+		"scripts/battle/dove_behaviors.gd": "417397aea04b5a58a8c6806b465b65d40fe4d8da8c07b5a8480582119b0dfe42",
 		"scripts/battle/dove_musketeer.gd": "554c8b503948455b154da32084ba4824d6b0c8947bd61c83e95e19813c612435",
-		"scripts/battle/dove_snow.gd": "12420bfd037c70ca34255fc8686493858dc63e932893d8949cc81f7b0ed7c467",
+		"scripts/battle/dove_snow.gd": "27a19fdd8a56f3d5f747cfc588727d2e386b69920e1f6598723afea08cc52b1f",
 		"scripts/battle/dove_targeting.gd": "8e2f4073f6de7edc946b8b537ecbfc9da845066e94908de59b171abfefef1180",
-		"scripts/battle/level01_sim.gd": "bfe6e599b6b1ab76cc1ce0caffffe9da4bac06ace4acd61123e15f7c62c724e0",
+		"scripts/battle/level01_sim.gd": "1f509b601c944c8db9916627ac124a1322b3f74192533ea2c3108bb714fd3069",
 		"tests/fixtures/level07_source.json": "c26f1b73957950b358df8e5c0998a3cddcc45d4f3da8d8708a3034b609b3cf62",
-		"tests/verify_level07.gd": "5caa9c51b8e798a68582259baf819a87df60e3e4e9190445157271fe901407f3"
+		"tests/verify_level07.gd": "bcd18a4519bb7d3aeffa6fdd0e89ea247433d8344f90c4bcb89ad1c8c9d659ca"
 	},
 	"source_scenarios": 18,
 	"timeline_waves": 23

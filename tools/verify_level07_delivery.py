@@ -36,8 +36,8 @@ def verify():
                  'scripts/battle/dove_targeting.gd','scripts/battle/dove_modifiers.gd','scripts/battle/dove_behaviors.gd',
                  'scripts/battle/level01_sim.gd','scripts/battle/battle_view.gd','scripts/battle/battle_ui.gd']:
         hashes[path]=sha(ROOT/path)
-    assert len(combinations())==21
-    result={'passed':True,'source':read_catalog()['source'],'playable_combinations':21,'reports':reports,
+    assert len(combinations())==24
+    result={'passed':True,'source':read_catalog()['source'],'playable_combinations':len(combinations()),'reports':reports,
             'failure_probes':probes,'source_hashes':hashes,'browser_tested':False,'victory_replays_required':False,
             'additive_audit':'tests/fixtures/level07_additions.json; prior gameplay, UI metadata and source pixels retained'}
     (ROOT/'reports/level07_delivery.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')

@@ -7,10 +7,10 @@
 	"passed": true,
 	"scope": "targeted UI/input with constructed battle states; no complete replays",
 	"source_hashes": {
-		"scripts/battle/battle_feedback.gd": "a2c1b705b3dbbabaf59908d91af19d5aec7602a681389d74480ae64ec9efce49",
-		"scripts/battle/battle_ui.gd": "900c3a23548286aee0d8708106765eb509850aa2ec483f0c7690774f4474e9d2",
+		"scripts/battle/battle_feedback.gd": "f3d0dbd1d2225281d8eef83c7f3534350e6c4127ab9af1dc389a5289ad996241",
+		"scripts/battle/battle_ui.gd": "b12ad85f5b65083dc67e2bd78b19e5918f1ad55d0cf09432a8ba7b35bf98e61c",
 		"scripts/battle/battle_victory.gd": "0ce46751eb798ec710ae9304132d67c7806f6816a25ccf6ad8ca5bf3c47e6211",
-		"scripts/battle/battle_view.gd": "d398bcdae9cb7f4524c58aad2c21d890c30e7b926c55bb035c730938ec2c568f",
+		"scripts/battle/battle_view.gd": "af6e4e0b109b538fe21e8d534f78c54acf7f23e7c86f78b13461b48fb16052ea",
 		"scripts/battle/battle_wave_flags.gd": "cf3daa90f148cf81e3d0dee7c257d75b2ec918adea6bd3bda43b1ee0e93b1735",
 		"scripts/battle/dove_ui_layout.gd": "3b5f799a9db0ffe091ac8889bc9e5b431b5e80cedc4065fa1b05dbaaa45d3803"
 	}

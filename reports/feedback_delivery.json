@@ -12,12 +12,12 @@
     },
     "feedback_native_1280x720": {
       "passed": true,
-      "checks": 782,
+      "checks": 786,
       "layout_only": false
     },
     "feedback_native_1024x768": {
       "passed": true,
-      "checks": 616,
+      "checks": 620,
       "layout_only": true
     },
     "feedback_assets": {
@@ -45,15 +45,15 @@
     }
   },
   "source_hashes": {
-    "reports/feedback_logic.json": "3004d98047e8fb16d5a010c6fa00fe2376d9204c60b44b097bdf93304c72168d",
-    "reports/feedback_native_1280x720.json": "7726bba169ffb6fabb87501a9cb0956abbf633e37d347c9edfd14790738c69d4",
-    "reports/feedback_native_1024x768.json": "fc22751dbcbc1d51001f5593709c99faf53270f16acf717bfba10f4b6d7ccf4c",
-    "reports/feedback_assets.json": "b86e44bf975696736b56f9095fdb90cce9520b8fcc1da3e5adcd7f2820df5beb",
-    "reports/feedback_combat_audit.json": "d62d6642dfe9c6942bbf54e7a4ba1ed7c3fd6a8ab22c53444e36e36deda15f3c",
-    "reports/followup_logic.json": "9d28f532e085f28fc3a35ed3087ed18de22cd109a65af7e9dc9fe5fde174537b",
-    "reports/followup_native_1280x720.json": "cee5e655ecb1dab47252915872122168618c1673722b3b0f109ae68754648149",
-    "reports/followup_native_1024x768.json": "622b4993776c38ba22abc3c6a8fbd90ec2f816752aa782431fc6ccc51239a159",
-    "tools/verify_feedback_delivery.py": "53a152e18315d1a605e346271a3065be4da18427c43d15983b45d35872eaf7b1",
+    "reports/feedback_logic.json": "0dad99993d95d90a4b6748bd8d1fc229ac971f9e2730e20ea6dd5b91e3f26f4f",
+    "reports/feedback_native_1280x720.json": "cb81353dad9f132e941c129348f09d6622f819224b573cf6063e1603d30a5897",
+    "reports/feedback_native_1024x768.json": "8e6e47ab0a8a481b2e25a162b775c662e7da23d7899c03cc63dabb2022847c75",
+    "reports/feedback_assets.json": "ce03d4cd1e3a4342859a45299538bba250f4aa20c75eda768f157d3b42edcb52",
+    "reports/feedback_combat_audit.json": "cc244d13b897f06aeffc535746f9328461c2ab7e45ff950bff215465b20aecc6",
+    "reports/followup_logic.json": "bac4ed7f7f032bd375e22d230e8d795bcb6a6a22e3bfbaa928abea2581bedcbe",
+    "reports/followup_native_1280x720.json": "66b8cdfba73065fa42f19e4ed5b195bcbd47fa6fffbca64fc49a08b11f6229de",
+    "reports/followup_native_1024x768.json": "07fb111e04d0772273fdb052997719b6421a23808b610275b4e18d03d7972135",
+    "tools/verify_feedback_delivery.py": "37878baabdf353d87db45902c62772f7dbed5e2aae2b884496b80ec82c2b1b7b",
     "tools/feedback_reference/main.lua": "cf1e6c053dc336ee2b0fa92b84f79d833f23dff94df87bde0ef09bda488d6993",
     "tools/feedback_reference/conf.lua": "92fe96aeda62fcde5e725dd36ffe4f819b8c738dac4c72953818f621b2087432",
     "tools/prepare_feedback_reference.py": "52f8f6b38741d9129892b2d660b9224798954b198cf9c3e7b2ed55af19fda610",
@@ -65,12 +65,12 @@
     "tests/fixtures/feedback_source.json": "c25f17f1b0e423a39838469c82bb41dc94aeea4a053d1892ccadc9d59b466f34",
     "tests/fixtures/followup_source.json": "59bcb259d6065071bdd445657aa946d3431b0f11486caea1195dd38e4f5e3f35",
     "tests/fixtures/feedback_combat_adjustments.json": "f0038887ec479bbcab61e8b1164dbe6fb098566fba38cb3f36a9f6972b290f41",
-    "docs/FEEDBACK_REPAIRS.md": "c85f1af03c91892ef79d6ca260290fb4992e5a45c1d9640cb173f84249140522",
-    "tools/web_bootstrap.py": "ca117c4fb44db734b5e91b3fbff332c0baf35003e3ff4c6c788691b5d852e0a8",
-    "tools/package_level01.py": "ea1fd53258af42db8976e7c89b68a14d90c5ee0abe610d24263c3199d2a73326"
+    "docs/FEEDBACK_REPAIRS.md": "d664b1e3187e86ad5ed239fe4f13d0373067eafa1a846a91edf8a67d41cd6029",
+    "tools/web_bootstrap.py": "43549525ef51824e97eee1ec37930d778cb308f76d16bdc63b713fba46677dfb",
+    "tools/package_level01.py": "7732e387875c1ad1d8a83f8dd3073af77da9dd053e0d4a592b6024a4a0fd725c"
   },
   "historical_baseline_preserved": true,
-  "content_combinations": 21,
+  "content_combinations": 24,
   "browser_tested": false,
   "guard_scope": "14 isolated and 14 all-guards-present passing-enemy scenes on real placements/routes; original selection/movement functions; native render queue follows each live unit exactly once and removes all dead units; static layout duplicates fixed"
 }

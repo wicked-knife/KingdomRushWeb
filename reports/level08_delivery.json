@@ -1,0 +1,131 @@
+{
+  "passed": true,
+  "playable_combinations": 24,
+  "reports": {
+    "level08_logic": {
+      "passed": true,
+      "checks": 499,
+      "independent_modes": 3,
+      "births": 1097,
+      "timeline_waves": 25,
+      "source_scenarios": 72
+    },
+    "level08_native_1280x720": {
+      "passed": true,
+      "checks": 200,
+      "layout_only": false
+    },
+    "level08_native_1024x768": {
+      "passed": true,
+      "checks": 104,
+      "layout_only": true
+    },
+    "level08_assets": {
+      "passed": true
+    },
+    "level08_compatibility": {
+      "passed": true
+    },
+    "level07_logic": {
+      "passed": true,
+      "checks": 230,
+      "independent_modes": 3,
+      "births": 708,
+      "timeline_waves": 23,
+      "source_scenarios": 18,
+      "content_combinations": 24
+    },
+    "content_catalog": {
+      "passed": true,
+      "content_combinations": 24
+    },
+    "content_unification": {
+      "passed": true,
+      "checks": 329,
+      "timeline_waves": 88
+    },
+    "upgrades_logic": {
+      "passed": true,
+      "checks": 327,
+      "content_combinations": 24
+    }
+  },
+  "failure_probes": [
+    {
+      "missing": "tower_sasquash_holder",
+      "rejected": true,
+      "reason": "level08: layout -> missing template tower_sasquash_holder"
+    },
+    {
+      "missing": "soldier_sasquash",
+      "rejected": true,
+      "reason": "level08: missing template dependency: tower_sasquash -> soldier_sasquash"
+    },
+    {
+      "missing": "missile_bfg",
+      "rejected": true,
+      "reason": "Invalid power preview dependency: missile/1: 'missile_bfg'"
+    },
+    {
+      "missing": "mod_bfg_stun",
+      "rejected": true,
+      "reason": "Invalid power preview dependency: missile/1: 'mod_bfg_stun'"
+    },
+    {
+      "missing": "axe_barbarian_rude",
+      "rejected": true,
+      "reason": "level08: soldier_barbarian -> missing runtime dependency axe_barbarian_rude"
+    },
+    {
+      "missing": "enemy_troll_chieftain",
+      "rejected": true,
+      "reason": "level08: wave/creep -> missing template enemy_troll_chieftain"
+    },
+    {
+      "missing": "missile_callback",
+      "rejected": true,
+      "reason": "level08: missile_bfg.remove -> missing required runtime callback game_scripts.missile_bfg.remove"
+    }
+  ],
+  "source_hashes": {
+    "reports/level08_logic.json": "9a17a1b62ce06161a33e2935a186d0f9b78acf59612ea9d2ce456e27e762528f",
+    "reports/level08_native_1280x720.json": "05559e269a1d35932fab2121c6454da5a659c30612620e3b0787175d00029288",
+    "reports/level08_native_1024x768.json": "722f0d2ad14ddb6ff07c18b725a50e6b67e53499f4361c0c42e26859215364e2",
+    "reports/level08_assets.json": "d52fc1bf88e800155137f71337617f3df9f8075e0a6125b54dcc7b274c81086d",
+    "reports/level08_compatibility.json": "3f3111820acd3739b651baf9e46be219a786b49260d33d70b8e3c2f8a074f7ad",
+    "reports/level07_logic.json": "a4aa6ead4bff013649b63d2acd78c26f88018782ff75bb8d7317dc3cdaf664e2",
+    "reports/content_catalog.json": "953cd5527b637ce906b027a937f1fffe918cb6251f3559b58cdffb9fee0e5483",
+    "reports/content_unification.json": "4f27cae165f5bce7690b4c8b5ab15ae0760630d841b3308e46ccade8216abd27",
+    "reports/upgrades_logic.json": "23a5e9d18ce8d5f6b17357647886206362e53c4d820d5cf2e0dc2f2e03c73c43",
+    "data/level08/animations.json": "69efefbdd801265ed1d1d3eefafdee070063c38da46c8c0735d998e1fda3085a",
+    "data/level08/atlas.json": "e695ae3b0048056b72cd49d9431ee6cf3e1708a81d86301a5ff051bb6772d961",
+    "data/level08/atlas_0.png": "929f673c2de27afe9e9133f7d2384eb9f5d9d4ca1705c7361bc36999f865a8df",
+    "data/level08/atlas_1.png": "2638f4f77684e48ee88dcd7da13df8efb0bd04c4d8805fc5ca77b9c6b6edbb72",
+    "data/level08/atlas_10.png": "12d664bc95f252d3e57475ff69e0b1ac2530f19b8598b5e7fd5fb585c347aace",
+    "data/level08/atlas_11.png": "ee35dd681a7533d18706c9ca847a5135f77b0f86ea47645c3f1bb33081510677",
+    "data/level08/atlas_12.png": "a2e8b27dc448552051fc032ad4df836b5faa977fe39ef54c9c002e08ae81f7cc",
+    "data/level08/atlas_13.png": "b291569640db623d9883cc1ef307fe37a77ad1f02dab6ca2c50e6fc04236caf2",
+    "data/level08/atlas_14.png": "e58d6725680ad6e213d5d2b25a973e490f00cfc14b4dd22f72b2b9dd558a69a5",
+    "data/level08/atlas_2.png": "262a2c75c951f4bc56889f6135bfbe1a2896d63a23b6758bcab9e2264ac0cc0d",
+    "data/level08/atlas_3.png": "aef8749474ab9602177b97da360c190d12ed15b1a5d08fae79a2633c87d76964",
+    "data/level08/atlas_4.png": "bea4354e8045b4c70472f83b8f3fd49a2394a7b33f20659b5b1b7b7c4315ff60",
+    "data/level08/atlas_5.png": "8d4a22c3bc43f8c47478ccc160199593cae8fc2d16935fb35fa194ab5df8e3d9",
+    "data/level08/atlas_6.png": "c54d27c98d9fd002f40e678a36c49783b27e4ae30b561064db6821496dade26f",
+    "data/level08/atlas_7.png": "97d79b1ff3c80a9177d8986662976d65540e8c2907f2d52fb6c52afe0522ffaa",
+    "data/level08/atlas_8.png": "32ac30edea741c2bcb7c437a684d289106092b5fdc81699a108fabd7961ff62f",
+    "data/level08/atlas_9.png": "09bc56efaf56274a48c5d08e5bde37045c3a914c911d97d8698fa3bb7ad9f5fe",
+    "data/level08/catalog.json": "4e498189bc15e1c8b44e62c43f8bcbef880f3e827610630950f0743c7847d72f",
+    "data/level08/definition.json": "61b2742cbbb218f8503e51af83bfb9ff01fb35cc592fb10e3c0d1a91f7041b85",
+    "data/level08/manifest.json": "9b1000015aa8546d0fa0f31d071368baaf883b9c29c368d02fddefe21ddb3a1f",
+    "data/level08/sounds.json": "2425c72f71ac85888202c62be9918519a240a0a53b6df3e71f8114549790f196",
+    "data/campaign_content.json": "74229ab22af76a29221a777ea72dcf0a327035a978d4aefedf95bbac4dbfe1f3",
+    "tools/verify_level08_delivery.py": "7ea4ca0e3607627c1c1c05c3d14998e8afc7ef0664c4b49e3cffe1c4e1ecc893",
+    "tools/prepare_level08_reference.py": "156bca13d4a8df7af241a83e249e85fc07089c223373e74cce35b1f7e4a5384a",
+    "tools/level08_reference/main.lua": "e583c9feca0632d419a7c4a7fd75bef0e7fd645cddfe3fa21d19069d030e2d94",
+    "tools/level08_reference/behavior.lua": "d8786544a7f5fa6f29dadb6ef2288de1a52aad5b035d89dc0afcb3d851d2040b",
+    "tests/fixtures/level08_source.json": "a1231dfed0317e3a6f769c0e03b436ce600b345aba1be1205ef53eb76ec721fd",
+    "tests/verify_web_pack.gd": "30974818d9c46837659175f5153f11d549dc11b6feb0170206629e3e47354130"
+  },
+  "browser_tested": false,
+  "victory_replays_required": false
+}

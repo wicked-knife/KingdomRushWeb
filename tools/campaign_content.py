@@ -84,6 +84,11 @@ def validate_definition(data, spec):
     templates = data["templates"]
     identity = spec["folder"]
     catalog = read_catalog()
+    for owner, callbacks in catalog.get("runtime_callbacks", {}).items():
+        if owner in templates:
+            for event, callback in callbacks.items():
+                if data.get("callbacks", {}).get(owner, {}).get(event) != callback:
+                    raise ValueError(f"{identity}: {owner}.{event} -> missing required runtime callback {callback}")
     for owner, children in catalog.get("runtime_dependencies", {}).items():
         if owner in templates:
             for child in children:
