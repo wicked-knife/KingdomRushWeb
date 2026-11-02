@@ -110,7 +110,11 @@ func _run() -> void:
 		if FileAccess.file_exists(smoke_path + suffix): DirAccess.remove_absolute(smoke_path + suffix)
 	var definition: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/level01/definition.json"))
 	var hero_definition: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/heroes/definition.json"))
-	if hero_definition.get("heroes", []).size() != 79: failures.append("Hero roster incomplete")
+	if hero_definition.get("heroes", []).size() != hero_definition.get("hero_ids", []).size() or hero_definition.get("hero_ids", []).is_empty(): failures.append("Hero roster incomplete")
+	if hero_definition.source.commit != content.source.commit or hero_definition.heroes.size()!=91: failures.append("Hero roster does not match current Dove source")
+	for id: String in ["hero_zefira","hero_illiana","hero_malik_kr6"]:
+		var matching: Array=hero_definition.heroes.filter(func(row):return row.name==id)
+		if matching.size()!=1 or int(matching[0].available_level)<=200:failures.append("New hero unlock metadata invalid: "+id)
 	if definition.waves.groups.size() != 7 or definition.waves.cash != 270:
 		failures.append("First campaign data invalid")
 	var atlas: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/level01/atlas.json"))

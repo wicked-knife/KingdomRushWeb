@@ -12,6 +12,7 @@ local allowed={
   ["lib.klua.table"]=true,["lib.klua.vector"]=true,["lib.hump.vector-light"]=true,["lib.nav_path"]=true,
   ["lib.json"]=true,["lib.heading"]=true,["all.constants"]=true,["kr1.game_settings"]=true,
   ["lib.constant_spiked_armor"]=true,["lib.nav_rally"]=true,["lib.timed"]=true,
+  ["lib.klua.macros"]=true,["lib.klua.log"]=true,
   enemies=true,boss=true,["data.map_animations_paths"]=true,["data.map_animations_paths2"]=true
 }
 function require(name)
@@ -53,6 +54,9 @@ package.loaded.utils=U
 package.loaded.script_utils=functions("script_utils")
 package.loaded.hero_utils=functions("hero_utils")
 package.loaded.path_db=functions("path_db")
+package.loaded.grid_db=functions("grid_db")
+package.loaded.level_utils=functions("level_utils")
+package.loaded["kr1.upgrades"]=functions("upgrades")
 package.loaded.animation_db={loaded=false}
 local registered_sounds={}
 package.loaded.sound_db={register_sounds=function(_,sounds) for k,v in pairs(sounds)do registered_sounds[k]=v end end,register_groups=function() end}
@@ -78,8 +82,9 @@ local function run()
   for _,name in ipairs({"foundamental_towers","mage_towers","archer_towers","engineer_towers","barrack_towers"}) do chunk("kr1/"..name..".lua");package.loaded[name]=true end
   chunk("kr1/heroes.lua");package.loaded.heroes=true
   local registry=require("heroes.registry")
-  registry:init();registry:ensure_template("hero_gerald")
+  registry:init()
   chunk("kr1/game_templates.lua")
+  for _,module in ipairs(registry.declarations) do registry:ensure_template(module.name) end
   local strings=chunk("_assets/kr1-desktop/strings/zh-Hans.lua")
   _G._=function(key) return strings[key] or key end
   local utils=assert(io.open(source.."/all/utils.lua","rb")):read("*a")
@@ -90,20 +95,25 @@ local function run()
   _G.GGLabel={static={ref_h=1080}};_G.REF_H=1080
   local map=chunk("kr1-desktop/data/map_data.lua")
   local out={heroes={},sounds=registered_sounds,inputs=loaded_inputs}
-  for _,row in ipairs(registry:get_hero_data()) do
+  for _,module in ipairs(registry.declarations) do
+    if module.room then
+    local row=table.deepclone(module.room);row.name=module.name
     local t=E:get_template(row.name)
     local copy={};for k,v in pairs(row) do copy[k]=v end
     copy.title=_G._((t.info.i18n_key or string.upper(row.name)).."_NAME")
     copy.bio=_G._(string.upper(row.name).."_DESCRIPTION")
-    copy.special=_G._(string.upper(row.name).."_SPECIAL")
     copy.sound=t.sound_events.hero_room_select
     copy.details={}
     local prefix="HERO_ROOM_"..string.upper(t.info.i18n_key or row.name):gsub("^HERO_", "").."_"
-    for _,key in ipairs(t.hero.room_special_order or {}) do
+    local summary={}
+    for _,key in ipairs(module.room_special_order or {}) do
       copy.details[#copy.details+1]={title=_G._(prefix..key.."_NAME"),text=U.format_text_expr(_G._(prefix..key.."_DESC"),{})}
+      summary[#summary+1]=_G._(prefix..key.."_NAME")
     end
+    copy.special=#summary>0 and table.concat(summary,_G._("HERO_ROOM_FMT_SEP")) or _G._("HERO_ROOM_PROCESSING")
     if #copy.details==0 then copy.details={{title=_G._("HERO_ROOM_PROCESSING"),text=_G._("HERO_ROOM_PROCESSING")}} end
     out.heroes[#out.heroes+1]=copy
+    end
   end
   local json=require("lib.json")
   local f=assert(io.open(destination,"wb"));f:write(json.encode(out));f:close()

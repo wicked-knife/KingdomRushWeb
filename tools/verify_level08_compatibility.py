@@ -36,7 +36,7 @@ def verify():
         rows.append({'content': name, 'parts': len(parts), 'prior_content_unchanged': True,
                      'source_pixels_verified': True})
     probes = []
-    for case in ('old_stat', 'old_frame', 'unlisted_upgrade_edge'):
+    for case in ('old_stat', 'old_frame', 'unlisted_upgrade_edge', 'wrong_scorch', 'stale_current_source'):
         part = 'animations' if case == 'old_frame' else 'definition'
         bad = copy.deepcopy(read(f'data/level06/{part}.json'))
         if case == 'old_stat':
@@ -45,8 +45,12 @@ def verify():
             added = {path[1] for path in manifest['contents']['level06']['animations']['added']}
             key = next(k for k in bad['animations'] if k not in added)
             bad['animations'][key]['frames'][0] += 1
-        else:
+        elif case == 'unlisted_upgrade_edge':
             bad['upgrade_targets']['tower_barrack_3'].append('tower_unknown')
+        elif case == 'wrong_scorch':
+            bad['templates']['power_scorched_earth']['aura']['damage_min'] += 1
+        else:
+            bad['source']['commit'] = 'stale'
         try:
             before_eighth('level06', bad, part)
         except AssertionError:
@@ -54,7 +58,8 @@ def verify():
         else:
             raise AssertionError('Historical audit accepted ' + case)
     for path in ('tests/fixtures/level08_additions.json', 'tools/level08_compatibility.py',
-                 'tools/verify_level08_compatibility.py'):
+                 'tools/verify_level08_compatibility.py', 'tools/dove_2106_compatibility.py',
+                 'tests/fixtures/dove_2106_delta.json'):
         hashes[path] = sha(path)
     result = {'passed': True, 'baseline_commit': manifest['baseline_commit'], 'contents': rows,
               'failure_probes': probes, 'source_hashes': hashes}

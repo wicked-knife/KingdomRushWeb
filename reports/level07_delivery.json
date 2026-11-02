@@ -1,8 +1,8 @@
 {
   "passed": true,
   "source": {
-    "version": "2.1.0.3",
-    "commit": "1a863df00b08f6bf1018ae0b0e7e4e106b939082"
+    "version": "2.1.0.6",
+    "commit": "4072b18bf4e418eec8b813a960c83003744cb710"
   },
   "playable_combinations": 24,
   "reports": {
@@ -36,7 +36,7 @@
     "level07_assets": {
       "passed": true,
       "frames": 4555,
-      "animations": 359
+      "animations": 361
     },
     "content_catalog": {
       "passed": true,
@@ -76,18 +76,18 @@
     }
   ],
   "source_hashes": {
-    "reports/level07_logic.json": "a4aa6ead4bff013649b63d2acd78c26f88018782ff75bb8d7317dc3cdaf664e2",
-    "reports/level07_native_1280x720.json": "cc9eeaf7fdb1d2595cec7ba2bd8f9c5de8a3c1266d73f6769e5f534be6b59135",
-    "reports/level07_native_1024x768.json": "a53a09fdea8346b607565bae76307cb76f460bbb782d1808641b62294af919f2",
-    "reports/level07_assets.json": "b0b72bcf961a1e61dd4925718e53cc173ad7a95f9761ce14899c95552720850a",
-    "reports/content_catalog.json": "953cd5527b637ce906b027a937f1fffe918cb6251f3559b58cdffb9fee0e5483",
-    "reports/content_unification.json": "4f27cae165f5bce7690b4c8b5ab15ae0760630d841b3308e46ccade8216abd27",
-    "data/level07/animations.json": "420abdb5fe86a0bdc29ded2d1231fd18992d416b8c6e0e32a8511cb1a32adb3c",
-    "data/level07/atlas.json": "4f0dd488f8a74a88b44279d2e9bc7f767e70cdabd25e6c0e74e23b6bec74df8e",
+    "reports/level07_logic.json": "6dd376ab03b1a31be4623e7a385587ba2289bd3d59e648a81646ed221b42f768",
+    "reports/level07_native_1280x720.json": "df511c15e657eb6f0281958ea50523742d190ac46560a3f82e647135b6dd69c3",
+    "reports/level07_native_1024x768.json": "4922d3b3a0f3d2145738933fbc55382456e94058c3adbaeae711bd05e35d0329",
+    "reports/level07_assets.json": "26aed3326c0c22a57b6e981f08ef351d08ebe85d792ccaa18255cf1ce3e03d44",
+    "reports/content_catalog.json": "45054579e55a7c181645f7da9e6f9fb202381682e2be8cba2146fa42a6ac5098",
+    "reports/content_unification.json": "ba60765a6fc8f6cfc6eb4fe24adf40f4ab2bc6982158da37bc0b0a5ff4291013",
+    "data/level07/animations.json": "425a68a1cb5fbb4791a349411bbf88c8365400488815724d99f6a99c88cf0149",
+    "data/level07/atlas.json": "8218ec48432954973d976d9b6bc8cbf9c1b84156d9b05744ec6ccac97876068f",
     "data/level07/atlas_0.png": "8a8e2d22733d3e7f831f2cc09eaa9d989f61a375106210d0b73fda4f050a1f65",
     "data/level07/atlas_1.png": "b622ff8a4cd08863ca944b8e8c6a5089e3e554ca7779e0f48901ef72ebad073e",
     "data/level07/atlas_10.png": "877572ab869721efa91b006192d9b1eaa29d88c69b5dacd3b3d3057a8d376a76",
-    "data/level07/atlas_11.png": "c2b562cae783f16ef4130a3eff53a77e307087a1f492641e36752ac6874af60b",
+    "data/level07/atlas_11.png": "6c8e6ebd5dd3afd592086d5505a0451daec5ea8d09bbd073e45608272dd4b4ba",
     "data/level07/atlas_12.png": "5115e9af4e7ff14a834281e85a04437d4df83c463b60e68390f1ea0b6dacac26",
     "data/level07/atlas_2.png": "73735b8b8df2c9e9a8243890a26b12599e2e33e96f3b46e4fbbcf710db4025b7",
     "data/level07/atlas_3.png": "b9b325fe1ebbf7536bb46bcdf441ceb7e1e695cc5862963d634ce413fb7c7651",
@@ -98,24 +98,24 @@
     "data/level07/atlas_8.png": "565dea26e38631cc8d0e00684ecb9bdfb6a5c8b7da2adb1df1de2718f5174d67",
     "data/level07/atlas_9.png": "0e0061bf58497d8c2ca17b4cc7e849de3242a3ef95b0c276e18b852cd9d528c2",
     "data/level07/catalog.json": "20bfe1adc6b4a3417c695ca8412988e08c4b4ba8f5299effe2d16faa294285c7",
-    "data/level07/definition.json": "a0b7822ff12d7167ceb30a13ee0ac2bc96a46f8248f0e7d606cce892ca884039",
-    "data/level07/manifest.json": "ae4027e4a78e9d3c37b4821917268f71b2aa44257fbb17a43b03910460cb76af",
+    "data/level07/definition.json": "283ceb763955ae3b16e7d89fec1f712896861f34eef3b9548f5ea09f0d1d0a84",
+    "data/level07/manifest.json": "d549556a6a3656d6caa5fe0a0c29c82c016b72e23f74e315cda010075dcfa1a5",
     "data/level07/sounds.json": "8aaf56a276628679c62c1b3159d2b4ed8c08381d25720d799a35605a1a373fbb",
-    "data/campaign_content.json": "74229ab22af76a29221a777ea72dcf0a327035a978d4aefedf95bbac4dbfe1f3",
+    "data/campaign_content.json": "6d6a36fb85966513abb96f56e2680ea4bc7b736c5b2611174365430024127ff4",
     "tools/verify_level07_delivery.py": "5d925032e9fbf688b0ee9f783bc995e131fef71392fe400eee813d5d3259a637",
     "tools/level07_reference/main.lua": "00e38c4c07dff720f5c174bee388055f434566886c7c7d69b6b99b7695b85a77",
     "tools/level07_reference/behavior.lua": "87aaf035ff2d8173997a6d8c49b43230e4aa43fc9f99d6df67d82656e9cedac1",
     "tools/prepare_level07_reference.py": "b6e57c6663cabf6e15bd1e22d6ae45d3644e97c752cb71891567cfd0eeaecdc7",
-    "tests/fixtures/level07_source.json": "c26f1b73957950b358df8e5c0998a3cddcc45d4f3da8d8708a3034b609b3cf62",
+    "tests/fixtures/level07_source.json": "0e757e9d2676a22f2e75c7cf675ed96aaacc9a9ae5e4c546a880a67c89618aa9",
     "tests/fixtures/level07_additions.json": "6b2fc4b9195534bc85d0c81bd3a804eae27f2450935926ab0ef319273f3420fc",
     "scripts/battle/dove_musketeer.gd": "554c8b503948455b154da32084ba4824d6b0c8947bd61c83e95e19813c612435",
     "scripts/battle/dove_snow.gd": "27a19fdd8a56f3d5f747cfc588727d2e386b69920e1f6598723afea08cc52b1f",
     "scripts/battle/dove_targeting.gd": "8e2f4073f6de7edc946b8b537ecbfc9da845066e94908de59b171abfefef1180",
-    "scripts/battle/dove_modifiers.gd": "8c52fef99fa869cef596be22e8b57560c1ec1927d9b0c70aa74f64b38ac38acf",
+    "scripts/battle/dove_modifiers.gd": "7558af98abee050a155f0497ebd18a60bc953ec7596dbd4ec58650397a7e0af0",
     "scripts/battle/dove_behaviors.gd": "417397aea04b5a58a8c6806b465b65d40fe4d8da8c07b5a8480582119b0dfe42",
     "scripts/battle/level01_sim.gd": "1f509b601c944c8db9916627ac124a1322b3f74192533ea2c3108bb714fd3069",
     "scripts/battle/battle_view.gd": "af6e4e0b109b538fe21e8d534f78c54acf7f23e7c86f78b13461b48fb16052ea",
-    "scripts/battle/battle_ui.gd": "b12ad85f5b65083dc67e2bd78b19e5918f1ad55d0cf09432a8ba7b35bf98e61c"
+    "scripts/battle/battle_ui.gd": "d45d1ac932af352eee6cc28d5aa8c1687e4d84bbbd6c15166fc4afef1ea1b9d4"
   },
   "browser_tested": false,
   "victory_replays_required": false,

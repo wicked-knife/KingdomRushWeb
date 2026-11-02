@@ -1,19 +1,19 @@
 {
   "passed": true,
-  "source_commit": "1a863df00b08f6bf1018ae0b0e7e4e106b939082",
+  "source_commit": "4072b18bf4e418eec8b813a960c83003744cb710",
   "source_inputs": 50,
   "frames": 4687,
   "canonical_frames": 2541,
-  "animations": 365,
+  "animations": 367,
   "resources": 107,
   "sha256": {
-    "animations.json": "5f36a937ed92b2033a75f08bd70f4ec5408afe9af38affeb6e650c711c40b0d0",
-    "atlas.json": "3ef32058cbcaa89b1536592f626a5e1410a940489e7d6248bbf870894556af00",
+    "animations.json": "ab6c00e7946536b0a88d5c01bd2bc710a7dea05f6f514019390bffaab69ccce7",
+    "atlas.json": "0b769a52b7d4e5c9e0fb30b45b4a129ed78f92dfea43542348eb64d68bac7ba3",
     "atlas_0.png": "36acbbde6b6a1bdfd57c50c45d6bba5da467ee8889d9fc4efce1883f1b1ff622",
     "atlas_1.png": "b622ff8a4cd08863ca944b8e8c6a5089e3e554ca7779e0f48901ef72ebad073e",
     "atlas_10.png": "26cf7319e66fe5818860f22cd3e9bd6421d7726ac80ad73bd4d8a36345a2a56d",
     "atlas_11.png": "b5f55f708314c1aa8012c95f54336199c81a94b553d1bf3686b7a733eeaf7941",
-    "atlas_12.png": "1ff12ac481a7fda6d3324d80726774ee52cfef41f73c2aeb7a5339117235e68b",
+    "atlas_12.png": "aa54645917d311d64c7d9db300a237a2a008ff832224ec24dedca2e45e3075b9",
     "atlas_13.png": "0ec974ccba7a21202dd1ebfb38ea42c2f5af7aaa54c74fd9e75d00bf362a48cc",
     "atlas_2.png": "feece4a35c251051f407b6979326c714e2f89aa15c980f4e6f121d2a15a14664",
     "atlas_3.png": "ab0a557101d658ca31798d5efde1b7c2744e31a90c821d7921f12bc64154f7c9",
@@ -24,8 +24,8 @@
     "atlas_8.png": "246afe0b962734454fd5a59d167828b9349e6e203ece0894abe6a2de31364558",
     "atlas_9.png": "90789ea94095a66aa74336b71a97474e91e2c411d66e27816189d87967c134cc",
     "catalog.json": "a617fbffe5a7aab61d59bf0716eca2811d70c28f807f423f1ae61f1b4a6ce543",
-    "definition.json": "1361a3a00a823473d2cadef66ffa8b9e2f9c1b8fbe939703dd709d1a7441fd4f",
-    "manifest.json": "afc22433910ab6bc0d12d6bd1a2923126e0c4e0fc40d3f3a6cbbb8f65036ff44",
+    "definition.json": "d18808975040989f19fde82ad690e2e5d7bde1509fc8e47689c382c733cc61dc",
+    "manifest.json": "8dfa817db944ec0c6ee6bbd4fb889eb155ad5e6ad01353d7b5bec36db6f11985",
     "sounds.json": "bcae609bbf58193b2512366b1d505f8cfd154938f2a95640a4f1ace6081ebb83"
   }
 }

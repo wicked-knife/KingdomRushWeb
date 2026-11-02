@@ -1,6 +1,6 @@
 -- Source coroutines and helpers run with controlled services and RNG draws.
 -- Stubs supply only entity queues/clock/terrain; formulas execute from Dove.
-return function(root, project, original, UP)
+return function(root, project, original, UP, cases)
   local V=require("lib.klua.vector");local bit=require("bit")
   local function read(p)local f=assert(io.open(root.."/"..p,"rb"));local s=f:read("*a");f:close();return s end
   local src=read("all/scripts.lua");local game=read("kr1/game_scripts.lua")
@@ -55,6 +55,24 @@ return function(root, project, original, UP)
   co=coroutine.create(function()scripts.aura_apply_damage.update(aura,store)end)
   for tick=61,362 do store.tick_ts=tick/30;if coroutine.status(co)=="dead"then break end;assert(coroutine.resume(co))end
   out.scorched_pulses=rows
+  -- Run the real aura with each actual source-patched rain rank, on both terrains.
+  out.scorch_ranks={}
+  for _,case in ipairs(cases) do
+    if case.name=="zero" or case.name:match("^rain/") then
+      for _,name in ipairs({"power_scorched_earth","power_scorched_water"}) do
+        local patched=case.templates[name].aura
+        local a=table.deepclone(original[name]);a.aura.duration=patched.duration
+        a.aura.damage_min=patched.damage_min;a.aura.damage_max=patched.damage_max;a.pos=V.v(500,300)
+        rows={};store.tick_ts=60/30
+        local enabled=case.templates.power_fireball.scorch_earth or false
+        if enabled then
+          co=coroutine.create(function()scripts.aura_apply_damage.update(a,store)end)
+          for tick=61,363 do store.tick_ts=tick/30;if coroutine.status(co)=="dead"then break end;assert(coroutine.resume(co))end
+        end
+        out.scorch_ranks[#out.scorch_ranks+1]={rank=case.levels.rain,template=name,enabled=enabled,aura=patched,pulses=rows,removed=not enabled or a.removed==true}
+      end
+    end
+  end
   -- Fire control uses the real target prediction and coroutine timing. Spread
   -- is zero only in this fixture so coordinates do not depend on RNG engines.
   env.GR={cell_size=16,cell_type=function()return TERRAIN_LAND end}

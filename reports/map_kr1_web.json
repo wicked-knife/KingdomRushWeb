@@ -1,7 +1,7 @@
 {
   "package_created": true,
-  "source_commit": "1a863df00b08f6bf1018ae0b0e7e4e106b939082",
-  "content_catalog_sha256": "74229ab22af76a29221a777ea72dcf0a327035a978d4aefedf95bbac4dbfe1f3",
+  "source_commit": "4072b18bf4e418eec8b813a960c83003744cb710",
+  "content_catalog_sha256": "6d6a36fb85966513abb96f56e2680ea4bc7b736c5b2611174365430024127ff4",
   "browser_tested": false,
   "build_type": "release",
   "developer_menu": false,
@@ -196,10 +196,10 @@
   "default_technology_acceptance": {
     "logic": {
       "passed": true,
-      "checks": 327,
+      "checks": 389,
       "source_patch_scenarios": 40,
-      "source_template_rows": 3880,
-      "behavior_scenarios": 20,
+      "source_template_rows": 4280,
+      "behavior_scenarios": 36,
       "content_combinations": 24
     },
     "native_1280x720": {
@@ -232,12 +232,12 @@
       },
       "feedback_native_1280x720": {
         "passed": true,
-        "checks": 786,
+        "checks": 782,
         "layout_only": false
       },
       "feedback_native_1024x768": {
         "passed": true,
-        "checks": 620,
+        "checks": 616,
         "layout_only": true
       },
       "feedback_assets": {
@@ -269,15 +269,15 @@
     "guard_scope": "14 isolated and 14 all-guards-present passing-enemy scenes on real placements/routes; original selection/movement functions; native render queue follows each live unit exactly once and removes all dead units; static layout duplicates fixed"
   },
   "feedback_report_sha256": {
-    "reports/feedback_assets.json": "ce03d4cd1e3a4342859a45299538bba250f4aa20c75eda768f157d3b42edcb52",
-    "reports/feedback_combat_audit.json": "cc244d13b897f06aeffc535746f9328461c2ab7e45ff950bff215465b20aecc6",
-    "reports/feedback_delivery.json": "69baa48e74890c620488f7f8c19214dd8601a562b13a6b1c71b66499081545e0",
-    "reports/feedback_logic.json": "0dad99993d95d90a4b6748bd8d1fc229ac971f9e2730e20ea6dd5b91e3f26f4f",
-    "reports/feedback_native_1024x768.json": "8e6e47ab0a8a481b2e25a162b775c662e7da23d7899c03cc63dabb2022847c75",
-    "reports/feedback_native_1280x720.json": "cb81353dad9f132e941c129348f09d6622f819224b573cf6063e1603d30a5897",
-    "reports/followup_logic.json": "bac4ed7f7f032bd375e22d230e8d795bcb6a6a22e3bfbaa928abea2581bedcbe",
-    "reports/followup_native_1024x768.json": "07fb111e04d0772273fdb052997719b6421a23808b610275b4e18d03d7972135",
-    "reports/followup_native_1280x720.json": "66b8cdfba73065fa42f19e4ed5b195bcbd47fa6fffbca64fc49a08b11f6229de"
+    "reports/feedback_assets.json": "7ffeba97218768cc912a7d38951125255eafa2e052426e4a0a334d6f98b162c2",
+    "reports/feedback_combat_audit.json": "b4edf754770d24a753f344cefb0ff9a850944644feb0cfd28f97aef823b490b0",
+    "reports/feedback_delivery.json": "e85ed0eb6713685836253bab8255a8427b9f33f8a3badee0f15ad6f6b5168476",
+    "reports/feedback_logic.json": "9ecc4bddd35936e1dd1b045c58aeaee1b28b70ff9d1e720b60cebd5e38826471",
+    "reports/feedback_native_1024x768.json": "90cb56ed5c89ca250f1c8a2b828ac04520c62bf38ddfaddb95c12fdbfe867755",
+    "reports/feedback_native_1280x720.json": "b321dae0bf81652f611272cc320a4d35e213e6f97c7d58b6d50611cac000d2da",
+    "reports/followup_logic.json": "84127c702d6d174486ad1d483afe50a722d517eba4062888cd19eedb4086d192",
+    "reports/followup_native_1024x768.json": "1fc8b97e969ff78dbe770e8166d5b3797a1aeccb19b1ecf4c920ad208c3302c2",
+    "reports/followup_native_1280x720.json": "ca2eaa0264a4c44ba0704ed0f6969476b834b0ede45899e6b5b652f5e6b637f6"
   },
   "seventh_acceptance": {
     "passed": true,
@@ -313,7 +313,7 @@
       "level07_assets": {
         "passed": true,
         "frames": 4555,
-        "animations": 359
+        "animations": 361
       },
       "content_catalog": {
         "passed": true,
@@ -402,9 +402,9 @@
       },
       "upgrades_logic": {
         "passed": true,
-        "checks": 327,
+        "checks": 389,
         "source_patch_scenarios": 40,
-        "source_template_rows": 3880,
+        "source_template_rows": 4280,
         "content_combinations": 24
       },
       "advanced_barrack_cooldown": {
@@ -458,24 +458,24 @@
     ]
   },
   "validation_report_sha256": {
-    "reports/level07_assets.json": "b0b72bcf961a1e61dd4925718e53cc173ad7a95f9761ce14899c95552720850a",
-    "reports/level07_delivery.json": "8906758a871e63ce4a23372ceafbbf2806602a5914933fae0d60bbf284fc3670",
-    "reports/level07_logic.json": "a4aa6ead4bff013649b63d2acd78c26f88018782ff75bb8d7317dc3cdaf664e2",
-    "reports/level07_native_1024x768.json": "a53a09fdea8346b607565bae76307cb76f460bbb782d1808641b62294af919f2",
-    "reports/level07_native_1280x720.json": "cc9eeaf7fdb1d2595cec7ba2bd8f9c5de8a3c1266d73f6769e5f534be6b59135",
-    "reports/level08_assets.json": "d52fc1bf88e800155137f71337617f3df9f8075e0a6125b54dcc7b274c81086d",
-    "reports/level08_compatibility.json": "3f3111820acd3739b651baf9e46be219a786b49260d33d70b8e3c2f8a074f7ad",
-    "reports/level08_delivery.json": "ee68d2cf48c9d5c83f6cd24eb150d9d4b0ab3cd136ba18be541cdc70f13fe754",
-    "reports/level08_logic.json": "5ac1a87e51262399acd0821b0b25e07c2cd31ad62d71af2f8117bc62702aea30",
-    "reports/level08_native_1024x768.json": "b50a255c02e7acae4df653926da7823dcbeef4f6eab942dda43fe69ca5e199be",
-    "reports/level08_native_1280x720.json": "9d541a4ac4bf5ff7519f9e8c98986ec93dd6b0c71f46d124b3db531e5a8ab9a1",
-    "reports/level08_upgrades.json": "d959c2ba5ad00aed3e7468513051e49f82661c5ee40c126acd4c1856c27239bf"
+    "reports/level07_assets.json": "26aed3326c0c22a57b6e981f08ef351d08ebe85d792ccaa18255cf1ce3e03d44",
+    "reports/level07_delivery.json": "402ec0a6780160fe5d2431f8894d9d01a37974bceb1816303aca86f0fad33b49",
+    "reports/level07_logic.json": "6dd376ab03b1a31be4623e7a385587ba2289bd3d59e648a81646ed221b42f768",
+    "reports/level07_native_1024x768.json": "4922d3b3a0f3d2145738933fbc55382456e94058c3adbaeae711bd05e35d0329",
+    "reports/level07_native_1280x720.json": "df511c15e657eb6f0281958ea50523742d190ac46560a3f82e647135b6dd69c3",
+    "reports/level08_assets.json": "290b7384f985e0d57a9b6c203047e4747e82cb51b72926699b3709091dabbfcf",
+    "reports/level08_compatibility.json": "80f7f96709f9a9b2b0a6d84f3a34d0e545616eb137fe760a44d45f0564e306d4",
+    "reports/level08_delivery.json": "cd351d09cd702f1b6754f366f7819feab49182672b1af4d51d3dac3f7c103617",
+    "reports/level08_logic.json": "c3fa0426cbcaf2460885695cd0f3ebba8bf78c67e0a77251a27e1ebd9d5fd834",
+    "reports/level08_native_1024x768.json": "943faa8152d5cc4dff69a1878e2159b46a88894e07c469feeb1d636f81d65853",
+    "reports/level08_native_1280x720.json": "8836eba7355b3064216fa6484cccb6d68231b31f62410fc1f5755fe823e0a052",
+    "reports/level08_upgrades.json": "56e66a87585dcb8e62e703dfc1f6255ed47ade89ffcb4486ffca0420d2dda3c1"
   },
   "technology_scheme": "1",
-  "pck_files": 834,
+  "pck_files": 860,
   "bundle": "build\\KingdomRush-KR1-Levels01-08-Web.zip",
-  "bytes": 257767598,
-  "sha256": "55232723a9ebdee5b3003eeefb0014de84f543312d0eb2665414139f6be0cd42",
+  "bytes": 259545938,
+  "sha256": "da63a0988914d240d4129b196ca02105ed25216348ba975bf71d096b2eca2f0c",
   "web_files": {
     "index.apple-touch-icon.png": {
       "bytes": 11939,
@@ -491,7 +491,7 @@
     },
     "index.html": {
       "bytes": 3146,
-      "sha256": "95b9fa4f5dab06a3a94e7ff3b620ee3f7ad2c749337226be471f49592e202a03"
+      "sha256": "99cfdc71a34c01abaa153bc595a469832fc77bec4d7ac3847cfb3d6058e4d924"
     },
     "index.icon.png": {
       "bytes": 5765,
@@ -502,8 +502,8 @@
       "sha256": "33c94cb3175f3333b82e2a3be5e8e86f77986f0aa2042b1631f6367a4e5bb6ba"
     },
     "index.pck": {
-      "bytes": 262844032,
-      "sha256": "5300d4be15ff9a8cdf1b0f110eff80151f3b0953f521793c054a097382ee9ed2"
+      "bytes": 264780884,
+      "sha256": "626c682474c1dac389c901012b1f4239a33736806bf0fac1c35daf72536a9454"
     },
     "index.png": {
       "bytes": 21443,
@@ -514,20 +514,20 @@
       "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
     },
     "export_receipt.json": {
-      "bytes": 14152,
-      "sha256": "b736b72020996dd50b8f831dab08261b6dd7b00fe7666f8b07cb48ef334fcd35"
+      "bytes": 14297,
+      "sha256": "57bec79947dc96ee7a41083d77869442d7a56b306df9c037fa13835e927e5506"
     },
     "README.txt": {
-      "bytes": 6661,
-      "sha256": "40588c7550644fc5a568e942467aac73a628f583dadc6ccd4b8733e858d70d76"
+      "bytes": 6680,
+      "sha256": "4d658d41c5b39721dbda2ca9b64cff0b45fc4299d2be8ead24b0e6e8acf59662"
     },
     "start_server.cmd": {
       "bytes": 180,
       "sha256": "8f021ad5511504a288354fec02c4bf8514f054a2457cc229710e1d6069558b32"
     },
     "pack_files.json": {
-      "bytes": 59476,
-      "sha256": "23eabc40ee77889b7f9f967c74803bb96e1f9d2f6feb0ee48230d5004763eedb"
+      "bytes": 61913,
+      "sha256": "4a53aaf8426fbae1d960144d63e4015b044b88c3c685f1ab4944d6e0e79e0fe4"
     }
   }
 }

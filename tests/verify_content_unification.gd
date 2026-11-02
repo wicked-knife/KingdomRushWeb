@@ -24,7 +24,9 @@ func run() -> void:
 	check(FileAccess.get_sha256("res://tests/fixtures/followup_source.json")==repairs.followup_source_fixture_sha256,"default bomb simulation step has independent source-coroutine evidence")
 	var record_current := OS.get_cmdline_user_args().has("--record-current")
 	check(not baseline.is_empty(), "current combat snapshot exists")
-	if not record_current: check(baseline.get("source",{}).get("commit","") == Levels.catalog().source.commit, "combat snapshot uses current source")
+	var transition: Dictionary = Levels.read_json("res://tests/fixtures/dove_2106_delta.json")
+	if not record_current:
+		check(baseline.source.commit == transition.source_before.commit and Levels.catalog().source == transition.source_after, "historical combat source has an explicit current transition")
 	var expected_timelines: Dictionary = Levels.read_json("res://tests/fixtures/content_timelines.json")
 	check(expected_timelines.size() == 15, "all pre-migration mode timelines exist")
 	check(not Levels.supports(9) and not Levels.supports(1, 1, 3), "preview and unsupported difficulty remain unavailable")
@@ -88,7 +90,7 @@ func run() -> void:
 	var timeline_file := FileAccess.open("res://reports/content_timelines.json", FileAccess.WRITE)
 	timeline_file.store_string(JSON.stringify(timelines)); timeline_file.close()
 	var hashes:={}
-	for path in ["tests/verify_content_unification.gd","tests/fixtures/content_combat_baseline.json","tests/fixtures/feedback_combat_adjustments.json","tests/fixtures/feedback_source.json","tests/fixtures/followup_source.json","scripts/battle/level01_sim.gd","scripts/battle/dove_projectile.gd","scripts/battle/dove_paladin.gd"]:hashes[path]=FileAccess.get_sha256("res://"+path)
+	for path in ["tests/fixtures/dove_2106_delta.json","data/campaign_content.json","tests/verify_content_unification.gd","tests/fixtures/content_combat_baseline.json","tests/fixtures/feedback_combat_adjustments.json","tests/fixtures/feedback_source.json","tests/fixtures/followup_source.json","scripts/battle/level01_sim.gd","scripts/battle/dove_projectile.gd","scripts/battle/dove_paladin.gd"]:hashes[path]=FileAccess.get_sha256("res://"+path)
 	var report := {"passed":failures.is_empty(),"checks":checks,"combinations":15,"timeline_waves":timeline_waves,"timeline_entries":timeline_entries,"timeline_report":"reports/content_timelines.json","combat_scenarios":3,"combat_ticks":3600,"samples":samples,"failures":failures,"source_hashes":hashes,"historical_baseline_preserved":true,"source_backed_adjustments":"tests/fixtures/feedback_combat_adjustments.json","first_difference_audit":"reports/feedback_combat_audit.json"}
 	var suffix := "_before" if OS.get_cmdline_user_args().has("--before") else ""
 	if not preload("res://tests/report_writer.gd").json_file("res://reports/content_unification"+suffix+".json",report):quit(1);return

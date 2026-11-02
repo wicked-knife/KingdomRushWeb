@@ -171,7 +171,7 @@
     }
   ],
   "source_hashes": {
-    "reports/content_unification.json": "4f27cae165f5bce7690b4c8b5ab15ae0760630d841b3308e46ccade8216abd27",
+    "reports/content_unification.json": "ba60765a6fc8f6cfc6eb4fe24adf40f4ab2bc6982158da37bc0b0a5ff4291013",
     "tests/fixtures/content_combat_baseline.json": "ccc12400ba08d7a3cbeba91bac30347d7d1ddd7c33efb5faf891d8552022efbe",
     "tests/fixtures/feedback_combat_adjustments.json": "f0038887ec479bbcab61e8b1164dbe6fb098566fba38cb3f36a9f6972b290f41",
     "tests/fixtures/feedback_source.json": "c25f17f1b0e423a39838469c82bb41dc94aeea4a053d1892ccadc9d59b466f34",

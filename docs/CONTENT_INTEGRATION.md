@@ -1,6 +1,6 @@
 # 关卡统一接入
 
-基准及当前范围见 [复刻指南](GODOT_WEB_REMAKE_GUIDE.md)。前七关 21 个组合与游侠测试场共用导出链路；公开的 `CampaignLevels.supports()`、`load_definition()` 与存档格式保持兼容。
+基准及当前范围见 [复刻指南](GODOT_WEB_REMAKE_GUIDE.md)。前八关 24 个组合与游侠测试场共用导出链路；公开的 `CampaignLevels.supports()`、`load_definition()` 与存档格式保持兼容。
 
 ## 职责
 

@@ -4,6 +4,9 @@ import hashlib
 import json
 import math
 import re
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
+from dove_hero_assets import declarations
 from PIL import Image, ImageChops, ImageDraw, ImageOps
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,7 +27,8 @@ def verify():
     for path in manifest["resources"] + manifest["data"]:
         assert (ROOT / path.removeprefix("res://")).is_file(), path
     rows = definition["heroes"]
-    assert len(rows) == len({h["name"] for h in rows}) == 79
+    source_ids = [p.parent.name for p, _ in declarations(SOURCE)[1]]
+    assert [h["name"] for h in rows] == definition["hero_ids"] == source_ids
     assert definition["portrait_fallbacks"] == []
     generated = manifest.get("generated_portraits", {})
     approved = read(ROOT / "assets/kingdom_rush/generated/heroes/portraits.json")["portraits"]
@@ -44,7 +48,8 @@ def verify():
     for hero in rows:
         assert hero["thumbnail"] in atlas["lookup"] and hero["portrait"] in atlas["lookup"], hero["name"]
         assert hero["map_icon"] in map_atlas["lookup"], hero["name"]
-        assert len(hero["stats"]) == 4 and 1 <= hero["available_level"] <= 116
+        source_row = (SOURCE / "kr1/heroes" / hero["name"] / "init.lua").read_text(encoding="utf-8")
+        assert len(hero["stats"]) == 4 and hero["available_level"] == int(re.search(r"available_level\s*=\s*(\d+)", source_row)[1])
         assert hero["title"] and hero["bio"] and hero["special"] and hero["details"]
         assert hero.get("sound") in sounds
         for text in [hero["title"], hero["bio"], hero["special"], *[v for entry in hero["details"] for v in entry.values()]]:
@@ -83,7 +88,7 @@ def verify():
     for page in pages.values():
         assert page.size == (2048, 2048)
         page.close()
-    report = {"passed": True, "heroes": 79, "skills": sum(len(h["details"]) for h in rows), "frames_pixel_verified": len(atlas["frames"]), "pages": len(pages), "generated_portraits": list(generated), "portrait_fallbacks": definition["portrait_fallbacks"], "commit": definition["source"]["commit"]}
+    report = {"passed": True, "heroes": len(rows), "skills": sum(len(h["details"]) for h in rows), "frames_pixel_verified": len(atlas["frames"]), "pages": len(pages), "generated_portraits": list(generated), "portrait_fallbacks": definition["portrait_fallbacks"], "commit": definition["source"]["commit"]}
     (ROOT / "reports/heroes_assets.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report))
 

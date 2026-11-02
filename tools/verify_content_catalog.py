@@ -31,7 +31,8 @@ def verify():
         # any frozen gameplay or previous UI fields.
         for field in ("selection_markers", "tower_menu_power_offset"):
             gameplay["ui"].pop(field, None)
-        source = gameplay.pop("source")
+        gameplay.pop("source")
+        source = definition["source"]
         changed = [key for key, value in gameplay.items() if digest(value) != baseline["sections"][name].get(key)]
         rows[name] = {"gameplay_unchanged": digest(gameplay) == expected, "changed_sections": changed,
                       "source_current": all(source[k] == catalog["source"][k] for k in ("version", "commit")),

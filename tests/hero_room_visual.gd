@@ -23,6 +23,7 @@ func _run() -> void:
 	await capture("locked")
 	for row: Dictionary in app.campaign.hero_definition.heroes:
 		room.show_hero(row.name); await capture("audit", false)
+	room.show_hero("hero_zefira"); await capture("new_hero_zefira")
 	for id in app.campaign.hero_definition.portrait_fallbacks:
 		room.show_hero(id); await capture(id)
 	for row: Dictionary in app.campaign.hero_definition.heroes:

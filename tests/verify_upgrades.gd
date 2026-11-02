@@ -63,6 +63,8 @@ func run() -> void:
 	behavior_cases()
 	lifecycle_cases()
 	source_behavior_cases(reference.behaviors)
+	scorch_rank_cases(reference.behaviors.scorch_ranks)
+	bloodless_cases()
 	var file := FileAccess.open("res://reports/upgrades_source_comparison.json", FileAccess.WRITE)
 	assert(file!=null,"Cannot write technology comparison: "+str(FileAccess.get_open_error()))
 	file.store_string(JSON.stringify(comparisons)); file.close()
@@ -360,3 +362,49 @@ func source_behavior_cases(reference: Dictionary) -> void:
 	difference=first_difference(reference.brilliance,factors,"brilliance")
 	check(difference=="","actual source brilliance insert/remove: "+difference)
 	comparisons.source_brilliance={"expected":reference.brilliance,"actual":factors,"first_difference":difference};behavior_scenarios+=1
+
+func scorch_rank_cases(rows: Array) -> void:
+	for row: Dictionary in rows:
+		var sim = battle({"rain":int(row.rank)})
+		var rule: Dictionary = sim.templates[row.template].aura
+		check(project(rule,row.aura)==row.aura,"source scorch rank values %s/%s"%[row.rank,row.template])
+		var midpoint: float = floorf((float(rule.damage_min)+float(rule.damage_max))/2)
+		rule.damage_min=midpoint;rule.damage_max=midpoint
+		var terrain: Dictionary=sim.data.terrain
+		for column: Array in terrain.grid:
+			for i in column.size():column[i]=2 if row.template=="power_scorched_water" else 1
+		var enemy: Dictionary=sim._spawn_enemy("enemy_dark_knight",0)
+		enemy.pos=Vector2(500,300);enemy.hp=10000;enemy.armor=0
+		sim.tick=60;sim.upgrades.scorched(sim,enemy.pos)
+		check((not sim.upgrades.auras.is_empty())==row.enabled,"source scorch trigger rank %s"%row.rank)
+		if row.enabled:check(sim.upgrades.auras[0].template==row.template,"source terrain selects "+row.template)
+		var pulses: Array=[]
+		for tick in range(61,364):
+			sim.tick=tick;var hp: float=enemy.hp;sim.upgrades.step(sim)
+			if enemy.hp<hp:pulses.append({"tick":tick,"value":hp-enemy.hp,"kind":2})
+		var expected: Array=row.pulses if row.pulses is Array else []
+		var difference:=first_difference(expected,pulses,"scorch_rank")
+		check(difference=="" and sim.upgrades.auras.is_empty() and row.removed,"source scorch ticks and cleanup %s/%s: %s"%[row.rank,row.template,difference])
+		comparisons["scorch_%s_%s"%[row.rank,row.template]]={"expected":expected,"actual":pulses,"first_difference":difference}
+		behavior_scenarios+=1
+	for mode in [2,3]:
+		var sim=battle({"rain":6},1,mode)
+		var cap: int=sim.data.layout.level_mode_overrides[mode-1].max_upgrade_level
+		check(sim.upgrades.effective.rain==mini(6,cap) and sim.templates.power_fireball.scorch_earth==(cap>=2),"source challenge rain cap %d"%mode)
+		check(sim.templates.power_scorched_earth.aura.duration==(10 if cap>=4 else 5),"source challenge scorch duration %d"%mode)
+
+func bloodless_cases() -> void:
+	for color: Variant in [null,"red"]:
+		var sim=battle({})
+		var enemy: Dictionary=sim._spawn_enemy("enemy_dark_knight",0)
+		if color==null:sim.templates[enemy.template].unit.erase("blood_color")
+		else:sim.templates[enemy.template].unit.blood_color=color
+		var applied:=false
+		for i in 100:
+			if sim.modifiers.apply(sim,"mod_blood_elves",enemy,1,"0",-1,1,{"value":100,"type":2}):applied=true;break
+		check(applied,"blood test modifier inserted")
+		var hp: float=enemy.hp
+		for tick in range(1,92):sim.tick=tick;sim.modifiers.step(sim)
+		check(enemy.hp<hp and sim.modifiers.active.is_empty(),"blood color does not change damage or cleanup %s"%color)
+		check(sim.effects.any(func(e):return e.template=="fx_bleeding")==(color!=null),"bloodless unit suppresses blood FX %s"%color)
+		behavior_scenarios+=1

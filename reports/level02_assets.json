@@ -1,24 +1,24 @@
 {
   "passed": true,
-  "source_commit": "1a863df00b08f6bf1018ae0b0e7e4e106b939082",
+  "source_commit": "4072b18bf4e418eec8b813a960c83003744cb710",
   "source_inputs": 40,
   "frames": 1965,
   "canonical_frames": 1063,
-  "animations": 177,
+  "animations": 179,
   "resources": 63,
   "sha256": {
-    "animations.json": "ecf98c7e7c3ea06aa04b1435f279890af78d3a6cd7e857fcb76063699546c936",
-    "atlas.json": "79ec2c5ce80fb633cb1ce3fab1e4dd5d18f3772797575e1545c08ea80d69caa6",
+    "animations.json": "856294fd3f4eeec0f90ab6d46edc1731948b64637f3f668971b696d450e7090a",
+    "atlas.json": "0f96b9956965f8d43ce8aac963b9af3b9cd71b9674bac63a33035ffaafdf175f",
     "atlas_0.png": "b48cd591c926f7bf110a1d53b45d8fcd5556006c8b8d2afbe23cdd3b8fd71c84",
     "atlas_1.png": "9737cd68753587fcd7e8ff7c2ed6de22f3c63ecc5eccae725c18246ded85c9a2",
     "atlas_2.png": "57d5c355a03b8c1e4bb6ed6df9db2cb7772d7545daa01568a6dc27ebab314c48",
     "atlas_3.png": "e426c71cb93e55f46deec10683c85154c2b54811cd4536b7d3a51892094d0922",
     "atlas_4.png": "26cf7319e66fe5818860f22cd3e9bd6421d7726ac80ad73bd4d8a36345a2a56d",
-    "atlas_5.png": "94a02c0e7c484a86e007fa013becbff0c4e3766000c3ebc8fa4c4a06e7693249",
+    "atlas_5.png": "a500dff6c3ba71d12ab0f336c3ddd96ea2036a9c62edcd7877ede56929724c67",
     "atlas_6.png": "e2ee036896734fcc1dee131d594435f1805b4fd2c54f20fcefbb9d0489116d5a",
     "catalog.json": "8c4d84eed722ce12843024a09eea16f936e6e139b544b6d2171c9da757825499",
-    "definition.json": "419e5ae8a297abe61e061d06daf94e6745c5ac81bc6b5bb00beda4cdcae74f9b",
-    "manifest.json": "e5f0990648607fc73d6df4a3c20fc9946f9da8e36dc7419c67bcae340ed1f439",
+    "definition.json": "c5b3382c75f6494ad5a08b162b846c004f021a73abfdde9193ed976ac8954907",
+    "manifest.json": "bf405bec6a41d7b6049aba4a3ec30b5050a5779f6f34c77681a966e629d27d6f",
     "sounds.json": "f5079fda8b6de302d0b7be50cb915412e225075694dfedf1b1859df46c0272bf"
   }
 }

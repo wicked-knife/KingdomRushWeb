@@ -43,11 +43,11 @@ return function(root,E,GS,read)
   package.loaded.utils=U;package.loaded.script_utils=SU;package.loaded.grid_db=GR
   package.loaded.path_db=P;package.loaded.sound_db=sound;package.loaded["kr1.game_settings"]=GS
   local HU=assert(loadstring(read("kr1/hero_utils.lua")))()
+  package.loaded.hero_utils=HU
   env.level_up_basic=HU.level_up_basic;env.upgrade_skill=HU.upgrade_skill;env.update_hp=HU.update_hp
-  local hero_source=read("kr1/hero_scripts.lua")
-  local start=assert(hero_source:find("scripts.aura_malik_fissure = {",1,true))
-  local finish=assert(hero_source:find("scripts.mod_priest_armor = {",start,true))
-  local chunk=assert(loadstring(hero_source:sub(start,finish-1)));setfenv(chunk,env);chunk()
+  local chunk=assert(loadstring(read("kr1/heroes/hero_malik/templates.lua")));setfenv(chunk,env);chunk()
+  scripts.hero_malik={level_up=E:get_template("hero_malik").hero.fn_level_up,update=E:get_template("hero_malik").main_script.update}
+  scripts.aura_malik_fissure={update=E:get_template("aura_malik_fissure").main_script.update}
   local function hero(level)
     local h=E:create_entity("hero_malik");h.id=1;h.health.hp=nil
     h.nav_rally={pos=V.v(0,0),center=V.v(0,0),new=false};h.nav_grid.waypoints={}

@@ -102,8 +102,8 @@
 	"passed": true,
 	"scope": "native Godot input, ordinary barrack departure/contact/selection/hits, advanced tower skills and animation endpoints, camp fire/hire, chief effects, restart and constructed settlement; no victory replay",
 	"source_hashes": {
-		"data/level08/definition.json": "61b2742cbbb218f8503e51af83bfb9ff01fb35cc592fb10e3c0d1a91f7041b85",
-		"scripts/battle/battle_ui.gd": "b12ad85f5b65083dc67e2bd78b19e5918f1ad55d0cf09432a8ba7b35bf98e61c",
+		"data/level08/definition.json": "0949ecd9c9d088af0b89ead1cdb9e1966031c5c881b808cfa2150d4534f772be",
+		"scripts/battle/battle_ui.gd": "d45d1ac932af352eee6cc28d5aa8c1687e4d84bbbd6c15166fc4afef1ea1b9d4",
 		"scripts/battle/battle_view.gd": "af6e4e0b109b538fe21e8d534f78c54acf7f23e7c86f78b13461b48fb16052ea",
 		"scripts/battle/dove_advanced_barrack.gd": "d5ce27a5c0629962469ccc0c3bd28d3d37e343bc5cf5b1b37949ec6e38898667",
 		"scripts/battle/dove_bfg.gd": "0f8bc792f74af3e7fbb0b88c92f05be9e1369d5491dec95907b48dd0a2de111e",

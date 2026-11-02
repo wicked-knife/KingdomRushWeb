@@ -1,177 +1,144 @@
 {
   "passed": true,
+  "date": "2026-11-02",
   "source": {
-    "version": "2.1.0.3",
-    "commit": "1a863df00b08f6bf1018ae0b0e7e4e106b939082"
+    "version": "2.1.0.6",
+    "commit": "4072b18bf4e418eec8b813a960c83003744cb710"
   },
-  "scope": "Current Dove source synchronization, shared combat, exporters and documentation cleanup; no new levels, hero combat or technology",
-  "shared_combat": [
-    "additive factor increases and multiplicative reductions; inverse removal",
-    "incremental tower buffs and garrison inheritance",
-    "current bolt acceleration, tracking and arrival order",
-    "projectile shooter/factor/level provenance and modifier filtering"
+  "levels": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
   ],
-  "data": {
-    "playable_combinations": 18,
-    "content_bundles": 7,
-    "existing_gameplay_fields_unchanged": true,
-    "source_metadata_compared_separately": true,
-    "timeline_waves": 112,
-    "timeline_births": 3910,
-    "short_combat_ticks": 3600,
-    "short_combat_scenarios": 3
-  },
-  "hero_room": {
-    "registry": true,
-    "heroes": 79,
-    "computed_skills": 373,
-    "explicit_KR1_images": true,
-    "registered_sounds": true,
-    "hero_combat": false
-  },
-  "save": {
-    "upgrade_list_id": "1",
-    "new_slots_create_achievements": false,
-    "existing_unknown_fields_preserved": true
-  },
-  "docs": {
-    "retained": [
-      "docs/ASSETS.md",
-      "docs/BATTLE_BEHAVIOR.md",
-      "docs/CONTENT_INTEGRATION.md",
-      "docs/GODOT_WEB_REMAKE_GUIDE.md",
-      "docs/RUNNING.md",
-      "docs/TEST_REDUNDANCY_REVIEW.md",
-      "docs/UI_ADAPTATION.md"
-    ],
-    "removed": [
-      "docs/ARCHER_UPGRADE_DELIVERY.md",
-      "docs/BATTLE_UI_ALIGNMENT.md",
-      "docs/CHALLENGES_DELIVERY.md",
-      "docs/DOVE_SAVES_DELIVERY.md",
-      "docs/HERO_SELECTION_DELIVERY.md",
-      "docs/INTERACTION_FIXES.md",
-      "docs/LEVEL01_DELIVERY.md",
-      "docs/LEVEL02_03_DELIVERY.md",
-      "docs/LEVEL04_TIER3_DELIVERY.md",
-      "docs/LEVEL05_ELF_DELIVERY.md",
-      "docs/LEVEL06_DELIVERY.md",
-      "docs/MAP_KR1_DELIVERY.md",
-      "docs/RANGER_DELIVERY.md",
-      "docs/TOWER_UPGRADES_DELIVERY.md"
-    ],
-    "broken_links": 0,
-    "historical_baseline_sections": 0,
-    "discarded_uncommitted_update_note": true
-  },
-  "checks": {
-    "current_dove_combat": {
+  "content_combinations": 24,
+  "heroes": 91,
+  "skills": 445,
+  "native_resolutions": [
+    "1280x720",
+    "1024x768"
+  ],
+  "historical_baseline_preserved": true,
+  "browser_tested": false,
+  "full_victory_replays_required": false,
+  "reports": {
+    "reports/dove_2106_transition.json": {
+      "sha256": "374695d6527cfff6ec18e1817fc21f3d84f65d872804088b3022b73764073c71",
+      "passed": true,
+      "logical_files": 36
+    },
+    "reports/heroes_assets.json": {
+      "sha256": "2eb0cfba309bc2eb17881f75929a9444114d9dc43342237d1ebb310c6e7a5a97",
+      "passed": true,
+      "heroes": 91,
+      "skills": 445
+    },
+    "reports/heroes_logic.json": {
+      "sha256": "27e5ce203f602abfaddae524ab48a49dc3b55b0d3fc688e132b9f9fb306c20a8",
+      "passed": true,
+      "checks": 47,
+      "heroes": 91
+    },
+    "reports/heroes_visual_1280x720.json": {
+      "sha256": "11b45eb5b5178d31bbd47820b4925babdcf2c56ee995a9eb9a9d55b46b5e70c9",
+      "passed": true,
+      "text_boxes_checked": 1128
+    },
+    "reports/heroes_visual_1024x768.json": {
+      "sha256": "8b3291d35236a9aa4b2cd9ce902270cc5e2a8d852ca183549cc71102998be152",
+      "passed": true,
+      "text_boxes_checked": 1128
+    },
+    "reports/hero_combat_logic.json": {
+      "sha256": "d9827bcfaa589205ecdc38d6499225e40e0405621006918c73a418840156631f",
+      "passed": true,
+      "checks": 161,
+      "behavior_scenarios": 59
+    },
+    "reports/hero_malik_native_1280x720.json": {
+      "sha256": "20c4d974ecdc0772a53b0ad22f1806a2918ed0e6cdc65d730c872eb50f13ace3",
+      "passed": true,
+      "checks": 101
+    },
+    "reports/hero_malik_assets.json": {
+      "sha256": "124b89f8ecdecca3cb8be663afb78c0bdb79d0210d8caf6e666397bca2bfd6d6",
+      "passed": true
+    },
+    "reports/current_dove_combat.json": {
+      "sha256": "b59e1910e9129cf68a2ecb6fccce0b160dee601db206722f1f209ecd1df35ff7",
       "passed": true,
       "checks": 22
     },
-    "content_catalog": {
+    "reports/upgrades_logic.json": {
+      "sha256": "3d3ebc00daf3df7749bdb1b1c67e8d37930b6ddb2450c6773d35ca5249ae2a49",
+      "passed": true,
+      "checks": 389,
+      "behavior_scenarios": 36,
+      "source_patch_scenarios": 40
+    },
+    "reports/upgrades_native_1280x720.json": {
+      "sha256": "9a3f192da4b985a4090841aa44db8d0392beb4f286863be81941a2468784a495",
+      "passed": true,
+      "checks": 2752,
+      "text_boxes_checked": 582
+    },
+    "reports/upgrades_native_1024x768.json": {
+      "sha256": "2b0b7043d76bcec2b54964aa709e51be5156a84466590ff3d0626a0b1659720a",
+      "passed": true,
+      "checks": 2749,
+      "text_boxes_checked": 582
+    },
+    "reports/upgrades_assets.json": {
+      "sha256": "0e2d8acd6aff60821a15e400a6d04b9d8a4bc7b3a8e32396e87110c9c0071e28",
       "passed": true
     },
-    "content_unification": {
-      "passed": true,
-      "checks": 303,
-      "timeline_waves": 88,
-      "timeline_entries": 2794,
-      "combat_scenarios": 3,
-      "combat_ticks": 3600
-    },
-    "level06_logic": {
-      "passed": true,
-      "checks": 185,
-      "timeline_waves": 24,
-      "births": 1116
-    },
-    "level05_logic": {
-      "passed": true,
-      "checks": 140
-    },
-    "ranger_logic": {
-      "passed": true,
-      "checks": 215
-    },
-    "battle_details_logic": {
-      "passed": true,
-      "checks": 49
-    },
-    "dove_saves_logic": {
-      "passed": true,
-      "checks": 113
-    },
-    "heroes_logic": {
-      "passed": true,
-      "checks": 35,
-      "heroes": 79
-    },
-    "heroes_assets": {
-      "passed": true,
-      "heroes": 79,
-      "skills": 373
-    },
-    "battle_ui_logic": {
-      "passed": true,
-      "checks": 122,
-      "layout_only": false
-    },
-    "battle_ui_1280x720": {
-      "passed": true,
-      "checks": 130,
-      "layout_only": false
-    },
-    "battle_ui_1024x768": {
-      "passed": true,
-      "checks": 52,
-      "layout_only": true
-    },
-    "battle_ui_assets": {
+    "reports/content_catalog.json": {
+      "sha256": "45054579e55a7c181645f7da9e6f9fb202381682e2be8cba2146fa42a6ac5098",
       "passed": true
     },
-    "challenges_logic": {
+    "reports/content_unification.json": {
+      "sha256": "ba60765a6fc8f6cfc6eb4fe24adf40f4ab2bc6982158da37bc0b0a5ff4291013",
       "passed": true,
-      "checks": 290
+      "checks": 329
     },
-    "ranged_animation_logic": {
-      "passed": true,
-      "checks": 83
+    "reports/level07_delivery.json": {
+      "sha256": "402ec0a6780160fe5d2431f8894d9d01a37974bceb1816303aca86f0fad33b49",
+      "passed": true
     },
-    "skill_placement_logic": {
-      "passed": true,
-      "checks": 185
+    "reports/level08_delivery.json": {
+      "sha256": "cd351d09cd702f1b6754f366f7819feab49182672b1af4d51d3dac3f7c103617",
+      "passed": true
     },
-    "heroes_visual_1280x720": {
+    "reports/feedback_delivery.json": {
+      "sha256": "e85ed0eb6713685836253bab8255a8427b9f33f8a3badee0f15ad6f6b5168476",
+      "passed": true
+    },
+    "reports/battle_ui_logic.json": {
+      "sha256": "5cb4222cc7ac46f8ef90699e74b577114250d4e419ac07d3629293373531121c",
       "passed": true,
-      "text_boxes_checked": 985
+      "checks": 122
+    },
+    "reports/battle_ui_1280x720.json": {
+      "sha256": "591f026a414d9ead2147d01f8c0bfefb749c7aba9c42f6f6abf043d4ca389fc3",
+      "passed": true,
+      "checks": 130
+    },
+    "reports/battle_ui_1024x768.json": {
+      "sha256": "70e83d5d0f1e4f01d72688474845ecd62faff5abe7d7e067edd9c2bab4a4b8c0",
+      "passed": true,
+      "checks": 52
     }
   },
-  "native": {
-    "1280x720": true,
-    "1024x768_layout_only": true,
-    "hero_room_1280x720": true,
-    "representative_images_reviewed": true
-  },
-  "web": {
-    "exported": true,
-    "type": "release",
-    "isolated_pck": true,
-    "files": 651,
-    "package": "build/KingdomRush-KR1-Levels01-06-Web.zip",
-    "sha256": "dd2fbbf70c40cf3ca4aa7f5b19c6058303ddebc9da5a88145fe80c4bc4c4e154",
-    "browser_tested": false
-  },
-  "full_victory_replays_run": false,
-  "assets_hash_verification": {
-    "verified_files": 13035,
-    "source_files_checked": 7020,
-    "errors": []
-  },
-  "cleanup": {
-    "temporary_files_removed": 78,
-    "bytes_removed": 769675,
-    "kept_current_web_bundle": true,
-    "kept_source_manifest_dependencies": true
+  "package": {
+    "path": "build/KingdomRush-KR1-Levels01-08-Web.zip",
+    "sha256": "da63a0988914d240d4129b196ca02105ed25216348ba975bf71d096b2eca2f0c",
+    "bytes": 259545938,
+    "zip_crc_verified": true,
+    "pck_files": 860,
+    "isolated_pck_passed": true
   }
 }

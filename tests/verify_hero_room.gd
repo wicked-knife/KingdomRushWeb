@@ -18,11 +18,14 @@ func _run() -> void:
 	create_timer(90).timeout.connect(func(): push_error("Hero test timeout"); quit(1))
 	DirAccess.make_dir_recursive_absolute(temporary)
 	var p := Progress.new(); p.initialize(temporary + "/campaign.json")
-	check(p.hero_rows.size() == 79 and p.selected_hero_ids().is_empty(), "new save has the full roster and no selected hero")
+	check(p.hero_rows.keys().size() == p.hero_definition.hero_ids.size() and p.hero_rows.size() == 91 and p.selected_hero_ids().is_empty(), "new save has the full roster and no selected hero")
 	check(not p.select_hero("hero_gerald") and not p.select_hero("unknown"), "locked and unknown heroes cannot be selected")
 	Fixture.complete(p, victory())
 	var available: Array = p.hero_rows.keys().filter(func(id): return p.is_hero_unlocked(id))
 	check(available.size() == 12 and not p.is_hero_unlocked("hero_malik"), "source stage-one completion unlocks exactly twelve heroes")
+	for row: Dictionary in p.hero_definition.heroes:
+		if int(row.available_level)>200:
+			check(not p.is_hero_unlocked(row.name) and not p.select_hero(row.name), "new hero retains source unlock: "+row.name)
 	var a: String = available[0]; var b: String = available[1]; var c: String = available[2]
 	check(p.select_hero(a) and p.select_hero(b) and p.selected_hero_ids() == [a, b], "two heroes retain insertion order")
 	check(not p.select_hero(a) and p.selected_hero_ids() == [a, b], "duplicate selection is a no-op")
@@ -82,6 +85,6 @@ func _run() -> void:
 	app._return_to_map(); await app.map_ready
 	check(app.campaign.selected_hero_ids() == [a, b] and app.campaign_map.hero_room == null, "map return preserves selection and frees room resources")
 	app.queue_free(); await process_frame; await process_frame
-	var report := {"passed": failures.is_empty(), "checks": checks, "heroes": 79, "failures": failures}
+	var report := {"passed": failures.is_empty(), "checks": checks, "heroes": p.hero_rows.size(), "failures": failures}
 	write("res://reports/heroes_logic.json", report)
 	print("HERO_LOGIC: ", JSON.stringify(report)); quit(0 if failures.is_empty() else 1)

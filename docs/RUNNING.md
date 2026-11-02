@@ -82,3 +82,5 @@ python tools/web_bootstrap.py serve
 交付时集中导出一次。发布包在 `build/KingdomRush-KR1-Levels01-08-Web.zip`，目录在 `build/web`；使用 HTTP 服务访问，不能直接打开 HTML 文件。导出默认 release，开发者入口关闭；需要调试包时显式加 `--debug`。隔离 PCK 检查验证菜单、地图、英雄房间和全部 24 个组合的资源，不代替浏览器验收。浏览器由用户手动检查输入、声音解锁、后台标签页和持久化。
 
 当前发布包还要求八项反馈检查 `python tools/verify_feedback_delivery.py` 通过；该检查自动纳入最终导出。专项重现、报告和历史战斗差异见 [FEEDBACK_REPAIRS.md](FEEDBACK_REPAIRS.md)。继续在 Godot 验证，最终集中导出一次；浏览器手动验收。
+
+本次基准更新见 [Dove 2.1.0.6 更新](DOVE_2106_UPDATE.md)。历史战斗快照与原版本证据保持不变；当前版本差异由 `tests/fixtures/dove_2106_delta.json` 严格列举后再运行历史指纹审计。

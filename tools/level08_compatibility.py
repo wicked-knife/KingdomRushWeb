@@ -7,6 +7,7 @@ import copy
 import hashlib
 import json
 from pathlib import Path
+from dove_2106_compatibility import before_current
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / 'tests/fixtures/level08_additions.json'
@@ -19,7 +20,7 @@ def digest(value):
 
 
 def before_eighth(name, value, part='definition', gameplay=False):
-    value = copy.deepcopy(value)
+    value = before_current(name, value, part)
     spec = json.loads(MANIFEST.read_text(encoding='utf-8'))['contents'].get(name, {}).get(part)
     if not spec:
         return value

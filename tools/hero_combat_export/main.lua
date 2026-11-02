@@ -3,7 +3,7 @@ function love.load()
   local ok,err=xpcall(function()
     local root=assert(os.getenv("DOVE_SOURCE_DIR"))
     local output=assert(os.getenv("DOVE_EXPORT_PATH"))
-    package.path=root.."/?.lua;"..root.."/all/?.lua;"..root.."/kr1/?.lua;"..package.path
+    package.path=root.."/?.lua;"..root.."/all/?.lua;"..root.."/kr1/?.lua;"..root.."/kr1/?/init.lua;"..package.path
     require("lib.klua.table"); require("all.constants")
     local V=require("lib.klua.vector")
     _G.V=V; _G.vec_2=V.v; _G.vec_1=V.vv; _G.r=V.r; _G.fts=function(v) return v/30 end
@@ -20,6 +20,9 @@ function love.load()
     end
     package.loaded.scripts=scripts("scripts"); package.loaded.game_scripts=scripts("game_scripts")
     package.loaded.script_utils=functions("script_utils")
+    package.loaded.hero_utils=functions("hero_utils")
+    package.loaded.path_db={};package.loaded.sound_db={register_sounds=function()end,register_groups=function()end}
+    package.loaded.animation_db={loaded=false}
     package.loaded.utils={fts=fts}; package.loaded.i18n={cjk=function(_,v) return v end}
     package.loaded["all.rally_utils"]=functions("rally_utils"); package.loaded.achievements=functions("achievements")
     local E={entities={},components={}}
@@ -29,18 +32,19 @@ function love.load()
     function E:register_t(n,base) local v=base and table.deepclone(assert(self.entities[base],base)) or {};v.template_name=n;self.entities[n]=v;return v end
     E.register_t_hot=E.register_t
     function E:add_comps(t,...) for _,n in ipairs({...}) do t[n]=self:clone_c(n) end end
-    function E:get_template(n) return assert(self.entities[n],n) end
+    function E:get_template(n) return self.entities[n] end
     _G.E=E; package.loaded.entity_db=E
     local function read(path) inputs[path]=true;local f=assert(io.open(root.."/"..path,"rb"));local s=f:read("*a");f:close();return s end
     local function chunk(path,text) return assert(loadstring(text or read(path),"@"..path))() end
     chunk("all/components.lua"); package.loaded.components=true
     chunk("all/templates.lua"); package.loaded.templates=true
     chunk("kr1/game_templates_utils.lua"); package.loaded.game_templates_utils=true
-    local heroes=read("kr1/heroes.lua")
-    local header=heroes:sub(1,assert(heroes:find('tt = RT(',1,true))-1)
-    local a=assert(heroes:find('tt = RT("hero_malik",',1,true))
-    local b=assert(heroes:find('tt = RT("hero_denas",',a,true))
-    chunk("kr1/heroes.lua",header..heroes:sub(a,b-1))
+    local registry=require("heroes.registry")
+    registry:init();registry:ensure_template("hero_malik")
+    for _,path in ipairs({"kr1/heroes/registry.lua","kr1/heroes/name_style.lua","kr1/heroes/hero_malik/init.lua","kr1/heroes/hero_malik/templates.lua","kr1/heroes/hero_malik/groups.lua","kr1/heroes/hero_malik/animations.bin"}) do inputs[path]=true end
+    names[E:get_template("hero_malik").main_script.update]="game_scripts.hero_malik.update"
+    names[E:get_template("hero_malik").hero.fn_level_up]="game_scripts.hero_malik.level_up"
+    names[E:get_template("aura_malik_fissure").main_script.update]="game_scripts.aura_malik_fissure.update"
     local function clean(v)
       if type(v)=="function" then return assert(names[v],"Unmapped source callback") end
       if type(v)=="number" and math.abs(v)==math.huge then return v>0 and 1e99 or -1e99 end
@@ -59,7 +63,7 @@ function love.load()
     local out={templates={},behaviors={},dependencies={},callbacks={},inputs=inputs}
     local function export(id)
       if out.templates[id] then return end
-      local t=E:get_template(id);local row={}; for _,key in ipairs(fields) do if t[key]~=nil then row[key]=clean(t[key]) end end
+      local t=assert(E:get_template(id),id);local row={}; for _,key in ipairs(fields) do if t[key]~=nil then row[key]=clean(t[key]) end end
       out.templates[id]=row
       if t.hero then row.hero_rally={immune_to=tonumber(t.nav_rally.immune_to),requires_node_nearby=t.nav_rally.requires_node_nearby} end
       if t.main_script and t.main_script.update then out.behaviors[id]=clean(t.main_script.update) end

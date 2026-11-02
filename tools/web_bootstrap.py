@@ -135,6 +135,8 @@ def main():
         (ROOT / "export_presets.cfg").write_text(preset_text(), encoding="utf-8")
     if args.command == "export":
         engine = godot_path(args.godot)
+        from verify_dove_update import run as verify_source_transition
+        verify_source_transition()
         hero_reports = {}
         if read_catalog().get("combat_heroes"):
             for name in ("hero_combat_logic", "hero_malik_native_1280x720", "hero_malik_assets"):
@@ -194,6 +196,8 @@ def main():
         native_report = json.loads(native_path.read_text(encoding="utf-8")) if native_path.exists() else {}
         sixth_required = 6 in level_ids()
         receipt = {
+            "source": read_catalog()["source"],
+            "source_transition_verified": True,
             "export_succeeded": True,
             "build_type": "debug" if args.debug else "release",
             "developer_menu": args.debug,

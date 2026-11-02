@@ -9,6 +9,11 @@ func _init() -> void: call_deferred("_run")
 func check(value: bool, description: String) -> void:
 	if not value: failures.append(description); push_error(description)
 
+func construction_progress() -> float:
+	for item: Dictionary in battle.draw_list:
+		if item.frame == "buildbar": return item.scale.x
+	return -1
+
 func click(point: Vector2, button: int = MOUSE_BUTTON_LEFT) -> void:
 	var event := InputEventMouseButton.new()
 	event.position = point * battle.zoom; event.button_index = button; event.pressed = true
@@ -34,10 +39,23 @@ func _run() -> void:
 	battle.mouse_filter = Control.MOUSE_FILTER_IGNORE; battle.set_process_input(false)
 	suffix = "%dx%d" % [root.size.x, root.size.y]
 	while not battle.sim.notices.is_empty(): battle._action("confirm")
+	battle._action("pause"); await capture("pause_volume")
+	var old_music: float = app.settings.music_volume
+	var old_sfx: float = app.settings.sfx_volume
+	var sliders: Array = battle.hits.filter(func(h): return h.action == "volume" and h.args.bus == "music")
+	check(sliders.size() == 1, "pause music slider exists")
+	if not sliders.is_empty():
+		var args: Dictionary = sliders[0].args
+		battle._set_volume(args, args.track.position.x + args.track.size.x * 0.25)
+		check(is_equal_approx(app.settings.music_volume, 0.25) and is_equal_approx(app.settings.sfx_volume, old_sfx), "pause slider updates music independently")
+	app.settings.set_volumes(old_music, old_sfx); battle._action("pause")
 	for entry: Dictionary in [{"id": "4", "type": "barrack"}, {"id": "1", "type": "archer"}, {"id": "8", "type": "engineer"}]: check(battle.sim.command("build", entry), "legal fixture build")
-	for at in [24, 26, 29, 44, 46, 49, 100]:
+	for at in [0, 12, 24, 25, 26, 29, 44, 46, 49, 100]:
 		while battle.sim.tick < at: battle.sim.step()
 		await capture("door_%03d" % at)
+		if at == 0: check(is_equal_approx(construction_progress(), 0), "construction starts empty")
+		elif at == 12: check(is_equal_approx(construction_progress(), 0.5), "construction halfway at 0.4s")
+		elif at == 25: check(construction_progress() < 0, "construction bar removed on completion")
 	check(battle.sim.tower_by_id("4").door_state == "closed", "door stays closed")
 	var soldier: Dictionary = battle.sim.soldiers[0]
 	click(battle.world(soldier.pos + Vector2(0, 9)))
@@ -76,6 +94,7 @@ func _run() -> void:
 		await capture("flight_%02d" % i)
 		for j in range(2): battle.sim.step()
 	check(battle.draw_list.all(func(item): return not battle._frame(item.frame).is_empty()), "every sampled world frame resolves")
+	check(battle.sim.command("wave"), "reinforcement fixture enters battle before casting")
 	battle.sim.notices.append("POWER_REINFORCEMENT"); battle._action("confirm")
 	check(battle.sim.command("cast", {"power": "reinforcements", "pos": Vector2(765, 270)}), "reinforcement unlocked through source notice")
 	var farmer: Dictionary = battle.sim.soldiers.filter(func(s): return s.template == "re_farmer")[0]

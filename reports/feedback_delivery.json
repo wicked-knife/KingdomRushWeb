@@ -12,12 +12,12 @@
     },
     "feedback_native_1280x720": {
       "passed": true,
-      "checks": 786,
+      "checks": 782,
       "layout_only": false
     },
     "feedback_native_1024x768": {
       "passed": true,
-      "checks": 620,
+      "checks": 616,
       "layout_only": true
     },
     "feedback_assets": {
@@ -45,14 +45,14 @@
     }
   },
   "source_hashes": {
-    "reports/feedback_logic.json": "0dad99993d95d90a4b6748bd8d1fc229ac971f9e2730e20ea6dd5b91e3f26f4f",
-    "reports/feedback_native_1280x720.json": "cb81353dad9f132e941c129348f09d6622f819224b573cf6063e1603d30a5897",
-    "reports/feedback_native_1024x768.json": "8e6e47ab0a8a481b2e25a162b775c662e7da23d7899c03cc63dabb2022847c75",
-    "reports/feedback_assets.json": "ce03d4cd1e3a4342859a45299538bba250f4aa20c75eda768f157d3b42edcb52",
-    "reports/feedback_combat_audit.json": "cc244d13b897f06aeffc535746f9328461c2ab7e45ff950bff215465b20aecc6",
-    "reports/followup_logic.json": "bac4ed7f7f032bd375e22d230e8d795bcb6a6a22e3bfbaa928abea2581bedcbe",
-    "reports/followup_native_1280x720.json": "66b8cdfba73065fa42f19e4ed5b195bcbd47fa6fffbca64fc49a08b11f6229de",
-    "reports/followup_native_1024x768.json": "07fb111e04d0772273fdb052997719b6421a23808b610275b4e18d03d7972135",
+    "reports/feedback_logic.json": "9ecc4bddd35936e1dd1b045c58aeaee1b28b70ff9d1e720b60cebd5e38826471",
+    "reports/feedback_native_1280x720.json": "b321dae0bf81652f611272cc320a4d35e213e6f97c7d58b6d50611cac000d2da",
+    "reports/feedback_native_1024x768.json": "90cb56ed5c89ca250f1c8a2b828ac04520c62bf38ddfaddb95c12fdbfe867755",
+    "reports/feedback_assets.json": "7ffeba97218768cc912a7d38951125255eafa2e052426e4a0a334d6f98b162c2",
+    "reports/feedback_combat_audit.json": "b4edf754770d24a753f344cefb0ff9a850944644feb0cfd28f97aef823b490b0",
+    "reports/followup_logic.json": "84127c702d6d174486ad1d483afe50a722d517eba4062888cd19eedb4086d192",
+    "reports/followup_native_1280x720.json": "ca2eaa0264a4c44ba0704ed0f6969476b834b0ede45899e6b5b652f5e6b637f6",
+    "reports/followup_native_1024x768.json": "1fc8b97e969ff78dbe770e8166d5b3797a1aeccb19b1ecf4c920ad208c3302c2",
     "tools/verify_feedback_delivery.py": "37878baabdf353d87db45902c62772f7dbed5e2aae2b884496b80ec82c2b1b7b",
     "tools/feedback_reference/main.lua": "cf1e6c053dc336ee2b0fa92b84f79d833f23dff94df87bde0ef09bda488d6993",
     "tools/feedback_reference/conf.lua": "92fe96aeda62fcde5e725dd36ffe4f819b8c738dac4c72953818f621b2087432",
@@ -66,8 +66,8 @@
     "tests/fixtures/followup_source.json": "59bcb259d6065071bdd445657aa946d3431b0f11486caea1195dd38e4f5e3f35",
     "tests/fixtures/feedback_combat_adjustments.json": "f0038887ec479bbcab61e8b1164dbe6fb098566fba38cb3f36a9f6972b290f41",
     "docs/FEEDBACK_REPAIRS.md": "d664b1e3187e86ad5ed239fe4f13d0373067eafa1a846a91edf8a67d41cd6029",
-    "tools/web_bootstrap.py": "43549525ef51824e97eee1ec37930d778cb308f76d16bdc63b713fba46677dfb",
-    "tools/package_level01.py": "7732e387875c1ad1d8a83f8dd3073af77da9dd053e0d4a592b6024a4a0fd725c"
+    "tools/web_bootstrap.py": "0de618f281128f05ed0e05935b19503e899f7bc4baca62aeaee5c65e73e3e25a",
+    "tools/package_level01.py": "bded4575b8040803cb6073a40eae8e14f8b4dda759eaa9cea81fc9963491f35c"
   },
   "historical_baseline_preserved": true,
   "content_combinations": 24,

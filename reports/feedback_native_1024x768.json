@@ -174,13 +174,13 @@
 			"state": "shrapnel3"
 		}
 	],
-	"checks": 620,
+	"checks": 616,
 	"failures": [],
 	"guard_scenes": [],
 	"layout_only": true,
 	"passed": true,
 	"source_hashes": {
-		"scripts/battle/battle_ui.gd": "b12ad85f5b65083dc67e2bd78b19e5918f1ad55d0cf09432a8ba7b35bf98e61c",
+		"scripts/battle/battle_ui.gd": "d45d1ac932af352eee6cc28d5aa8c1687e4d84bbbd6c15166fc4afef1ea1b9d4",
 		"scripts/battle/battle_view.gd": "af6e4e0b109b538fe21e8d534f78c54acf7f23e7c86f78b13461b48fb16052ea",
 		"scripts/battle/dove_paladin.gd": "e222ca537c0febb079f368d44e7a2f9b19f6056aed49dc05bad8a3dd3010fc76",
 		"scripts/battle/dove_power_preview.gd": "8701b14ac3747b3f9409fdb93a168fa800b42e6b9679a8182e131369c67bd8fd",

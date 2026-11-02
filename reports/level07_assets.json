@@ -1,18 +1,18 @@
 {
   "passed": true,
-  "source_commit": "1a863df00b08f6bf1018ae0b0e7e4e106b939082",
+  "source_commit": "4072b18bf4e418eec8b813a960c83003744cb710",
   "source_inputs": 50,
   "frames": 4555,
   "canonical_frames": 2444,
-  "animations": 359,
+  "animations": 361,
   "resources": 105,
   "sha256": {
-    "animations.json": "420abdb5fe86a0bdc29ded2d1231fd18992d416b8c6e0e32a8511cb1a32adb3c",
-    "atlas.json": "4f0dd488f8a74a88b44279d2e9bc7f767e70cdabd25e6c0e74e23b6bec74df8e",
+    "animations.json": "425a68a1cb5fbb4791a349411bbf88c8365400488815724d99f6a99c88cf0149",
+    "atlas.json": "8218ec48432954973d976d9b6bc8cbf9c1b84156d9b05744ec6ccac97876068f",
     "atlas_0.png": "8a8e2d22733d3e7f831f2cc09eaa9d989f61a375106210d0b73fda4f050a1f65",
     "atlas_1.png": "b622ff8a4cd08863ca944b8e8c6a5089e3e554ca7779e0f48901ef72ebad073e",
     "atlas_10.png": "877572ab869721efa91b006192d9b1eaa29d88c69b5dacd3b3d3057a8d376a76",
-    "atlas_11.png": "c2b562cae783f16ef4130a3eff53a77e307087a1f492641e36752ac6874af60b",
+    "atlas_11.png": "6c8e6ebd5dd3afd592086d5505a0451daec5ea8d09bbd073e45608272dd4b4ba",
     "atlas_12.png": "5115e9af4e7ff14a834281e85a04437d4df83c463b60e68390f1ea0b6dacac26",
     "atlas_2.png": "73735b8b8df2c9e9a8243890a26b12599e2e33e96f3b46e4fbbcf710db4025b7",
     "atlas_3.png": "b9b325fe1ebbf7536bb46bcdf441ceb7e1e695cc5862963d634ce413fb7c7651",
@@ -23,8 +23,8 @@
     "atlas_8.png": "565dea26e38631cc8d0e00684ecb9bdfb6a5c8b7da2adb1df1de2718f5174d67",
     "atlas_9.png": "0e0061bf58497d8c2ca17b4cc7e849de3242a3ef95b0c276e18b852cd9d528c2",
     "catalog.json": "20bfe1adc6b4a3417c695ca8412988e08c4b4ba8f5299effe2d16faa294285c7",
-    "definition.json": "a0b7822ff12d7167ceb30a13ee0ac2bc96a46f8248f0e7d606cce892ca884039",
-    "manifest.json": "ae4027e4a78e9d3c37b4821917268f71b2aa44257fbb17a43b03910460cb76af",
+    "definition.json": "283ceb763955ae3b16e7d89fec1f712896861f34eef3b9548f5ea09f0d1d0a84",
+    "manifest.json": "d549556a6a3656d6caa5fe0a0c29c82c016b72e23f74e315cda010075dcfa1a5",
     "sounds.json": "8aaf56a276628679c62c1b3159d2b4ed8c08381d25720d799a35605a1a373fbb"
   }
 }

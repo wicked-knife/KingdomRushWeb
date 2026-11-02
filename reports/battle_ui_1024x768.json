@@ -22,7 +22,7 @@
 	"scope": "targeted UI/input with constructed battle states; no complete replays",
 	"source_hashes": {
 		"scripts/battle/battle_feedback.gd": "f3d0dbd1d2225281d8eef83c7f3534350e6c4127ab9af1dc389a5289ad996241",
-		"scripts/battle/battle_ui.gd": "b12ad85f5b65083dc67e2bd78b19e5918f1ad55d0cf09432a8ba7b35bf98e61c",
+		"scripts/battle/battle_ui.gd": "d45d1ac932af352eee6cc28d5aa8c1687e4d84bbbd6c15166fc4afef1ea1b9d4",
 		"scripts/battle/battle_victory.gd": "0ce46751eb798ec710ae9304132d67c7806f6816a25ccf6ad8ca5bf3c47e6211",
 		"scripts/battle/battle_view.gd": "af6e4e0b109b538fe21e8d534f78c54acf7f23e7c86f78b13461b48fb16052ea",
 		"scripts/battle/battle_wave_flags.gd": "cf3daa90f148cf81e3d0dee7c257d75b2ec918adea6bd3bda43b1ee0e93b1735",

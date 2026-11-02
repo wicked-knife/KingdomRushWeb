@@ -19,8 +19,13 @@ func initialize(manifest_path: String = MANIFEST) -> bool:
 	var definition_path := "res://data/heroes/definition.json"
 	if not FileAccess.file_exists(definition_path): return _fail("英雄目录缺失")
 	var definition: Variant = JSON.parse_string(FileAccess.get_file_as_string(definition_path))
-	if not definition is Dictionary or definition.get("schema_version", 0) != 1 or not definition.get("heroes") is Array or definition.heroes.size() != 79:
+	if not definition is Dictionary or definition.get("schema_version", 0) != 1 or not definition.get("heroes") is Array or definition.heroes.is_empty():
 		return _fail("英雄目录无效")
+	var ids: Array = []
+	for row: Dictionary in definition.heroes:
+		if not row.get("name") is String or row.name.is_empty() or row.name in ids: return _fail("英雄目录重复或缺少 ID")
+		ids.append(row.name)
+	if ids != definition.get("hero_ids", []): return _fail("英雄注册清单不完整")
 	if not catalog.is_available() or catalog.load_group("heroes").get("frames", {}).is_empty(): return _fail("英雄图集目录无效")
 	var paths: Array = manifest.resources
 	for i in paths.size():

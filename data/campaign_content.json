@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "source": {
-    "version": "2.1.0.3",
-    "commit": "1a863df00b08f6bf1018ae0b0e7e4e106b939082"
+    "version": "2.1.0.6",
+    "commit": "4072b18bf4e418eec8b813a960c83003744cb710"
   },
   "levels": {
     "1": {

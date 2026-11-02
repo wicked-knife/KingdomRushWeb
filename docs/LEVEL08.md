@@ -71,4 +71,4 @@ python tools/verify_level08_delivery.py
 
 `level08_upgrades_source.json` 独立执行冻结 Dove 的实际科技补丁和大贝莎技能升级回调；16 组科技／上限配置、1472 条模板投影分别计数。投影包括健康、射程、攻击参数、技能价格和冷却，运行时重算的攻击排序由行为专项核对。Godot 通过 418 项检查，购买导弹／集束弹各三级，实际调用攻击选择消费者核对射程、冷却及地面目标的混合冷却。原 40 组默认科技样本和历史战斗快照未改写。
 
-此次完整交付已替换 `657c3bd` 的旧 Web 包，隔离 PCK 实际选招探针和 ZIP 完整性检查均通过；新的包哈希及检查结果记录在 `reports/map_kr1_web.json` 和 `docs/PROGRESSION_MILESTONES.md`。浏览器由用户手动验收。
+此次完整交付已替换 `657c3bd` 的旧 Web 包，隔离 PCK 实际选招探针和 ZIP 完整性检查均通过；新的包哈希及检查结果记录在 `reports/map_kr1_web.json` 和 [当前版本更新记录](DOVE_2106_UPDATE.md)。浏览器由用户手动验收。

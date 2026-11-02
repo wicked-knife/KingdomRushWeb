@@ -9,7 +9,9 @@ python tools/sync_dove_assets.py
 python tools/import_dove_assets.py --verify-only --check-source
 ```
 
-同步器验证源码 HEAD 与目录一致且工作区干净，将 Git 当前元数据放入忽略的 `output/dove_assets_<commit>`，补充安装目录的媒体，再运行统一转换器。已安装媒体通过只读硬链接暂存；覆盖源元数据前先解除已有链接，不会写入安装文件。删除不再受源清单管理的生成文件仅限受管 raw／assets 目录，不删除用户数据。
+同步器验证源码 HEAD 与目录一致且工作区干净，将 Git 当前元数据放入忽略的 `output/dove_assets_<commit>`，补充安装目录的媒体，再运行统一转换器。已安装媒体通过只读硬链接暂存；环境不允许硬链接时复制到暂存目录。覆盖源元数据前先解除已有链接，不会写入安装文件。删除不再受源清单管理的生成文件仅限受管 raw／assets 目录，不删除用户数据。
+
+Dove 2.1.0.6 的英雄动画、声音与音组按注册声明合并，清单记录各模块输入哈希。注册顺序、模块文件或全局表变化都会使对应转换缓存失效。英雄大厅按明确的 `portrait_image`、`thumb_image`、`icon_image` 字段导出，缺少源立绘的三名英雄使用已确认的自定义立绘。
 
 原始快照保存在 `source_assets/kingdom_rush_dove`，运行资源在 `assets/kingdom_rush`，清单与完整性信息在 `reports/assets_manifest.json`、`assets_verification.json`。关卡／地图／英雄房间另生成裁剪后的图集与 manifest，发布仅收集其依赖。不要把整个本地素材库打入 Web 包。
 

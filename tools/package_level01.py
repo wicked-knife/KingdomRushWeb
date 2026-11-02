@@ -16,6 +16,8 @@ def sha256(path):
 def package():
     folder = ROOT / "build/web"
     receipt = json.loads((folder / "export_receipt.json").read_text(encoding="utf-8"))
+    if receipt.get("source", {}).get("commit") != BASE or not receipt.get("source_transition_verified"):
+        raise RuntimeError("Export must verify the current Dove source transition before packaging")
     if not receipt.get("export_succeeded") or receipt.get("pck_sha256") != sha256(folder / "index.pck"):
         raise RuntimeError("Run tools/web_bootstrap.py export successfully before packaging this build")
     if not receipt.get('feedback_acceptance',{}).get('passed'):
@@ -80,7 +82,7 @@ def package():
         "Purchases save immediately. Undo restores this opening's levels; Reset clears levels and rebases Undo.\n"
         "Each mode caps effective technology without changing purchased ranks. Other schemes remain preserved and block play.\n"
         "Three independent local save slots; volume settings remain global.\n"
-        "Hero room: browse 79 heroes, view computed skills, select up to two unlocked heroes.\n"
+        "Hero room: browse the source-registered heroes, view computed skills, select up to two unlocked heroes.\n"
         "Completing level 1 unlocks 12 heroes; selecting a third replaces slot two.\n"
         "Selections save per slot. Selected Malik enters battles where the source allows heroes; others remain previews.\n"
         "Malik starts each battle at level 1; melee, Smash, Fissure, XP, regeneration and 15-second respawn are enabled.\n"
@@ -129,7 +131,7 @@ def package():
             archive.write(path, path.name)
     result = {
         "package_created": True,
-        "source_commit": "1a863df00b08f6bf1018ae0b0e7e4e106b939082",
+        "source_commit": receipt["source"]["commit"],
         "content_catalog_sha256": receipt.get("content_catalog_sha256"),
         "browser_tested": False,
         "build_type": receipt.get("build_type", "release"),

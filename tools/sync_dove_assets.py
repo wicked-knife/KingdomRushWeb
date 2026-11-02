@@ -2,6 +2,7 @@
 import argparse
 import io
 import os
+import shutil
 import subprocess
 import tarfile
 from pathlib import Path
@@ -29,7 +30,12 @@ def sync(source, media):
             target = stage / original.relative_to(media)
             if not target.exists():
                 target.parent.mkdir(parents=True, exist_ok=True)
-                os.link(original, target)
+                try:
+                    os.link(original, target)
+                except OSError:
+                    # Sandboxed Windows sessions may read installed media but
+                    # cannot create links to its inode. Copy only into staging.
+                    shutil.copy2(original, target)
     (stage / 'current_version_commit_hash.txt').write_text(BASE + '\n', encoding='utf-8')
     Migration(stage, ROOT, source).run()
     write_summary(ROOT)

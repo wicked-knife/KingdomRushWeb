@@ -67,14 +67,13 @@ def prepare(source, love):
     atlas = json.loads((assets / "data/atlases/hero_room.json").read_text(encoding="utf-8"))
     locale = json.loads((assets / "data/locale_zh-Hans.json").read_text(encoding="utf-8"))
     data["strings"] = {k: locale[k] for k in ["HERO ROOM", "Select hero", "MAP_HERO_ROOM_SELECT", "MAP_HERO_ROOM_DESELECT", "MAP_HERO_ROOM_UNLOCK", "MAP_HEROROOM_BIO", "Special abilities", "BUTTON_DONE", "TOGGLE"]}
-    assert len(data["heroes"]) == 79
+    assert data["heroes"] and len({row["name"] for row in data["heroes"]}) == len(data["heroes"])
+    data["hero_ids"] = [row["name"] for row in data["heroes"]]
     data["portrait_fallbacks"] = []
     for row in data["heroes"]:
-        # KR1 uses unprefixed atlas names, including registry rows declaring 1.
-        prefix = f"kr{row['from_kr']}_" if int(row.get("from_kr", 1)) > 1 else ""
-        row["thumbnail"] = row.get("thumb_image", f"{prefix}hero_room_thumbs_{row['thumb']:04d}")
-        row["map_icon"] = row.get("icon_image", f"{prefix}mapButtons_portrait_hero_{row['icon']:04d}")
-        row["portrait"] = row.get("portrait_image", f"{prefix}portrait_notxt_{row['portrait']:04d}")
+        row["thumbnail"] = row["thumb_image"]
+        row["map_icon"] = row["icon_image"]
+        row["portrait"] = row.get("portrait_image", "")
         row["portrait_fallback"] = row["portrait"] not in atlas["lookup"]
         if row["portrait_fallback"]:
             row["portrait"] = row["thumbnail"]
@@ -123,7 +122,7 @@ def prepare(source, love):
     resources += sorted({"res://assets/kingdom_rush/kr1-desktop/sounds/files/" + f for sound in sounds.values() for f in sound["files"]})
     resources += ["res://scripts/map/hero_room.gd", "res://scripts/services/hero_loader.gd"]
     write(out / "manifest.json", {"schema_version": 1, "source": data["source"], "resources": resources, "data": [f"res://data/heroes/{p}.json" for p in ["definition", "catalog", "atlas", "sounds"]], "source_texture_hashes": {texture.relative_to(ROOT).as_posix(): hashlib.sha256(texture.read_bytes()).hexdigest()}, "generated_portraits": generated})
-    print(json.dumps({"heroes": 79, "skills": sum(len(h["details"]) for h in data["heroes"]), "pages": len(pages), "portrait_fallbacks": data["portrait_fallbacks"]}))
+    print(json.dumps({"heroes": len(data["heroes"]), "skills": sum(len(h["details"]) for h in data["heroes"]), "pages": len(pages), "portrait_fallbacks": data["portrait_fallbacks"]}))
 
 
 if __name__ == "__main__":

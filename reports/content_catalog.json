@@ -83,7 +83,7 @@
       "reason": "Runtime dependency missing from export manifest: res://scripts/battle/dove_behaviors.gd -> res://scripts/battle/dove_bfg.gd"
     }
   ],
-  "publication_resources": 378,
+  "publication_resources": 391,
   "publication_data": 74,
   "resource_baseline": "battle_ui_baseline.json (source pixel verification in battle_ui_assets.json)",
   "verified_resource_files": 85,

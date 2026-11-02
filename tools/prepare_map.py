@@ -67,6 +67,9 @@ def prepare(source, love):
     for group in ["screen_map_flags", "screen_map_buttons", "stars_container"]:
         wanted.update(atlases[group]["frames"])
     wanted.update(k for k in atlases["hero_room"]["frames"] if "mapButtons_portrait_hero_" in k)
+    from dove_hero_assets import declarations
+    for declaration, _ in declarations(source)[1]:
+        wanted.update(re.findall(r'icon_image\s*=\s*"([^"]+)"', declaration.read_text(encoding="utf-8")))
     wanted.update(k for k in atlases["level_select"]["frames"] if k.startswith("levelSelect_"))
     wanted.update(k for k in atlases["view_options"]["frames"] if k.startswith("options_") and not k.startswith("options_lang"))
     lookup = {}

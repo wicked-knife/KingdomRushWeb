@@ -173,8 +173,9 @@ func step(sim: RefCounted) -> void:
 				if t.dps.get("fx","") != "" and m.get("bleed_fx", true) and (not m.has("bleeding") or sim.tick - int(m.last_fx) >= sim.frames(t.dps.fx_every)):
 					if m.has("bleeding"): m.last_fx = sim.tick
 					var unit: Dictionary = sim.templates[target.template].unit
-					var size: String = "small" if int(unit.size) == 1 else "big"
-					sim.add_effect(t.dps.fx,target.pos,{"target":target.id,"state":size + "_" + str(unit.blood_color),"flip":target.flip if t.dps.get("fx_target_flip",false) else false})
+					if unit.get("blood_color"):
+						var size: String = "small" if int(unit.size) == 1 else "big"
+						sim.add_effect(t.dps.fx,target.pos,{"target":target.id,"state":size + "_" + str(unit.blood_color),"flip":target.flip if t.dps.get("fx_target_flip",false) else false})
 		if target.hp <= 0: _release(sim, m); active.erase(m)
 
 func remaining(target_id: int, sim: RefCounted) -> float:

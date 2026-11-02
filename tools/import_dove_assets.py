@@ -477,8 +477,18 @@ class Migration:
         atomic_bytes(destination, json_bytes(data))
         self.record(source, destination, action)
 
+    def output_json_many(self, sources, destination, data, action):
+        inputs = {str(path): self.source_hash(path) for path in sources}
+        old = self.previous.get(destination.relative_to(self.project).as_posix(), {})
+        if old.get("input_sources") == inputs and self.reusable(sources[0], destination, action):
+            return
+        atomic_bytes(destination, json_bytes(data))
+        self.record(sources[0], destination, action, input_sources=inputs)
+
     def write_raw(self):
+        from dove_hero_assets import resource_inputs
         selected = []
+        selected.extend(resource_inputs(self.source))
         for relative in ["_assets", "kr1/data", "kr1-desktop/data", "all-desktop/data"]:
             selected.extend(p for p in (self.source / relative).rglob("*") if p.is_file() and p.suffix.lower() not in {".bat", ".exe", ".dll", ".so", ".lnk"})
         for relative in ["version.lua", "current_version_commit_hash.txt", "main_globals.lua", "all/constants.lua"]:
@@ -537,9 +547,9 @@ class Migration:
             frame_count += len(data["frames"]); alias_count += len(data["aliases"])
             if warnings: self.warnings["atlas"].append({"group": path.stem, "warnings": warnings})
         self.log(f"Decoded {len(groups)} atlases, {frame_count} frames, {alias_count} aliases")
-        animation_source = self.source / "kr1/data/game_animations.bin"
-        animations = decode_animations(animation_source.read_bytes())
-        self.output_json(animation_source, self.assets / "data/animations.json", animations, "decode_animations")
+        from dove_hero_assets import animations as hero_animations, declarations
+        animations, animation_inputs = hero_animations(self.source)
+        self.output_json_many(animation_inputs, self.assets / "data/animations.json", animations, "decode_registered_animations")
         exoskeletons = {}
         exo_animations = set()
         exo_count = 0
@@ -567,6 +577,17 @@ class Migration:
             path = self.source / relative
             self.log(f"Converting static Lua: {name}")
             data = StaticLua(path.read_text(encoding="utf-8-sig")).parse()
+            inputs = [path]
+            if name in {"sounds", "sound_groups"}:
+                registry, modules = declarations(self.source)
+                inputs.append(registry)
+                field = "sounds" if name == "sounds" else "groups"
+                for declaration, fields in modules:
+                    inputs.append(declaration)
+                    for module in fields[field]:
+                        extra = self.source / "kr1" / (module.replace(".", "/") + ".lua")
+                        data.update(StaticLua(extra.read_text(encoding="utf-8-sig")).parse())
+                        inputs.append(extra)
             if name in {"sounds", "sound_groups"}:
                 for key, definition in data.items():
                     for filename in definition.get("files", []):
@@ -581,7 +602,7 @@ class Migration:
                         used.update(rule[1] for rule in rules)
                 for missing_font in sorted(used - available):
                     self.warnings["missing_font_mappings"].append(missing_font)
-            self.output_json(path, self.assets / "data" / (name + ".json"), data, "static_lua_to_json")
+            self.output_json_many(inputs, self.assets / "data" / (name + ".json"), data, "static_lua_to_json")
             static_paths[name] = RESOURCE_ROOT + f"data/{name}.json"
         catalog = {"schema_version": SCHEMA, "baseline": "source_snapshot", "fps": 30, "groups": groups, "exoskeletons": exoskeletons,
                    "animations": RESOURCE_ROOT + "data/animations.json", "audio_directory": RESOURCE_ROOT + "kr1-desktop/sounds/files/",
@@ -598,7 +619,15 @@ class Migration:
             return {"reference_available": False, "reference": str(self.reference)}
         expected = re.findall(r'\["([^"\n]+)"\]=\{(\d+),"([^"\n]+)"\}', index.read_text(encoding="utf-8"))
         missing = [name for name, size, checksum in expected if not (self.source / "_assets" / name).is_file()]
-        return {"reference_available": True, "reference": str(self.reference), "not_merged": True, "missing_from_installed": missing,
+        def commit(folder):
+            if (folder / ".git").is_dir():
+                import subprocess
+                return subprocess.check_output(["git", "--git-dir=" + str(folder / ".git"),
+                                                "--work-tree=" + str(folder), "rev-parse", "HEAD"], text=True).strip()
+            path = folder / "current_version_commit_hash.txt"
+            return path.read_text(encoding="utf-8").strip() if path.is_file() else None
+        current, reference = commit(self.source), commit(self.reference)
+        return {"reference_available": True, "reference": str(self.reference), "not_merged": not current or current != reference, "missing_from_installed": missing,
                 "missing_extensions": dict(Counter(Path(name).suffix for name in missing))}
 
     def run(self):
@@ -644,6 +673,7 @@ def verify_existing(project: Path, check_source: bool):
             errors.append(entry["destination"])
         if check_source:
             sources[entry["source"]] = entry["source_sha256"]
+            sources.update(entry.get("input_sources", {}))
     for path, expected in sources.items():
         if digest(Path(path)) != expected: errors.append("source changed: " + path)
     print(json.dumps({"verified_files": len(manifest["files"]), "source_files_checked": len(sources), "errors": errors}, ensure_ascii=False), flush=True)

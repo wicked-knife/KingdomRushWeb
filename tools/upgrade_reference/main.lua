@@ -89,7 +89,7 @@ function love.load()
     end
     result.unpublished_inert_targets={};for n in pairs(skipped)do result.unpublished_inert_targets[#result.unpublished_inert_targets+1]=n end;table.sort(result.unpublished_inert_targets)
     if not reference_level then
-      result.behaviors=assert(loadfile(project.."/tools/upgrade_reference/behavior.lua"))()(root,project,original,UP)
+      result.behaviors=assert(loadfile(project.."/tools/upgrade_reference/behavior.lua"))()(root,project,original,UP,result.cases)
       result.behaviors.elf_missile=assert(loadfile(project.."/tools/upgrade_reference/elf_precision.lua"))()(root,original,UP)
     end
     local f=assert(io.open(os.getenv("DOVE_UPGRADE_REFERENCE_OUTPUT") or project.."/tests/fixtures/dove_upgrades_source.json","wb"));f:write(json.encode(result));f:close()
