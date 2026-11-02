@@ -27,6 +27,8 @@ def package():
     last = max(level_ids())
     if 8 in level_ids() and not receipt.get('eighth_acceptance', {}).get('passed'):
         raise RuntimeError('Current eighth-stage acceptance is required before packaging')
+    if 9 in level_ids() and not receipt.get('ninth_acceptance', {}).get('passed'):
+        raise RuntimeError('Current ninth-stage acceptance is required before packaging')
     for path, expected in receipt.get('validation_report_sha256', {}).items():
         if sha256(ROOT / path) != expected:
             raise RuntimeError('Stage validation report changed after export: ' + path)
@@ -54,7 +56,7 @@ def package():
         "Earn three campaign stars on a level to enter its challenges. Each challenge starts with one life.\n"
         "Heroic: 6 waves; Iron: 1 wave. First completion of each challenge grants one star.\n"
         f"Campaign three stars plus both challenges total {len(level_ids()) * 5} stars. Level {last + 1} is a preview.\n"
-        "Heroic gold (levels 1-8): 230/310/400/750/1000/1200/1000/1100. Iron: 360/275/660/1500/1500/800/1200/1200.\n"
+        "Heroic gold (levels 1-9): 230/310/400/750/1000/1200/1000/1100/2000. Iron: 360/275/660/1500/1500/800/1200/1200/2400.\n"
         "Iron tower bans: L1 archer+mage; L2 barracks; L3 artillery; L4 mage+artillery; L5 barracks.\n"
         "L5 Iron has 3 free tier-3 archers and 2 elf ruins; camp repair/recruit/skills remain available.\n"
         "Level 2: 240 gold, 7 waves, 7 tower sites. Level 3: 330 gold, 11 waves, 12 sites, two lanes.\n"
@@ -77,6 +79,10 @@ def package():
         "Cast Rain of Fire at the frozen camp, then hire one Sasquatch for 400; fallen Sasquatches refill after 12 seconds.\n"
         "Victory/map settlement unlocks Barbarians and BFG for revisiting stages 4-7 where source restrictions allow them.\n"
         "Level 8 challenges disable heroes and cap technology at 5. Iron has a free mage2 and bans new archers and mages.\n"
+        "Level 9: Stormcloud Temple, 800 gold, 19 waves and 15 sites. Sorcerer: curse, polymorph, elemental. Sunray: ray levels, gold and charge.\n"
+        "Level 9 challenges: 2000/2400 gold, 1 life, technology cap 5, heroes disabled. Iron has 9 free mage1 towers; only new mages allowed.\n"
+        "JT eats and heals, summons wolves/yetis, freezes 3 towers per cast. Click each frozen tower 3 times to thaw.\n"
+        "JT's death waits for your click before the final animation and enemy cleanup. Victory/map settlement permanently unlocks the new towers.\n"
         "Default technology scheme 1: six branches and 36 upgrades, purchased with settled stars on the map.\n"
         "Click a higher rank to buy missing prerequisites, or a purchased rank to refund it and later ranks.\n"
         "Purchases save immediately. Undo restores this opening's levels; Reset clears levels and rebases Undo.\n"
@@ -98,7 +104,7 @@ def package():
         "Early-wave rewards animate +gold at the gold counter and -seconds above cooling skills.\n"
         "Click a soldier/enemy to inspect live stats. Click a sheep 8 times to pop it.\n"
         "1 = fire rain, 2 = reinforcements, Space = next wave. Skills unlock after wave 3/7 tutorials in level 1.\n"
-        "In all challenges and campaigns 2-8 both skills unlock when wave 1 is sent; neither can be used during setup.\n"
+        "In all challenges and campaigns 2-9 both skills unlock when wave 1 is sent; neither can be used during setup.\n"
         "Click enemy alerts for information.\n\n"
         "Feedback repairs: tower introductions, grass/snow hover, technology/map stars and colored current-to-next skill values.\n"
         "Cannon targeting/flight and preplaced guard interception follow the frozen Dove source; no difficulty changes.\n\n"
@@ -154,6 +160,7 @@ def package():
         "feedback_report_sha256": receipt.get("feedback_report_sha256", {}),
         "seventh_acceptance": receipt.get("seventh_acceptance", {}),
         "eighth_acceptance": receipt.get("eighth_acceptance", {}),
+        "ninth_acceptance": receipt.get("ninth_acceptance", {}),
         "validation_report_sha256": receipt.get("validation_report_sha256", {}),
         "technology_scheme": receipt.get("technology_scheme"),
         "pck_files": len(report["files"]) if checked else None,

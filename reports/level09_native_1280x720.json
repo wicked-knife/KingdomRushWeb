@@ -1,0 +1,199 @@
+{
+	"captures": [
+		{
+			"path": "res://reports/challenges_level9_mode1_1280x720.png",
+			"state": "level9_mode1"
+		},
+		{
+			"gold": 800,
+			"path": "res://reports/towers_ninth_opening_1280x720.png",
+			"state": "ninth_opening",
+			"tick": 0
+		},
+		{
+			"gold": 800,
+			"path": "res://reports/towers_ninth_cave_empty_1280x720.png",
+			"state": "ninth_cave_empty",
+			"tick": 0
+		},
+		{
+			"gold": 800,
+			"path": "res://reports/towers_ninth_cave_node0_1280x720.png",
+			"state": "ninth_cave_node0",
+			"tick": 0
+		},
+		{
+			"gold": 800,
+			"path": "res://reports/towers_ninth_cave_node8_1280x720.png",
+			"state": "ninth_cave_node8",
+			"tick": 0
+		},
+		{
+			"gold": 800,
+			"path": "res://reports/towers_ninth_cave_node20_1280x720.png",
+			"state": "ninth_cave_node20",
+			"tick": 0
+		},
+		{
+			"gold": 19500,
+			"path": "res://reports/towers_ninth_mage_branches_1_1280x720.png",
+			"state": "ninth_mage_branches_1",
+			"tick": 30
+		},
+		{
+			"gold": 19500,
+			"path": "res://reports/towers_ninth_tooltip_tower_sorcerer_1280x720.png",
+			"state": "ninth_tooltip_tower_sorcerer",
+			"tick": 30
+		},
+		{
+			"gold": 18725,
+			"path": "res://reports/towers_ninth_power_polymorph_1280x720.png",
+			"state": "ninth_power_polymorph",
+			"tick": 30
+		},
+		{
+			"gold": 18100,
+			"path": "res://reports/towers_ninth_power_elemental_1280x720.png",
+			"state": "ninth_power_elemental",
+			"tick": 30
+		},
+		{
+			"gold": 19500,
+			"path": "res://reports/towers_ninth_mage_branches_2_1280x720.png",
+			"state": "ninth_mage_branches_2",
+			"tick": 60
+		},
+		{
+			"gold": 19500,
+			"path": "res://reports/towers_ninth_tooltip_tower_sunray_1280x720.png",
+			"state": "ninth_tooltip_tower_sunray",
+			"tick": 60
+		},
+		{
+			"gold": 18910,
+			"path": "res://reports/towers_ninth_power_ray_1280x720.png",
+			"state": "ninth_power_ray",
+			"tick": 60
+		},
+		{
+			"gold": 18710,
+			"path": "res://reports/towers_ninth_power_gold_1280x720.png",
+			"state": "ninth_power_gold",
+			"tick": 60
+		},
+		{
+			"gold": 18460,
+			"path": "res://reports/towers_ninth_power_charge_1280x720.png",
+			"state": "ninth_power_charge",
+			"tick": 60
+		},
+		{
+			"gold": 18460,
+			"path": "res://reports/towers_ninth_elemental_raise_1280x720.png",
+			"state": "ninth_elemental_raise",
+			"tick": 361
+		},
+		{
+			"gold": 18460,
+			"path": "res://reports/towers_ninth_elemental_active_1280x720.png",
+			"state": "ninth_elemental_active",
+			"tick": 381
+		},
+		{
+			"gold": 18460,
+			"path": "res://reports/towers_ninth_polymorph_1280x720.png",
+			"state": "ninth_polymorph",
+			"tick": 381
+		},
+		{
+			"gold": 18560,
+			"path": "res://reports/towers_ninth_sheep_death_1280x720.png",
+			"state": "ninth_sheep_death",
+			"tick": 381
+		},
+		{
+			"gold": 18560,
+			"path": "res://reports/towers_ninth_sheep_hidden_1280x720.png",
+			"state": "ninth_sheep_hidden",
+			"tick": 392
+		},
+		{
+			"gold": 18560,
+			"path": "res://reports/towers_ninth_frozen_tower_1280x720.png",
+			"state": "ninth_frozen_tower",
+			"tick": 412
+		},
+		{
+			"gold": 18560,
+			"path": "res://reports/towers_ninth_thaw_end_1280x720.png",
+			"state": "ninth_thaw_end",
+			"tick": 421
+		},
+		{
+			"gold": 18560,
+			"path": "res://reports/towers_ninth_thaw_fade_1280x720.png",
+			"state": "ninth_thaw_fade",
+			"tick": 451
+		},
+		{
+			"gold": 18560,
+			"path": "res://reports/towers_ninth_jt_death_1280x720.png",
+			"state": "ninth_jt_death",
+			"tick": 451
+		},
+		{
+			"gold": 18560,
+			"path": "res://reports/towers_ninth_jt_wait_click_1280x720.png",
+			"state": "ninth_jt_wait_click",
+			"tick": 496
+		},
+		{
+			"gold": 18560,
+			"path": "res://reports/towers_ninth_jt_death_end_1280x720.png",
+			"state": "ninth_jt_death_end",
+			"tick": 616
+		},
+		{
+			"gold": 800,
+			"path": "res://reports/towers_ninth_victory_1280x720.png",
+			"state": "ninth_victory",
+			"tick": 0
+		},
+		{
+			"path": "res://reports/challenges_level9_mode2_1280x720.png",
+			"state": "level9_mode2"
+		},
+		{
+			"gold": 2000,
+			"path": "res://reports/towers_ninth_mode2_1280x720.png",
+			"state": "ninth_mode2",
+			"tick": 3
+		},
+		{
+			"path": "res://reports/challenges_level9_mode3_1280x720.png",
+			"state": "level9_mode3"
+		},
+		{
+			"gold": 2400,
+			"path": "res://reports/towers_ninth_mode3_1280x720.png",
+			"state": "ninth_mode3",
+			"tick": 4
+		}
+	],
+	"checks": 185,
+	"failures": [],
+	"layout_only": false,
+	"passed": true,
+	"scope": "Godot native mouse, source frames and constructed settlement; no victory replay",
+	"source_hashes": {
+		"data/level09/definition.json": "a4043bd42ca191ced0a3f4dfa2078d5d191a5c01508121850477485297cb89bc",
+		"scripts/battle/battle_ui.gd": "fdcd8daf2514fd523be7ba46262726184bbad4f6898c2904a8cf1c8992ec6ecf",
+		"scripts/battle/battle_view.gd": "44c7b27defb756d81577757d77287a7e3fc2647e4f10866bf8ffc4f00f1adf16",
+		"scripts/battle/dove_jt.gd": "1466e7babad5b5a9ea18ae29430a383de161a2f69f0fd7df673276936f04d91e",
+		"scripts/battle/dove_sorcerer.gd": "d10210953a621e13d05af31f67d6b183d3735fcaf0a459262b8adf891d802038",
+		"scripts/battle/dove_sunray.gd": "f3e00f93575bb2bbda6ae7ea36e9206c0e527d947e147190d803c1207d3efb8d",
+		"scripts/battle/level01_sim.gd": "783347d15b0b9afdbba0dd9f3598a33116bf360c27fe9405f46840de3f4cfe69",
+		"tests/level09_visual.gd": "62466a69032299c613c74a1e12b336e001a84ebb02d31ed7e5251bc7d210f8e1"
+	}
+}

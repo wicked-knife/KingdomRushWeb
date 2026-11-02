@@ -1,6 +1,6 @@
 {
   "passed": true,
-  "content_combinations": 24,
+  "content_combinations": 27,
   "definitions": {
     "level01": {
       "gameplay_unchanged": true,
@@ -31,16 +31,16 @@
       "changed_sections": [],
       "source_current": true,
       "controller": "default",
-      "behaviors": 73,
-      "dependency_owners": 127
+      "behaviors": 85,
+      "dependency_owners": 149
     },
     "level05": {
       "gameplay_unchanged": true,
       "changed_sections": [],
       "source_current": true,
       "controller": "default",
-      "behaviors": 85,
-      "dependency_owners": 115
+      "behaviors": 97,
+      "dependency_owners": 137
     },
     "ranger_arena": {
       "gameplay_unchanged": true,
@@ -83,8 +83,8 @@
       "reason": "Runtime dependency missing from export manifest: res://scripts/battle/dove_behaviors.gd -> res://scripts/battle/dove_bfg.gd"
     }
   ],
-  "publication_resources": 391,
-  "publication_data": 74,
+  "publication_resources": 449,
+  "publication_data": 80,
   "resource_baseline": "battle_ui_baseline.json (source pixel verification in battle_ui_assets.json)",
   "verified_resource_files": 85,
   "unchanged_resource_files": 21,

@@ -47,11 +47,11 @@
 	"layout_only": true,
 	"passed": true,
 	"source_hashes": {
-		"scripts/battle/battle_ui.gd": "d45d1ac932af352eee6cc28d5aa8c1687e4d84bbbd6c15166fc4afef1ea1b9d4",
-		"scripts/battle/battle_view.gd": "af6e4e0b109b538fe21e8d534f78c54acf7f23e7c86f78b13461b48fb16052ea",
+		"scripts/battle/battle_ui.gd": "fdcd8daf2514fd523be7ba46262726184bbad4f6898c2904a8cf1c8992ec6ecf",
+		"scripts/battle/battle_view.gd": "c93a873cd872ba36e82d041d702d6b90e51da2b8d79130c2189ee156027f28dd",
 		"scripts/battle/dove_arcane.gd": "5b58bd539c658a8022d7177a7655a4882511cfac47e573b47b8af455df9e9889",
 		"scripts/battle/dove_projectile.gd": "6dc4815a1561da7fd89fc732ec2115738883d09a9a1ea8505d234af256231c0c",
-		"scripts/battle/level01_sim.gd": "1f509b601c944c8db9916627ac124a1322b3f74192533ea2c3108bb714fd3069",
+		"scripts/battle/level01_sim.gd": "783347d15b0b9afdbba0dd9f3598a33116bf360c27fe9405f46840de3f4cfe69",
 		"tests/followup_visual.gd": "9b3e990208536a60ecf8b0a3efe67dc6c1aef97c8246e24655d5ba39ee58c3e2"
 	}
 }

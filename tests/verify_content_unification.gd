@@ -29,7 +29,7 @@ func run() -> void:
 		check(baseline.source.commit == transition.source_before.commit and Levels.catalog().source == transition.source_after, "historical combat source has an explicit current transition")
 	var expected_timelines: Dictionary = Levels.read_json("res://tests/fixtures/content_timelines.json")
 	check(expected_timelines.size() == 15, "all pre-migration mode timelines exist")
-	check(not Levels.supports(9) and not Levels.supports(1, 1, 3), "preview and unsupported difficulty remain unavailable")
+	check(not Levels.supports(10) and not Levels.supports(1, 1, 3), "preview and unsupported difficulty remain unavailable")
 	var catalog := Levels.catalog()
 	check(Sim.Controller.create("unknown", catalog) == null, "unknown controller rejected")
 	var invalid := Levels.load_definition(5)

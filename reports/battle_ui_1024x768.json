@@ -22,9 +22,9 @@
 	"scope": "targeted UI/input with constructed battle states; no complete replays",
 	"source_hashes": {
 		"scripts/battle/battle_feedback.gd": "f3d0dbd1d2225281d8eef83c7f3534350e6c4127ab9af1dc389a5289ad996241",
-		"scripts/battle/battle_ui.gd": "d45d1ac932af352eee6cc28d5aa8c1687e4d84bbbd6c15166fc4afef1ea1b9d4",
+		"scripts/battle/battle_ui.gd": "fdcd8daf2514fd523be7ba46262726184bbad4f6898c2904a8cf1c8992ec6ecf",
 		"scripts/battle/battle_victory.gd": "0ce46751eb798ec710ae9304132d67c7806f6816a25ccf6ad8ca5bf3c47e6211",
-		"scripts/battle/battle_view.gd": "af6e4e0b109b538fe21e8d534f78c54acf7f23e7c86f78b13461b48fb16052ea",
+		"scripts/battle/battle_view.gd": "c93a873cd872ba36e82d041d702d6b90e51da2b8d79130c2189ee156027f28dd",
 		"scripts/battle/battle_wave_flags.gd": "cf3daa90f148cf81e3d0dee7c257d75b2ec918adea6bd3bda43b1ee0e93b1735",
 		"scripts/battle/dove_ui_layout.gd": "3b5f799a9db0ffe091ac8889bc9e5b431b5e80cedc4065fa1b05dbaaa45d3803"
 	}

@@ -171,7 +171,7 @@ func _run() -> void:
 		await sasquash_frames()
 		battle.sim._finish("victory");battle.set_process(true);await create_timer(4.2).timeout;battle.set_process(false)
 		await capture("eighth_victory");await action("map");await app.map_ready
-		check("tower_bfg" not in app.campaign.data.locked_towers and "tower_barbarian" not in app.campaign.data.locked_towers and not app.campaign.is_playable(9),"native result commits new towers and ninth preview")
+		check("tower_bfg" not in app.campaign.data.locked_towers and "tower_barbarian" not in app.campaign.data.locked_towers and app.campaign.is_playable(9) and not app.campaign.is_playable(10),"native result commits new towers and opens ninth; tenth preview")
 		for mode in [2,3]:
 			await enter(8,mode);await capture("eighth_mode%d"%mode)
 			check(battle.sim.gold==[1100,1200][mode-2] and battle.sim.lives==1,"native source challenge economy %d"%mode)

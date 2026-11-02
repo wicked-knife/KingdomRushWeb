@@ -102,3 +102,10 @@ __pycache__/
 !/reports/followup_logic.json
 !/reports/followup_native_1280x720.json
 !/reports/followup_native_1024x768.json
+!/reports/level09_logic.json
+!/reports/level09_assets.json
+!/reports/level09_compatibility.json
+!/reports/level09_native_1280x720.json
+!/reports/level09_native_1024x768.json
+!/reports/level09_upgrades.json
+!/reports/level09_delivery.json

@@ -26,7 +26,7 @@ func ticks(sim, count: int) -> void:
 func run() -> void:
 	source = Levels.read_json("res://tests/fixtures/level06_source.json")
 	check(not source.is_empty(), "independent frozen-source oracle exists")
-	check(Levels.supports(6, 3) and not Levels.supports(9) and not Levels.supports(6, 1, 3), "published range and difficulty")
+	check(Levels.supports(6, 3) and not Levels.supports(10) and not Levels.supports(6, 1, 3), "published range and difficulty")
 	for mode in [1, 2, 3]:
 		var sim = fresh(mode)
 		check(sim.data.waves == source.modes[str(mode)], "all wave fields match frozen Lua mode %d" % mode)

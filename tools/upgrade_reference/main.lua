@@ -60,7 +60,7 @@ function love.load()
       return out
     end
     local cases={{name="zero",levels={},limit=6}}
-    for _,branch in ipairs(reference_level and {"barracks","engineers"} or UP.display_order)do for rank=1,6 do cases[#cases+1]={name=branch.."/"..rank,levels={[branch]=rank},limit=6}end end
+    for _,branch in ipairs(reference_level==9 and {"mages","barracks"} or reference_level and {"barracks","engineers"} or UP.display_order)do for rank=1,6 do cases[#cases+1]={name=branch.."/"..rank,levels={[branch]=rank},limit=6}end end
     for _,limit in ipairs(reference_level and {6,5,0} or {6,4,0})do
       local levels={};for _,key in ipairs(UP.display_order)do levels[key]=6 end
       cases[#cases+1]={name="all/"..limit,levels=levels,limit=limit}

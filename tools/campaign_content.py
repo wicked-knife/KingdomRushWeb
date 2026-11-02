@@ -84,6 +84,18 @@ def validate_definition(data, spec):
     templates = data["templates"]
     identity = spec["folder"]
     catalog = read_catalog()
+    for owner, rows in catalog.get('runtime_fields', {}).items():
+        if owner not in templates:
+            continue
+        for row in rows:
+            value = templates[owner]
+            try:
+                for key in row['path']:
+                    value = value[key]
+            except (KeyError, IndexError, TypeError):
+                value = None
+            if value != row['value']:
+                raise ValueError(f"{identity}: {owner} -> missing required runtime field {row['path']}")
     for owner, callbacks in catalog.get("runtime_callbacks", {}).items():
         if owner in templates:
             for event, callback in callbacks.items():

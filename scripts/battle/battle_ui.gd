@@ -151,12 +151,12 @@ func selection() -> void:
 func _selection(id: String, closing: bool) -> void:
 	var sim: RefCounted = view.sim
 	var tower: Dictionary = sim.tower_by_id(id)
-	if tower.is_empty() or (tower.ready > sim.tick and not closing): return
+	if tower.is_empty() or tower.get("blocked",false) or (tower.ready > sim.tick and not closing): return
 	if closing: tower = tower.duplicate(); tower.type = closing_type; tower.template = closing_template
 	var t: Dictionary = sim.tower_template(tower)
 	var range_pos: Vector2 = view.world(tower.pos + view.Simulation.vec(t.tower.range_offset))
 	if tower.type not in ["","holder_elf","holder_sasquash"] and not closing:
-		var barrack: bool = t.has("barrack")
+		var barrack: bool = t.has("barrack") and tower.type!="mage"
 		var upgrade_preview: Dictionary = {}
 		for target: String in sim.upgrade_options(tower):
 			if view.hovered != "upgrade" + str({"id":id,"upgrade_to":target}) or sim.tower_locked(target): continue
@@ -213,12 +213,12 @@ func _selection(id: String, closing: bool) -> void:
 				var price: int = sim.power_price(tower, power)
 				_menu_icon(item.image, pos, "upgrade_power", {"id":id,"power":power}, price, enabled and price >= 0 and sim.gold >= price, price < 0, item.get("halo", "glow_ico_main"))
 				var maximum: int = sim.tower_template(tower).powers[power].max_level
-				for rank in range(maximum):
+				for rank in range(0 if item.get("no_upgrade_lights",false) else maximum):
 					paint.image("power_rank_0001" if rank < int(tower.powers[power]) else "power_rank_0002", pos + view.Simulation.vec(data.tower_menu_power_offset[rank]), Vector2.ONE)
 				if power_fx.get("id", "") == id and power_fx.get("powers", {}).has(power):
 					var age: float = feedback_time - power_fx.powers[power]
 					if age < 23.0 / 30.0: paint.image("effect_powerbuy_%04d" % (1 + int(age * 30)), pos, Vector2(0.5, 0.5))
-		if tower.type == "barrack": _menu_icon("sub_icons_0001", Vector2(128, 118), "target", {"power": "rally"}, -1, enabled)
+		if sim.can_rally(tower): _menu_icon("sub_icons_0001", Vector2(128, 118), "target", {"power": "rally"}, -1, enabled)
 		for item:Dictionary in data.tower_menus.get(str(t.tower.type),[]):
 			if item.get("action","")!="tw_buy_soldier":continue
 			var type:String=item.action_arg

@@ -104,6 +104,9 @@ func _on_event(kind: String, payload: Dictionary) -> void:
 	match kind:
 		"music": _music(str(payload.id))
 		"sound": _sound(str(payload.id))
+		"stop_audio":
+			audio.stop_music()
+			for player:AudioStreamPlayer in fx_players:player.stop()
 		"wave":
 			selected = ""; targeting = ""
 			feedback.sync_cursor()
@@ -223,6 +226,7 @@ func _draw() -> void:
 		if sim.templates[e.template].has("particle_system") or sim.templates[e.template].has("tunnel") or sim.templates[e.template].template_name == "decal_tunnel_light": continue
 		_queue_template(e.template, Simulation.vec(e.pos))
 	sim.snow.queue(self)
+	sim.jt.queue(self)
 	for decal: Dictionary in sim.decals:
 		if not decal.removed: _queue_template(decal.template, decal.pos, decal.state, decal.state_at, decal.flip, false, 1, false, "", decal)
 	for egg: Dictionary in sim.eggs:
@@ -269,10 +273,11 @@ func _draw() -> void:
 	draw_list.sort_custom(func(a, b):
 		if a.z != b.z: return a.z < b.z
 		if a.sort_y != b.sort_y: return a.sort_y > b.sort_y
+		if int(a.get("draw_order",1)) != int(b.get("draw_order",1)): return int(a.get("draw_order",1)) < int(b.get("draw_order",1))
 		return a.order < b.order)
 	for item: Dictionary in draw_list: _art(item.frame, world(item.pos), item.anchor, 1.0, item.tint, item.flip, -item.rotation, item.scale)
 	for unit: Dictionary in sim.enemies + sim.soldiers:
-		if unit.hp <= 0 or unit.hp == unit.max_hp or unit.get("hidden", false) or unit.get("health_bar_hidden",false) or unit.has("boss"): continue
+		if unit.get("health_bar_hidden",false) or unit.hp <= 0 or unit.hp == unit.max_hp or unit.get("hidden", false) or unit.get("health_bar_hidden",false) or unit.has("boss"): continue
 		var p := world(unit.pos + Simulation.vec(sim.templates[unit.template].health_bar.offset))
 		var width := 36.0 if sim.templates[unit.template].health_bar.type == "medium" or unit.has("hero") and sim.templates[unit.template].health_bar.type=="med" else 24.0
 		draw_rect(Rect2(p + Vector2(-width / 2 - 1, -2), Vector2(width + 2, 4)), Color("362519"))
@@ -300,6 +305,11 @@ func _queue_egg(egg: Dictionary) -> void:
 
 func _queue_template(template_name: String, point: Vector2, state: String = "", at: int = 0, flip: bool = false, up: bool = false, variant: int = 1, dead: bool = false, preview: String = "", runtime: Dictionary = {}) -> void:
 	if runtime.get("hidden", false): return
+	if dead and runtime.get("source_corpse",false):
+		var u:Dictionary=sim.templates[template_name].get("unit",{})
+		if u.get("hide_during_death",false):return
+		var death_length:int=SpriteAnimation.duration(animations,SpriteAnimation.key(sim.templates[template_name].render.sprites[0],state))
+		if u.get("hide_after_death",false) and sim.tick-at>=death_length:return
 	var template: Dictionary = runtime.get("combat_template",sim.templates[template_name])
 	if dead and template.get("unit", {}).get("hide_after_death", false):
 		var sprite: Dictionary = template.render.sprites[0]
@@ -317,9 +327,10 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 		var playback := {"state": state, "elapsed": maxi(0, sim.tick - at)}
 		if runtime.get("prefix", "") != "": playback.prefix = runtime.prefix
 		var layer: Dictionary = runtime.get("layers", {}).get(order, {})
+		if layer.has("visible") and not layer.visible:continue
 		if not layer.is_empty():
-			playback.state = layer.state; playback.elapsed = maxi(0, sim.tick - int(layer.at)); playback.loop = layer.loop
-			var length := SpriteAnimation.duration(animations, SpriteAnimation.key(sprite, layer.state))
+			playback.state = layer.get("state",state); playback.elapsed = maxi(0, sim.tick - int(layer.get("at",at))); playback.loop = layer.get("loop",true)
+			var length := SpriteAnimation.duration(animations, SpriteAnimation.key(sprite, layer.get("state",state)))
 			if layer.has("idle") and int(playback.elapsed) >= length:
 				playback.state = layer.idle; playback.elapsed -= length; playback.loop = true
 		elif state != "":
@@ -346,6 +357,7 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 		if not tween.get("disabled", false) or clicked:
 			var seconds: float = (sim.tick - int(runtime.clicked_at) if clicked else sim.tick - int(runtime.get("born_at", at))) / 30.0
 			for property: Dictionary in tween.get("props", []):
+				if property.get("disabled",false):continue
 				if int(property.get("sprite_id", 1)) != order: continue
 				if property.name == "scale": sprite_scale *= SpriteAnimation.vector_track(property.keys, seconds)
 				elif property.name == "alpha":
@@ -356,11 +368,11 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 							if k[0] is String: k[0] = float(runtime.get("duration", 0)) - (0.5 if k[0].ends_with("-0.5") else 0)
 					alpha *= SpriteAnimation.scalar_track(keys, fmod(seconds, float(keys[-1][0])) if property.get("loop", false) and float(keys[-1][0]) > 0 else seconds) / 255.0
 		var color: Array = sprite.get("color", [255, 255, 255])
-		draw_list.append({"scale": sprite_scale, "frame": frame_name, "pos": point + offset, "sort_y": float(sprite.get("sort_y",point.y + float(sprite.get("sort_y_offset", 0)))), "anchor": Simulation.vec(sprite.get("anchor", {"x": 0.5, "y": 0.5})), "z": int(sprite.get("z", 3000)), "order": draw_list.size() + int(layer.get("draw_order", order)) - order, "flip": layer.get("flip", runtime.get("flip", sprite.get("flip_x", flip))), "rotation": float(runtime.get("rotation", sprite.get("r", 0))), "tint": Color(color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, alpha)})
+		draw_list.append({"scale": sprite_scale, "frame": frame_name, "pos": point + offset, "sort_y": float(sprite.get("sort_y",point.y + float(sprite.get("sort_y_offset", 0)))), "anchor": Simulation.vec(sprite.get("anchor", {"x": 0.5, "y": 0.5})), "z": int(sprite.get("z", 3000)), "draw_order": int(layer.get("draw_order",sprite.get("draw_order",order))), "order": draw_list.size(), "flip": layer.get("flip", runtime.get("flip", sprite.get("flip_x", flip))), "rotation": float(runtime.get("rotation", sprite.get("r", 0))), "tint": Color(color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, alpha)})
 
 func _draw_boss_bar() -> void:
 	for unit: Dictionary in sim.enemies:
-		if not unit.has("boss") or unit.hp <= 0: continue
+		if not unit.has("boss") or unit.hp <= 0 or unit.get("health_bar_hidden",false): continue
 		var origin := Vector2((view_width - 440) / 2, 20)
 		var hp: float = clampf(unit.hp / unit.max_hp, 0, 1)
 		var panel := StyleBoxFlat.new(); panel.bg_color = Color(0, 0, 0, 0.55); panel.set_corner_radius_all(5)
@@ -437,6 +449,16 @@ func _gui_input(input: InputEvent) -> void:
 		else: invalid_point_time = INVALID_POINT_DURATION
 		feedback.sync_cursor()
 		return
+	var interactive:int=0
+	for unit:Dictionary in sim.enemies:
+		if unit.hp<=0 or unit.get("hidden",false) or not (unit.has("jt") or sim.behaviors.role(unit.template)=="sheep"):continue
+		var area:Dictionary=sim.templates[unit.template].ui.click_rect
+		if Rect2(unit.pos+Simulation.vec(area.pos),Simulation.vec(area.size)).has_point(world_point):interactive=unit.id
+	if interactive!=0:
+		sim.command("unit_click",{"id":interactive})
+		if not sim.unit_by_id(interactive).has("jt") or sim.unit_by_id(interactive).get("dying",false):return
+	var clicked_tower:String=pick_tower(world_point)
+	if clicked_tower!="" and sim.tower_by_id(clicked_tower).get("blocked",false):sim.command("tower_click",{"id":clicked_tower});selected="";return
 	selected_unit = UnitInfo.pick(sim.soldiers + sim.enemies, sim.templates, world_point)
 	if selected_unit != 0:
 		if sim.unit_by_id(selected_unit).has("hero"):targeting="hero";feedback.sync_cursor()

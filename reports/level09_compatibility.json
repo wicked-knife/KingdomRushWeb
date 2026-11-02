@@ -1,0 +1,85 @@
+{
+  "passed": true,
+  "baseline_commit": "1d7fb78a831a6ec5cd481923ecf145cda449be44",
+  "contents": [
+    {
+      "content": "level04",
+      "parts": 6,
+      "prior_content_unchanged": true,
+      "source_pixels_verified": true
+    },
+    {
+      "content": "level05",
+      "parts": 6,
+      "prior_content_unchanged": true,
+      "source_pixels_verified": true
+    },
+    {
+      "content": "level06",
+      "parts": 6,
+      "prior_content_unchanged": true,
+      "source_pixels_verified": true
+    },
+    {
+      "content": "level07",
+      "parts": 6,
+      "prior_content_unchanged": true,
+      "source_pixels_verified": true
+    },
+    {
+      "content": "level08",
+      "parts": 6,
+      "prior_content_unchanged": true,
+      "source_pixels_verified": true
+    }
+  ],
+  "failure_probes": [
+    {
+      "case": "old_stat",
+      "rejected": true
+    },
+    {
+      "case": "missing_new_template",
+      "rejected": true
+    },
+    {
+      "case": "unlisted_upgrade",
+      "rejected": true
+    }
+  ],
+  "source_hashes": {
+    "data/level04/definition.json": "25b4cd8423a88a6dfacdd5fdb63e7935d2e0aa50d1a5691ed6a742a0adf1d4f5",
+    "data/level04/animations.json": "bb89c6b3eb970560516df63ae9e04712ebcece30fbfc5bfdf993bd9991112afd",
+    "data/level04/atlas.json": "9e4f258aeaf9bb50f9cc2e0951d2c05ca796b7f48ec4f9e052668b5da3946b51",
+    "data/level04/sounds.json": "bb75ee0e7e40ff856b5fce41683305414566d15073b34c2278e43cd1f6307f70",
+    "data/level04/manifest.json": "f78571422c16669a5a7a70a40ca2f4e5cfee3309a331bd06e0f8dfe2b39265a8",
+    "data/level04/catalog.json": "bd4e425d6a451ca1d2f52413e28b1fc5a6c386a2fbc4b45fa0d9bb056d272e58",
+    "data/level05/definition.json": "f2b65d038a694fa80aec3d17587ab538d212b4da63dc77977d1e7b263aed5efa",
+    "data/level05/animations.json": "d34fc50176c75e29785c5e38c94395ece01c8b39d4525333c0f91b721e435e10",
+    "data/level05/atlas.json": "571e329732889b364120f9b6d7f79dbb19cd372c4cf0fe06d9b712a5d9d5ea97",
+    "data/level05/sounds.json": "2633bcf79484365b88268ad6fc2b3dd5d6d847828e257b2351ef7bf66de9e538",
+    "data/level05/manifest.json": "202e498894b6eeb48534e5795a9e5a39867168ed483dc8c48abe32b0f213ead1",
+    "data/level05/catalog.json": "e730d96782e3a48e05e5ea05be030b6294ce8cb753254a13cd0387dc1d922f33",
+    "data/level06/definition.json": "4272359f318a72376094a229ad7ee9a5c3797186e2958bbc7dcd5506a946a3af",
+    "data/level06/animations.json": "f34a1b2cf164fcd06c27a560499e982205d77781644b49b20731a9cc389820a6",
+    "data/level06/atlas.json": "f53becbbe8f0249033dabf415daee352e4b534084b9c6b28be4b05afb9d5bb7a",
+    "data/level06/sounds.json": "3d154ead4cca7bec68f68c5f1551c74e7c7d7cbe847bf7d177466ffbb5f9c441",
+    "data/level06/manifest.json": "47e0ad62f5c8bd4666fdddaba01045f4e17d30e2faba7f6710b87f69db15b315",
+    "data/level06/catalog.json": "a617fbffe5a7aab61d59bf0716eca2811d70c28f807f423f1ae61f1b4a6ce543",
+    "data/level07/definition.json": "71588162c9f3116ef2e7f102a432cde645e68f13f9c57915e20ce7d9e2a1e0c5",
+    "data/level07/animations.json": "cbf70db48750b0f49ceddfbf34767b6bb45b8f8f032a2c35dd34cdc6cf38ac5a",
+    "data/level07/atlas.json": "4236043177c349dca2ad3e7a46b95c91823cd12d722c515a4de5d5524d6aac18",
+    "data/level07/sounds.json": "7e19b7bf4e7c9c562a002958c60325273cccb90809e4a4bea35f7a1661cce160",
+    "data/level07/manifest.json": "b8f2cf8ba6a7d16d341ea5071833d8231f3600b696873c966dbbaab83118e100",
+    "data/level07/catalog.json": "20bfe1adc6b4a3417c695ca8412988e08c4b4ba8f5299effe2d16faa294285c7",
+    "data/level08/definition.json": "40f3555cada50881c998acf875139e7e48c32f53f395119adc18a396db2e24bf",
+    "data/level08/animations.json": "eb2918119f7da7a18f7eae92ffc2dc65385f5d7a244ce6e30a12abae50729d0b",
+    "data/level08/atlas.json": "43eb6a240a29520d84da0bcffe40c82fc0c6fc3384905f04ac16e8220f76afe9",
+    "data/level08/sounds.json": "cc8ae98fb09fdfc358efabe6c364d40428a5d213b4240307ad1661456441ac02",
+    "data/level08/manifest.json": "6ec39bb6ec6473ab19d20e33fe9793b1cf21641fe511fa58c9405e8c1c6491a5",
+    "data/level08/catalog.json": "4e498189bc15e1c8b44e62c43f8bcbef880f3e827610630950f0743c7847d72f",
+    "tests/fixtures/level09_additions.json": "e30ed443b136faf503bc86f465faed0ad7d1f3b6364251872943e5c87dbb43c1",
+    "tools/level09_compatibility.py": "ee0b0be7cd96830034427e50e2aa4f6343daa93b201b08cf67789c64b7bd7f53",
+    "tools/verify_level09_compatibility.py": "4d8da3907ef269c42a41b691ccd23327a48fbfddf7f536936b0f6cc413d9350d"
+  }
+}

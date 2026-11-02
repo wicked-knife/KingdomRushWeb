@@ -1,0 +1,119 @@
+{
+  "passed": true,
+  "playable_combinations": 27,
+  "reports": {
+    "level09_logic": {
+      "passed": true,
+      "checks": 246,
+      "independent_modes": 3,
+      "births": 995,
+      "timeline_waves": 26,
+      "source_tower_scenarios": 9
+    },
+    "level09_native_1280x720": {
+      "passed": true,
+      "checks": 185,
+      "layout_only": false
+    },
+    "level09_native_1024x768": {
+      "passed": true,
+      "checks": 134,
+      "layout_only": true
+    },
+    "level09_assets": {
+      "passed": true
+    },
+    "level09_compatibility": {
+      "passed": true
+    },
+    "level09_upgrades": {
+      "passed": true,
+      "checks": 97,
+      "source_patch_scenarios": 16
+    }
+  },
+  "failure_probes": [
+    {
+      "missing": "mod_jt_tower",
+      "rejected": true,
+      "reason": "level09: eb_jt -> missing runtime dependency mod_jt_tower"
+    },
+    {
+      "missing": "jt_spawner_aura",
+      "rejected": true,
+      "reason": "level09: missing template dependency: eb_jt -> jt_spawner_aura"
+    },
+    {
+      "missing": "enemy_sheep_fly",
+      "rejected": true,
+      "reason": "level09: tower_sorcerer -> missing runtime dependency enemy_sheep_fly"
+    },
+    {
+      "missing": "soldier_elemental",
+      "rejected": true,
+      "reason": "Invalid power preview dependency: elemental/1: 'soldier_elemental'"
+    },
+    {
+      "missing": "fx_mod_polymorph_sorcerer_big",
+      "rejected": true,
+      "reason": "level09: mod_polymorph_sorcerer -> missing runtime dependency fx_mod_polymorph_sorcerer_big"
+    },
+    {
+      "missing": "jt_damage_callback",
+      "rejected": true,
+      "reason": "level09: eb_jt -> missing required runtime field ['health', 'on_damage']"
+    },
+    {
+      "missing": "slayer_callback",
+      "rejected": true,
+      "reason": "level09: enemy_slayer -> missing required runtime field ['melee', 'attacks', 0, 'side_effect']"
+    }
+  ],
+  "source_hashes": {
+    "reports/level09_logic.json": "b6cfd5bf359772c94a8f1f5419bfc53f8fc8b0c0347451050840ebf1d155a239",
+    "reports/level09_native_1280x720.json": "4622b3e95d869c1007ecd1f8480bd860cb0a947a02196314ee49ce6abb1ab295",
+    "reports/level09_native_1024x768.json": "2535a042f7421ea6e92390490d2436ba35ef0309edd84226ab27220675008b62",
+    "reports/level09_assets.json": "6e520ab994fe3e36e9b80b3c82eaaccd836caf9c57beeecd4ca42738bcab6664",
+    "reports/level09_compatibility.json": "733c4a2d36a0159c63b7d3d4af2acb37d965594526c53ed30d367f6f23097bec",
+    "reports/level09_upgrades.json": "9df6caca1bbb4cda9aab6a6a80e768e8782d2c6511bf0423ef0b385ff36813d3",
+    "data/level09/animations.json": "bca5ca2b3f6f4390b85c84ef83df66fd03c912bab730ee817a92bda8d3ed963c",
+    "data/level09/atlas.json": "fd7f85cb44fc4a0cab1e77d2069127aac63f1c2f51ceb0869561fbf0d9d3c462",
+    "data/level09/atlas_0.png": "47e36ead5f4cc0a125118f74008547634aecc49e2a01ab78025f7d3e11fed9ef",
+    "data/level09/atlas_1.png": "89ad28624f9acf4c12ca28b368a95d1290fa4b24362407df844ddb5e1943f010",
+    "data/level09/atlas_10.png": "4b4f26a3f3c2c00afb4fda778aaa6791715f040bd0976a68467d9cc7649f5004",
+    "data/level09/atlas_11.png": "bcb3e709572c56e84d7b4c4685ff802124d068efcbb1c0bb2750404bf2095171",
+    "data/level09/atlas_12.png": "98a5c4f055120531ac4104af048be3da0a17a7fd0daa2e0ea009fb896272c41d",
+    "data/level09/atlas_13.png": "e2325501c74a3f7ac552ca1b1683c9e46888ed23f674b135a1453703a0069616",
+    "data/level09/atlas_14.png": "ee5f25a3def3b4258723aeb0cb76e9d2d1b5835373118f37313355d2b247ae7b",
+    "data/level09/atlas_15.png": "bf4cc251fdd808d4fa4f82db5e9c295d9eca6ec58ad928fbfce108c0e2403cfe",
+    "data/level09/atlas_16.png": "c7ae1d800dab4d583f48d6058160de5f3b0c3e9157921dbe288a741af4d47e69",
+    "data/level09/atlas_17.png": "d1ee537e53651455b04bc7ab0cfde9595c14e78340bc31f68d9f77f582143e84",
+    "data/level09/atlas_18.png": "3ccea30316b2cb2f3731540b5d73a25c9eec2aa592e998161dedd42c8e77675d",
+    "data/level09/atlas_19.png": "68fbd5937bc0e636dcf8d0f22247bb46f9e27c9ac062e110da546a6368f1d968",
+    "data/level09/atlas_2.png": "be18a3b94d1e771370c9eefe36257bfbf23f7de02f352a1757875fa16051977b",
+    "data/level09/atlas_20.png": "8f4d56aab0476fd30e8610358d98264fa9efaeec5ac7769cb1916716718f1d65",
+    "data/level09/atlas_21.png": "df000413dfdcbd768378fc830aacd85b570031f8218691af9171471da4677c0e",
+    "data/level09/atlas_22.png": "9743d5547d2cf76df522a52229744cb1c2df15480d362a7a77c364fd74e10148",
+    "data/level09/atlas_23.png": "fe1462eb8693beee47763d41d571387c8563516a7af1e17422f966e418bf5b3c",
+    "data/level09/atlas_24.png": "2a619cba0612b73f8697907fc846fc094bc6073b0afeaba86ab03bce3660a950",
+    "data/level09/atlas_3.png": "34b019d0ad997af138f26a6e0ad897e02bc4246c33b8d19107550b16b25e6182",
+    "data/level09/atlas_4.png": "4501ac08df86b95f5442b738a255c4448ec6482788473b6d5460c911e0e9a152",
+    "data/level09/atlas_5.png": "90b50426023db301698c027a5405aa63fa877d2d4c1ed3736e1ff8a67d0cc309",
+    "data/level09/atlas_6.png": "5f30525f1a091dfec7b6004bbcbf491356520875b1e10ae30a8c7abc4f6645bc",
+    "data/level09/atlas_7.png": "358bb492da8de73c931d7454cb528be022882bf2e3eb88a6dec5a9c16fe367d6",
+    "data/level09/atlas_8.png": "1c0035371d57a6892caf856e5b2d1a08d078291aac2be3e976ba81fb619f465d",
+    "data/level09/atlas_9.png": "06d3231572d9337b420dec69f11f29d154149950b5db44ea45b688f87deafcf2",
+    "data/level09/catalog.json": "446d9f5062c2d15c8e0fdee7e5927ed4f97940bbc25bc373d181071a4f5dd87c",
+    "data/level09/definition.json": "a4043bd42ca191ced0a3f4dfa2078d5d191a5c01508121850477485297cb89bc",
+    "data/level09/manifest.json": "053b276e0cd3af012940434d25eef2efb4b9d947a16ee3c887685d5890008e82",
+    "data/level09/sounds.json": "4c35e3723f7e3f6d2705c73c1feb105d14f9b6cceb4ccee5eb522daa8eba4f5d",
+    "data/campaign_content.json": "08b7508d9e751191cc145bdbd6e3ea7cd31b59cbcf49934b4e04820ca4412fd0",
+    "tools/verify_level09_delivery.py": "45aae8f01e968e43c69c93624a2ca5982348b38ecdca4c33f3208d5b7a9b2dba",
+    "tools/prepare_level09_reference.py": "c90e79240a24465fe2c0de5ef238bbab426db2374b1c4a765816f2d233e83a52",
+    "tools/level09_reference/main.lua": "aada9e7485ede6ebff4f02dc57be887ac34cebd82b9faba01d8cb86acc354e60",
+    "tools/level09_reference/behavior.lua": "550c1d8447fc548a77f8cb8add02d95643742ff14719ba711afdce3348812182",
+    "tests/verify_web_pack.gd": "9e77f031ba84d76fb640309bbd40389ae488fa0d5f4f575713f8776c6a3630ab"
+  },
+  "browser_tested": false,
+  "victory_replays_required": false
+}

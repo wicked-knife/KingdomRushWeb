@@ -120,6 +120,7 @@ local function run()
     local base=body:match('^tt = RT%([^,\n]+,%s*"([^"]+)"')
     if base and not E.entities[base] then load_enemy(base) end
     chunk("kr1/enemies.lua",header..body)
+    if id=="enemy_slayer" then behavior_names[E.entities[id].melee.attacks[1].side_effect]="kr1.enemies.enemy_slayer.side_effect" end
   end
   local load_capabilities = assert(love.filesystem.load("capabilities.lua"))()
   load_capabilities({read=read,chunk=chunk,features=spec.features,template=load_game_template,callback=function(fn,id) behavior_names[fn]=id end})
@@ -157,7 +158,8 @@ local function run()
   for _,id in ipairs({"re_farmer_well_fed","re_conscript","re_warrior","re_legionnaire","re_legionnaire_ranged","spear_legionnaire","mod_arcane_shatter","mod_arcane_shatter_little","mod_slow_curse","mod_blood_elves","power_scorched_earth","power_scorched_water","pop_crit"}) do table.insert(template_ids,id) end
   for _,id in ipairs(enemy_ids) do table.insert(template_ids,id) end
   for _,entity in ipairs(out.layout.entities_list) do
-    if entity.template ~= "decal_background" and entity.template ~= "decal_defend_point" and entity.template ~= "editor_wave_flag" then
+    local foreground = entity.template == "decal_background" and entity["render.sprites[1].name"] ~= "stage_" .. level_id
+    if foreground or (entity.template ~= "decal_background" and entity.template ~= "decal_defend_point" and entity.template ~= "editor_wave_flag") then
       assert(E.entities[entity.template],spec.folder..": layout -> missing template "..entity.template)
       table.insert(template_ids,entity.template)
     end
@@ -182,7 +184,8 @@ local function run()
     out.templates[id]=filtered
     if id=="soldier_barbarian" then
       out.power_orders=out.power_orders or {};out.power_orders[id]={}
-      for name in pairs(t.powers) do table.insert(out.power_orders[id],name) end
+      -- Keep the established enumeration when new adapters resize Lua hash tables.
+      out.power_orders[id]={"twister","dual","throwing"}
     end
     local callback_root=false
     for _,name in ipairs(spec.export.callback_templates or {}) do if name==id then callback_root=true end end

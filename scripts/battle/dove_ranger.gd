@@ -45,6 +45,7 @@ static func step(sim: RefCounted, tower: Dictionary) -> void:
 			bullet.poison_level = int(tower.powers.poison); bullet.source = str(tower.id)
 			sim.event.emit("ranger_shot", {"target":e.id,"sid":sid,"tick":sim.tick})
 		tower.pending = {}
+	if tower.get("blocked",false):return
 	if sim.tick < tower.attack_at or sim.tick < r.animation_until or not tower.pending.is_empty(): return
 	var targets := candidates(sim, center, t.attacks.range, a)
 	if targets.is_empty(): tower.attack_at += 5; return
@@ -97,6 +98,7 @@ static func _thorn(sim: RefCounted, tower: Dictionary, center: Vector2) -> void:
 					sim.modifiers.apply(sim,"mod_thorn",e,level,str(tower.id),duration,sim.attack_factor(tower))
 		if sim.tick < r.casting.ends_at: return
 		r.casting = {}
+	if tower.get("blocked",false):return
 	if float(sim.tick) - float(r.thorn_ts) < float(a.cooldown) * 30: return
 	if _thorn_targets(sim,tower,center,a).size() < int(a.min_count): r.thorn_ts += 1.5; return
 	r.thorn_ts = float(sim.tick)

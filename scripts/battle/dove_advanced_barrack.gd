@@ -4,7 +4,7 @@ extends RefCounted
 const Anim = preload("res://scripts/battle/dove_animation.gd")
 
 static func supports(name: String) -> bool:
-	return name in ["soldier_barbarian","soldier_sasquash"]
+	return name in ["soldier_barbarian","soldier_sasquash","soldier_elemental"]
 
 static func initialize(sim, tower: Dictionary) -> void:
 	tower.powers={"dual":0,"twister":0,"throwing":0}
@@ -79,6 +79,7 @@ static func _interrupt(sim,s:Dictionary,t:Dictionary) -> void:
 static func step(sim, s:Dictionary) -> void:
 	if not s.has("combat_template"):insert(sim,s,sim.tower_by_id(s.home))
 	if s.hp<=0:return
+	if sim.tick<int(s.get("raise_until",0)):return
 	var t:Dictionary=s.combat_template
 	if s.get("rally_pending",false):
 		_interrupt(sim,s,t);sim._unblock(s);s.rally_pending=false;s.rallying=true

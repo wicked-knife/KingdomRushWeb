@@ -26,6 +26,12 @@ func clear(sim: RefCounted) -> void:
 	active.clear()
 
 func _release(sim: RefCounted, m: Dictionary) -> void:
+	if m.has("armor_added") and not m.get("rage",false):
+		var unit:Dictionary=sim.unit_by_id(m.target)
+		if not unit.is_empty():unit.armor=float(unit.get("armor",sim.templates[unit.template].health.armor))-float(m.armor_added)
+	if m.has("fast_added"):
+		var unit:Dictionary=sim.unit_by_id(m.target)
+		if not unit.is_empty():unit.speed_bonus=float(unit.get("speed_bonus",0))-float(m.fast_added);unit.erase("walk_angles")
 	if m.get("rage",false):
 		var target: Dictionary = sim.unit_by_id(m.target)
 		if not target.is_empty():
@@ -55,6 +61,8 @@ func apply(sim: RefCounted, template: String, target: Dictionary, level: int, so
 	var t: Dictionary = sim.templates[template]
 	if sim.behaviors.role(template) in ["arcane_damage", "disintegrate", "teleport"]: return sim.Behaviors.Arcane.apply(sim, template, target, level, source, damage_factor)
 	var rule: Dictionary = t.modifier
+	if t.has("armor_buff") and not sim.templates[target.template].get("enemy",{}).get("can_accept_magic",true):return false
+	if sim.behaviors.role(template)=="polymorph":return sim.Behaviors.Sorcerer.polymorph(sim,target,t)
 	if t.has("hps") and target.hp==target.max_hp:return false
 	if not flags_match(sim, target, rule): return false
 	if target.template in rule.get("excluded_templates", []): return false
@@ -131,6 +139,13 @@ func apply(sim: RefCounted, template: String, target: Dictionary, level: int, so
 			target.armor=clampf(previous+float(t.extra_armor),0,0.99)
 			m.armor_added=float(target.armor)-previous
 	if t.has("hps"):m.next_heal=sim.tick+1
+	if t.has("armor_buff"):
+		var armor:float=float(target.get("armor",sim.templates[target.template].health.armor))
+		m.armor_added=armor*float(t.armor_buff.factor);target.armor=armor+float(m.armor_added)
+	if template=="mod_rocketeer_speed_buff":
+		m.fast_added=(float(sim.templates[target.template].motion.max_speed)+float(target.get("speed_bonus",0)))*(float(t.fast.factor)-1)
+		target.speed_bonus=float(target.get("speed_bonus",0))+float(m.fast_added);target.already_speed_up=true;target.walk_angles=t.walk_angles
+		sim.event.emit("sound",{"id":t.sound_events.insert})
 	active.append(m)
 	sim.event.emit("modifier_applied", {"template":template,"target":target.id,"level":level})
 	return true
@@ -168,7 +183,7 @@ func step(sim: RefCounted) -> void:
 					m.damage_ts += float(t.dps.damage_every)
 					m.next_hit = maxi(sim.tick + 1, ceili((float(m.damage_ts) + float(t.dps.damage_every)) * 30.0 - 0.0000001))
 				else: m.next_hit += sim.frames(t.dps.damage_every)
-				var amount := float(int(m.bleeding)) if m.has("bleeding") else float(t.dps.damage_min) + float(t.dps.damage_inc) * int(m.level)
+				var amount := float(int(m.bleeding)) if m.has("bleeding") else float(t.dps.damage_min) + float(t.dps.get("damage_inc",0)) * int(m.level)
 				sim.damage(target, amount * float(m.get("damage_factor",1.0)), int(t.dps.damage_type), int(m.source))
 				if t.dps.get("fx","") != "" and m.get("bleed_fx", true) and (not m.has("bleeding") or sim.tick - int(m.last_fx) >= sim.frames(t.dps.fx_every)):
 					if m.has("bleeding"): m.last_fx = sim.tick

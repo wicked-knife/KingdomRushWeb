@@ -55,7 +55,7 @@ def verify():
     assert any(sum(other['id'] == row['id'] for other in native['normal_barrack_attacks']) >= 2
                for row in native['normal_barrack_attacks'])
     assert read('reports/level08_native_1024x768.json')['layout_only']
-    assert len(combinations()) == 24
+    assert len(combinations()) == 27
     for file, expected in read('reports/level08_assets.json')['sha256'].items():
         path = f'data/level08/{file}'
         assert sha(path) == expected, (path, 'asset evidence stale')
@@ -81,7 +81,7 @@ def verify():
                  'tools/level08_reference/behavior.lua', 'tests/fixtures/level08_source.json',
                  'tests/verify_web_pack.gd'):
         hashes[path] = sha(path)
-    result = {'passed': True, 'playable_combinations': 24, 'reports': reports,
+    result = {'passed': True, 'playable_combinations': len(combinations()), 'reports': reports,
               'failure_probes': probes, 'source_hashes': hashes,
               'browser_tested': False, 'victory_replays_required': False}
     (ROOT / 'reports/level08_delivery.json').write_text(

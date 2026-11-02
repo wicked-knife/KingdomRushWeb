@@ -1,7 +1,7 @@
 {
   "package_created": true,
   "source_commit": "4072b18bf4e418eec8b813a960c83003744cb710",
-  "content_catalog_sha256": "6d6a36fb85966513abb96f56e2680ea4bc7b736c5b2611174365430024127ff4",
+  "content_catalog_sha256": "08b7508d9e751191cc145bdbd6e3ea7cd31b59cbcf49934b4e04820ca4412fd0",
   "browser_tested": false,
   "build_type": "release",
   "developer_menu": false,
@@ -14,7 +14,8 @@
     5,
     6,
     7,
-    8
+    8,
+    9
   ],
   "playable_modes": [
     1,
@@ -141,6 +142,21 @@
       "level": 8,
       "mode": 3,
       "difficulty": 2
+    },
+    {
+      "level": 9,
+      "mode": 1,
+      "difficulty": 2
+    },
+    {
+      "level": 9,
+      "mode": 2,
+      "difficulty": 2
+    },
+    {
+      "level": 9,
+      "mode": 3,
+      "difficulty": 2
     }
   ],
   "challenge_validation_passed": true,
@@ -165,7 +181,9 @@
     "7/2",
     "7/3",
     "8/2",
-    "8/3"
+    "8/3",
+    "9/2",
+    "9/3"
   ],
   "challenge_replays_verified": [],
   "pck_isolated_check": true,
@@ -196,11 +214,11 @@
   "default_technology_acceptance": {
     "logic": {
       "passed": true,
-      "checks": 389,
+      "checks": 398,
       "source_patch_scenarios": 40,
       "source_template_rows": 4280,
       "behavior_scenarios": 36,
-      "content_combinations": 24
+      "content_combinations": 27
     },
     "native_1280x720": {
       "passed": true,
@@ -265,27 +283,27 @@
       }
     },
     "historical_baseline_preserved": true,
-    "content_combinations": 24,
+    "content_combinations": 27,
     "guard_scope": "14 isolated and 14 all-guards-present passing-enemy scenes on real placements/routes; original selection/movement functions; native render queue follows each live unit exactly once and removes all dead units; static layout duplicates fixed"
   },
   "feedback_report_sha256": {
-    "reports/feedback_assets.json": "7ffeba97218768cc912a7d38951125255eafa2e052426e4a0a334d6f98b162c2",
-    "reports/feedback_combat_audit.json": "b4edf754770d24a753f344cefb0ff9a850944644feb0cfd28f97aef823b490b0",
-    "reports/feedback_delivery.json": "e85ed0eb6713685836253bab8255a8427b9f33f8a3badee0f15ad6f6b5168476",
-    "reports/feedback_logic.json": "9ecc4bddd35936e1dd1b045c58aeaee1b28b70ff9d1e720b60cebd5e38826471",
-    "reports/feedback_native_1024x768.json": "90cb56ed5c89ca250f1c8a2b828ac04520c62bf38ddfaddb95c12fdbfe867755",
-    "reports/feedback_native_1280x720.json": "b321dae0bf81652f611272cc320a4d35e213e6f97c7d58b6d50611cac000d2da",
-    "reports/followup_logic.json": "84127c702d6d174486ad1d483afe50a722d517eba4062888cd19eedb4086d192",
-    "reports/followup_native_1024x768.json": "1fc8b97e969ff78dbe770e8166d5b3797a1aeccb19b1ecf4c920ad208c3302c2",
-    "reports/followup_native_1280x720.json": "ca2eaa0264a4c44ba0704ed0f6969476b834b0ede45899e6b5b652f5e6b637f6"
+    "reports/feedback_assets.json": "8fdbb3395fbae1b8d43e4a0d7e3cf48ddf20ee5a6f9dbb7e2de137b7a82f77e0",
+    "reports/feedback_combat_audit.json": "e57f516424f5bc4ee6b1a115010147de4067177b9204f407a465ca5e6181c23e",
+    "reports/feedback_delivery.json": "7a9c65be3ea624e890c4581cee703ac0de27700c673fa12dc2395c5e0f0773f1",
+    "reports/feedback_logic.json": "dd4bda3d8be1eba9acc51332ddee32b7916e44d531d2a9aaf3722e36a301dddf",
+    "reports/feedback_native_1024x768.json": "c4719266069f93d827c31511e0fc5a2657470c4600d0e93217bfff0695074c17",
+    "reports/feedback_native_1280x720.json": "724a8c41cb03b8429ae3f9f1dc8836e731ed7f5a752ed1d6e6c19a384704f705",
+    "reports/followup_logic.json": "a31ba291572cc0807f27f136eec9f784f4d5830769bc3bff0421360e18633fb9",
+    "reports/followup_native_1024x768.json": "c15b07ddc09756215009ef139b1669ea3c307f7cfd781f93feffb969727568c0",
+    "reports/followup_native_1280x720.json": "6ba9c093d5e5bf8f2830cd9abb2b94410a80bdfb70736d97bf3dea4c67f8d10c"
   },
   "seventh_acceptance": {
     "passed": true,
-    "playable_combinations": 24,
+    "playable_combinations": 27,
     "reports": {
       "level07_logic": {
         "passed": true,
-        "checks": 230,
+        "checks": 233,
         "independent_modes": 3,
         "timeline_waves": 23,
         "births": 708,
@@ -312,12 +330,12 @@
       },
       "level07_assets": {
         "passed": true,
-        "frames": 4555,
-        "animations": 361
+        "frames": 5309,
+        "animations": 424
       },
       "content_catalog": {
         "passed": true,
-        "content_combinations": 24
+        "content_combinations": 27
       },
       "content_unification": {
         "passed": true,
@@ -356,7 +374,7 @@
   },
   "eighth_acceptance": {
     "passed": true,
-    "playable_combinations": 24,
+    "playable_combinations": 27,
     "reports": {
       "level08_logic": {
         "passed": true,
@@ -384,7 +402,7 @@
       },
       "level07_logic": {
         "passed": true,
-        "checks": 230,
+        "checks": 233,
         "independent_modes": 3,
         "births": 708,
         "timeline_waves": 23,
@@ -393,7 +411,7 @@
       },
       "content_catalog": {
         "passed": true,
-        "content_combinations": 24
+        "content_combinations": 27
       },
       "content_unification": {
         "passed": true,
@@ -402,10 +420,10 @@
       },
       "upgrades_logic": {
         "passed": true,
-        "checks": 389,
+        "checks": 398,
         "source_patch_scenarios": 40,
         "source_template_rows": 4280,
-        "content_combinations": 24
+        "content_combinations": 27
       },
       "advanced_barrack_cooldown": {
         "passed": true,
@@ -457,25 +475,104 @@
       }
     ]
   },
+  "ninth_acceptance": {
+    "passed": true,
+    "playable_combinations": 27,
+    "reports": {
+      "level09_logic": {
+        "passed": true,
+        "checks": 246,
+        "independent_modes": 3,
+        "births": 995,
+        "timeline_waves": 26,
+        "source_tower_scenarios": 9
+      },
+      "level09_native_1280x720": {
+        "passed": true,
+        "checks": 161,
+        "layout_only": false
+      },
+      "level09_native_1024x768": {
+        "passed": true,
+        "checks": 116,
+        "layout_only": true
+      },
+      "level09_assets": {
+        "passed": true
+      },
+      "level09_compatibility": {
+        "passed": true
+      },
+      "level09_upgrades": {
+        "passed": true,
+        "checks": 97,
+        "source_patch_scenarios": 16
+      }
+    },
+    "failure_probes": [
+      {
+        "missing": "mod_jt_tower",
+        "rejected": true,
+        "reason": "level09: eb_jt -> missing runtime dependency mod_jt_tower"
+      },
+      {
+        "missing": "jt_spawner_aura",
+        "rejected": true,
+        "reason": "level09: missing template dependency: eb_jt -> jt_spawner_aura"
+      },
+      {
+        "missing": "enemy_sheep_fly",
+        "rejected": true,
+        "reason": "level09: tower_sorcerer -> missing runtime dependency enemy_sheep_fly"
+      },
+      {
+        "missing": "soldier_elemental",
+        "rejected": true,
+        "reason": "Invalid power preview dependency: elemental/1: 'soldier_elemental'"
+      },
+      {
+        "missing": "fx_mod_polymorph_sorcerer_big",
+        "rejected": true,
+        "reason": "level09: mod_polymorph_sorcerer -> missing runtime dependency fx_mod_polymorph_sorcerer_big"
+      },
+      {
+        "missing": "jt_damage_callback",
+        "rejected": true,
+        "reason": "level09: eb_jt -> missing required runtime field ['health', 'on_damage']"
+      },
+      {
+        "missing": "slayer_callback",
+        "rejected": true,
+        "reason": "level09: enemy_slayer -> missing required runtime field ['melee', 'attacks', 0, 'side_effect']"
+      }
+    ]
+  },
   "validation_report_sha256": {
-    "reports/level07_assets.json": "26aed3326c0c22a57b6e981f08ef351d08ebe85d792ccaa18255cf1ce3e03d44",
-    "reports/level07_delivery.json": "402ec0a6780160fe5d2431f8894d9d01a37974bceb1816303aca86f0fad33b49",
-    "reports/level07_logic.json": "6dd376ab03b1a31be4623e7a385587ba2289bd3d59e648a81646ed221b42f768",
-    "reports/level07_native_1024x768.json": "4922d3b3a0f3d2145738933fbc55382456e94058c3adbaeae711bd05e35d0329",
-    "reports/level07_native_1280x720.json": "df511c15e657eb6f0281958ea50523742d190ac46560a3f82e647135b6dd69c3",
-    "reports/level08_assets.json": "290b7384f985e0d57a9b6c203047e4747e82cb51b72926699b3709091dabbfcf",
-    "reports/level08_compatibility.json": "80f7f96709f9a9b2b0a6d84f3a34d0e545616eb137fe760a44d45f0564e306d4",
-    "reports/level08_delivery.json": "cd351d09cd702f1b6754f366f7819feab49182672b1af4d51d3dac3f7c103617",
-    "reports/level08_logic.json": "c3fa0426cbcaf2460885695cd0f3ebba8bf78c67e0a77251a27e1ebd9d5fd834",
-    "reports/level08_native_1024x768.json": "943faa8152d5cc4dff69a1878e2159b46a88894e07c469feeb1d636f81d65853",
-    "reports/level08_native_1280x720.json": "8836eba7355b3064216fa6484cccb6d68231b31f62410fc1f5755fe823e0a052",
-    "reports/level08_upgrades.json": "56e66a87585dcb8e62e703dfc1f6255ed47ade89ffcb4486ffca0420d2dda3c1"
+    "reports/level07_assets.json": "bb2233a20dd94288f8abfdb03c99ce4cb3015acb77e85554bc40955400666146",
+    "reports/level07_delivery.json": "1ef17fecba87c86730519f753269be5d2cc13cd464c4e03efe7672f6635edd10",
+    "reports/level07_logic.json": "643d374b03872557db0c2c05cf759f6d53d1f5afb517c7bbc480e7f03822a55b",
+    "reports/level07_native_1024x768.json": "85582d149879114e36e54f180f705f98ca1dc038cd42973f0f0b81ac4ba3b95d",
+    "reports/level07_native_1280x720.json": "06ad9e2731d79b98e09c859d41687f8445c66bb520106ea0d4316291855dd3d1",
+    "reports/level08_assets.json": "1bd8484f4e21bced41b9065f810a25b51ac47859e0a7ee9cf6aaba382be0b3e3",
+    "reports/level08_compatibility.json": "0b3ef39b62f276e95dcaf6397ea99a3745c2801180cd528f6976a0ba2fb4ce03",
+    "reports/level08_delivery.json": "15470c6b1b0e28ba9fa321d4f70f38779d6c466b0b3ed927f1a7e54996ff72b0",
+    "reports/level08_logic.json": "5c843aeb500bfee9894ba6fdc5b11ecfe9152014ef52d8a04ad4b2f8d662aa4f",
+    "reports/level08_native_1024x768.json": "2ccfa4d73d2fbe80c5b2a9a12074dec461df055a3e4c6b89763bb29bdc35e481",
+    "reports/level08_native_1280x720.json": "d1d8fd1ae02085b85cc9734aa72afd4166018511e8cfc38c96ccd32bd8d0cbea",
+    "reports/level08_upgrades.json": "07a8ae27da5de1d151f0b237a97566a8d4000e3b2d32a91a48fb6a70b619fabb",
+    "reports/level09_assets.json": "e704606d3e3690d7216f6e84eb298b79efcc3bd90858517259bbc0ece56708fc",
+    "reports/level09_compatibility.json": "733c4a2d36a0159c63b7d3d4af2acb37d965594526c53ed30d367f6f23097bec",
+    "reports/level09_delivery.json": "00854e68f04495e15ac500d2c081a973b4337ff555a6ba113c585dd8a27d5c7c",
+    "reports/level09_logic.json": "970f41e4e0a3ba9edb6b1fa37ab398b99fb6c77739ff3486982c3c340e54c2e3",
+    "reports/level09_native_1024x768.json": "f8f77b57f9fbbd7240d5895501601daeb6cb0bd8f644a06ee5e9a755ef8faf0f",
+    "reports/level09_native_1280x720.json": "1fd85ba95a832812759afc608665afd7b052951e06c58463a78767215a402855",
+    "reports/level09_upgrades.json": "c231b995a1ffc712485b71172b016f18091ee5def94684b66d98e7357d475977"
   },
   "technology_scheme": "1",
-  "pck_files": 860,
-  "bundle": "build\\KingdomRush-KR1-Levels01-08-Web.zip",
-  "bytes": 259545938,
-  "sha256": "da63a0988914d240d4129b196ca02105ed25216348ba975bf71d096b2eca2f0c",
+  "pck_files": 980,
+  "bundle": "build\\KingdomRush-KR1-Levels01-09-Web.zip",
+  "bytes": 344377749,
+  "sha256": "31e3cced6b3a2d8d8fd7cdcbf1a508a604333d65448b27156d7fcf27ca52c234",
   "web_files": {
     "index.apple-touch-icon.png": {
       "bytes": 11939,
@@ -491,7 +588,7 @@
     },
     "index.html": {
       "bytes": 3146,
-      "sha256": "99cfdc71a34c01abaa153bc595a469832fc77bec4d7ac3847cfb3d6058e4d924"
+      "sha256": "39e1a06378f697f39bd317c85457368552ab43a3052d1107afbc63814f507420"
     },
     "index.icon.png": {
       "bytes": 5765,
@@ -502,8 +599,8 @@
       "sha256": "33c94cb3175f3333b82e2a3be5e8e86f77986f0aa2042b1631f6367a4e5bb6ba"
     },
     "index.pck": {
-      "bytes": 264780884,
-      "sha256": "626c682474c1dac389c901012b1f4239a33736806bf0fac1c35daf72536a9454"
+      "bytes": 353737768,
+      "sha256": "3dd743ae58770fbb4634d304e928f2d3dc555a88f28f44258b348624465c874d"
     },
     "index.png": {
       "bytes": 21443,
@@ -514,20 +611,20 @@
       "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
     },
     "export_receipt.json": {
-      "bytes": 14297,
-      "sha256": "57bec79947dc96ee7a41083d77869442d7a56b306df9c037fa13835e927e5506"
+      "bytes": 17435,
+      "sha256": "0d2314d5f572cf36a55292722d7fdab2723a6c9132e5268c4c9418a1e0b8412d"
     },
     "README.txt": {
-      "bytes": 6680,
-      "sha256": "4d658d41c5b39721dbda2ca9b64cff0b45fc4299d2be8ead24b0e6e8acf59662"
+      "bytes": 7221,
+      "sha256": "f6bb5c6453181c0c442fb485f6de8e1075cd0933129c18bd59ffcc658026a77f"
     },
     "start_server.cmd": {
       "bytes": 180,
       "sha256": "8f021ad5511504a288354fec02c4bf8514f054a2457cc229710e1d6069558b32"
     },
     "pack_files.json": {
-      "bytes": 61913,
-      "sha256": "4a53aaf8426fbae1d960144d63e4015b044b88c3c685f1ab4944d6e0e79e0fe4"
+      "bytes": 69869,
+      "sha256": "1485d344188630ad75fcff9bed5908a564338c821d887282b603f438ca65ba15"
     }
   }
 }

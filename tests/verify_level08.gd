@@ -23,7 +23,7 @@ func run() -> void:
 	check(Sim.Behaviors.validate(missing,Levels.catalog()).contains("required runtime callback"),"runtime rejects missing source missile removal callback")
 	missing=Levels.load_definition(8);missing.templates.erase("axe_barbarian_rude")
 	check(Sim.Behaviors.validate(missing,Levels.catalog()).contains("axe_barbarian_rude"),"runtime rejects missing dual-axe projectile")
-	check(Levels.supports(8,3) and not Levels.supports(9) and not Levels.supports(8,1,3),"eight levels, three modes, normal difficulty")
+	check(Levels.supports(8,3) and not Levels.supports(10) and not Levels.supports(8,1,3),"eight levels, three modes, normal difficulty")
 	for mode in [1,2,3]:
 		var sim=fresh(mode)
 		if sim==null:quit(1);return

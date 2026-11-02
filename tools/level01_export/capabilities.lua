@@ -1,5 +1,26 @@
 -- Feature adapters evaluate frozen source templates without running gameplay.
 local adapters = {}
+  adapters.sorcerer = function(ctx)
+    local text=ctx.read("kr1/mage_towers.lua")
+    local header=text:sub(1,assert(text:find('tt = RT(',1,true))-1)
+    local a=assert(text:find('tt = RT("tower_sorcerer"',1,true))
+    local b=assert(text:find('local tower_archmage = RT(',a,true))
+    ctx.chunk("kr1/mage_towers.lua",header..text:sub(a,b-1))
+  end
+  adapters.sunray = function(ctx)
+    local text=ctx.read("kr1/mage_towers.lua")
+    local header=text:sub(1,assert(text:find('tt = RT(',1,true))-1)
+    local a=assert(text:find('tt = RT("tower_sunray"',1,true))
+    local b=assert(text:find('tt = RT("bolt_elves"',a,true))
+    ctx.chunk("kr1/mage_towers.lua",header..text:sub(a,b-1))
+  end
+  adapters.jt = function(ctx)
+    local text=ctx.read("kr1/boss.lua")
+    local header=text:sub(1,assert(text:find('tt = RT(',1,true))-1)
+    local a=assert(text:find('tt = RT("eb_jt"',1,true))
+    local b=assert(text:find('tt = RT("eb_veznan"',a,true))
+    ctx.chunk("kr1/boss.lua",header..text:sub(a,b-1))
+  end
   adapters.barbarian = function(ctx)
     local text=ctx.read("kr1/barrack_towers.lua")
     local header=text:sub(1,assert(text:find('tt = RT(',1,true))-1)

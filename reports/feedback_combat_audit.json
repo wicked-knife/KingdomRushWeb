@@ -171,13 +171,13 @@
     }
   ],
   "source_hashes": {
-    "reports/content_unification.json": "ba60765a6fc8f6cfc6eb4fe24adf40f4ab2bc6982158da37bc0b0a5ff4291013",
+    "reports/content_unification.json": "4462cca3e034e3b6fdf905c681c872f93648619e9025cc34515a54b03e23e496",
     "tests/fixtures/content_combat_baseline.json": "ccc12400ba08d7a3cbeba91bac30347d7d1ddd7c33efb5faf891d8552022efbe",
     "tests/fixtures/feedback_combat_adjustments.json": "f0038887ec479bbcab61e8b1164dbe6fb098566fba38cb3f36a9f6972b290f41",
     "tests/fixtures/feedback_source.json": "c25f17f1b0e423a39838469c82bb41dc94aeea4a053d1892ccadc9d59b466f34",
     "tests/fixtures/followup_source.json": "59bcb259d6065071bdd445657aa946d3431b0f11486caea1195dd38e4f5e3f35",
     "tools/verify_feedback_combat.py": "c22641ed5f2be4c59ee90520253e8fff07af3d838350dc3eb9db8952f88d2e6b",
-    "scripts/battle/level01_sim.gd": "1f509b601c944c8db9916627ac124a1322b3f74192533ea2c3108bb714fd3069",
+    "scripts/battle/level01_sim.gd": "783347d15b0b9afdbba0dd9f3598a33116bf360c27fe9405f46840de3f4cfe69",
     "scripts/battle/dove_projectile.gd": "6dc4815a1561da7fd89fc732ec2115738883d09a9a1ea8505d234af256231c0c"
   }
 }

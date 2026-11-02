@@ -73,6 +73,7 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
     for entity in data["layout"]["entities_list"]:
         original=entity["template"]
         if original not in data["templates"]: continue
+        if original == "decal_background" and entity.get("render.sprites[1].name") == data["level"]["background"]: continue
         overrides={k:v for k,v in entity.items() if "." in k and not k.startswith(("editor.","tower.","ui."))}
         if overrides:
             instance=copy.deepcopy(data["templates"][original])
@@ -86,6 +87,10 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
             data["templates"][name]=instance;entity["template"]=name
             if original in data["behaviors"]: data["behaviors"][name]=data["behaviors"][original]
             data["dependencies"][name]=copy.deepcopy(data["dependencies"].get(original, []))
+    # Only the placed foreground instances are runtime roots. The generic source
+    # background has no image name; the main stage is drawn by the view itself.
+    data["templates"].pop("decal_background", None)
+    data["dependencies"].pop("decal_background", None)
     for name in spec.get("exclude_templates", []):
         data["templates"].pop(name, None)
         data["behaviors"].pop(name, None)

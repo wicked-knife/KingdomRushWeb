@@ -31,6 +31,7 @@ static func step(sim, tower: Dictionary) -> void:
 			_fire(sim,tower,r.job)
 		if sim.tick < r.job.end_at: return
 		r.job = {}
+	if tower.get("blocked",false):return
 	for guard in 4:
 		if int(r.cursor) == 3:
 			tower.layers[2] = {"state":"idle","at":sim.tick,"loop":true}

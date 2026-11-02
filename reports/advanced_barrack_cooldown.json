@@ -167,9 +167,9 @@
 	],
 	"passed": true,
 	"source_hashes": {
-		"data/level08/definition.json": "0949ecd9c9d088af0b89ead1cdb9e1966031c5c881b808cfa2150d4534f772be",
-		"scripts/battle/dove_advanced_barrack.gd": "d5ce27a5c0629962469ccc0c3bd28d3d37e343bc5cf5b1b37949ec6e38898667",
-		"scripts/battle/level01_sim.gd": "1f509b601c944c8db9916627ac124a1322b3f74192533ea2c3108bb714fd3069",
+		"data/level08/definition.json": "40f3555cada50881c998acf875139e7e48c32f53f395119adc18a396db2e24bf",
+		"scripts/battle/dove_advanced_barrack.gd": "2363aae084523e9b94588e549f399643158d2ef2e9de9ff10c0c4f4f08cd7113",
+		"scripts/battle/level01_sim.gd": "783347d15b0b9afdbba0dd9f3598a33116bf360c27fe9405f46840de3f4cfe69",
 		"tests/verify_advanced_barrack_cooldown.gd": "c28e29c24b3500a812c5e1142cce8cc7dfba8ab380df9c4651f30dcea24ac960"
 	}
 }

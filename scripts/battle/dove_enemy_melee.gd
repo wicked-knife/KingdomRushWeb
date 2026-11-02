@@ -9,6 +9,8 @@ static func step(sim, enemy: Dictionary, template: Dictionary) -> bool:
 	if not enemy.mixed_melee_job.is_empty():
 		var job: Dictionary = enemy.mixed_melee_job
 		var attack: Dictionary = template.melee.attacks[0]
+		if job.has("sound_at") and not job.get("sound_played",false) and sim.tick>=job.sound_at:
+			job.sound_played=true;sim.event.emit("sound",{"id":attack.sound})
 		if not job.hit:
 			if sim.tick < job.hit_at and int(enemy.get("stun_count",0)) > 0 and not attack.get("ignore_stun",false):
 				enemy.mixed_melee_job = {}; return false
@@ -18,7 +20,7 @@ static func step(sim, enemy: Dictionary, template: Dictionary) -> bool:
 				if not target.is_empty(): job.dodged = sim.rng.randf() <= float(sim.templates[target.template].get("dodge",{}).get("chance",0))
 			if sim.tick >= job.hit_at:
 				job.hit = true
-				if attack.get("sound_args",{}).get("delay",0) > 0: sim.event.emit("sound",{"id":attack.sound})
+				if not job.has("sound_at") and attack.get("sound_args",{}).get("delay",0) > 0: sim.event.emit("sound",{"id":attack.sound})
 				if attack.type == "area":
 					var count := 0
 					for soldier: Dictionary in sim.soldiers:
@@ -60,8 +62,10 @@ static func melee(sim, enemy: Dictionary, target: Dictionary, template: Dictiona
 		"end_at":sim.tick+Anim.duration(sim.animations,Anim.key(template.render.sprites[0],attack.animation)),
 		"hit":false,"dodged":false,"dodge_checked":dodge.is_empty() or not attack.has("dodge_time"),"dodge_at":sim.tick+sim.source_wait_ticks(sim.tick,dodge_time)}
 	sim._state(enemy,attack.animation,true)
+	if enemy.has("jt") and float(attack.get("sound_args",{}).get("delay",0))>0:enemy.mixed_melee_job.sound_at=sim.tick+sim.source_unconditional_wait_ticks(sim.tick,float(attack.sound_args.delay))
 	if attack.has("sound") and attack.get("sound_args",{}).get("delay",0) <= 0: sim.event.emit("sound",{"id":attack.sound})
 
 static func _damage(sim, enemy: Dictionary, soldier: Dictionary, attack: Dictionary) -> void:
 	var amount: int = sim.rng.randi_range(int(attack.damage_min)+int(enemy.get("melee_damage_min_bonus",0)),int(attack.damage_max)+int(enemy.get("melee_damage_max_bonus",0)))
 	sim.damage(soldier,float(amount)*sim.attack_factor(enemy),int(attack.damage_type),enemy.id)
+	if attack.get("side_effect","")=="game_scripts.eb_jt.heal":enemy.hp=minf(enemy.max_hp,enemy.hp+100)

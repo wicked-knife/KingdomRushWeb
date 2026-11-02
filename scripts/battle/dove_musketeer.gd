@@ -112,6 +112,7 @@ static func step(sim, tower: Dictionary) -> void:
 		tower.layers[int(r.job.sid)].erase("draw_order")
 		sim.effects = sim.effects.filter(func(e): return e.get("owner","") != tower.id)
 		r.job = {}
+	if tower.get("blocked",false):return
 	while int(r.cursor) < 4:
 		var index: int = [2,1,3,0][int(r.cursor)]
 		r.cursor += 1

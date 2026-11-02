@@ -10,7 +10,7 @@ func fresh(mode: int = 1):
 func run() -> void:
 	source = Levels.read_json("res://tests/fixtures/level07_source.json")
 	check(not source.is_empty(),"actual frozen Lua samples exist")
-	check(Levels.ids().size()==8 and not Levels.supports(9) and not Levels.supports(7,1,3),"eight stages; ninth preview; normal only")
+	check(Levels.ids().size()==9 and not Levels.supports(10) and not Levels.supports(7,1,3),"eight stages; ninth preview; normal only")
 	for mode in [1,2,3]:
 		var sim = fresh(mode)
 		check(sim.data.waves==source.modes[str(mode)],"all seventh source wave fields mode %d" % mode)

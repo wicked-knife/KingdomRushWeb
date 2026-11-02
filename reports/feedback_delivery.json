@@ -45,14 +45,14 @@
     }
   },
   "source_hashes": {
-    "reports/feedback_logic.json": "9ecc4bddd35936e1dd1b045c58aeaee1b28b70ff9d1e720b60cebd5e38826471",
-    "reports/feedback_native_1280x720.json": "b321dae0bf81652f611272cc320a4d35e213e6f97c7d58b6d50611cac000d2da",
-    "reports/feedback_native_1024x768.json": "90cb56ed5c89ca250f1c8a2b828ac04520c62bf38ddfaddb95c12fdbfe867755",
-    "reports/feedback_assets.json": "7ffeba97218768cc912a7d38951125255eafa2e052426e4a0a334d6f98b162c2",
-    "reports/feedback_combat_audit.json": "b4edf754770d24a753f344cefb0ff9a850944644feb0cfd28f97aef823b490b0",
-    "reports/followup_logic.json": "84127c702d6d174486ad1d483afe50a722d517eba4062888cd19eedb4086d192",
-    "reports/followup_native_1280x720.json": "ca2eaa0264a4c44ba0704ed0f6969476b834b0ede45899e6b5b652f5e6b637f6",
-    "reports/followup_native_1024x768.json": "1fc8b97e969ff78dbe770e8166d5b3797a1aeccb19b1ecf4c920ad208c3302c2",
+    "reports/feedback_logic.json": "dd4bda3d8be1eba9acc51332ddee32b7916e44d531d2a9aaf3722e36a301dddf",
+    "reports/feedback_native_1280x720.json": "724a8c41cb03b8429ae3f9f1dc8836e731ed7f5a752ed1d6e6c19a384704f705",
+    "reports/feedback_native_1024x768.json": "c4719266069f93d827c31511e0fc5a2657470c4600d0e93217bfff0695074c17",
+    "reports/feedback_assets.json": "8fdbb3395fbae1b8d43e4a0d7e3cf48ddf20ee5a6f9dbb7e2de137b7a82f77e0",
+    "reports/feedback_combat_audit.json": "e57f516424f5bc4ee6b1a115010147de4067177b9204f407a465ca5e6181c23e",
+    "reports/followup_logic.json": "a31ba291572cc0807f27f136eec9f784f4d5830769bc3bff0421360e18633fb9",
+    "reports/followup_native_1280x720.json": "6ba9c093d5e5bf8f2830cd9abb2b94410a80bdfb70736d97bf3dea4c67f8d10c",
+    "reports/followup_native_1024x768.json": "c15b07ddc09756215009ef139b1669ea3c307f7cfd781f93feffb969727568c0",
     "tools/verify_feedback_delivery.py": "37878baabdf353d87db45902c62772f7dbed5e2aae2b884496b80ec82c2b1b7b",
     "tools/feedback_reference/main.lua": "cf1e6c053dc336ee2b0fa92b84f79d833f23dff94df87bde0ef09bda488d6993",
     "tools/feedback_reference/conf.lua": "92fe96aeda62fcde5e725dd36ffe4f819b8c738dac4c72953818f621b2087432",
@@ -66,11 +66,11 @@
     "tests/fixtures/followup_source.json": "59bcb259d6065071bdd445657aa946d3431b0f11486caea1195dd38e4f5e3f35",
     "tests/fixtures/feedback_combat_adjustments.json": "f0038887ec479bbcab61e8b1164dbe6fb098566fba38cb3f36a9f6972b290f41",
     "docs/FEEDBACK_REPAIRS.md": "d664b1e3187e86ad5ed239fe4f13d0373067eafa1a846a91edf8a67d41cd6029",
-    "tools/web_bootstrap.py": "0de618f281128f05ed0e05935b19503e899f7bc4baca62aeaee5c65e73e3e25a",
-    "tools/package_level01.py": "bded4575b8040803cb6073a40eae8e14f8b4dda759eaa9cea81fc9963491f35c"
+    "tools/web_bootstrap.py": "b7bdd326804ed62807fd0a7b2469ec04be81e850ebdfc092b4dd1a5dd8d03a2b",
+    "tools/package_level01.py": "8df2e9228f26b8f69bc7ec53c77ef23b31ed2e1bd3755297b8815b36d86da0b8"
   },
   "historical_baseline_preserved": true,
-  "content_combinations": 24,
+  "content_combinations": 27,
   "browser_tested": false,
   "guard_scope": "14 isolated and 14 all-guards-present passing-enemy scenes on real placements/routes; original selection/movement functions; native render queue follows each live unit exactly once and removes all dead units; static layout duplicates fixed"
 }

@@ -90,7 +90,9 @@
         "ranger",
         "musketeer",
         "barbarian",
-        "bfg"
+        "bfg",
+        "sorcerer",
+        "sunray"
       ],
       "notification_overrides": {
         "TOWER_LEVEL3": {
@@ -126,7 +128,9 @@
         "spider",
         "musketeer",
         "barbarian",
-        "bfg"
+        "bfg",
+        "sorcerer",
+        "sunray"
       ],
       "atlas_groups": [
         "go_stage05"
@@ -167,7 +171,9 @@
         "juggernaut",
         "musketeer",
         "barbarian",
-        "bfg"
+        "bfg",
+        "sorcerer",
+        "sunray"
       ],
       "atlas_groups": [
         "go_stage06"
@@ -204,7 +210,9 @@
         "musketeer",
         "snow",
         "barbarian",
-        "bfg"
+        "bfg",
+        "sorcerer",
+        "sunray"
       ],
       "atlas_groups": [
         "go_stage07",
@@ -247,7 +255,9 @@
         "barbarian",
         "bfg",
         "ice_enemies",
-        "sasquash"
+        "sasquash",
+        "sorcerer",
+        "sunray"
       ],
       "atlas_groups": [
         "go_stage08",
@@ -259,6 +269,52 @@
         "stage_8"
       ],
       "layout_instance_base": 120
+    },
+    "9": {
+      "id": 9,
+      "generation": 1,
+      "folder": "level09",
+      "modes": [
+        1,
+        2,
+        3
+      ],
+      "difficulties": [
+        2
+      ],
+      "controller": "level09",
+      "features": [
+        "base",
+        "wolf",
+        "healer",
+        "bandits",
+        "tier3",
+        "ranger",
+        "flying",
+        "enemy_ranged",
+        "paladin",
+        "arcane",
+        "musketeer",
+        "snow",
+        "spider",
+        "barbarian",
+        "bfg",
+        "ice_enemies",
+        "sorcerer",
+        "sunray",
+        "jt"
+      ],
+      "atlas_groups": [
+        "go_stage09",
+        "go_stage09_bg",
+        "go_stages_ice",
+        "go_enemies_ice"
+      ],
+      "frames": [
+        "stage_9",
+        "stage9_boss_corpse"
+      ],
+      "layout_instance_base": 150
     }
   },
   "arenas": {
@@ -921,12 +977,149 @@
         "holder_sasquash",
         "sasquash"
       ]
+    },
+    "sorcerer": {
+      "template_ids": [
+        "tower_sorcerer",
+        "enemy_sheep_ground",
+        "enemy_sheep_fly",
+        "fx_mod_polymorph_sorcerer_small",
+        "fx_mod_polymorph_sorcerer_big",
+        "pop_puff"
+      ],
+      "fields": [
+        "powers",
+        "armor_buff",
+        "polymorph",
+        "clicks_to_destroy"
+      ],
+      "reference_fields": [
+        "disintegrate_fx"
+      ],
+      "animation_states": [
+        "polymorph",
+        "polymorphUp",
+        "polymorphDown",
+        "raise"
+      ],
+      "tower_menus": [
+        "sorcerer"
+      ],
+      "upgrade_menus": [
+        "mage:3:2"
+      ],
+      "power_prefixes": [
+        "SORCERER"
+      ],
+      "upgrade_targets": [
+        "tower_mage_3:tower_sorcerer"
+      ],
+      "inputs": [
+        "kr1/mage_towers.lua",
+        "kr1/tower_scripts.lua",
+        "kr1/game_scripts.lua",
+        "all/scripts.lua"
+      ]
+    },
+    "sunray": {
+      "template_ids": [
+        "tower_sunray",
+        "fx_coin_jump"
+      ],
+      "fields": [
+        "powers",
+        "image_width",
+        "track_target",
+        "ray_duration",
+        "ray_y_scales"
+      ],
+      "animation_states": [
+        "charging",
+        "ready_start",
+        "ready_idle",
+        "charge"
+      ],
+      "tower_menus": [
+        "sunray"
+      ],
+      "upgrade_menus": [
+        "mage:3:3"
+      ],
+      "power_prefixes": [
+        "SUNRAY"
+      ],
+      "upgrade_targets": [
+        "tower_mage_3:tower_sunray"
+      ],
+      "inputs": [
+        "kr1/mage_towers.lua",
+        "kr1/tower_scripts.lua"
+      ],
+      "atlas_groups": [
+        "go_towers_group5"
+      ]
+    },
+    "jt": {
+      "template_ids": [
+        "eb_jt",
+        "mod_rocketeer_speed_buff",
+        "decal_jt_tap",
+        "fx_jt_tower_click"
+      ],
+      "fields": [
+        "spawn_data",
+        "tap_decal",
+        "tap_timeout",
+        "required_clicks",
+        "end_delay",
+        "speed_buff",
+        "fast",
+        "walk_angles"
+      ],
+      "reference_fields": [
+        "tap_decal",
+        "hit_decal",
+        "click_fx"
+      ],
+      "animation_states": [
+        "freeze",
+        "breath",
+        "death_end",
+        "start",
+        "end",
+        "walkingRightLeft_fast",
+        "walkingUp_fast",
+        "walkingDown_fast"
+      ],
+      "notification_ids": [
+        "TOWER_SORCERER",
+        "TOWER_SUNRAY",
+        "enemy_slayer",
+        "enemy_rocketeer"
+      ],
+      "inputs": [
+        "kr1/boss.lua",
+        "kr1/boss_scripts.lua",
+        "kr1/game_scripts.lua"
+      ],
+      "constants": [
+        "DAMAGE_EAT",
+        "DAMAGE_NO_LIFESTEAL",
+        "F_ALL",
+        "MOD_TYPE_FREEZE"
+      ],
+      "callback_templates": [
+        "eb_jt",
+        "enemy_rocketeer",
+        "enemy_slayer"
+      ]
     }
   },
   "controllers": {
     "default": "res://scripts/battle/controllers/default_level.gd",
     "level01": "res://scripts/battle/controllers/level01.gd",
-    "level06": "res://scripts/battle/controllers/level06.gd"
+    "level06": "res://scripts/battle/controllers/level06.gd",
+    "level09": "res://scripts/battle/controllers/level09.gd"
   },
   "behaviors": {
     "scripts.enemy_mixed.update": "ground",
@@ -978,7 +1171,16 @@
     "game_scripts.bomb_cluster.update": "cluster",
     "scripts.missile.update": "missile",
     "game_scripts.tower_sasquash_holder.update": "sasquash_holder",
-    "game_scripts.enemy_troll_chieftain.update": "chieftain"
+    "game_scripts.enemy_troll_chieftain.update": "chieftain",
+    "game_scripts.tower_sorcerer.update": "sorcerer",
+    "game_scripts.tower_sunray.update": "sunray",
+    "scripts.mod_armor_buff.update": "armor_buff",
+    "scripts.mod_polymorph.insert": "polymorph",
+    "game_scripts.enemy_sheep.update": "sheep",
+    "game_scripts.eb_jt.update": "jt",
+    "game_scripts.jt_spawner_aura.update": "jt_spawn",
+    "game_scripts.mod_jt_tower.update": "jt_freeze",
+    "scripts.mod_speed_buff.update": "speed_buff"
   },
   "behavior_aliases": {
     "game_scripts.tower_archer.update": "scripts.tower_archer.update",
@@ -1003,7 +1205,9 @@
     "game_scripts.mod_tower_decal.insert": "scripts.mod_tower_decal.insert",
     "game_scripts.aura_unit_regen.update": "scripts.aura_unit_regen.update",
     "game_scripts.tower_musketeer.update": "tower_scripts.tower_musketeer.update",
-    "game_scripts.missile.update": "scripts.missile.update"
+    "game_scripts.missile.update": "scripts.missile.update",
+    "game_scripts.mod_armor_buff.update": "scripts.mod_armor_buff.update",
+    "game_scripts.mod_dps.update": "scripts.mod_dps.update"
   },
   "runtime_scripts": [
     "res://scripts/services/campaign_levels.gd",
@@ -1048,7 +1252,10 @@
     "res://scripts/battle/dove_advanced_barrack.gd",
     "res://scripts/battle/dove_sasquash.gd",
     "res://scripts/battle/dove_chieftain.gd",
-    "res://scripts/battle/dove_enemy_melee.gd"
+    "res://scripts/battle/dove_enemy_melee.gd",
+    "res://scripts/battle/dove_sorcerer.gd",
+    "res://scripts/battle/dove_sunray.gd",
+    "res://scripts/battle/dove_jt.gd"
   ],
   "callbacks": [
     "game_scripts.aura_apply_mod.insert",
@@ -1150,7 +1357,26 @@
     "game_scripts.missile.insert",
     "game_scripts.missile.update",
     "game_scripts.enemy_spider_big.update",
-    "game_scripts.tower_barrack_mercenaries.update"
+    "game_scripts.tower_barrack_mercenaries.update",
+    "game_scripts.eb_jt.on_damage",
+    "game_scripts.eb_jt.heal",
+    "game_scripts.enemy_rocketeer.on_damage",
+    "kr1.enemies.enemy_slayer.side_effect",
+    "game_scripts.mod_armor_buff.insert",
+    "game_scripts.mod_armor_buff.remove",
+    "game_scripts.mod_armor_buff.update",
+    "game_scripts.mod_dps.insert",
+    "game_scripts.mod_dps.update",
+    "scripts.mod_polymorph.insert",
+    "game_scripts.mod_rocketeer_speed_buff.insert",
+    "game_scripts.mod_rocketeer_speed_buff.remove",
+    "game_scripts.eb_jt.update",
+    "game_scripts.enemy_sheep.update",
+    "game_scripts.jt_spawner_aura.update",
+    "game_scripts.mod_jt_tower.update",
+    "game_scripts.mod_track_target.insert",
+    "game_scripts.tower_sorcerer.update",
+    "game_scripts.tower_sunray.update"
   ],
   "runtime_callbacks": {
     "missile_bfg": {
@@ -1178,11 +1404,74 @@
     ],
     "enemy_troll_chieftain": [
       "aura_troll_chieftain_regen"
+    ],
+    "tower_sorcerer": [
+      "enemy_sheep_ground",
+      "enemy_sheep_fly"
+    ],
+    "eb_jt": [
+      "enemy_whitewolf",
+      "enemy_yeti",
+      "decal_jt_tap",
+      "mod_jt_tower"
+    ],
+    "tower_sunray": [
+      "fx_coin_jump"
+    ],
+    "enemy_rocketeer": [
+      "mod_rocketeer_speed_buff"
+    ],
+    "mod_polymorph_sorcerer": [
+      "enemy_sheep_ground",
+      "enemy_sheep_fly",
+      "fx_mod_polymorph_sorcerer_small",
+      "fx_mod_polymorph_sorcerer_big",
+      "pop_puff"
     ]
   },
   "combat_heroes": {
     "hero_malik": {
       "folder": "hero_malik_combat"
     }
+  },
+  "runtime_fields": {
+    "eb_jt": [
+      {
+        "path": [
+          "health",
+          "on_damage"
+        ],
+        "value": "game_scripts.eb_jt.on_damage"
+      },
+      {
+        "path": [
+          "melee",
+          "attacks",
+          0,
+          "side_effect"
+        ],
+        "value": "game_scripts.eb_jt.heal"
+      }
+    ],
+    "enemy_rocketeer": [
+      {
+        "path": [
+          "health",
+          "on_damage"
+        ],
+        "value": "game_scripts.enemy_rocketeer.on_damage"
+      }
+    ],
+    "enemy_slayer": [
+      {
+        "path": [
+          "melee",
+          "attacks",
+          0,
+          "side_effect"
+        ],
+        "value": "kr1.enemies.enemy_slayer.side_effect"
+      }
+    ]
   }
 }
