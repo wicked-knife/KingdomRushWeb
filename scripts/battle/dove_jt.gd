@@ -65,7 +65,7 @@ func queue(view) -> void:
 		var tower:Dictionary=sim.tower_by_id(f.tower)
 		if tower.is_empty():continue
 		var alpha:float=clampf(1-float(sim.tick-int(f.get("fade_at",sim.tick)))/30,0,1) if f.phase=="fade" else 1.0
-		view._queue_template("mod_jt_tower",tower.pos,f.state,f.at,false,false,1,false,"",{"alpha":alpha,"playback_loop":false,"layers":{2:{"visible":f.phase=="wait"}}})
+		view._queue_template("mod_jt_tower",tower.pos,f.state,f.at,false,false,1,false,"",{"alpha":alpha,"playback_loop":false,"layers":{2:{"visible":f.phase=="wait", "state":"", "at":f.at, "loop":true}}})
 	for e:Dictionary in sim.enemies:
 		if e.has("jt") and e.jt.phase=="tap":view._queue_template(sim.templates[e.template].tap_decal,e.pos)
 

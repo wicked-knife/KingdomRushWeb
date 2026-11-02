@@ -57,3 +57,18 @@ python tools/verify_level09_delivery.py
 弹丸另行直接核对 Dove 的 `kr1/mage_towers.lua`、`all/scripts.lua`、`kr1/data/game_animations.bin` 和冻结源 DDS：`bolt_sorcerer_flying` 确实使用金色 `sorcererbolt_star` 1–8 帧，命中使用 `sorcererbolt` 9–16 帧，像素与映射均一致。普通弹丸目前缺少源 `ps_bolt_sorcerer` 拖尾消费者，不能将主贴图一致描述为完整视觉一致；此次仅修复洞口与冰封叠层，没有修改弹丸效果。
 
 本次使用 Godot 原生窗口完成专项验证，未重新导出 Web；现有 Web ZIP 仍为修复前版本。
+
+
+## 科技与战斗杂项修复（2026-11-02）
+
+按用户顺序处理六项：科技分类标题使用按钮字体并调整与首排图标的间距；升级价格牌放大 12%，用直立数字替代位图中的斜体数字；科技余额和地图科技按钮的星星数字使用 `numbers_bold`。战斗 HUD 的生命、金币和波次按可见字形居中，避免字体行高造成视觉偏移。
+
+Dove `all/gui_utils.lua:141` 的 `armor_value_desc_detailed` 返回护甲系数乘 100 后的整数，不附百分号；零值返回 None，指定伤害组免疫返回 Immune。复刻信息栏对应显示整数、“无”和“免疫”，不改变战斗数值。
+
+Dove `all/scripts.lua` 的 `mod_dps.update` 将单位 `mod_offset` 写入精灵 offset，特效实体仍位于目标脚底。此前复刻将 offset 加到实体坐标，使诅咒圆环的 sort_y 一起偏移。现在将绘制位置与排序位置分开，保留源 `sort_y_offset=-3`；专项原生场景检查圆环的实际绘制顺序与位置。
+
+Dove `kr1/game_templates.lua:968` 的冰壳精灵不循环，第二层 `decal_jt_tap` 循环播放七帧。现在第二层独立采样自己的状态、时间与 loop，不再被冰壳的全局非循环设置覆盖；仍需三次点击破冰，开始、解冻、隐藏和清理时机保持原有源生命周期。
+
+Dove `all-desktop/game_gui.lua` 的 game-victory 处理在普通玩法中等待两秒后调用 victory，期间模拟继续。复刻在最终清场后继续模拟 60 tick，再启动结算；同时记录已击杀敌人的死亡动画结束 tick，动画较长时等待其完成。重开清除等待状态，后续敌人重新出现时重新计时，不等待整段尸体残留时间。
+
+专项逻辑 `tests/verify_misc_presentation.gd` 覆盖护甲格式、普通及长死亡动画、结算延时和重开清理。原生 `tests/level09_visual.gd` 增加 HUD、诅咒深度、破冰手势连续帧、最后敌人死亡帧与结算先后检查。此次未重新导出 Web。

@@ -85,6 +85,11 @@ func lifecycles9() -> void:
 	sim.jt.freeze(sim,sunray,jt.id);sim.tick=sim.jt.freezes[1].end_at;sim.jt.step_freezes(sim)
 	await capture("ninth_frozen_tower")
 	frozen_order9(sorcerer);frozen_order9(sunray)
+	var tap_before: Array = battle.draw_list.filter(func(d):return d.frame.begins_with("boss_JT_tap_notxt_" )).map(func(d):return d.frame)
+	sim.tick += 3
+	await capture("ninth_frozen_tap_motion")
+	var tap_after: Array = battle.draw_list.filter(func(d):return d.frame.begins_with("boss_JT_tap_notxt_" )).map(func(d):return d.frame)
+	check(tap_before.size()==2 and tap_after.size()==2 and tap_before!=tap_after,"native frozen hand changes source frame independently of ice")
 	for i in 3:
 		await click(battle.world(sorcerer.pos+Vector2(0,30)));sim.jt.step_freezes(sim);sim.tick+=1
 	sim.jt.step_freezes(sim)
@@ -112,9 +117,11 @@ func _run() -> void:
 	await enter(9,1);await capture("ninth_opening")
 	check(battle.sim.gold==800 and battle.sim.towers.size()==15,"native ninth source opening")
 	await cave9()
+	await status_presentation9()
 	await build9("1","tower_sorcerer");await build9("2","tower_sunray")
 	if not layout_only:await lifecycles9()
 	await restart();check(battle.sim.gold==800 and battle.sim.wave==0,"native ninth restart")
+	await final_death9()
 	battle.sim._finish("victory");battle.set_process(true);await create_timer(4.2).timeout;battle.set_process(false);await capture("ninth_victory");await action("map");await app.map_ready
 	check("tower_sorcerer" not in app.campaign.data.locked_towers and "tower_sunray" not in app.campaign.data.locked_towers and not app.campaign.is_playable(10),"native map commits new towers and tenth preview")
 	for mode in [2,3]:
@@ -128,3 +135,40 @@ func _run() -> void:
 	preload("res://tests/report_writer.gd").json_file("res://reports/level09_native_%s.json"%suffix,{"passed":failures.is_empty(),"checks":checks,"failures":failures,"captures":captures,"layout_only":layout_only,"source_hashes":hashes,"scope":"Godot native mouse, source frames and constructed settlement; no victory replay"})
 	print("LEVEL09_NATIVE: ","PASS" if failures.is_empty() else JSON.stringify(failures)," checks=",checks)
 	app.queue_free();await process_frame;quit(0 if failures.is_empty() else 1)
+
+func status_presentation9() -> void:
+	var sim = battle.sim
+	var enemy: Dictionary = sim._spawn_enemy("enemy_marauder", 0)
+	enemy.pos = Vector2(500, 360)
+	sim.gold = 5201; sim.lives = 120; sim.wave = 2
+	battle.selected_unit = enemy.id
+	check(sim.modifiers.apply(sim,"mod_sorcerer_curse_dps",enemy,1,"1"),"source curse applied for native depth check")
+	await capture("ninth_curse_depth_hud")
+	var actor := -1
+	var curse := -1
+	for i in battle.draw_list.size():
+		var row: Dictionary = battle.draw_list[i]
+		if row.frame.begins_with("curse_"):
+			curse = i
+			check(row.sort_y == enemy.pos.y - 3,"curse depth uses feet and source minus three")
+		if row.pos == enemy.pos and row.z == 3000: actor = i
+	check(actor >= 0 and curse > actor,"native curse ring renders over ground below body")
+	for row: Dictionary in battle.interface.paint.audit:
+		if str(row.id).begins_with("hud:"):check(row.fits,"HUD visible glyphs fit "+row.id)
+	sim.enemies.erase(enemy); sim.modifiers.clear(sim)
+	battle.selected_unit = 0
+	sim.gold = 800; sim.lives = 20; sim.wave = 0
+
+func final_death9() -> void:
+	var sim = battle.sim
+	sim.notices.clear(); sim.spawn_queue.clear(); sim.pending_entities.clear(); sim.spawners.clear()
+	sim.enemies.clear(); sim.wave = sim.data.waves.groups.size()
+	var enemy: Dictionary = sim._spawn_enemy("enemy_marauder",0)
+	enemy.pos = Vector2(500,360)
+	sim.damage(enemy,enemy.hp,1)
+	for i in 10:sim.step()
+	await frame9(enemy,"death","last_enemy_death_before_victory")
+	check(sim.result=="" and battle.victory_elapsed<0,"native last death plays before settlement starts")
+	for i in 51:sim.step()
+	await capture("ninth_last_enemy_death_complete")
+	check(sim.result=="victory" and sim.tick-enemy.dead_at>=Anim.duration(battle.animations,Anim.key(sim.templates[enemy.template].render.sprites[0],"death")),"native victory starts after final source death and delay")

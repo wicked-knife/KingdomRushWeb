@@ -304,9 +304,9 @@ func hud() -> void:
 	var sim: RefCounted = view.sim
 	paint.push(Vector2(0, -22), 0.9)
 	paint.image("top_left")
-	paint.label(str(sim.lives), Rect2(78, 33, 31, 35), 18, Color.WHITE, "center", "middle", 1, 1, "hud:lives", "numbers_bold")
-	paint.label(str(sim.gold), Rect2(135, 33, 58, 35), 18, Color.WHITE, "center", "middle", 1, 1, "hud:gold", "numbers_bold")
-	paint.label("专项测试" if sim.data.get("arena",false) else "%d/%d 波" % [sim.wave, sim.data.waves.groups.size()], Rect2(234, 31, 82, 35), 16, Color.WHITE, "center", "middle", 1, 1, "hud:wave", "numbers_bold")
+	paint.display_label(str(sim.lives), Rect2(78, 33, 31, 35), 18, Color.WHITE, "numbers_bold", "hud:lives", 1)
+	paint.display_label(str(sim.gold), Rect2(135, 33, 58, 35), 18, Color.WHITE, "numbers_bold", "hud:gold", 1)
+	paint.display_label("专项测试" if sim.data.get("arena",false) else "%d/%d 波" % [sim.wave, sim.data.waves.groups.size()], Rect2(234, 31, 82, 35), 16, Color.WHITE, "numbers_bold", "hud:wave", 1)
 	paint.pop()
 	paint.push(Vector2(view.view_width - 37, -21), 0.9)
 	var base := _size("pause_base")
@@ -407,8 +407,8 @@ func _unit_info() -> void:
 	paint.label("%d / %d" % [int(info.hp), int(info.hp_max)], Rect2(0, 0, health_size.x, 17), 11, Color.WHITE, "center", "middle", 1, 1, "unit:hp", "infobar_stats")
 	var columns := [
 		["base_info_icons_sword", "%d–%d / %s秒" % [int(info.damage_min), int(info.damage_max), _number(info.cooldown)], 112.0],
-		["base_info_icons_armor", "%d%%" % roundi(info.armor * 100), 60.0],
-		["base_info_icons_magic_armor", "%d%%" % roundi(info.magic_armor * 100), 60.0],
+		["base_info_icons_armor", view.UnitInfo.armor_text(info.armor, info.immune == 131546), 60.0],
+		["base_info_icons_magic_armor", view.UnitInfo.armor_text(info.magic_armor, info.immune == 262180), 60.0],
 		["base_info_icons_cost" if info.enemy else "base_info_icons_lifetime", str(info.lives) if info.enemy else "%s秒" % _number(info.respawn), 60.0]]
 	var x := 145.0
 	for column: Array in columns:

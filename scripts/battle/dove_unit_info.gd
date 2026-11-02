@@ -19,5 +19,10 @@ static func snapshot(unit: Dictionary, templates: Dictionary, strings: Dictionar
 	return {"id": unit.id, "name": unit.get("display_name", strings.get(name_key, name_key)), "portrait": unit.get("portrait", info.get("portrait", "")),
 		"hp": unit.hp, "hp_max": unit.max_hp, "damage_min": float(attack.get("damage_min", 0))+float(unit.get("melee_damage_min_bonus",0)), "damage_max": float(attack.get("damage_max", 0))+float(unit.get("melee_damage_max_bonus",0)),
 		"cooldown": attack.get("cooldown", 0), "armor": unit.get("armor", t.health.armor), "magic_armor": unit.get("magic_armor", t.health.magic_armor),
-		"enemy": t.has("enemy"), "lives": t.get("enemy", {}).get("lives_cost", 0),
+		"immune": int(t.health.get("immune_to", 0)), "enemy": t.has("enemy"), "lives": t.get("enemy", {}).get("lives_cost", 0),
 		"respawn": t.health.dead_lifetime, "speed": float(t.motion.max_speed)+float(unit.get("speed_bonus",0))}
+
+static func armor_text(value: float, immune: bool = false) -> String:
+	if immune: return "免疫"
+	if value <= 0: return "无"
+	return str(int(value * 100))

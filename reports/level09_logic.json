@@ -12,11 +12,11 @@
 		"scripts/battle/dove_advanced_barrack.gd": "2363aae084523e9b94588e549f399643158d2ef2e9de9ff10c0c4f4f08cd7113",
 		"scripts/battle/dove_behaviors.gd": "839d6b9d39e4f9b4955d8281e034515e3470457d679e265ab1d8382c626ca9cc",
 		"scripts/battle/dove_enemy_melee.gd": "dbd761b72b9d54871ae097b32d78a92783e018f162a216ca4bef4a1cdb23ad8f",
-		"scripts/battle/dove_jt.gd": "1466e7babad5b5a9ea18ae29430a383de161a2f69f0fd7df673276936f04d91e",
+		"scripts/battle/dove_jt.gd": "52d06669df870a14cfe82089d12388a87dde05006d7437f72663802f2d5def51",
 		"scripts/battle/dove_modifiers.gd": "f647015a95dca900f651aaa854a51ae3b547e9aa2cc3efa67e0a4356e7632d24",
 		"scripts/battle/dove_sorcerer.gd": "d10210953a621e13d05af31f67d6b183d3735fcaf0a459262b8adf891d802038",
 		"scripts/battle/dove_sunray.gd": "f3e00f93575bb2bbda6ae7ea36e9206c0e527d947e147190d803c1207d3efb8d",
-		"scripts/battle/level01_sim.gd": "783347d15b0b9afdbba0dd9f3598a33116bf360c27fe9405f46840de3f4cfe69",
+		"scripts/battle/level01_sim.gd": "1fe9c0622e5d87608a83d55aa5d6132bccb4ca53eafc38cdd280bdb8a922a784",
 		"tests/fixtures/level09_source.json": "dc441b9214fdd2f9f18bedaa3add201189db84e2876ed6525763d4183830f4ff",
 		"tests/verify_level09.gd": "e3a35c32f575e13640460ceae27bc3881bbb7b0d043f02fe4c19d9ba005b7e97"
 	},

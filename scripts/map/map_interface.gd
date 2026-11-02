@@ -30,7 +30,7 @@ func draw() -> void:
 				var star_size: Vector2 = paint.image_size("mapUpgradePointsAvailable")
 				paint.push(at+Vector2(133,42)-star_size*0.85/2,0.85)
 				paint.image("mapUpgradePointsAvailable")
-				paint.display_label(str(points),Rect2(0,19,star_size.x,24),22,Color("4e2b07"),"numbers","upgrade_points")
+				paint.display_label(str(points),Rect2(0,19,star_size.x,24),22,Color("4e2b07"),"numbers_bold","upgrade_points")
 				paint.pop()
 		paint.label(item[2], Rect2(at + Vector2(50, 121), Vector2(126, 30)), 18, Color("e4bc72"), "center", "middle", 1, 1, "", "h_map")
 		if not available: paint.label("暂未开放", Rect2(at + Vector2(50, 151), Vector2(126, 24)), 15, Color("ccb58b"), "center", "middle", 1, 1)

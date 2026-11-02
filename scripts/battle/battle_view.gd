@@ -268,7 +268,7 @@ func _draw() -> void:
 		if target.is_empty() or target.hp <= 0 or target.get("hidden", false): continue
 		# The original lifecycle hides older duplicate poison sprites.
 		if not modifier.get("visible",true) or not sim.templates[modifier.template].has("render"): continue
-		_queue_template(modifier.template, target.pos + (Vector2.ZERO if modifier.template == "mod_thorn" or not sim.templates[modifier.template].modifier.get("use_mod_offset",true) else Simulation.vec(sim.templates[target.template].unit.mod_offset)), modifier.state, modifier.at, target.flip, false, 1, false, "", {"prefix":modifier.prefix,"sprite_scale":modifier.scale,"playback_loop":modifier.phase == "loop" and sim.templates[modifier.template].render.sprites[0].get("loop",true)})
+		_queue_template(modifier.template, target.pos, modifier.state, modifier.at, target.flip, false, 1, false, "", {"sprite_offset": Vector2.ZERO if modifier.template == "mod_thorn" or not sim.templates[modifier.template].modifier.get("use_mod_offset",true) else Simulation.vec(sim.templates[target.template].unit.mod_offset), "prefix":modifier.prefix,"sprite_scale":modifier.scale,"playback_loop":modifier.phase == "loop" and sim.templates[modifier.template].render.sprites[0].get("loop",true)})
 	feedback.queue_markers()
 	draw_list.sort_custom(func(a, b):
 		if a.z != b.z: return a.z < b.z
@@ -339,13 +339,14 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 			if state == "shoot" and not shoot_angles.is_empty(): playback.state = shoot_angles[0 if up else mini(1, shoot_angles.size() - 1)]
 			if state in ["attack", "attack2", "holystrike", "healing"] and int(playback.elapsed) >= SpriteAnimation.duration(animations, SpriteAnimation.key(sprite, state)):
 				playback.state = "idle"; playback.loop = true
-		if runtime.has("playback_loop"): playback.loop = runtime.playback_loop
+		if runtime.has("playback_loop") and not layer.has("loop"): playback.loop = runtime.playback_loop
 		if sprite.has("hide_after_runs") and int(playback.elapsed)>=SpriteAnimation.duration(animations,SpriteAnimation.key(sprite,playback.state))*int(sprite.hide_after_runs):continue
 		if template.has("reinforcement") and template.get("info", {}).has("portrait_idxs"): playback.prefix = "%s_%d" % [template_name, variant]
 		var frame_name := SpriteAnimation.frame(sprite, animations, playback)
 		if order == 1 and runtime.get("terrain_base",true) and runtime.has("holder") and sim.templates.has(runtime.holder) and not sprite.get("animated",false): frame_name = sim.templates[runtime.holder].render.sprites[0].name
 		if tower_over: frame_name += "_over"
 		var offset := Simulation.vec(sprite.get("offset", {"x": 0, "y": 0}))
+		offset += runtime.get("sprite_offset", Vector2.ZERO)
 		var alpha := float(sprite.get("alpha", 255)) / 255.0
 		alpha *= float(runtime.get("alpha",1.0))
 		# Multi-attack soldiers use the source corpse lifetime (guards/paladins).

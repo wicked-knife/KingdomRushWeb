@@ -64,6 +64,8 @@ var wave := 0
 var next_wave_tick := -1
 var wave_end_tick := -1
 var result := ""
+var victory_ready_at := -1
+var victory_animation_end := -1
 var paused := false
 var speed := 1
 var accumulator := 0.0
@@ -105,7 +107,7 @@ func reset(seed_value: int = 1) -> void:
 	upgrades.apply(data)
 	rng.seed = seed_value
 	tick = 0; gold = int(data.waves.cash); lives = int(data.waves.lives)
-	wave = 0; next_wave_tick = -1; wave_end_tick = -1; result = ""
+	wave = 0; next_wave_tick = -1; wave_end_tick = -1; result = ""; victory_ready_at = -1; victory_animation_end = -1
 	paused = false; speed = 1; accumulator = 0; next_id = 1; kills = 0; leaks = 0
 	developer_used = false
 	towers.clear(); enemies.clear(); soldiers.clear(); projectiles.clear(); effects.clear(); decals.clear(); spawn_queue.clear(); spawn_log.clear()
@@ -534,7 +536,11 @@ func step() -> void:
 	soldiers = soldiers.filter(func(s): return s.has("hero") or s.hp > 0 or tick - s.dead_at < (frames(templates[s.template].health.dead_lifetime) if s.get("source_corpse",false) or templates[s.template].get("powers", {}).has("holystrike") or s.home == "" and not templates[s.template].has("reinforcement") else 60))
 	effects = effects.filter(func(e): return tick - e.at < e.duration)
 	if lives <= 0: _finish("defeat")
-	elif controller.can_finish(self): _finish("victory")
+	elif controller.can_finish(self):
+		# Dove game_gui delays the victory panel by two seconds while play continues.
+		if victory_ready_at < 0: victory_ready_at = tick + 60
+		if tick >= maxi(victory_ready_at, victory_animation_end): _finish("victory")
+	else: victory_ready_at = -1
 
 func _finish(value: String) -> void:
 	if result != "": return
@@ -1052,6 +1058,8 @@ func damage(unit: Dictionary, amount: float, type: int, source_id: int = 0, redu
 			if (type&16384)!=0:unit.hidden=true
 		if unit.has("jt"):unit.state="death_end";unit.state_at=unit.jt.at
 		if t.has("enemy"):
+			for sprite: Dictionary in t.render.sprites:
+				victory_animation_end = maxi(victory_animation_end, int(unit.state_at) + SpriteAnimation.duration(animations, SpriteAnimation.key(sprite, unit.state)))
 			gold += int(unit_gold(unit) * float(data.rules.enemy_gold_factor)); kills += 1
 			if t.sound_events.has("death") and not unit.has("boss"): event.emit("sound", {"id": t.sound_events.death})
 		elif unit.home != "":

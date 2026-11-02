@@ -46,18 +46,18 @@ func _draw() -> void:
 		paint.label(summary.error, Rect2(170, 250, 580, 180), 24, Color("f7eaba"), "center", "middle")
 		paint.pop(); return
 	paint.image("Upgrades_StarContainer", Vector2(100,637))
-	paint.display_label(str(summary.available), Rect2(145,648,72,38),32,Color("e7deaf"),"numbers","available_stars")
+	paint.display_label(str(summary.available), Rect2(145,648,72,38),32,Color("e7deaf"),"numbers_bold","available_stars")
 	var classes: Array = Upgrades.definition().classes
 	for index in classes.size():
 		var x: float = [121, 243, 361, 483, 604, 724][index]
 		var level := int(summary.levels[classes[index]])
 		if level > 0:
 			paint.image("YellowBar",Vector2([152,274,394,514,636,755][index],538),Vector2(6,376)/paint.image_size("YellowBar"),Color.WHITE,Vector2(1,0.2*level*0.83))
-		paint.label(["弓箭", "兵营", "法师", "炮兵", "火雨", "援军"][index], Rect2(x - 6, 80, 80, 24), 17, Color("eac88d"), "center", "middle", 1, 1)
+		paint.label(["弓箭", "兵营", "法师", "炮兵", "火雨", "援军"][index], Rect2(x - 6, 78, 80, 26), 17, Color("eac88d"), "center", "middle", 1, 1, "tech_class_%d" % index, "button")
 	for id: String in Upgrades.definition().techs:
 		var tech: Dictionary = Upgrades.definition().techs[id]
 		var index: int = classes.find(tech.class)
-		var point := Vector2([121, 243, 361, 483, 604, 724][index], 520 - int(tech.level) * 80 * 0.83)
+		var point := Vector2([121, 243, 361, 483, 604, 724][index], 524 - int(tech.level) * 78 * 0.83)
 		var bought: bool = int(summary.levels[tech.class]) >= int(tech.level)
 		var candidate: Dictionary = summary.levels.duplicate(); candidate[tech.class] = int(tech.level)
 		var enabled: bool = bought or Upgrades.spent(candidate) <= int(summary.total)
@@ -68,8 +68,11 @@ func _draw() -> void:
 		elif shown == id and enabled: paint.image("Upgrades_Icons_over",icon_size/2,Vector2(0.5,0.5))
 		if not bought:
 			var prefix := "" if enabled else "Disabled_"
-			paint.image(prefix + "Upgrades_Icons_PriceTag", Vector2(35, 55))
-			paint.image(prefix + "Upgrades_Icons_PriceTag_Nm_%04d" % int(tech.price), Vector2(35,55)+paint.image_size(prefix+"Upgrades_Icons_PriceTag")/2+Vector2(4,0), Vector2(0.5, 0.5))
+			paint.push(Vector2(33, 54), 1.12)
+			paint.image(prefix + "Upgrades_Icons_PriceTag")
+			var tag_size: Vector2 = paint.image_size(prefix + "Upgrades_Icons_PriceTag")
+			paint.display_label(str(int(tech.price)), Rect2(tag_size.x * 0.48, 1, tag_size.x * 0.46, tag_size.y - 2), 14, Color("ffe24b") if enabled else Color("b8b8ad"), "numbers_bold", "tech_cost:" + id)
+			paint.pop()
 		if bought_fx.has(id) and elapsed - float(bought_fx[id]) < 0.6:
 			paint.image("Upgrades_Icons_buyFx_%04d" % (1 + mini(17, int((elapsed - float(bought_fx[id])) * 30))), Vector2(-22, -22))
 		paint.hit(Rect2(0, 0, 82, 82), "upgrade", {"id":id}, enabled)

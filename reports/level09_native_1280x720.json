@@ -35,6 +35,12 @@
 			"tick": 0
 		},
 		{
+			"gold": 5201,
+			"path": "res://reports/towers_ninth_curse_depth_hud_1280x720.png",
+			"state": "ninth_curse_depth_hud",
+			"tick": 0
+		},
+		{
 			"gold": 19500,
 			"path": "res://reports/towers_ninth_mage_branches_1_1280x720.png",
 			"state": "ninth_mage_branches_1",
@@ -126,39 +132,57 @@
 		},
 		{
 			"gold": 18560,
+			"path": "res://reports/towers_ninth_frozen_tap_motion_1280x720.png",
+			"state": "ninth_frozen_tap_motion",
+			"tick": 415
+		},
+		{
+			"gold": 18560,
 			"path": "res://reports/towers_ninth_thaw_end_1280x720.png",
 			"state": "ninth_thaw_end",
-			"tick": 421
+			"tick": 424
 		},
 		{
 			"gold": 18560,
 			"path": "res://reports/towers_ninth_thaw_fade_1280x720.png",
 			"state": "ninth_thaw_fade",
-			"tick": 451
+			"tick": 454
 		},
 		{
 			"gold": 18560,
 			"path": "res://reports/towers_ninth_jt_death_1280x720.png",
 			"state": "ninth_jt_death",
-			"tick": 451
+			"tick": 454
 		},
 		{
 			"gold": 18560,
 			"path": "res://reports/towers_ninth_jt_wait_click_1280x720.png",
 			"state": "ninth_jt_wait_click",
-			"tick": 496
+			"tick": 499
 		},
 		{
 			"gold": 18560,
 			"path": "res://reports/towers_ninth_jt_death_end_1280x720.png",
 			"state": "ninth_jt_death_end",
-			"tick": 616
+			"tick": 619
 		},
 		{
-			"gold": 800,
+			"gold": 840,
+			"path": "res://reports/towers_ninth_last_enemy_death_before_victory_1280x720.png",
+			"state": "ninth_last_enemy_death_before_victory",
+			"tick": 10
+		},
+		{
+			"gold": 840,
+			"path": "res://reports/towers_ninth_last_enemy_death_complete_1280x720.png",
+			"state": "ninth_last_enemy_death_complete",
+			"tick": 61
+		},
+		{
+			"gold": 840,
 			"path": "res://reports/towers_ninth_victory_1280x720.png",
 			"state": "ninth_victory",
-			"tick": 0
+			"tick": 61
 		},
 		{
 			"path": "res://reports/challenges_level9_mode2_1280x720.png",
@@ -181,19 +205,19 @@
 			"tick": 4
 		}
 	],
-	"checks": 185,
+	"checks": 207,
 	"failures": [],
 	"layout_only": false,
 	"passed": true,
 	"scope": "Godot native mouse, source frames and constructed settlement; no victory replay",
 	"source_hashes": {
 		"data/level09/definition.json": "a4043bd42ca191ced0a3f4dfa2078d5d191a5c01508121850477485297cb89bc",
-		"scripts/battle/battle_ui.gd": "fdcd8daf2514fd523be7ba46262726184bbad4f6898c2904a8cf1c8992ec6ecf",
-		"scripts/battle/battle_view.gd": "44c7b27defb756d81577757d77287a7e3fc2647e4f10866bf8ffc4f00f1adf16",
-		"scripts/battle/dove_jt.gd": "1466e7babad5b5a9ea18ae29430a383de161a2f69f0fd7df673276936f04d91e",
+		"scripts/battle/battle_ui.gd": "ca255d9084e777b055b4260b335d4cd36c066d2b21ddc5440123bc971371b7b2",
+		"scripts/battle/battle_view.gd": "eab0b2d0d4dc4391df6cfdb5b715f7f498b80fa16dd4ea3948f09a0d1f6a2e9f",
+		"scripts/battle/dove_jt.gd": "52d06669df870a14cfe82089d12388a87dde05006d7437f72663802f2d5def51",
 		"scripts/battle/dove_sorcerer.gd": "d10210953a621e13d05af31f67d6b183d3735fcaf0a459262b8adf891d802038",
 		"scripts/battle/dove_sunray.gd": "f3e00f93575bb2bbda6ae7ea36e9206c0e527d947e147190d803c1207d3efb8d",
-		"scripts/battle/level01_sim.gd": "783347d15b0b9afdbba0dd9f3598a33116bf360c27fe9405f46840de3f4cfe69",
-		"tests/level09_visual.gd": "62466a69032299c613c74a1e12b336e001a84ebb02d31ed7e5251bc7d210f8e1"
+		"scripts/battle/level01_sim.gd": "1fe9c0622e5d87608a83d55aa5d6132bccb4ca53eafc38cdd280bdb8a922a784",
+		"tests/level09_visual.gd": "a7b8bd69ccb3243ae019c87fce357474fd97ea7c5350afcf081635ab040fb2db"
 	}
 }
