@@ -171,6 +171,7 @@ static func unit_effect(sim, name: String, target: Dictionary) -> void:
 
 static func step_auras(sim) -> void:
 	for aura: Dictionary in sim.auras.duplicate():
+		if aura.template=="aura_tesla_overcharge":continue
 		var spec: Dictionary = sim.templates[aura.template].aura
 		if sim.tick - aura.at > sim.frames(spec.duration): sim.auras.erase(aura); continue
 		if sim.tick < aura.next or (aura.has("first") and sim.tick - aura.first > sim.frames(spec.apply_duration)): continue

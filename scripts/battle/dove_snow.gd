@@ -64,19 +64,29 @@ func step(sim) -> void:
 		if float(sim.tick)/30-float(enemy.regen_ts)>=float(regen.cooldown):
 			enemy.regen_ts+=float(regen.cooldown)
 			if (regen.get("ignore_stun",false) or int(enemy.get("stun_count",0))==0) and (regen.get("ignore_mods",false) or (int(enemy.get("vis",sim.templates[enemy.template].vis).bans)&int(sim.data.constants.F_MOD))==0): enemy.hp=minf(enemy.max_hp,enemy.hp+float(regen.health))
-	for emitter: Dictionary in emitters:
+	for emitter: Dictionary in emitters.duplicate():
 		var ps: Dictionary = sim.templates[emitter.template].particle_system
-		if sim.tick>=float(emitter.next):
-			_emit(sim,emitter.template,emitter.pos,sim.tick); emitter.next+=30/float(ps.emission_rate)
+		var until:float=minf(float(sim.tick),float(emitter.get("until",sim.tick)))
+		var interval:=30.0/float(ps.emission_rate)
+		while float(emitter.next)<=until:
+			_emit(sim,emitter.template,emitter.pos,float(emitter.next),0,float(emitter.get("scale",1)))
+			emitter.next+=interval
+		if sim.tick>=float(emitter.get("until",INF)):emitters.erase(emitter)
 	particles=particles.filter(func(p):return sim.tick-p.at<p.duration)
 
 func emit_trail(sim, projectile: Dictionary, template: String) -> void:
 	var ps: Dictionary = sim.templates[template].particle_system
-	if sim.tick<float(projectile.get("particle_at",0)): return
-	projectile.particle_at=float(sim.tick)+30/float(ps.emission_rate)
-	_emit(sim,template,projectile.pos,sim.tick,float(projectile.rotation))
+	var interval := 30.0 / float(ps.emission_rate)
+	var previous: Vector2 = projectile.get("particle_pos",projectile.get("from",projectile.pos))
+	var emitted_at := float(projectile.get("particle_at",projectile.get("at",sim.tick)))
+	var count := maxi(0,int(floor((float(sim.tick)-emitted_at)/interval+0.000001)))
+	for i in count:
+		# Source particle_system interpolates the tracked entity's previous position.
+		_emit(sim,template,previous.lerp(projectile.pos,float(i)/count),emitted_at+(i+1)*interval,float(projectile.rotation))
+	projectile.particle_at=emitted_at+count*interval
+	projectile.particle_pos=projectile.pos
 
-func _emit(sim, template: String, point: Vector2, at: int, rotation: float = 0) -> void:
+func _emit(sim, template: String, point: Vector2, at: float, rotation: float = 0, speed_scale: float = 1) -> void:
 	var ps: Dictionary = sim.templates[template].particle_system
 	var area: Vector2 = sim.vec(ps.get("emit_area_spread",{"x":0,"y":0}))
 	var spread := float(ps.get("emit_spread",0))
@@ -84,8 +94,8 @@ func _emit(sim, template: String, point: Vector2, at: int, rotation: float = 0) 
 	var speed: Array = ps.get("emit_speed",[0,0])
 	var life: Array = ps.particle_lifetime
 	var scale_value: Array = ps.get("scale_var",[1,1])
-	particles.append({"template":template,"pos":point+Vector2(rng.randf_range(-area.x/2,area.x/2),rng.randf_range(-area.y/2,area.y/2)),"at":at,
-		"velocity":Vector2(cos(angle),sin(angle))*rng.randf_range(speed[0],speed[1]),"duration":maxi(1,roundi(rng.randf_range(life[0],life[1])*30)),"scale":rng.randf_range(scale_value[0],scale_value[1]),"rotation":rotation})
+	particles.append({"template":template,"pos":point+sim.vec(ps.get("emit_offset",{"x":0,"y":0}))+Vector2(rng.randf_range(-area.x/2,area.x/2),rng.randf_range(-area.y/2,area.y/2)),"at":at,
+		"velocity":Vector2(cos(angle),sin(angle))*rng.randf_range(speed[0],speed[1])*speed_scale,"duration":maxf(1,(float(life[0])+float(life[1]))*15.0),"scale":rng.randf_range(scale_value[0],scale_value[1]),"rotation":float(ps.get("emit_rotation",rotation))+rng.randf_range(-0.5,0.5)*float(ps.get("emit_rotation_spread",0))})
 
 func queue(view) -> void:
 	var sim = view.sim
@@ -93,13 +103,23 @@ func queue(view) -> void:
 		if tunnels.any(func(t):return t.name in light.names and not t.queue.is_empty()): view._queue_template(light.template,light.pos,"",0,false,false,1,false,"",{"layers":{1:{"visible":true,"state":"","at":0,"loop":true}}})
 	for particle: Dictionary in particles:
 		var ps: Dictionary = sim.templates[particle.template].particle_system
-		var elapsed: int = sim.tick-int(particle.at)
+		var elapsed: float = sim.tick-float(particle.at)
 		var fraction := clampf(float(elapsed)/particle.duration,0,1)
 		var alphas: Array = ps.get("alphas",[255,0])
 		var segment := fraction*(alphas.size()-1)
 		var index := mini(int(segment),alphas.size()-2)
 		var alpha := lerpf(float(alphas[index]),float(alphas[index+1]),segment-index)/255
 		var frame: String = ps.name
-		if ps.get("animated",false): frame=Anim.frame({"name":ps.name,"animated":true},sim.animations,{"elapsed":elapsed,"loop":ps.get("loop",true)})
+		if ps.get("animated",false): frame=Anim.frame({"name":ps.name,"animated":true},sim.animations,{"elapsed":int(elapsed),"loop":ps.get("loop",true)})
 		var pos: Vector2 = particle.pos+particle.velocity*float(elapsed)/30
-		view.draw_list.append({"scale":Vector2.ONE*float(particle.scale),"frame":frame,"pos":pos,"sort_y":pos.y,"anchor":Vector2(0.5,0.5),"z":int(ps.get("z",3000)),"order":view.draw_list.size(),"flip":false,"rotation":particle.rotation,"tint":Color(1,1,1,alpha)})
+		view.draw_list.append({"scale":Vector2(_phase(ps.get("scales_x",[1]),fraction),_phase(ps.get("scales_y",[1]),fraction))*float(particle.scale),"frame":frame,"pos":pos,"sort_y":pos.y,"anchor":sim.vec(ps.get("anchor",{"x":0.5,"y":0.5})),"z":int(ps.get("z",3000)),"order":view.draw_list.size(),"flip":false,"rotation":particle.rotation,"tint":Color(1,1,1,alpha)})
+
+func _phase(values: Array, fraction: float) -> float:
+	if values.size()==1:return float(values[0])
+	var segment := clampf(fraction,0,1)*(values.size()-1)
+	var index := mini(int(segment),values.size()-2)
+	return lerpf(float(values[index]),float(values[index+1]),segment-index)
+
+func burst(sim, template:String, point:Vector2, scale_factor:float=1) -> void:
+	var ps:Dictionary=sim.templates[template].particle_system
+	emitters.append({"template":template,"pos":point,"next":float(sim.tick)+30.0/float(ps.emission_rate),"until":float(sim.tick)+float(ps.emit_duration)*30*scale_factor,"scale":scale_factor})

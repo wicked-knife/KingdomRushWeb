@@ -73,7 +73,11 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
     for entity in data["layout"]["entities_list"]:
         original=entity["template"]
         if original not in data["templates"]: continue
-        if original == "decal_background" and entity.get("render.sprites[1].name") == data["level"]["background"]: continue
+        # Preserve published instance identities when additional roots load base templates earlier.
+        aliases = spec.get("layout_instance_aliases")
+        alias = next((row["alias"] for row in aliases or [] if row["entity"] == entity), None)
+        if aliases is not None and original == "decal_background" and alias is None: continue
+        if aliases is None and original == "decal_background" and entity.get("render.sprites[1].name") == data["level"]["background"]: continue
         overrides={k:v for k,v in entity.items() if "." in k and not k.startswith(("editor.","tower.","ui."))}
         if overrides:
             instance=copy.deepcopy(data["templates"][original])
@@ -82,7 +86,7 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
                 parts=re.findall(r"[^.\[\]]+",key)
                 for part in parts[:-1]: target=target[int(part)-1] if isinstance(target,list) else target[part]
                 target[parts[-1]]=value
-            name=f"{original}__{instance_index}"
+            name=alias or f"{original}__{instance_index}"
             instance_index += 1
             data["templates"][name]=instance;entity["template"]=name
             if original in data["behaviors"]: data["behaviors"][name]=data["behaviors"][original]
@@ -187,7 +191,7 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
                             key=variant+"_"+suffix
                             if key in all_anims: animations[key]=all_anims[key]
                 default_key=prefix+"_"+name
-                if default_key not in all_anims and not any(prefix+"_"+s in all_anims for s in script_states + size_states):
+                if default_key not in all_anims and not any(prefix+"_"+s in all_anims for s in script_states + size_states + sprite.get("size_names",[])):
                     wanted.add(name.replace("%04i","0001"))
             elif name:
                 name=name.replace("%04i","0001")

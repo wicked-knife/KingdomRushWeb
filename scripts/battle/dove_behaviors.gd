@@ -1,5 +1,7 @@
 extends RefCounted
 ## Explicit source IDs, including verified aliases, select existing implementations.
+const Tesla = preload("res://scripts/battle/dove_tesla.gd")
+const Wasteland = preload("res://scripts/battle/dove_wasteland.gd")
 const Sorcerer = preload("res://scripts/battle/dove_sorcerer.gd")
 const Sunray = preload("res://scripts/battle/dove_sunray.gd")
 const Jt = preload("res://scripts/battle/dove_jt.gd")
@@ -71,7 +73,7 @@ static func validate(definition: Dictionary, content_catalog: Dictionary) -> Str
 		if not templates.has(name) or not supported(implementation): return "%s: %s -> unsupported Dove behavior '%s'" % [content, name, source_id]
 	for name: String in templates:
 		var template: Dictionary = templates[name]
-		var actor: bool = template.has("enemy") or template.has("soldier") or template.has("bullet") or template.has("modifier") or template.has("aura") or template.has("spawner") or template.has("fireball_count") or (template.has("tower") and not str(template.tower.get("type", "")).begins_with("holder"))
+		var actor: bool = template.has("graveyard") or template.has("enemy") or template.has("soldier") or template.has("bullet") or template.has("modifier") or template.has("aura") or template.has("spawner") or template.has("fireball_count") or (template.has("tower") and not str(template.tower.get("type", "")).begins_with("holder"))
 		if not actor: continue
 		var source_id: String = definition.get("behaviors", {}).get(name, "")
 		var role: String = content_catalog.get("behaviors", {}).get(canonical(source_id, content_catalog), "")
@@ -98,7 +100,7 @@ func role(template: String) -> String:
 	return catalog.behaviors.get(canonical(bindings.get(template, ""), catalog), "")
 
 static func supported(value: String) -> bool:
-	return value in ROLES or value in ["musketeer","shotgun","tunnel","unit_regen","hero_malik","fissure_aura","stun_modifier","bfg","missile","cluster","sasquash_holder","chieftain","sorcerer","sunray","jt","jt_spawn","jt_freeze","sheep","polymorph","armor_buff","speed_buff"]
+	return value in ROLES or value in ["tesla","tesla_ray","tesla_aura","graveyard","demon_mage","skeleton_aura","musketeer","shotgun","tunnel","unit_regen","hero_malik","fissure_aura","stun_modifier","bfg","missile","cluster","sasquash_holder","chieftain","sorcerer","sunray","jt","jt_spawn","jt_freeze","sheep","polymorph","armor_buff","speed_buff"]
 
 func projectile_role(template: Dictionary) -> String:
 	return catalog.behaviors.get(canonical(template.get("behavior", ""), catalog), "")
@@ -113,6 +115,7 @@ func upgrade_tower(sim, old: Dictionary, upgraded: Dictionary) -> void:
 	if behavior == "arcane": Arcane.initialize(sim, upgraded)
 	if behavior == "musketeer": Musketeer.initialize(sim, upgraded)
 	if behavior == "bfg": Bfg.initialize(sim,upgraded)
+	if behavior == "tesla": Tesla.initialize(sim,upgraded)
 	if behavior == "sorcerer": Sorcerer.initialize(sim,upgraded)
 	if behavior == "sunray": Sunray.initialize(sim,upgraded)
 	var t: Dictionary = sim.templates[upgraded.template]
@@ -141,6 +144,7 @@ func hire(sim, tower: Dictionary) -> void:
 	elif role(tower.template) == "mercenary": Elf.hire(sim, tower)
 
 func tower_step(sim, tower: Dictionary) -> bool:
+	if role(tower.template)=="tesla": Tesla.step(sim,tower);return true
 	if role(tower.template)=="sorcerer": Sorcerer.step(sim,tower);return true
 	if role(tower.template)=="sunray": Sunray.step(sim,tower);return true
 	if role(tower.template) == "sasquash_holder": Sasquash.frozen_step(sim,tower); return true
@@ -164,6 +168,7 @@ func soldier_step(sim, soldier: Dictionary, template: Dictionary) -> bool:
 
 func enemy_inserted(sim, enemy: Dictionary) -> void:
 	sim.snow.enemy_inserted(sim,enemy)
+	Wasteland.inserted(sim,enemy)
 	if enemy.template in ["eb_jt","enemy_rocketeer","enemy_slayer","enemy_sheep_ground","enemy_sheep_fly"]:enemy.source_corpse=true
 	if role(enemy.template)=="jt": Jt.initialize(sim,enemy)
 	if role(enemy.template)=="sheep": enemy.sheep_clicks=0;enemy.click_pending=false
@@ -173,6 +178,7 @@ func enemy_inserted(sim, enemy: Dictionary) -> void:
 	if role(enemy.template) == "chieftain": Chieftain.initialize(sim,enemy)
 
 func enemy_step(sim, enemy: Dictionary, template: Dictionary) -> bool:
+	if Wasteland.enemy_step(sim,enemy,template):return true
 	if enemy.has("jt"):return Jt.step(sim,enemy,template)
 	if role(enemy.template)=="sheep" and Sorcerer.sheep_step(sim,enemy):return true
 	if enemy.has("mixed_melee_job"): return EnemyMelee.step(sim,enemy,template)
@@ -188,3 +194,4 @@ func step_spawners(sim) -> void:
 	Spider.step(sim)
 	Spawner.step(sim)
 	Arcane.step_auras(sim)
+	Tesla.auras(sim)

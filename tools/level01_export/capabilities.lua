@@ -1,5 +1,13 @@
 -- Feature adapters evaluate frozen source templates without running gameplay.
 local adapters = {}
+  adapters.tesla = function(ctx)
+    local text=ctx.read("kr1/engineer_towers.lua")
+    local header=text:sub(1,assert(text:find('tt = RT(',1,true))-1)
+    local a=assert(text:find('tt = RT("tower_tesla"',1,true))
+    local b=assert(text:find('local tower_dwaarp = RT(',a,true))
+    ctx.chunk("kr1/engineer_towers.lua",header..text:sub(a,b-1))
+  end
+  adapters.wasteland = function(ctx) ctx.template("graveyard_controller") end
   adapters.sorcerer = function(ctx)
     local text=ctx.read("kr1/mage_towers.lua")
     local header=text:sub(1,assert(text:find('tt = RT(',1,true))-1)

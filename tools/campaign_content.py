@@ -15,6 +15,8 @@ def template_dependencies(value, reference_fields=()):
         if isinstance(node, dict):
             for key, child in node.items():
                 if key in fields and isinstance(child, str) and child: found.add(child)
+                if key == "death_spawns" and isinstance(child,dict) and child.get("name"): found.add(child["name"])
+                if key == "spawns_by_health" and isinstance(child,list): found.update(row[0] for row in child)
                 if key == "mods" and isinstance(child, list): found.update(x for x in child if isinstance(x, str) and x)
                 if key == "auras" and isinstance(child, dict):
                     found.update(a["name"] for a in child.get("list", []) if a.get("name"))
@@ -132,7 +134,7 @@ def validate_definition(data, spec):
     validate_callbacks(templates, "templates")
     for name, template in templates.items():
         active_tower = "tower" in template and not template.get("tower", {}).get("type", "").startswith("holder")
-        if active_tower or any(key in template for key in ("enemy", "soldier", "bullet", "modifier", "aura", "spawner", "fireball_count")):
+        if active_tower or any(key in template for key in ("enemy", "soldier", "bullet", "modifier", "aura", "spawner", "graveyard", "fireball_count")):
             source_id = data.get("behaviors", {}).get(name)
             if not source_id:
                 raise ValueError(f"{identity}: missing behavior binding for {name}")
@@ -149,7 +151,7 @@ def validate_definition(data, spec):
     waves = [data["waves"], *(row["waves"] for row in data.get("modes", {}).values())]
     for layout in layouts:
         for entity in layout["entities_list"]:
-            required = "tower.holder_id" in entity or entity["template"].startswith(("tunnel", "decal_tunnel_light", "ps_snow"))
+            required = "tower.holder_id" in entity or entity["template"].startswith(("tunnel", "decal_tunnel_light", "ps_snow", "graveyard_controller"))
             if required and entity["template"] not in templates:
                 raise ValueError(f"{identity}: layout -> missing template {entity['template']}")
     for program in waves:

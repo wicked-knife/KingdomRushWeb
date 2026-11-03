@@ -1,0 +1,71 @@
+{
+	"captures": [
+		{
+			"path": "res://reports/challenges_level10_mode1_1280x720.png",
+			"state": "level10_mode1"
+		},
+		{
+			"gold": 800,
+			"path": "res://reports/towers_tesla_moving_00_1280x720.png",
+			"state": "tesla_moving_00",
+			"tick": 0
+		},
+		{
+			"gold": 800,
+			"path": "res://reports/towers_tesla_moving_01_1280x720.png",
+			"state": "tesla_moving_01",
+			"tick": 1
+		},
+		{
+			"gold": 800,
+			"path": "res://reports/towers_tesla_moving_02_1280x720.png",
+			"state": "tesla_moving_02",
+			"tick": 2
+		},
+		{
+			"gold": 800,
+			"path": "res://reports/towers_tesla_moving_03_1280x720.png",
+			"state": "tesla_moving_03",
+			"tick": 3
+		},
+		{
+			"gold": 800,
+			"path": "res://reports/towers_tesla_moving_05_1280x720.png",
+			"state": "tesla_moving_05",
+			"tick": 5
+		},
+		{
+			"gold": 800,
+			"path": "res://reports/towers_tesla_moving_08_1280x720.png",
+			"state": "tesla_moving_08",
+			"tick": 8
+		},
+		{
+			"gold": 800,
+			"path": "res://reports/towers_tesla_moving_12_1280x720.png",
+			"state": "tesla_moving_12",
+			"tick": 12
+		},
+		{
+			"gold": 800,
+			"path": "res://reports/towers_tesla_moving_15_1280x720.png",
+			"state": "tesla_moving_15",
+			"tick": 15
+		},
+		{
+			"gold": 800,
+			"path": "res://reports/towers_tesla_moving_18_1280x720.png",
+			"state": "tesla_moving_18",
+			"tick": 18
+		}
+	],
+	"checks": 90,
+	"failures": [],
+	"passed": true,
+	"source_hashes": {
+		"scripts/battle/battle_view.gd": "7bc3f20bf1d3eccab023da3c5a6519650ff51a74af74275abf560ec5af5868c9",
+		"scripts/battle/dove_tesla.gd": "7c695c71c4d0a399b1e1e8d14db4bcad5831f73179fefe02c52f06e29a9e03b9",
+		"tests/fixtures/level10_source.json": "813201a6991cc543726f21bd766742570431f4140f7807625a15a9489df11502",
+		"tests/tesla_animation_visual.gd": "f8abf2cbf2b1756607021781bbc98a6be7266b16f87d821a1798e625f5e4986f"
+	}
+}

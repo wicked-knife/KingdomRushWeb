@@ -169,8 +169,8 @@ local function run()
   local unsupported={}
   local function export_template(id,origin)
     if out.templates[id] then return end
-    if not E.entities[id] and id:match('^enemy_') then load_enemy(id) end
-    if not E.entities[id] and (has("arcane") or has("paladin") or has("juggernaut") or has("musketeer") or has("snow")) then load_game_template(id) end
+    if not E.entities[id] and (id:match('^enemy_') or enemies:find('tt = RT("'..id..'"',1,true)) then load_enemy(id) end
+    if not E.entities[id] and (has("arcane") or has("paladin") or has("juggernaut") or has("musketeer") or has("snow") or has("tesla") or has("wasteland")) then load_game_template(id) end
     assert(E.entities[id],spec.folder..": "..origin.." -> missing template "..id)
     local t=E:get_template(id);local filtered={};for _,key in ipairs(fields) do if t[key]~=nil then filtered[key]=clean(t[key]) end end
     if spec.export.validate_callbacks then
@@ -195,7 +195,7 @@ local function run()
         if type(fn)=="function" then out.callbacks[id][key]=assert(behavior_names[fn],spec.folder..": "..id..".main_script."..key.." -> unmapped source callback") end
       end
     end
-    if t.modifier or t.aura or t.spawner or t.fireball_count or t.enemy or t.soldier or t.bullet or t.unfreeze_upgrade_to or (t.tower and not t.tower_holder) then
+    if t.graveyard or t.modifier or t.aura or t.spawner or t.fireball_count or t.enemy or t.soldier or t.bullet or t.unfreeze_upgrade_to or (t.tower and not t.tower_holder) then
       local fn=t.main_script and (t.main_script.update or t.main_script.insert)
       assert(fn and behavior_names[fn],spec.folder..": "..id.." has an unmapped behavior")
       out.behaviors[id]=behavior_names[fn]
@@ -210,6 +210,8 @@ local function run()
       end
     end
     visit(filtered)
+    if t.death_spawns and t.death_spawns.name then found[t.death_spawns.name]=true end
+    for _,spawn in ipairs(t.graveyard and t.graveyard.spawns_by_health or {}) do found[spawn[1]]=true end
     for _,a in ipairs(t.auras and t.auras.list or {}) do if a.name then found[a.name]=true end end
     -- miss_decal is a raw sprite, whereas miss_fx_water is an entity.
     if id=="spear_legionnaire" then found[t.bullet.miss_fx_water]=true end

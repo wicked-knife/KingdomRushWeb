@@ -26,6 +26,9 @@ func clear(sim: RefCounted) -> void:
 	active.clear()
 
 func _release(sim: RefCounted, m: Dictionary) -> void:
+	if m.template=="mod_skeleton_big":
+		var target:Dictionary=sim.unit_by_id(m.target)
+		if not target.is_empty():sim.DamageFactors.change(target,sim.templates[target.template],1-float(sim.templates[m.template].health_damage_factor_dec),true,true)
 	if m.has("armor_added") and not m.get("rage",false):
 		var unit:Dictionary=sim.unit_by_id(m.target)
 		if not unit.is_empty():unit.armor=float(unit.get("armor",sim.templates[unit.template].health.armor))-float(m.armor_added)
@@ -96,7 +99,7 @@ func apply(sim: RefCounted, template: String, target: Dictionary, level: int, so
 				# BASE counts *other* copies; max_duplicates=3 admits four in total.
 				if duplicates > int(rule.max_duplicates): return false
 			elif not rule.get("allows_duplicates",false):
-				m.expires = sim.tick + sim.frames(duration if duration >= 0 else float(rule.duration))
+				m.expires = sim.tick + sim.frames(minf(30000000,duration if duration >= 0 else float(rule.duration)))
 				return false
 	for m: Dictionary in active.duplicate():
 		if m.target == target.id and m.template == template and level > m.level:
@@ -105,7 +108,7 @@ func apply(sim: RefCounted, template: String, target: Dictionary, level: int, so
 			m.visible = false
 	var size_index := clampi(int(sim.templates[target.template].unit.size) - 1, 0, 2)
 	var m := {"template":template, "target":target.id, "level":level, "source":source, "born":sim.tick,
-		"at":sim.tick, "expires":sim.tick + sim.frames(duration if duration >= 0 else float(rule.duration)), "next_hit":sim.tick + 1,
+		"at":sim.tick, "expires":sim.tick + mini(1000000000,sim.frames(minf(30000000,duration if duration >= 0 else float(rule.duration)))), "next_hit":sim.tick + 1,
 		"state":"", "prefix":"", "scale":Vector2.ONE, "phase":"loop", "visible":true}
 	if damage_factor != 1.0: m.damage_factor = damage_factor
 	if bleeding >= 0: m.bleeding = bleeding; m.damage_factor = 1.0; m.bleed_fx = true; m.next_hit = sim.tick + 1; m.last_fx = 0; m.damage_ts = sim.tick / 30.0 - float(t.dps.damage_every)
@@ -146,6 +149,10 @@ func apply(sim: RefCounted, template: String, target: Dictionary, level: int, so
 		m.fast_added=(float(sim.templates[target.template].motion.max_speed)+float(target.get("speed_bonus",0)))*(float(t.fast.factor)-1)
 		target.speed_bonus=float(target.get("speed_bonus",0))+float(m.fast_added);target.already_speed_up=true;target.walk_angles=t.walk_angles
 		sim.event.emit("sound",{"id":t.sound_events.insert})
+	if template=="mod_demon_shield":m.shield_hits=0;m.shield_sources=[]
+	if template=="mod_skeleton_big":sim.DamageFactors.change(target,sim.templates[target.template],1-float(t.health_damage_factor_dec),true)
+	if template=="mod_tesla_overcharge" and sim.rng.randf()<float(t.stun_chance) and (int(target.get("vis",sim.templates[target.template].vis).bans)&int(sim.data.constants.F_STUN))==0 and (int(target.get("vis",sim.templates[target.template].vis).flags)&int(sim.data.constants.F_BOSS))==0:
+		m.stun=true;target.stun_count=int(target.get("stun_count",0))+1
 	active.append(m)
 	sim.event.emit("modifier_applied", {"template":template,"target":target.id,"level":level})
 	return true
@@ -178,12 +185,16 @@ func step(sim: RefCounted) -> void:
 				var minimum:=int(hps.heal_min)+int(hps.get("heal_min_inc",hps.get("heal_inc",0)))*int(m.level)
 				var maximum:=int(hps.heal_max)+int(hps.get("heal_max_inc",hps.get("heal_inc",0)))*int(m.level)
 				target.hp=minf(float(target.max_hp)*float(hps.get("overflow_factor",1)),float(target.hp)+sim.rng.randi_range(minimum,maximum))
+			if m.template=="mod_ray_tesla":
+				var every:float=float(sim.frames(float(t.dps.damage_every)))/30
+				if sim.tick<int(m.born) or float(sim.tick)/30-float(m.damage_ts)<every:continue
+				m.damage_ts+=every;m.next_hit=sim.tick
 			if t.has("dps") and sim.tick >= m.next_hit:
 				if m.has("bleeding"):
 					m.damage_ts += float(t.dps.damage_every)
 					m.next_hit = maxi(sim.tick + 1, ceili((float(m.damage_ts) + float(t.dps.damage_every)) * 30.0 - 0.0000001))
 				else: m.next_hit += sim.frames(t.dps.damage_every)
-				var amount := float(int(m.bleeding)) if m.has("bleeding") else float(t.dps.damage_min) + float(t.dps.get("damage_inc",0)) * int(m.level)
+				var amount := float(int(m.bleeding)) if m.has("bleeding") else float(m.get("damage",t.dps.get("damage_min",0))) + float(t.dps.get("damage_inc",0)) * int(m.level)
 				sim.damage(target, amount * float(m.get("damage_factor",1.0)), int(t.dps.damage_type), int(m.source))
 				if t.dps.get("fx","") != "" and m.get("bleed_fx", true) and (not m.has("bleeding") or sim.tick - int(m.last_fx) >= sim.frames(t.dps.fx_every)):
 					if m.has("bleeding"): m.last_fx = sim.tick

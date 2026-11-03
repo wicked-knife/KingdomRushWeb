@@ -1,0 +1,106 @@
+{
+	"captures": [
+		{
+			"path": "res://reports/challenges_level10_mode1_1280x720.png",
+			"state": "level10_mode1"
+		},
+		{
+			"gold": 800,
+			"path": "res://reports/towers_tenth_opening_1280x720.png",
+			"state": "tenth_opening",
+			"tick": 0
+		},
+		{
+			"gold": 18475,
+			"path": "res://reports/towers_tenth_power_bolt_1280x720.png",
+			"state": "tenth_power_bolt",
+			"tick": 30
+		},
+		{
+			"gold": 18035,
+			"path": "res://reports/towers_tenth_power_overcharge_1280x720.png",
+			"state": "tenth_power_overcharge",
+			"tick": 30
+		},
+		{
+			"gold": 18035,
+			"path": "res://reports/towers_tenth_tesla_chain_1280x720.png",
+			"state": "tenth_tesla_chain",
+			"tick": 255
+		},
+		{
+			"gold": 18035,
+			"path": "res://reports/towers_tenth_tesla_finished_1280x720.png",
+			"state": "tenth_tesla_finished",
+			"tick": 258
+		},
+		{
+			"gold": 18035,
+			"path": "res://reports/towers_tenth_tesla_ray_end_1280x720.png",
+			"state": "tenth_tesla_ray_end",
+			"tick": 327
+		},
+		{
+			"gold": 18060,
+			"path": "res://reports/towers_ninth_tenth_skeleton_raise_1280x720.png",
+			"state": "ninth_tenth_skeleton_raise",
+			"tick": 437
+		},
+		{
+			"gold": 18060,
+			"path": "res://reports/towers_tenth_skeleton_walk_1280x720.png",
+			"state": "tenth_skeleton_walk",
+			"tick": 470
+		},
+		{
+			"gold": 18060,
+			"path": "res://reports/towers_tenth_skeleton_aura_1280x720.png",
+			"state": "tenth_skeleton_aura",
+			"tick": 520
+		},
+		{
+			"gold": 18070,
+			"path": "res://reports/towers_tenth_skeleton_aura_end_1280x720.png",
+			"state": "tenth_skeleton_aura_end",
+			"tick": 520
+		},
+		{
+			"gold": 18070,
+			"path": "res://reports/towers_tenth_sorcerer_trail_1280x720.png",
+			"state": "tenth_sorcerer_trail",
+			"tick": 526
+		},
+		{
+			"path": "res://reports/challenges_level10_mode2_1280x720.png",
+			"state": "level10_mode2"
+		},
+		{
+			"gold": 1800,
+			"path": "res://reports/towers_tenth_mode2_1280x720.png",
+			"state": "tenth_mode2",
+			"tick": 3
+		},
+		{
+			"path": "res://reports/challenges_level10_mode3_1280x720.png",
+			"state": "level10_mode3"
+		},
+		{
+			"gold": 2200,
+			"path": "res://reports/towers_tenth_mode3_1280x720.png",
+			"state": "tenth_mode3",
+			"tick": 3
+		}
+	],
+	"checks": 102,
+	"failures": [],
+	"full_replays": false,
+	"passed": true,
+	"source_hashes": {
+		"data/level10/definition.json": "2d9f2440a2fb412b7e799078ef6bb62e8ae4ee45883dc45be149881b0cb24935",
+		"scripts/battle/battle_view.gd": "7bc3f20bf1d3eccab023da3c5a6519650ff51a74af74275abf560ec5af5868c9",
+		"scripts/battle/dove_snow.gd": "68d0e91988485524909a4dd6d804482adc66a6d43146e875678a8ea01af984fd",
+		"scripts/battle/dove_tesla.gd": "1738eb5c6774c31834aeefffeccafaad0badf2eb342154082af9af8f9fd2e962",
+		"scripts/battle/dove_wasteland.gd": "7e05de5929927736c203b8110e80b54bcfa6adcd93a2f5555d256bdb5612b9f1",
+		"tests/level10_visual.gd": "31ae67321795c174458c15d62d4fddb88e7a71cb1b788735efff2fda25fb6141"
+	}
+}

@@ -26,6 +26,7 @@ const Heroes = preload("res://scripts/battle/dove_heroes.gd")
 var heroes := Heroes.new()
 const Snow = preload("res://scripts/battle/dove_snow.gd")
 var snow := Snow.new()
+var wasteland := Behaviors.Wasteland.new()
 var jt := Behaviors.Jt.new()
 var base_templates: Dictionary
 var controller: RefCounted
@@ -114,6 +115,7 @@ func reset(seed_value: int = 1) -> void:
 	eggs.clear()
 	pending_entities.clear(); spawners.clear(); auras.clear()
 	controller.reset(self)
+	wasteland.reset()
 	# Dove enables the non-tutorial powers from the first next-wave-sent event,
 	# not while the battlefield is still in its pre-wave setup state.
 	unlocked = {"reinforcements": false, "fire": false}
@@ -452,7 +454,7 @@ func valid_power_point(power: String, point: Vector2) -> bool:
 	var terrain := _terrain_flags(point)
 	# The first four levels have no fn_can_power override. Fire additionally
 	# accepts water, and uses a wider path radius than troop deployment.
-	return (terrain & FIRE_EXCLUDED_TERRAINS) == 0 and ((terrain & 2) != 0 or _valid_node_nearby(point, FIRE_PATH_WIDTH_FACTOR, NF_POWER_1) or Behaviors.Sasquash.extra_fire_point(self,point))
+	return (terrain & FIRE_EXCLUDED_TERRAINS) == 0 and ((terrain & 2) != 0 or _valid_node_nearby(point, FIRE_PATH_WIDTH_FACTOR, NF_POWER_1) or Behaviors.Sasquash.extra_fire_point(self,point) or (controller.has_method("extra_fire_point") and controller.extra_fire_point(point)))
 
 func can_send_wave() -> bool:
 	return wave < data.waves.groups.size() and spawn_queue.is_empty() and (wave == 0 or next_wave_tick >= 0)
@@ -521,6 +523,7 @@ func step() -> void:
 	controller.step(self)
 	jt.step_freezes(self)
 	snow.step(self)
+	wasteland.step(self)
 	_decals_step()
 	behaviors.step_spawners(self)
 	heroes.step_auras(self)
@@ -1032,6 +1035,7 @@ func damage(unit: Dictionary, amount: float, type: int, source_id: int = 0, redu
 		unit.last_damage_tick=tick
 	if (type & 1024) != 0:
 		unit.armor = maxf(0, float(unit.get("armor", t.health.armor)) - amount); return 0
+	if Behaviors.Wasteland.shield_damage(self,unit,type,source_id):return 0
 	var armor := 0.0
 	if (type & 65536) != 0: armor = float(t.health.get("poison_armor",0))
 	elif (type & 1) != 0: armor = 0.0
@@ -1040,9 +1044,11 @@ func damage(unit: Dictionary, amount: float, type: int, source_id: int = 0, redu
 	elif (type & 32) != 0:
 		armor = float(unit.get("magic_armor", t.health.magic_armor)); armor *= 0.2 * armor + 0.4
 	elif (type & 8) != 0: armor = float(unit.get("armor", t.health.armor))
+	elif (type & 16) != 0: armor = clampf((float(unit.get("armor",t.health.armor))-reduce_armor)*0.5,0,1)
 	elif (type & 64) != 0: armor = clampf(float(unit.get("armor",t.health.armor))-reduce_armor,0,1)*0.7
 	# Frozen Dove all/utils.lua U.calc_protection, including its explosion curve.
 	if (type & 8) != 0 and (type & (65536 | 1 | 2 | 4)) == 0: armor *= 0.2 * armor + 0.4
+	if (type&16)!=0:amount*=float(t.health.get("damage_factor_electrical",1))
 	var actual := amount * DamageFactors.value(unit, t, true) * (1.0 - armor)
 	if (type & (4096|16384)) != 0: actual = float(unit.max_hp)*(1-float(t.health.get("instakill_resistance",0)))*maxf(1,DamageFactors.value(unit,t,true))
 	unit.hp = maxf(0, unit.hp - actual)
@@ -1058,6 +1064,7 @@ func damage(unit: Dictionary, amount: float, type: int, source_id: int = 0, redu
 			if (type&16384)!=0:unit.hidden=true
 		if unit.has("jt"):unit.state="death_end";unit.state_at=unit.jt.at
 		if t.has("enemy"):
+			wasteland.died(self,unit,type)
 			for sprite: Dictionary in t.render.sprites:
 				victory_animation_end = maxi(victory_animation_end, int(unit.state_at) + SpriteAnimation.duration(animations, SpriteAnimation.key(sprite, unit.state)))
 			gold += int(unit_gold(unit) * float(data.rules.enemy_gold_factor)); kills += 1
@@ -1104,6 +1111,7 @@ func _bullet_step(p: Dictionary) -> void:
 	var b: Dictionary = templates[p.template].bullet
 	var target := unit_by_id(p.target)
 	var behavior: String = behaviors.projectile_role(templates[p.template])
+	if behavior == "tesla_ray": Behaviors.Tesla.projectile(self,p,b);return
 	if behavior == "missile": Behaviors.Missile.step(self,p,b); return
 	if behavior == "cluster": Behaviors.Bfg.cluster_step(self,p,b); return
 	if p.template == "bomb_musketeer": Behaviors.Musketeer.shrapnel_projectile(self,p,b); return
@@ -1113,7 +1121,9 @@ func _bullet_step(p: Dictionary) -> void:
 	if EnemyProjectiles.step(self, p, b, behavior): return
 	var ratio := clampf(float(tick - p.at) / p.duration, 0, 1)
 	if behavior == "bolt":
-		if not _bolt_step(p, b, target): return
+		if not _bolt_step(p, b, target):
+			if b.has("particles_name"): snow.emit_trail(self,p,b.particles_name)
+			return
 		if p.target_invalid or not p.get("has_tracked", false): target = {}
 	elif behavior == "arrow_missile":
 		if not ArrowMissile.step(self,p,b): return

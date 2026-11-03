@@ -114,7 +114,10 @@ func apply(data: Dictionary) -> void:
 				_damage(templates, "mage_tower_bolts", u.damage_factor)
 				if templates.has("mod_ray_arcane"): _multiply_damage(templates.mod_ray_arcane.dps, u.damage_factor)
 			"mage_slow_curse": _mods(templates, "bolts", [u.mod], true)
-			"engineer_concentrated_fire": _damage(templates, "engineer_bombs", u.damage_factor)
+			"engineer_concentrated_fire":
+				_damage(templates, "engineer_bombs", u.damage_factor)
+				if templates.has("ray_tesla"):
+					for key:String in ["bounce_damage_min","bounce_damage_max"]:templates.ray_tesla[key]*=float(u.damage_factor)
 			"engineer_range_finder":
 				_scale(templates, "engineer_towers", ["attacks", "range"], u.range_factor)
 				if templates.has("tower_bfg"): templates.tower_bfg.attacks.list[1].range_base *= float(u.range_factor)
@@ -125,6 +128,9 @@ func apply(data: Dictionary) -> void:
 						for key in ["price_base", "price_inc"]:
 							if power.has(key): power[key] = floorf(float(power[key]) * float(u.cost_factor))
 			"engineer_gnomish_tinkering":
+				if templates.has("tower_tesla"):
+					templates.tower_tesla.attacks.list[0].cooldown*=float(u.cooldown_factor_electric)
+					templates.tower_tesla.attacks.min_cooldown*=float(u.cooldown_factor_electric)
 				if templates.has("tower_bfg"):
 					var bfg: Dictionary=templates.tower_bfg
 					var factor: float=u.cooldown_factor

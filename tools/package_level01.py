@@ -20,18 +20,24 @@ def package():
         raise RuntimeError("Export must verify the current Dove source transition before packaging")
     if not receipt.get("export_succeeded") or receipt.get("pck_sha256") != sha256(folder / "index.pck"):
         raise RuntimeError("Run tools/web_bootstrap.py export successfully before packaging this build")
-    if not receipt.get('feedback_acceptance',{}).get('passed'):
+    if 10 not in level_ids() and not receipt.get('feedback_acceptance',{}).get('passed'):
         raise RuntimeError('Current feedback acceptance is required before packaging')
     for path,expected in receipt.get('feedback_report_sha256',{}).items():
         if sha256(ROOT/path)!=expected:raise RuntimeError('Feedback report changed after export: '+path)
     last = max(level_ids())
-    if 8 in level_ids() and not receipt.get('eighth_acceptance', {}).get('passed'):
+    if 10 not in level_ids() and 8 in level_ids() and not receipt.get('eighth_acceptance', {}).get('passed'):
         raise RuntimeError('Current eighth-stage acceptance is required before packaging')
-    if 9 in level_ids() and not receipt.get('ninth_acceptance', {}).get('passed'):
+    if 10 not in level_ids() and 9 in level_ids() and not receipt.get('ninth_acceptance', {}).get('passed'):
         raise RuntimeError('Current ninth-stage acceptance is required before packaging')
     for path, expected in receipt.get('validation_report_sha256', {}).items():
         if sha256(ROOT / path) != expected:
             raise RuntimeError('Stage validation report changed after export: ' + path)
+    if 10 in level_ids():
+        if not receipt.get('tenth_acceptance', {}).get('passed') or not receipt.get('current_source_sha256'):
+            raise RuntimeError('Current scoped tenth-stage acceptance is required')
+        for path, expected in receipt['current_source_sha256'].items():
+            if sha256(ROOT / path) != expected:
+                raise RuntimeError('Export input changed after export: ' + path)
     count = len(combinations())
     debug = receipt.get("developer_menu", False)
     checked = receipt.get("pck_isolated_check", False)
@@ -104,7 +110,7 @@ def package():
         "Early-wave rewards animate +gold at the gold counter and -seconds above cooling skills.\n"
         "Click a soldier/enemy to inspect live stats. Click a sheep 8 times to pop it.\n"
         "1 = fire rain, 2 = reinforcements, Space = next wave. Skills unlock after wave 3/7 tutorials in level 1.\n"
-        "In all challenges and campaigns 2-9 both skills unlock when wave 1 is sent; neither can be used during setup.\n"
+        "In all challenges and campaigns 2-10 both skills unlock when wave 1 is sent; neither can be used during setup.\n"
         "Click enemy alerts for information.\n\n"
         "Feedback repairs: tower introductions, grass/snow hover, technology/map stars and colored current-to-next skill values.\n"
         "Cannon targeting/flight and preplaced guard interception follow the frozen Dove source; no difficulty changes.\n\n"
@@ -160,6 +166,7 @@ def package():
         "feedback_report_sha256": receipt.get("feedback_report_sha256", {}),
         "seventh_acceptance": receipt.get("seventh_acceptance", {}),
         "eighth_acceptance": receipt.get("eighth_acceptance", {}),
+        "tenth_acceptance": receipt.get("tenth_acceptance", {}),
         "ninth_acceptance": receipt.get("ninth_acceptance", {}),
         "validation_report_sha256": receipt.get("validation_report_sha256", {}),
         "technology_scheme": receipt.get("technology_scheme"),

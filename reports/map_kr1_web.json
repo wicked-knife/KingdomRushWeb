@@ -1,7 +1,7 @@
 {
   "package_created": true,
   "source_commit": "4072b18bf4e418eec8b813a960c83003744cb710",
-  "content_catalog_sha256": "08b7508d9e751191cc145bdbd6e3ea7cd31b59cbcf49934b4e04820ca4412fd0",
+  "content_catalog_sha256": "eecd92240e8ba8dd1a44d09f5ec336600a191d11cc7dab89a912beb9946563d1",
   "browser_tested": false,
   "build_type": "release",
   "developer_menu": false,
@@ -15,7 +15,8 @@
     6,
     7,
     8,
-    9
+    9,
+    10
   ],
   "playable_modes": [
     1,
@@ -157,6 +158,21 @@
       "level": 9,
       "mode": 3,
       "difficulty": 2
+    },
+    {
+      "level": 10,
+      "mode": 1,
+      "difficulty": 2
+    },
+    {
+      "level": 10,
+      "mode": 2,
+      "difficulty": 2
+    },
+    {
+      "level": 10,
+      "mode": 3,
+      "difficulty": 2
     }
   ],
   "challenge_validation_passed": true,
@@ -183,396 +199,166 @@
     "8/2",
     "8/3",
     "9/2",
-    "9/3"
+    "9/3",
+    "10/2",
+    "10/3"
   ],
   "challenge_replays_verified": [],
   "pck_isolated_check": true,
   "battle_ui_acceptance": {
-    "logic": {
+    "tenth_native": {
       "passed": true,
-      "checks": 122,
-      "layout_only": false,
-      "scope": "targeted UI/input with constructed battle states; no complete replays"
-    },
-    "1280x720": {
-      "passed": true,
-      "checks": 130,
-      "layout_only": false,
-      "scope": "targeted UI/input with constructed battle states; no complete replays"
-    },
-    "1024x768": {
-      "passed": true,
-      "checks": 52,
-      "layout_only": true,
-      "scope": "targeted UI/input with constructed battle states; no complete replays"
-    },
-    "assets": {
-      "passed": true,
-      "scope": "All seven current contents; source metadata checked separately from gameplay and UI; source pixels and complete frame families checked"
+      "checks": 102
     }
   },
   "default_technology_acceptance": {
-    "logic": {
+    "tenth_source_patches": {
       "passed": true,
-      "checks": 398,
-      "source_patch_scenarios": 40,
-      "source_template_rows": 4280,
-      "behavior_scenarios": 36,
-      "content_combinations": 27
-    },
-    "native_1280x720": {
-      "passed": true,
-      "checks": 2752,
-      "native_input": true,
-      "native_audio": true
-    },
-    "native_1024x768": {
-      "passed": true,
-      "checks": 2749,
-      "native_input": true,
-      "native_audio": true
-    },
-    "assets": {
-      "passed": true
+      "checks": 65,
+      "source_patch_scenarios": 16
     }
   },
   "feedback_acceptance": {
-    "passed": true,
-    "reports": {
-      "feedback_logic": {
-        "passed": true,
-        "checks": 473,
-        "content_combinations": 21,
-        "source_power_rows": 86,
-        "source_cannon_scenarios": 4,
-        "source_bomb_scenarios": 3,
-        "source_guard_scenarios": 8
-      },
-      "feedback_native_1280x720": {
-        "passed": true,
-        "checks": 782,
-        "layout_only": false
-      },
-      "feedback_native_1024x768": {
-        "passed": true,
-        "checks": 616,
-        "layout_only": true
-      },
-      "feedback_assets": {
-        "passed": true,
-        "content_combinations": 21
-      },
-      "feedback_combat_audit": {
-        "passed": true,
-        "independent_scenarios": 3,
-        "ticks": 3600
-      },
-      "followup_logic": {
-        "passed": true,
-        "checks": 45
-      },
-      "followup_native_1280x720": {
-        "passed": true,
-        "checks": 171,
-        "layout_only": false
-      },
-      "followup_native_1024x768": {
-        "passed": true,
-        "checks": 44,
-        "layout_only": true
-      }
-    },
-    "historical_baseline_preserved": true,
-    "content_combinations": 27,
-    "guard_scope": "14 isolated and 14 all-guards-present passing-enemy scenes on real placements/routes; original selection/movement functions; native render queue follows each live unit exactly once and removes all dead units; static layout duplicates fixed"
+    "passed": null,
+    "reports": null,
+    "historical_baseline_preserved": null,
+    "content_combinations": null,
+    "guard_scope": null
   },
-  "feedback_report_sha256": {
-    "reports/feedback_assets.json": "8fdbb3395fbae1b8d43e4a0d7e3cf48ddf20ee5a6f9dbb7e2de137b7a82f77e0",
-    "reports/feedback_combat_audit.json": "e57f516424f5bc4ee6b1a115010147de4067177b9204f407a465ca5e6181c23e",
-    "reports/feedback_delivery.json": "7a9c65be3ea624e890c4581cee703ac0de27700c673fa12dc2395c5e0f0773f1",
-    "reports/feedback_logic.json": "dd4bda3d8be1eba9acc51332ddee32b7916e44d531d2a9aaf3722e36a301dddf",
-    "reports/feedback_native_1024x768.json": "c4719266069f93d827c31511e0fc5a2657470c4600d0e93217bfff0695074c17",
-    "reports/feedback_native_1280x720.json": "724a8c41cb03b8429ae3f9f1dc8836e731ed7f5a752ed1d6e6c19a384704f705",
-    "reports/followup_logic.json": "a31ba291572cc0807f27f136eec9f784f4d5830769bc3bff0421360e18633fb9",
-    "reports/followup_native_1024x768.json": "c15b07ddc09756215009ef139b1669ea3c307f7cfd781f93feffb969727568c0",
-    "reports/followup_native_1280x720.json": "6ba9c093d5e5bf8f2830cd9abb2b94410a80bdfb70736d97bf3dea4c67f8d10c"
-  },
+  "feedback_report_sha256": {},
   "seventh_acceptance": {
-    "passed": true,
-    "playable_combinations": 27,
-    "reports": {
-      "level07_logic": {
-        "passed": true,
-        "checks": 233,
-        "independent_modes": 3,
-        "timeline_waves": 23,
-        "births": 708,
-        "content_combinations": 24,
-        "source_scenarios": 18,
-        "source_coroutines": [
-          "tower_musketeer",
-          "shotgun",
-          "bomb",
-          "tunnel",
-          "aura_unit_regen"
-        ],
-        "full_replays": false
-      },
-      "level07_native_1280x720": {
-        "passed": true,
-        "checks": 106,
-        "layout_only": false
-      },
-      "level07_native_1024x768": {
-        "passed": true,
-        "checks": 38,
-        "layout_only": true
-      },
-      "level07_assets": {
-        "passed": true,
-        "frames": 5309,
-        "animations": 424
-      },
-      "content_catalog": {
-        "passed": true,
-        "content_combinations": 27
-      },
-      "content_unification": {
-        "passed": true,
-        "checks": 329,
-        "timeline_waves": 88
-      }
-    },
-    "failure_probes": [
-      {
-        "missing": "pop_headshot",
-        "rejected": true,
-        "reason": "level07: tower_musketeer -> missing runtime dependency pop_headshot"
-      },
-      {
-        "missing": "mod_van_helsing_crosshair",
-        "rejected": true,
-        "reason": "level07: tower_musketeer -> missing runtime dependency mod_van_helsing_crosshair"
-      },
-      {
-        "missing": "ps_shotgun_musketeer",
-        "rejected": true,
-        "reason": "level07: tower_musketeer -> missing runtime dependency ps_shotgun_musketeer"
-      },
-      {
-        "missing": "aura_troll_regen",
-        "rejected": true,
-        "reason": "level07: enemy_troll -> missing runtime dependency aura_troll_regen"
-      },
-      {
-        "missing": "tunnel__101",
-        "rejected": true,
-        "reason": "level07: layout -> missing template tunnel__101"
-      }
-    ],
-    "additive_audit": "tests/fixtures/level07_additions.json; prior gameplay, UI metadata and source pixels retained"
+    "passed": null,
+    "playable_combinations": null,
+    "reports": null,
+    "failure_probes": null,
+    "additive_audit": null
   },
   "eighth_acceptance": {
-    "passed": true,
-    "playable_combinations": 27,
-    "reports": {
-      "level08_logic": {
-        "passed": true,
-        "checks": 499,
-        "independent_modes": 3,
-        "births": 1097,
-        "timeline_waves": 25,
-        "source_scenarios": 72
-      },
-      "level08_native_1280x720": {
-        "passed": true,
-        "checks": 208,
-        "layout_only": false
-      },
-      "level08_native_1024x768": {
-        "passed": true,
-        "checks": 104,
-        "layout_only": true
-      },
-      "level08_assets": {
-        "passed": true
-      },
-      "level08_compatibility": {
-        "passed": true
-      },
-      "level07_logic": {
-        "passed": true,
-        "checks": 233,
-        "independent_modes": 3,
-        "births": 708,
-        "timeline_waves": 23,
-        "source_scenarios": 18,
-        "content_combinations": 24
-      },
-      "content_catalog": {
-        "passed": true,
-        "content_combinations": 27
-      },
-      "content_unification": {
-        "passed": true,
-        "checks": 329,
-        "timeline_waves": 88
-      },
-      "upgrades_logic": {
-        "passed": true,
-        "checks": 398,
-        "source_patch_scenarios": 40,
-        "source_template_rows": 4280,
-        "content_combinations": 27
-      },
-      "advanced_barrack_cooldown": {
-        "passed": true,
-        "checks": 71,
-        "independent_scenarios": 8
-      },
-      "level08_upgrades": {
-        "passed": true,
-        "checks": 418,
-        "source_patch_scenarios": 16,
-        "source_template_rows": 1472
-      }
-    },
-    "failure_probes": [
-      {
-        "missing": "tower_sasquash_holder",
-        "rejected": true,
-        "reason": "level08: layout -> missing template tower_sasquash_holder"
-      },
-      {
-        "missing": "soldier_sasquash",
-        "rejected": true,
-        "reason": "level08: missing template dependency: tower_sasquash -> soldier_sasquash"
-      },
-      {
-        "missing": "missile_bfg",
-        "rejected": true,
-        "reason": "Invalid power preview dependency: missile/1: 'missile_bfg'"
-      },
-      {
-        "missing": "mod_bfg_stun",
-        "rejected": true,
-        "reason": "Invalid power preview dependency: missile/1: 'mod_bfg_stun'"
-      },
-      {
-        "missing": "axe_barbarian_rude",
-        "rejected": true,
-        "reason": "level08: soldier_barbarian -> missing runtime dependency axe_barbarian_rude"
-      },
-      {
-        "missing": "enemy_troll_chieftain",
-        "rejected": true,
-        "reason": "level08: wave/creep -> missing template enemy_troll_chieftain"
-      },
-      {
-        "missing": "missile_callback",
-        "rejected": true,
-        "reason": "level08: missile_bfg.remove -> missing required runtime callback game_scripts.missile_bfg.remove"
-      }
-    ]
+    "passed": null,
+    "playable_combinations": null,
+    "reports": null,
+    "failure_probes": null
   },
-  "ninth_acceptance": {
+  "tenth_acceptance": {
     "passed": true,
-    "playable_combinations": 27,
+    "playable_combinations": 30,
     "reports": {
-      "level09_logic": {
+      "level10_logic": {
         "passed": true,
-        "checks": 246,
+        "checks": 168,
         "independent_modes": 3,
-        "births": 995,
         "timeline_waves": 26,
-        "source_tower_scenarios": 9
+        "births": 1160
       },
-      "level09_native_1280x720": {
+      "level10_upgrades": {
+        "passed": true,
+        "checks": 65,
+        "source_patch_scenarios": 16
+      },
+      "level10_native_1280x720": {
+        "passed": true,
+        "checks": 102
+      },
+      "level10_assets": {
+        "passed": true,
+        "frames": 6258,
+        "animations": 483
+      },
+      "level10_compatibility": {
+        "passed": true
+      },
+      "level10_shared_logic": {
+        "passed": true,
+        "checks": 53,
+        "scope": "source Sorcerer/Sunray attacks; freeze/thaw, JT death, polymorph and elemental lifecycle; no campaign replay"
+      },
+      "sorcerer_trail_logic": {
+        "passed": true,
+        "checks": 10
+      },
+      "misc_presentation_logic": {
+        "passed": true,
+        "checks": 166,
+        "scope": "armor source formatting; final enemy death and two-second settlement delay"
+      },
+      "battle_details_logic": {
+        "passed": true,
+        "checks": 49
+      },
+      "hero_combat_logic": {
         "passed": true,
         "checks": 161,
-        "layout_only": false
-      },
-      "level09_native_1024x768": {
-        "passed": true,
-        "checks": 116,
-        "layout_only": true
-      },
-      "level09_assets": {
-        "passed": true
-      },
-      "level09_compatibility": {
-        "passed": true
-      },
-      "level09_upgrades": {
-        "passed": true,
-        "checks": 97,
-        "source_patch_scenarios": 16
+        "behavior_scenarios": 59
       }
     },
     "failure_probes": [
       {
-        "missing": "mod_jt_tower",
+        "missing": "tower_tesla",
         "rejected": true,
-        "reason": "level09: eb_jt -> missing runtime dependency mod_jt_tower"
+        "reason": "Invalid power preview dependency: bolt/1: 'tower_tesla'"
       },
       {
-        "missing": "jt_spawner_aura",
+        "missing": "ray_tesla",
         "rejected": true,
-        "reason": "level09: missing template dependency: eb_jt -> jt_spawner_aura"
+        "reason": "Invalid power preview dependency: bolt/1: 'ray_tesla'"
       },
       {
-        "missing": "enemy_sheep_fly",
+        "missing": "mod_ray_tesla",
         "rejected": true,
-        "reason": "level09: tower_sorcerer -> missing runtime dependency enemy_sheep_fly"
+        "reason": "level10: missing template dependency: ray_tesla -> mod_ray_tesla"
       },
       {
-        "missing": "soldier_elemental",
+        "missing": "ps_tesla_overcharge",
         "rejected": true,
-        "reason": "Invalid power preview dependency: elemental/1: 'soldier_elemental'"
+        "reason": "level10: missing template dependency: aura_tesla_overcharge -> ps_tesla_overcharge"
       },
       {
-        "missing": "fx_mod_polymorph_sorcerer_big",
+        "missing": "aura_demon_death",
         "rejected": true,
-        "reason": "level09: mod_polymorph_sorcerer -> missing runtime dependency fx_mod_polymorph_sorcerer_big"
+        "reason": "level10: enemy_demon -> missing runtime dependency aura_demon_death"
       },
       {
-        "missing": "jt_damage_callback",
+        "missing": "mod_demon_shield",
         "rejected": true,
-        "reason": "level09: eb_jt -> missing required runtime field ['health', 'on_damage']"
+        "reason": "level10: enemy_demon_mage -> missing runtime dependency mod_demon_shield"
       },
       {
-        "missing": "slayer_callback",
+        "missing": "enemy_skeleton_big",
         "rejected": true,
-        "reason": "level09: enemy_slayer -> missing required runtime field ['melee', 'attacks', 0, 'side_effect']"
+        "reason": "level10: graveyard_controller -> missing runtime dependency enemy_skeleton_big"
+      },
+      {
+        "missing": "graveyard_controller__7",
+        "rejected": true,
+        "reason": "level10: layout -> missing template graveyard_controller__7"
       }
-    ]
+    ],
+    "historical_scope": "Prior configuration preserved by exact additive audit against 1775c0e; shared runtime checked with representative current scenarios. Previous native multi-resolution reports are historical evidence only."
+  },
+  "ninth_acceptance": {
+    "passed": null,
+    "playable_combinations": null,
+    "reports": null,
+    "failure_probes": null
   },
   "validation_report_sha256": {
-    "reports/level07_assets.json": "bb2233a20dd94288f8abfdb03c99ce4cb3015acb77e85554bc40955400666146",
-    "reports/level07_delivery.json": "1ef17fecba87c86730519f753269be5d2cc13cd464c4e03efe7672f6635edd10",
-    "reports/level07_logic.json": "643d374b03872557db0c2c05cf759f6d53d1f5afb517c7bbc480e7f03822a55b",
-    "reports/level07_native_1024x768.json": "85582d149879114e36e54f180f705f98ca1dc038cd42973f0f0b81ac4ba3b95d",
-    "reports/level07_native_1280x720.json": "06ad9e2731d79b98e09c859d41687f8445c66bb520106ea0d4316291855dd3d1",
-    "reports/level08_assets.json": "1bd8484f4e21bced41b9065f810a25b51ac47859e0a7ee9cf6aaba382be0b3e3",
-    "reports/level08_compatibility.json": "0b3ef39b62f276e95dcaf6397ea99a3745c2801180cd528f6976a0ba2fb4ce03",
-    "reports/level08_delivery.json": "15470c6b1b0e28ba9fa321d4f70f38779d6c466b0b3ed927f1a7e54996ff72b0",
-    "reports/level08_logic.json": "5c843aeb500bfee9894ba6fdc5b11ecfe9152014ef52d8a04ad4b2f8d662aa4f",
-    "reports/level08_native_1024x768.json": "2ccfa4d73d2fbe80c5b2a9a12074dec461df055a3e4c6b89763bb29bdc35e481",
-    "reports/level08_native_1280x720.json": "d1d8fd1ae02085b85cc9734aa72afd4166018511e8cfc38c96ccd32bd8d0cbea",
-    "reports/level08_upgrades.json": "07a8ae27da5de1d151f0b237a97566a8d4000e3b2d32a91a48fb6a70b619fabb",
-    "reports/level09_assets.json": "e704606d3e3690d7216f6e84eb298b79efcc3bd90858517259bbc0ece56708fc",
-    "reports/level09_compatibility.json": "733c4a2d36a0159c63b7d3d4af2acb37d965594526c53ed30d367f6f23097bec",
-    "reports/level09_delivery.json": "00854e68f04495e15ac500d2c081a973b4337ff555a6ba113c585dd8a27d5c7c",
-    "reports/level09_logic.json": "970f41e4e0a3ba9edb6b1fa37ab398b99fb6c77739ff3486982c3c340e54c2e3",
-    "reports/level09_native_1024x768.json": "f8f77b57f9fbbd7240d5895501601daeb6cb0bd8f644a06ee5e9a755ef8faf0f",
-    "reports/level09_native_1280x720.json": "1fd85ba95a832812759afc608665afd7b052951e06c58463a78767215a402855",
-    "reports/level09_upgrades.json": "c231b995a1ffc712485b71172b016f18091ee5def94684b66d98e7357d475977"
+    "reports/level10_logic.json": "dbd43c8924d15b7c269a6e7f49a6dd598c780b0c8577bdea02f7d95a3acd8f11",
+    "reports/level10_upgrades.json": "891c9d46a54cf0fcfb4223fa895ea3d19e9281cdb95f6eb7dada269aa451879b",
+    "reports/level10_native_1280x720.json": "76c5be57eb84f29657d2bc5a37d80b0c9c9865d7c34441d4dd941555babbed8b",
+    "reports/level10_assets.json": "1033173ce2218c8a7e5d6b6573fbae93b0f090c852cff538fb998ac5f8c2d3e1",
+    "reports/level10_compatibility.json": "991b7764889d8838d47d4b5b3abdc79666418b9cc007097813e047af94f72190",
+    "reports/level10_shared_logic.json": "0749126420e3fb8d063658e22da5cf9ed3136fc720a4be112fc314e354108ec4",
+    "reports/sorcerer_trail_logic.json": "cfba3d992780bbee86930bc457ac6b84b6ec6c469133b6b3836f378afff7e655",
+    "reports/misc_presentation_logic.json": "060fe7033a6354d8ccb3bce6c5e1cb0b00a79c870100c0585423a504ad1ba8a1",
+    "reports/battle_details_logic.json": "bea9a48b837db253ef893f73435d3c30d7a5fc4efa051fdf3d720f594dbb835d",
+    "reports/hero_combat_logic.json": "4a52d6afcc93b4cbfed7029010a5c5cb9f10c6cf8d23b76062ce59227dfaaecd",
+    "reports/level10_delivery.json": "52f4754d3f776d85cb51b86776f90c3230d6b3fd8c95754542bcfac61b0bf93a"
   },
   "technology_scheme": "1",
-  "pck_files": 980,
-  "bundle": "build\\KingdomRush-KR1-Levels01-09-Web.zip",
-  "bytes": 344377749,
-  "sha256": "31e3cced6b3a2d8d8fd7cdcbf1a508a604333d65448b27156d7fcf27ca52c234",
+  "pck_files": 1048,
+  "bundle": "build\\KingdomRush-KR1-Levels01-10-Web.zip",
+  "bytes": 398432749,
+  "sha256": "6ffab70b3eefc5e1d1ee27bf066667696eb0b9434705e56db76ea7931c26f21f",
   "web_files": {
     "index.apple-touch-icon.png": {
       "bytes": 11939,
@@ -588,7 +374,7 @@
     },
     "index.html": {
       "bytes": 3146,
-      "sha256": "39e1a06378f697f39bd317c85457368552ab43a3052d1107afbc63814f507420"
+      "sha256": "f33622aae7ac628618d0047d1ddf430e7fe52dc2a1506bdb8bdd0a8084dd87c4"
     },
     "index.icon.png": {
       "bytes": 5765,
@@ -599,8 +385,8 @@
       "sha256": "33c94cb3175f3333b82e2a3be5e8e86f77986f0aa2042b1631f6367a4e5bb6ba"
     },
     "index.pck": {
-      "bytes": 353737768,
-      "sha256": "3dd743ae58770fbb4634d304e928f2d3dc555a88f28f44258b348624465c874d"
+      "bytes": 410613940,
+      "sha256": "bfd8ad679f1538ed7fedfe300b786f11caaf90a95fef48b8df0b67720b2b936d"
     },
     "index.png": {
       "bytes": 21443,
@@ -611,20 +397,20 @@
       "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
     },
     "export_receipt.json": {
-      "bytes": 17435,
-      "sha256": "0d2314d5f572cf36a55292722d7fdab2723a6c9132e5268c4c9418a1e0b8412d"
+      "bytes": 80242,
+      "sha256": "0f5d30ba67ffb8a9111170dfda3522323a3fb38345de390e309267b343d195ae"
     },
     "README.txt": {
-      "bytes": 7221,
-      "sha256": "f6bb5c6453181c0c442fb485f6de8e1075cd0933129c18bd59ffcc658026a77f"
+      "bytes": 7236,
+      "sha256": "e26e2e807cd6a6fa23aeb77c34ae0ce3d30fe3ba28a58d718aeaa7ce0e12c46c"
     },
     "start_server.cmd": {
       "bytes": 180,
       "sha256": "8f021ad5511504a288354fec02c4bf8514f054a2457cc229710e1d6069558b32"
     },
     "pack_files.json": {
-      "bytes": 69869,
-      "sha256": "1485d344188630ad75fcff9bed5908a564338c821d887282b603f438ca65ba15"
+      "bytes": 74096,
+      "sha256": "1a52507b5541f25dee2672700946434b51aa7e70c455d4dbc63585067dcbcb51"
     }
   }
 }

@@ -124,6 +124,8 @@ func _run() -> void:
 	sim.damage(enemy, 999, 1)
 	check(UnitInfo.snapshot(enemy, sim.templates, sim.data.ui.strings).is_empty() and UnitInfo.pick(sim.enemies, sim.templates, enemy.pos) == 0, "dead unit cannot stay selected")
 	var report := {"passed": failures.is_empty(), "checks": checks, "failures": failures}
+	report.source_hashes={}
+	for path:String in ["tests/verify_battle_details.gd","scripts/battle/level01_sim.gd","scripts/battle/dove_modifiers.gd","scripts/battle/dove_unit_info.gd"]:report.source_hashes[path]=FileAccess.get_sha256("res://"+path)
 	var file := FileAccess.open("res://reports/battle_details_logic.json", FileAccess.WRITE)
 	file.store_string(JSON.stringify(report, "\t")); file.close()
 	print("BATTLE_DETAILS: ", JSON.stringify(report))

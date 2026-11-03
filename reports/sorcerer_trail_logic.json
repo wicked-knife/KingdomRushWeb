@@ -1,0 +1,10 @@
+{
+	"checks": 10,
+	"failures": [],
+	"passed": true,
+	"source_hashes": {
+		"scripts/battle/dove_snow.gd": "68d0e91988485524909a4dd6d804482adc66a6d43146e875678a8ea01af984fd",
+		"scripts/battle/level01_sim.gd": "9cb5710e5391eba9db21a729ff67a4d731fc2e5929cc2655d35c4f6229ae3366",
+		"tests/verify_sorcerer_trail.gd": "bacc7d573e1a85a93c840654740728f191665036335df27f1e7bf7c886f89796"
+	}
+}

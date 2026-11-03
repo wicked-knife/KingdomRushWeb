@@ -109,3 +109,14 @@ __pycache__/
 !/reports/level09_native_1024x768.json
 !/reports/level09_upgrades.json
 !/reports/level09_delivery.json
+
+!/reports/level10_logic.json
+!/reports/level10_assets.json
+!/reports/level10_compatibility.json
+!/reports/level10_native_1280x720.json
+!/reports/level10_upgrades.json
+!/reports/level10_shared_logic.json
+!/reports/level10_delivery.json
+!/reports/sorcerer_trail_logic.json
+!/reports/tesla_animation_logic.json
+!/reports/tesla_animation_native.json

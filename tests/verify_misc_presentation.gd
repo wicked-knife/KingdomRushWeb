@@ -32,6 +32,8 @@ func run() -> void:
 		sim.reset()
 		check(sim.victory_ready_at==-1 and sim.victory_animation_end==-1,"restart clears pending settlement")
 	var report := {"passed":failures.is_empty(),"checks":checks,"failures":failures,"scope":"armor source formatting; final enemy death and two-second settlement delay"}
+	report.source_hashes={}
+	for path:String in ["tests/verify_misc_presentation.gd","scripts/battle/level01_sim.gd","scripts/battle/dove_modifiers.gd","scripts/battle/dove_unit_info.gd"]:report.source_hashes[path]=FileAccess.get_sha256("res://"+path)
 	preload("res://tests/report_writer.gd").json_file("res://reports/misc_presentation_logic.json",report)
 	print("MISC_PRESENTATION: ",JSON.stringify(report))
 	quit(0 if failures.is_empty() else 1)

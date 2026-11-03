@@ -13,7 +13,8 @@ def digest(value):
 
 
 def before_ninth(name, value, part='definition'):
-    value = copy.deepcopy(value)
+    from level10_compatibility import before_tenth
+    value = before_tenth(name, value, part)
     spec = json.loads(MANIFEST.read_text(encoding='utf-8'))['contents'].get(name, {}).get(part)
     if not spec:
         return value

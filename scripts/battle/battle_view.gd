@@ -226,6 +226,7 @@ func _draw() -> void:
 		if sim.templates[e.template].has("particle_system") or sim.templates[e.template].has("tunnel") or sim.templates[e.template].template_name == "decal_tunnel_light": continue
 		_queue_template(e.template, Simulation.vec(e.pos))
 	sim.snow.queue(self)
+	sim.wasteland.queue(self)
 	sim.jt.queue(self)
 	for decal: Dictionary in sim.decals:
 		if not decal.removed: _queue_template(decal.template, decal.pos, decal.state, decal.state_at, decal.flip, false, 1, false, "", decal)
@@ -268,7 +269,7 @@ func _draw() -> void:
 		if target.is_empty() or target.hp <= 0 or target.get("hidden", false): continue
 		# The original lifecycle hides older duplicate poison sprites.
 		if not modifier.get("visible",true) or not sim.templates[modifier.template].has("render"): continue
-		_queue_template(modifier.template, target.pos, modifier.state, modifier.at, target.flip, false, 1, false, "", {"sprite_offset": Vector2.ZERO if modifier.template == "mod_thorn" or not sim.templates[modifier.template].modifier.get("use_mod_offset",true) else Simulation.vec(sim.templates[target.template].unit.mod_offset), "prefix":modifier.prefix,"sprite_scale":modifier.scale,"playback_loop":modifier.phase == "loop" and sim.templates[modifier.template].render.sprites[0].get("loop",true)})
+		_queue_template(modifier.template, target.pos, modifier.state, modifier.at, target.flip, false, 1, false, "", {"sprite_z": int(sim.templates[target.template].render.sprites[0].z) if modifier.template=="mod_ray_tesla" else int(sim.templates[modifier.template].render.sprites[0].get("z",3000)), "sprite_offset": Vector2.ZERO if modifier.template == "mod_thorn" or not sim.templates[modifier.template].modifier.get("use_mod_offset",true) else Simulation.vec(sim.templates[target.template].unit.mod_offset), "prefix":modifier.prefix,"sprite_scale":modifier.scale,"playback_loop":modifier.phase == "loop" and sim.templates[modifier.template].render.sprites[0].get("loop",true)})
 	feedback.queue_markers()
 	draw_list.sort_custom(func(a, b):
 		if a.z != b.z: return a.z < b.z
@@ -349,6 +350,7 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 		offset += runtime.get("sprite_offset", Vector2.ZERO)
 		var alpha := float(sprite.get("alpha", 255)) / 255.0
 		alpha *= float(runtime.get("alpha",1.0))
+		if layer.has("alpha"):alpha=float(layer.alpha)
 		# Multi-attack soldiers use the source corpse lifetime (guards/paladins).
 		# Existing units retain their established presentation.
 		if dead and not runtime.get("source_corpse",false) and not template.get("unit", {}).get("hide_after_death", false) and not (template.has("soldier") and template.melee.attacks.size() > 1): alpha *= clampf(1 - float(sim.tick - at - 24) / 36, 0, 1)
@@ -369,7 +371,7 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 							if k[0] is String: k[0] = float(runtime.get("duration", 0)) - (0.5 if k[0].ends_with("-0.5") else 0)
 					alpha *= SpriteAnimation.scalar_track(keys, fmod(seconds, float(keys[-1][0])) if property.get("loop", false) and float(keys[-1][0]) > 0 else seconds) / 255.0
 		var color: Array = sprite.get("color", [255, 255, 255])
-		draw_list.append({"scale": sprite_scale, "frame": frame_name, "pos": point + offset, "sort_y": float(sprite.get("sort_y",point.y + float(sprite.get("sort_y_offset", 0)))), "anchor": Simulation.vec(sprite.get("anchor", {"x": 0.5, "y": 0.5})), "z": int(sprite.get("z", 3000)), "draw_order": int(layer.get("draw_order",sprite.get("draw_order",order))), "order": draw_list.size(), "flip": layer.get("flip", runtime.get("flip", sprite.get("flip_x", flip))), "rotation": float(runtime.get("rotation", sprite.get("r", 0))), "tint": Color(color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, alpha)})
+		draw_list.append({"scale": sprite_scale, "frame": frame_name, "pos": point + offset, "sort_y": float(sprite.get("sort_y",point.y + float(sprite.get("sort_y_offset", 0)))), "anchor": Simulation.vec(sprite.get("anchor", {"x": 0.5, "y": 0.5})), "z": int(runtime.get("sprite_z",sprite.get("z", 3000))), "draw_order": int(layer.get("draw_order",sprite.get("draw_order",order))), "order": draw_list.size(), "flip": layer.get("flip", runtime.get("flip", sprite.get("flip_x", flip))), "rotation": float(runtime.get("rotation", sprite.get("r", 0))), "tint": Color(color[0] / 255.0, color[1] / 255.0, color[2] / 255.0, alpha)})
 
 func _draw_boss_bar() -> void:
 	for unit: Dictionary in sim.enemies:
