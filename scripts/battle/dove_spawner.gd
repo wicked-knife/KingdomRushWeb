@@ -1,5 +1,24 @@
 extends RefCounted
 ## enemies_spawner payloads use a pending-insert boundary, separate from waves.
+static func reset_layout(sim) -> void:
+	sim.layout_spawners=[]
+	for entity:Dictionary in sim.data.layout.entities_list:
+		if sim.behaviors.role(entity.template)=="layout_spawner":sim.layout_spawners.append({"template":entity.template,"pos":sim.vec(entity.pos),"next":-1})
+
+static func step_layout(sim) -> void:
+	for item:Dictionary in sim.layout_spawners:
+		if sim.wave<1:continue
+		var spec:Dictionary=sim.templates[item.template]
+		if int(item.next)<0:item.next=sim.tick+sim.source_unconditional_wait_ticks(sim.tick,float(spec.cooldown))
+		if sim.tick<int(item.next):continue
+		var enemy:Dictionary=sim._spawn_enemy(spec.entity,0,int(spec.pi)-1,"layout_spawner")
+		enemy.pos=item.pos;sim._state(enemy,"raise",true);enemy.playback_loop=false
+		enemy.health_bar_hidden=true
+		enemy.raise_until=sim.tick+sim.SpriteAnimation.duration(sim.animations,sim.SpriteAnimation.key(sim.templates[enemy.template].render.sprites[0],"raise"))
+		enemy.forced_waypoint=sim.vec(sim.data.paths.paths[enemy.path][0][0])
+		sim.event.emit("sound",{"id":spec.sound})
+		item.next=sim.tick+sim.source_unconditional_wait_ticks(sim.tick,float(spec.cooldown_after))
+
 static func insert(sim, item: Dictionary) -> void:
 	var spec: Dictionary = sim.templates[item.template].spawner
 	var nearest = nearest_node(sim, item.pos)

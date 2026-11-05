@@ -1,0 +1,22 @@
+{
+	"births": 1472,
+	"checks": 1513,
+	"failures": [],
+	"full_replays": false,
+	"independent_modes": 3,
+	"passed": true,
+	"source_hashes": {
+		"data/campaign_content.json": "cb0af44d0d46f65b4f360eec63323f4baa028cd230ba84aa95fe6be2791f0bb9",
+		"data/level11/definition.json": "aa68a35eb99cc68dad8de4152fd09c420ccfbbf200cf95a71ae1a089bdfd4eeb",
+		"scripts/battle/dove_behaviors.gd": "c10b8fa0b98693287cbf2feff70cfb699fd0cf5317cd4faaa1cc30512371717d",
+		"scripts/battle/dove_enemy_melee.gd": "dbd761b72b9d54871ae097b32d78a92783e018f162a216ca4bef4a1cdb23ad8f",
+		"scripts/battle/dove_enemy_projectiles.gd": "04ae879e5b0df6d4c077f99e84aaeb4e2b64635c47984fc32b8ce5f83d671caf",
+		"scripts/battle/dove_necromancer.gd": "126392bfdd5adc570b6ec4dd88bb989467bde587eb59179aa188f1d63d8e3982",
+		"scripts/battle/dove_spawner.gd": "6263f6da1530752cc9dcf73377933cc6ac567af96cc66c1f2a0856438876a17d",
+		"scripts/battle/level01_sim.gd": "4beda3afbc618cb55146342ceaf47e96f7938d1ff2ade028767f68966186153f",
+		"tests/fixtures/level11_source.json": "9d63936355448925b3d2ce9a5315ed0c7e53d615c51f3e79d3f191873bd05e87",
+		"tests/verify_level11.gd": "3fff2eb0b1041f7f1503d149ff2a6dcd2d5532a040ca1a9caf0721a7697a6ee9"
+	},
+	"source_scenarios": 35,
+	"timeline_waves": 26
+}

@@ -22,7 +22,7 @@ def verify(level_id=1, ranger_arena=False):
         assert set(data["modes"]) == {"2", "3"}
         for mode in (2, 3):
             selected=data["modes"][str(mode)]
-            assert selected["waves"]["cash"] == {2:[230,310,400,750,1000,1200,1000,1100,2000,1800],3:[360,275,660,1500,1500,800,1200,1200,2400,2200]}[mode][level_id-1]
+            assert selected["waves"]["cash"] == {2:[230,310,400,750,1000,1200,1000,1100,2000,1800,2100],3:[360,275,660,1500,1500,800,1200,1200,2400,2200,2600]}[mode][level_id-1]
             assert selected["waves"]["lives"] == 1 and len(selected["waves"]["groups"]) == (6 if mode==2 else 1)
             assert all(e.get("editor.game_mode",0) in (0,mode) for e in selected["layout"]["entities_list"])
             assert f"kr1/data/waves/level{level_id:02d}_waves_{'heroic' if mode==2 else 'iron'}.lua" in data["source"]["inputs"]

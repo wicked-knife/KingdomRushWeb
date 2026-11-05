@@ -17,7 +17,7 @@ def template_dependencies(value, reference_fields=()):
                 if key in fields and isinstance(child, str) and child: found.add(child)
                 if key == "death_spawns" and isinstance(child,dict) and child.get("name"): found.add(child["name"])
                 if key == "spawns_by_health" and isinstance(child,list): found.update(row[0] for row in child)
-                if key == "mods" and isinstance(child, list): found.update(x for x in child if isinstance(x, str) and x)
+                if key in ("mods", "entity_names") and isinstance(child, list): found.update(x for x in child if isinstance(x, str) and x)
                 if key == "auras" and isinstance(child, dict):
                     found.update(a["name"] for a in child.get("list", []) if a.get("name"))
                 visit(child)
@@ -115,6 +115,8 @@ def validate_definition(data, spec):
         if mode != 1 and not str(mode) in data.get("modes", {}):
             raise ValueError(f"{identity}: missing registered mode {mode}")
     for name, source_id in data.get("behaviors", {}).items():
+        if name not in templates:
+            raise ValueError(f"{identity}: behavior -> missing template {name}")
         try:
             resolve_behavior(source_id, catalog)
         except ValueError as error:
@@ -134,7 +136,7 @@ def validate_definition(data, spec):
     validate_callbacks(templates, "templates")
     for name, template in templates.items():
         active_tower = "tower" in template and not template.get("tower", {}).get("type", "").startswith("holder")
-        if active_tower or any(key in template for key in ("enemy", "soldier", "bullet", "modifier", "aura", "spawner", "graveyard", "fireball_count")):
+        if (template.get("entity") and "cooldown_after" in template) or active_tower or any(key in template for key in ("enemy", "soldier", "bullet", "modifier", "aura", "spawner", "graveyard", "fireball_count")):
             source_id = data.get("behaviors", {}).get(name)
             if not source_id:
                 raise ValueError(f"{identity}: missing behavior binding for {name}")

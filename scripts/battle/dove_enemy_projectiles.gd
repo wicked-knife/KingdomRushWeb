@@ -2,6 +2,29 @@ extends RefCounted
 ## Enemy missile flight/retarget and bomb payloads; never share friendly splash.
 const Targets = preload("res://scripts/battle/dove_targeting.gd")
 
+static func bolt(sim, p:Dictionary, bullet:Dictionary) -> void:
+	# bolt_enemy differs from friendly bolts in tracking, acceleration and yield order.
+	if sim.tick<int(p.start_at):return
+	if p.pos.distance_squared_to(p.to)>float(p.speed)*float(p.speed)*sim.STEP*sim.STEP:
+		var target:Dictionary=sim.unit_by_id(p.target)
+		p.tracked_target=target.get("id",0)
+		if not target.is_empty():
+			var hit:Vector2=target.pos+sim.vec(sim.templates[target.template].unit.hit_offset)
+			if target.hp<=0 or (int(target.get("vis",sim.templates[target.template].vis).get("bans",0))&int(sim.data.constants.F_RANGED))!=0:
+				p.target=0;p.tracked_target=0
+			elif bullet.has("max_track_distance"):
+				var delta:Vector2=hit-p.to
+				if maxf(absf(delta.x),absf(delta.y))>float(bullet.max_track_distance):p.target=0;p.tracked_target=0
+			else:p.to=hit
+		p.speed=clampf(float(p.speed)+30*ceilf(float(p.speed)/30*float(bullet.acceleration_factor)),float(bullet.min_speed),float(bullet.max_speed))
+		p.pos+=p.pos.direction_to(p.to)*float(p.speed)*sim.STEP
+		p.rotation=(p.to-p.pos).angle()
+		return
+	p.done=true
+	var target:Dictionary=sim.unit_by_id(int(p.tracked_target))
+	if not target.is_empty() and target.hp>0:sim.damage(target,sim.rng.randi_range(int(bullet.damage_min),int(bullet.damage_max))*float(p.damage_factor),int(bullet.damage_type))
+	sim.add_effect(str(bullet.get("hit_fx","")),p.to)
+
 static func step(sim, projectile: Dictionary, bullet: Dictionary, role: String) -> bool:
 	if role == "enemy_bomb":
 		projectile.merge(sim.Projectile.sample(projectile, bullet, (sim.tick - projectile.at) / 30.0), true)

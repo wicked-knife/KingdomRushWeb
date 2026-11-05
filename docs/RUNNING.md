@@ -28,7 +28,7 @@ Python 依赖见 `tools/requirements.txt`。导出脚本默认使用本机源码
 
 ## 专项检查
 
-当前第十关交付使用 [第十关专项](LEVEL10.md) 的逻辑、原生、科技、像素与共享回归，生成 `reports/level10_delivery.json`；导出检查当前实现与报告哈希。第七至九关文档保留历史实现记录，旧多分辨率报告不冒充当前验收。
+当前第十一关交付使用 [第十一关专项](LEVEL11.md) 的逻辑、原生、科技、像素与共享回归，生成 `reports/level11_delivery.json`；导出检查当前实现与报告哈希。第七至九关文档保留历史实现记录，旧多分辨率报告不冒充当前验收。
 
 只运行与改动相关的检查，范围见 [验证约定](TEST_REDUNDANCY_REVIEW.md)。共用战斗变更的代表命令：
 
@@ -79,7 +79,7 @@ python tools/package_level01.py
 python tools/web_bootstrap.py serve
 ```
 
-交付时集中导出一次。发布包在 `build/KingdomRush-KR1-Levels01-10-Web.zip`，目录在 `build/web`；使用 HTTP 服务访问，不能直接打开 HTML 文件。导出默认 release，开发者入口关闭；需要调试包时显式加 `--debug`。隔离 PCK 检查验证菜单、地图、英雄房间和全部 30 个组合的资源，不代替浏览器验收。浏览器由用户手动检查输入、声音解锁、后台标签页和持久化。
+交付时集中导出一次。发布包在 `build/KingdomRush-KR1-Levels01-11-Web.zip`，目录在 `build/web`；使用 HTTP 服务访问，不能直接打开 HTML 文件。导出默认 release，开发者入口关闭；需要调试包时显式加 `--debug`。隔离 PCK 检查验证菜单、地图、英雄房间和全部 33 个组合的资源，不代替浏览器验收。浏览器由用户手动检查输入、声音解锁、后台标签页和持久化。
 
 当前发布包还要求八项反馈检查 `python tools/verify_feedback_delivery.py` 通过；该检查自动纳入最终导出。专项重现、报告和历史战斗差异见 [FEEDBACK_REPAIRS.md](FEEDBACK_REPAIRS.md)。继续在 Godot 验证，最终集中导出一次；浏览器手动验收。
 

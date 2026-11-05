@@ -1152,6 +1152,47 @@
       "frames": [
         "stage_10"
       ]
+    },
+    "11": {
+      "id": 11,
+      "generation": 1,
+      "folder": "level11",
+      "modes": [
+        1,
+        2,
+        3
+      ],
+      "difficulties": [
+        2
+      ],
+      "controller": "default",
+      "features": [
+        "base",
+        "wolf",
+        "healer",
+        "bandits",
+        "tier3",
+        "ranger",
+        "flying",
+        "enemy_ranged",
+        "paladin",
+        "arcane",
+        "musketeer",
+        "spider",
+        "barbarian",
+        "bfg",
+        "sorcerer",
+        "sunray",
+        "tesla",
+        "wasteland",
+        "necromancer",
+        "lava_spawner"
+      ],
+      "atlas_groups": [
+        "go_stage11_bg",
+        "go_enemies_wastelands",
+        "go_enemies_blackburn"
+      ]
     }
   },
   "arenas": {
@@ -2065,6 +2106,42 @@
         "mod_demon_shield",
         "mod_skeleton_big"
       ]
+    },
+    "necromancer": {
+      "fields": [
+        "timed_actions"
+      ],
+      "reference_fields": [],
+      "animation_states": [
+        "summon",
+        "raise"
+      ],
+      "notification_ids": [
+        "enemy_necromancer",
+        "enemy_lava_elemental"
+      ],
+      "inputs": [
+        "kr1/game_scripts.lua",
+        "kr1/enemies.lua",
+        "all/script_utils.lua"
+      ],
+      "constants": [
+        "F_RANGED"
+      ]
+    },
+    "lava_spawner": {
+      "fields": [
+        "entity",
+        "cooldown_after",
+        "pi",
+        "sound"
+      ],
+      "local_update_bindings": [
+        "s11_lava_spawner:kr1.level11.s11_lava_spawner.update"
+      ],
+      "inputs": [
+        "kr1/template_groups/level11_templates.lua"
+      ]
     }
   },
   "controllers": {
@@ -2139,7 +2216,10 @@
     "game_scripts.aura_tesla_overcharge.update": "tesla_aura",
     "game_scripts.graveyard_controller.update": "graveyard",
     "game_scripts.enemy_demon_mage.update": "demon_mage",
-    "game_scripts.aura_skeleton_big.update": "skeleton_aura"
+    "game_scripts.aura_skeleton_big.update": "skeleton_aura",
+    "game_scripts.enemy_necromancer.update": "necromancer",
+    "kr1.level11.s11_lava_spawner.update": "layout_spawner",
+    "scripts.bolt_enemy.update": "enemy_bolt"
   },
   "behavior_aliases": {
     "game_scripts.tower_archer.update": "scripts.tower_archer.update",
@@ -2170,6 +2250,7 @@
     "game_scripts.aura_apply_damage.update": "scripts.aura_apply_damage.update"
   },
   "runtime_scripts": [
+    "res://scripts/battle/dove_necromancer.gd",
     "res://scripts/services/campaign_levels.gd",
     "res://scripts/battle/level01_sim.gd",
     "res://scripts/battle/battle_view.gd",
@@ -2372,7 +2453,11 @@
     "game_scripts.enemy_demon_mage.update",
     "game_scripts.aura_skeleton_big.update",
     "game_scripts.aura_apply_damage.update",
-    "game_scripts.enemy_base_portal.insert"
+    "game_scripts.enemy_base_portal.insert",
+    "kr1.level11.s11_lava_spawner.update",
+    "game_scripts.enemy_necromancer.update",
+    "scripts.bolt_enemy.insert",
+    "scripts.bolt_enemy.update"
   ],
   "runtime_callbacks": {
     "missile_bfg": {
@@ -2389,6 +2474,9 @@
     "mod_skeleton_big": {
       "insert": "game_scripts.mod_skeleton_big.insert",
       "remove": "game_scripts.mod_skeleton_big.remove"
+    },
+    "s11_lava_spawner": {
+      "update": "kr1.level11.s11_lava_spawner.update"
     }
   },
   "runtime_dependencies": {
@@ -2449,6 +2537,14 @@
     ],
     "enemy_demon_wolf": [
       "aura_demon_wolf_death"
+    ],
+    "enemy_necromancer": [
+      "enemy_skeleton",
+      "enemy_skeleton_big",
+      "bolt_necromancer"
+    ],
+    "s11_lava_spawner": [
+      "enemy_lava_elemental"
     ]
   },
   "combat_heroes": {

@@ -1,6 +1,6 @@
 # 关卡统一接入
 
-基准及当前范围见 [复刻指南](GODOT_WEB_REMAKE_GUIDE.md)。前十关 30 个组合与游侠测试场共用导出链路；公开的 `CampaignLevels.supports()`、`load_definition()` 与存档格式保持兼容。
+基准及当前范围见 [复刻指南](GODOT_WEB_REMAKE_GUIDE.md)。前十一关 33 个组合与游侠测试场共用导出链路；公开的 `CampaignLevels.supports()`、`load_definition()` 与存档格式保持兼容。
 
 ## 职责
 
@@ -43,3 +43,5 @@
 科技规则和扩展步骤见 [默认科技闭环](DEFAULT_UPGRADES.md)。新关卡必须同时包含当前已开放科技对该关可达内容的依赖，不因测试使用零科技而省略。关卡目录中的 `layout_instance_base` 固定历史布局实例的命名起点，已有 `layout_instance_aliases` 时按源布局实体精确匹配已发布名称，新增依赖不能重命名旧卫兵、鱼或背景实例。
 
 源表现字段必须追踪到消费代码：例如 `render.sprites.loop=false` 不能被通用状态名判断改为循环；`unit.hide_after_death=true` 要在死亡动作结束时隐藏，不能等同于 `health.dead_lifetime` 到期移除。源字段已导出、引用检查通过、旧快照稳定，均不足以单独证明这类脚本语义已实现。新增机制按生命周期种类选代表单位检查，不在每关重复同一场景。
+
+第十一关布局局部函数通过显式 local_update_bindings 登记，生成器 entity 和召唤 entity_names 递归追踪；运行时由独立死灵协程及布局生成器消费者执行，见 [LEVEL11.md](LEVEL11.md)。

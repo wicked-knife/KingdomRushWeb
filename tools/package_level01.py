@@ -33,8 +33,9 @@ def package():
         if sha256(ROOT / path) != expected:
             raise RuntimeError('Stage validation report changed after export: ' + path)
     if 10 in level_ids():
-        if not receipt.get('tenth_acceptance', {}).get('passed') or not receipt.get('current_source_sha256'):
-            raise RuntimeError('Current scoped tenth-stage acceptance is required')
+        acceptance = "eleventh_acceptance" if 11 in level_ids() else "tenth_acceptance"
+        if not receipt.get(acceptance, {}).get('passed') or not receipt.get('current_source_sha256'):
+            raise RuntimeError('Current scoped stage acceptance is required')
         for path, expected in receipt['current_source_sha256'].items():
             if sha256(ROOT / path) != expected:
                 raise RuntimeError('Export input changed after export: ' + path)
@@ -89,6 +90,9 @@ def package():
         "Level 9 challenges: 2000/2400 gold, 1 life, technology cap 5, heroes disabled. Iron has 9 free mage1 towers; only new mages allowed.\n"
         "JT eats and heals, summons wolves/yetis, freezes 3 towers per cast. Click each frozen tower 3 times to thaw.\n"
         "JT's death waits for your click before the final animation and enemy cleanup. Victory/map settlement permanently unlocks the new towers.\n"
+        "Level 10: 800/1800/2200 gold, 19/6/1 waves, Tesla and graveyard; Iron bans new artillery.\n"
+        "Level 11: 1300/2100/2600 gold, 19/6/1 waves, 18 sites, necromancer and lava generator.\n"
+        "Level 11 allows Malik and technology cap 6 in all modes; Iron bans new archers and artillery.\n"
         "Default technology scheme 1: six branches and 36 upgrades, purchased with settled stars on the map.\n"
         "Click a higher rank to buy missing prerequisites, or a purchased rank to refund it and later ranks.\n"
         "Purchases save immediately. Undo restores this opening's levels; Reset clears levels and rebases Undo.\n"
@@ -167,6 +171,7 @@ def package():
         "seventh_acceptance": receipt.get("seventh_acceptance", {}),
         "eighth_acceptance": receipt.get("eighth_acceptance", {}),
         "tenth_acceptance": receipt.get("tenth_acceptance", {}),
+        "eleventh_acceptance": receipt.get("eleventh_acceptance", {}),
         "ninth_acceptance": receipt.get("ninth_acceptance", {}),
         "validation_report_sha256": receipt.get("validation_report_sha256", {}),
         "technology_scheme": receipt.get("technology_scheme"),

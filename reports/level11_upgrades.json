@@ -1,0 +1,27 @@
+{
+	"checks": 86,
+	"failures": [],
+	"passed": true,
+	"source_hashes": {
+		"data/level11/definition.json": "aa68a35eb99cc68dad8de4152fd09c420ccfbbf200cf95a71ae1a089bdfd4eeb",
+		"data/upgrades/definition.json": "56649f49a635a3e0f67c8674def89782c2536fd0c096102babd51afaa0598815",
+		"scripts/app_root.gd": "819589b066d9d106fcd8a05c38d568f7cd8ff8a3926906c7d33b6e0ef29640c9",
+		"scripts/battle/battle_view.gd": "7bc3f20bf1d3eccab023da3c5a6519650ff51a74af74275abf560ec5af5868c9",
+		"scripts/battle/dove_arcane.gd": "910616929963c924a84a268a3fb9f215f18c5dff39aaf625d97b70cb0194576a",
+		"scripts/battle/dove_behaviors.gd": "c10b8fa0b98693287cbf2feff70cfb699fd0cf5317cd4faaa1cc30512371717d",
+		"scripts/battle/dove_modifiers.gd": "fa1f8136d1c61ee0d1087b49c3700581d79dde4baed7ad733a72324c32d9be5c",
+		"scripts/battle/dove_upgrades.gd": "6e43a1b8a2f7f579119114c95f655c22cf6b7793016f67df12497355482045ed",
+		"scripts/battle/level01_sim.gd": "4beda3afbc618cb55146342ceaf47e96f7938d1ff2ade028767f68966186153f",
+		"scripts/map/map_interface.gd": "6539338f2a5585a7611ec825a8b51768f90a7d6ff027550aaaea846bd6470044",
+		"scripts/map/map_screen.gd": "16713179a9a97d74659daefbc11ef36299d03c2513a5e984e25e332e2110c0fb",
+		"scripts/map/upgrades_room.gd": "e4089ec1068641eac1185c99c0f78d95ccac00279e456bd2c1b22006f2caabf8",
+		"scripts/services/battle_setup.gd": "ecc0636937834eaeb63af06ab9068f86235cc00597644c56713189dcc44ea9d3",
+		"scripts/services/campaign_levels.gd": "da30a1fdd2463ea40be1083c3a83215738985442037aac0d48b410352297c1af",
+		"scripts/services/campaign_progress.gd": "63f8ea4460117fe0041ec0eccd9d57810a7b7c09022f74216e1ca00187e82827",
+		"tests/fixtures/level11_upgrades_source.json": "b26c70586566fc1044cc32b0a08e7c432352e132d7aa07c93c7bb04434b5a5e8",
+		"tests/verify_level11_upgrades.gd": "62e05188083f7a56b3f343819923d3fd46e95925d0f99e82b9ab8ab5b827432c",
+		"tools/upgrade_reference/main.lua": "dd05d64423e694ab3104ee23c152cfaf844a5bff82f937640a39abf8d905da7b"
+	},
+	"source_patch_scenarios": 16,
+	"source_template_rows": 1680
+}

@@ -53,6 +53,7 @@ var spawn_queue: Array = []
 var eggs: Array = []
 var pending_entities: Array = []
 var spawners: Array = []
+var layout_spawners: Array = []
 var auras: Array = []
 var notices: Array = []
 var unlocked := {"reinforcements": false, "fire": false}
@@ -116,6 +117,7 @@ func reset(seed_value: int = 1) -> void:
 	pending_entities.clear(); spawners.clear(); auras.clear()
 	controller.reset(self)
 	wasteland.reset()
+	Behaviors.Spawner.reset_layout(self)
 	# Dove enables the non-tutorial powers from the first next-wave-sent event,
 	# not while the battlefield is still in its pre-wave setup state.
 	unlocked = {"reinforcements": false, "fire": false}
@@ -839,11 +841,11 @@ func _enemy_step(e: Dictionary) -> void:
 	if e.has("jt") and e.jt.phase=="done" and not e.boss.death_handled:
 		Behaviors.Jt.step(self,e,templates[e.template]);return
 	if e.hp <= 0:
-		if e.has("boss"): behaviors.enemy_step(self, e, templates[e.template])
+		if e.has("boss") or e.has("necromancer"): behaviors.enemy_step(self, e, templates[e.template])
 		return
 	var t: Dictionary = templates[e.template]
 	# These source coroutines own the interrupt/animation waits of active attacks.
-	var coroutine_owned: bool = e.has("rage_job") or e.has("mixed_melee_job") or e.has("jt")
+	var coroutine_owned: bool = e.has("rage_job") or e.has("mixed_melee_job") or e.has("jt") or e.has("necromancer")
 	if coroutine_owned and behaviors.enemy_step(self,e,t): return
 	if int(e.get("stun_count",0)) > 0:
 		# SU.y_enemy_stun switches to idle, including enemies stunned while walking.
@@ -858,7 +860,7 @@ func _enemy_step(e: Dictionary) -> void:
 			else: _state(e, "idle")
 			return
 	var points: Array = data.paths.paths[e.get("path", 0)][e.subpath]
-	var remaining := float(t.motion.max_speed) * float(data.rules.enemy_speed_factor) * STEP * modifiers.speed(e.id, self)
+	var remaining := float(e.get("speed_override",t.motion.max_speed)) * float(data.rules.enemy_speed_factor) * STEP * modifiers.speed(e.id, self)
 	var previous: Vector2 = e.pos
 	while remaining > 0 and e.node + 1 < points.size():
 		var dest := vec(points[e.node + 1]); var length: float = e.pos.distance_to(dest)
@@ -1093,6 +1095,8 @@ func _projectile(type: String, target: int, from: Vector2, to: Vector2, flight: 
 		var precision := upgrades.get_tech("archer_precision")
 		if attacker.get("type", "") == "archer" and behaviors.projectile_role(templates[type]) != "shotgun" and type != "bomb_musketeer" and not precision.is_empty() and rng.randf() < float(precision.chance):
 			b.damage_min *= float(precision.damage_factor); b.damage_max *= float(precision.damage_factor); b.critical = true
+	if behaviors.projectile_role(templates[type]) == "enemy_bolt":
+		b.speed=float(bullet.min_speed);b.start_at=tick+1;b.tracked_target=0;b.playback_state="flying"
 	if behaviors.projectile_role(templates[type]) == "bolt":
 		b.speed = float(bullet.min_speed); b.last_step = tick; b.target_invalid = false
 	elif behaviors.projectile_role(templates[type]) == "shotgun":
@@ -1111,6 +1115,7 @@ func _bullet_step(p: Dictionary) -> void:
 	var b: Dictionary = templates[p.template].bullet
 	var target := unit_by_id(p.target)
 	var behavior: String = behaviors.projectile_role(templates[p.template])
+	if behavior == "enemy_bolt": EnemyProjectiles.bolt(self,p,b);return
 	if behavior == "tesla_ray": Behaviors.Tesla.projectile(self,p,b);return
 	if behavior == "missile": Behaviors.Missile.step(self,p,b); return
 	if behavior == "cluster": Behaviors.Bfg.cluster_step(self,p,b); return

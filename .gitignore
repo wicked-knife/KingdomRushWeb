@@ -120,3 +120,12 @@ __pycache__/
 !/reports/sorcerer_trail_logic.json
 !/reports/tesla_animation_logic.json
 !/reports/tesla_animation_native.json
+
+!/reports/level11_logic.json
+!/reports/level11_assets.json
+!/reports/level11_native_1280x720.json
+!/reports/level11_upgrades.json
+!/reports/level11_shared_logic.json
+!/reports/level11_ranged_shared.json
+!/reports/level11_delivery.json
+!/reports/hero_combat_logic.json

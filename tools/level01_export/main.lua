@@ -153,6 +153,10 @@ local function run()
   for _,name in ipairs(spec.export.constants or {}) do out.constants[name]=assert(_G[name]) end
   for key,value in pairs(source_tables) do out[key]=clean(value) end
   for _,id in ipairs(out.layout.required_templates or {}) do chunk("kr1/template_groups/"..id..".lua") end
+  for _,binding in ipairs(spec.export.local_update_bindings or {}) do
+    local id,name=binding:match("([^:]+):(.+)")
+    behavior_names[assert(E.entities[id],id).main_script.update]=name
+  end
   if has("snow") then behavior_names[E.entities.decal_goat.main_script.insert]="kr1.decal_sheep_big.insert" end
   local template_ids=table.deepclone(spec.export.template_ids)
   for _,id in ipairs({"re_farmer_well_fed","re_conscript","re_warrior","re_legionnaire","re_legionnaire_ranged","spear_legionnaire","mod_arcane_shatter","mod_arcane_shatter_little","mod_slow_curse","mod_blood_elves","power_scorched_earth","power_scorched_water","pop_crit"}) do table.insert(template_ids,id) end
@@ -195,7 +199,7 @@ local function run()
         if type(fn)=="function" then out.callbacks[id][key]=assert(behavior_names[fn],spec.folder..": "..id..".main_script."..key.." -> unmapped source callback") end
       end
     end
-    if t.graveyard or t.modifier or t.aura or t.spawner or t.fireball_count or t.enemy or t.soldier or t.bullet or t.unfreeze_upgrade_to or (t.tower and not t.tower_holder) then
+    if (t.entity and t.cooldown_after) or t.graveyard or t.modifier or t.aura or t.spawner or t.fireball_count or t.enemy or t.soldier or t.bullet or t.unfreeze_upgrade_to or (t.tower and not t.tower_holder) then
       local fn=t.main_script and (t.main_script.update or t.main_script.insert)
       assert(fn and behavior_names[fn],spec.folder..": "..id.." has an unmapped behavior")
       out.behaviors[id]=behavior_names[fn]
@@ -205,7 +209,7 @@ local function run()
       if type(value)~="table" then return end
       for key,child in pairs(value) do
         if references[key] and type(child)=="string" and child~="" then found[child]=true end
-        if key=="mods" and type(child)=="table" then for _,name in ipairs(child) do if type(name)=="string" and name~="" then found[name]=true end end end
+        if (key=="mods" or key=="entity_names") and type(child)=="table" then for _,name in ipairs(child) do if type(name)=="string" and name~="" then found[name]=true end end end
         visit(child)
       end
     end

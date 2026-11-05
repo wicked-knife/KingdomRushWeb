@@ -1,7 +1,7 @@
 {
   "package_created": true,
   "source_commit": "4072b18bf4e418eec8b813a960c83003744cb710",
-  "content_catalog_sha256": "eecd92240e8ba8dd1a44d09f5ec336600a191d11cc7dab89a912beb9946563d1",
+  "content_catalog_sha256": "cb0af44d0d46f65b4f360eec63323f4baa028cd230ba84aa95fe6be2791f0bb9",
   "browser_tested": false,
   "build_type": "release",
   "developer_menu": false,
@@ -16,7 +16,8 @@
     7,
     8,
     9,
-    10
+    10,
+    11
   ],
   "playable_modes": [
     1,
@@ -173,6 +174,21 @@
       "level": 10,
       "mode": 3,
       "difficulty": 2
+    },
+    {
+      "level": 11,
+      "mode": 1,
+      "difficulty": 2
+    },
+    {
+      "level": 11,
+      "mode": 2,
+      "difficulty": 2
+    },
+    {
+      "level": 11,
+      "mode": 3,
+      "difficulty": 2
     }
   ],
   "challenge_validation_passed": true,
@@ -201,20 +217,23 @@
     "9/2",
     "9/3",
     "10/2",
-    "10/3"
+    "10/3",
+    "11/2",
+    "11/3"
   ],
   "challenge_replays_verified": [],
   "pck_isolated_check": true,
   "battle_ui_acceptance": {
-    "tenth_native": {
+    "eleventh_native": {
       "passed": true,
-      "checks": 102
+      "checks": 118,
+      "scope": "three mode entry, source actor lifecycle/render queue, generator, build/spell input, restart and constructed result persistence"
     }
   },
   "default_technology_acceptance": {
-    "tenth_source_patches": {
+    "eleventh_source_patches": {
       "passed": true,
-      "checks": 65,
+      "checks": 86,
       "source_patch_scenarios": 16
     }
   },
@@ -240,100 +259,105 @@
     "failure_probes": null
   },
   "tenth_acceptance": {
+    "passed": null,
+    "playable_combinations": null,
+    "reports": null,
+    "failure_probes": null,
+    "historical_scope": null
+  },
+  "eleventh_acceptance": {
     "passed": true,
-    "playable_combinations": 30,
+    "playable_combinations": 33,
     "reports": {
-      "level10_logic": {
+      "level11_logic": {
         "passed": true,
-        "checks": 168,
+        "checks": 1513,
         "independent_modes": 3,
         "timeline_waves": 26,
-        "births": 1160
+        "births": 1472,
+        "source_scenarios": 35
       },
-      "level10_upgrades": {
+      "level11_upgrades": {
         "passed": true,
-        "checks": 65,
+        "checks": 86,
         "source_patch_scenarios": 16
       },
-      "level10_native_1280x720": {
+      "level11_native_1280x720": {
         "passed": true,
-        "checks": 102
+        "checks": 118,
+        "scope": "three mode entry, source actor lifecycle/render queue, generator, build/spell input, restart and constructed result persistence"
       },
-      "level10_assets": {
+      "level11_assets": {
         "passed": true,
-        "frames": 6258,
-        "animations": 483
+        "frames": 6612,
+        "animations": 501
       },
-      "level10_compatibility": {
-        "passed": true
-      },
-      "level10_shared_logic": {
+      "level11_shared_logic": {
         "passed": true,
-        "checks": 53,
-        "scope": "source Sorcerer/Sunray attacks; freeze/thaw, JT death, polymorph and elemental lifecycle; no campaign replay"
+        "checks": 86,
+        "scope": "representative stage-ten graveyard, demons, skeletons and Tesla source regressions"
       },
-      "sorcerer_trail_logic": {
+      "level11_ranged_shared": {
         "passed": true,
-        "checks": 10
-      },
-      "misc_presentation_logic": {
-        "passed": true,
-        "checks": 166,
-        "scope": "armor source formatting; final enemy death and two-second settlement delay"
-      },
-      "battle_details_logic": {
-        "passed": true,
-        "checks": 49
+        "checks": 18,
+        "scope": "six source axe-thrower ranged timing and interruption regressions"
       },
       "hero_combat_logic": {
         "passed": true,
-        "checks": 161,
-        "behavior_scenarios": 59
+        "checks": 161
+      },
+      "tesla_animation_logic": {
+        "passed": true,
+        "checks": 12
       }
     },
     "failure_probes": [
       {
-        "missing": "tower_tesla",
+        "missing": "enemy_necromancer",
         "rejected": true,
-        "reason": "Invalid power preview dependency: bolt/1: 'tower_tesla'"
+        "reason": "level11: behavior -> missing template enemy_necromancer"
       },
       {
-        "missing": "ray_tesla",
+        "missing": "enemy_skeleton",
         "rejected": true,
-        "reason": "Invalid power preview dependency: bolt/1: 'ray_tesla'"
-      },
-      {
-        "missing": "mod_ray_tesla",
-        "rejected": true,
-        "reason": "level10: missing template dependency: ray_tesla -> mod_ray_tesla"
-      },
-      {
-        "missing": "ps_tesla_overcharge",
-        "rejected": true,
-        "reason": "level10: missing template dependency: aura_tesla_overcharge -> ps_tesla_overcharge"
-      },
-      {
-        "missing": "aura_demon_death",
-        "rejected": true,
-        "reason": "level10: enemy_demon -> missing runtime dependency aura_demon_death"
-      },
-      {
-        "missing": "mod_demon_shield",
-        "rejected": true,
-        "reason": "level10: enemy_demon_mage -> missing runtime dependency mod_demon_shield"
+        "reason": "level11: graveyard_controller -> missing runtime dependency enemy_skeleton"
       },
       {
         "missing": "enemy_skeleton_big",
         "rejected": true,
-        "reason": "level10: graveyard_controller -> missing runtime dependency enemy_skeleton_big"
+        "reason": "level11: graveyard_controller -> missing runtime dependency enemy_skeleton_big"
       },
       {
-        "missing": "graveyard_controller__7",
+        "missing": "bolt_necromancer",
         "rejected": true,
-        "reason": "level10: layout -> missing template graveyard_controller__7"
+        "reason": "level11: enemy_necromancer -> missing runtime dependency bolt_necromancer"
+      },
+      {
+        "missing": "enemy_lava_elemental",
+        "rejected": true,
+        "reason": "level11: s11_lava_spawner -> missing runtime dependency enemy_lava_elemental"
+      },
+      {
+        "missing": "s11_lava_spawner",
+        "rejected": true,
+        "reason": "level11: behavior -> missing template s11_lava_spawner"
+      },
+      {
+        "missing": "necromancer behavior",
+        "rejected": true,
+        "reason": "level11: enemy_necromancer -> unsupported.missing: Unsupported Dove behavior: unsupported.missing"
+      },
+      {
+        "missing": "necromancer runtime resource",
+        "rejected": true,
+        "reason": "Runtime dependency missing from export manifest: res://scripts/battle/dove_behaviors.gd -> res://scripts/battle/dove_necromancer.gd"
       }
     ],
-    "historical_scope": "Prior configuration preserved by exact additive audit against 1775c0e; shared runtime checked with representative current scenarios. Previous native multi-resolution reports are historical evidence only."
+    "compatibility": {
+      "base_commit": "1f985e78c4127039b5ac0d211dabd5d70342b511",
+      "exact_files": 221
+    },
+    "historical_scope": "Levels 1-10 and ranger arena data unchanged byte for byte; representative shared runtime regressions run on current code."
   },
   "ninth_acceptance": {
     "passed": null,
@@ -342,23 +366,21 @@
     "failure_probes": null
   },
   "validation_report_sha256": {
-    "reports/level10_logic.json": "dbd43c8924d15b7c269a6e7f49a6dd598c780b0c8577bdea02f7d95a3acd8f11",
-    "reports/level10_upgrades.json": "891c9d46a54cf0fcfb4223fa895ea3d19e9281cdb95f6eb7dada269aa451879b",
-    "reports/level10_native_1280x720.json": "76c5be57eb84f29657d2bc5a37d80b0c9c9865d7c34441d4dd941555babbed8b",
-    "reports/level10_assets.json": "1033173ce2218c8a7e5d6b6573fbae93b0f090c852cff538fb998ac5f8c2d3e1",
-    "reports/level10_compatibility.json": "991b7764889d8838d47d4b5b3abdc79666418b9cc007097813e047af94f72190",
-    "reports/level10_shared_logic.json": "0749126420e3fb8d063658e22da5cf9ed3136fc720a4be112fc314e354108ec4",
-    "reports/sorcerer_trail_logic.json": "cfba3d992780bbee86930bc457ac6b84b6ec6c469133b6b3836f378afff7e655",
-    "reports/misc_presentation_logic.json": "060fe7033a6354d8ccb3bce6c5e1cb0b00a79c870100c0585423a504ad1ba8a1",
-    "reports/battle_details_logic.json": "bea9a48b837db253ef893f73435d3c30d7a5fc4efa051fdf3d720f594dbb835d",
-    "reports/hero_combat_logic.json": "4a52d6afcc93b4cbfed7029010a5c5cb9f10c6cf8d23b76062ce59227dfaaecd",
-    "reports/level10_delivery.json": "52f4754d3f776d85cb51b86776f90c3230d6b3fd8c95754542bcfac61b0bf93a"
+    "reports/level11_logic.json": "58235253f2e40bb3e477adb16068fb82920f62ddd9e858abdf6b43be540ffe1c",
+    "reports/level11_upgrades.json": "77bd4981fda8a459ebbdf0c9b41eae59cb63cc988ca5be5b8bb2a1ad870d56f3",
+    "reports/level11_native_1280x720.json": "c9817bb653a126e10a438278fbf3f31e8d21a6c07ea54deb71d66511ab646ff0",
+    "reports/level11_assets.json": "6dada48af763fcaa67ef4ce6d4a48e03549c945d78c48cfbafe0950d8793ff12",
+    "reports/level11_shared_logic.json": "7d05ab5bd25f6837b3215a758550b7d0d2dfd7cb6715997573ece7b58f03410c",
+    "reports/level11_ranged_shared.json": "47069a1445d58739c4db5a3ad26d48f4e6b24b6638f0938070b5fdfa556c3dda",
+    "reports/hero_combat_logic.json": "1b021b7c76929ba3c101b72f800afb7dbb4016ff4e3c04cb151861360fba4337",
+    "reports/tesla_animation_logic.json": "fc89ce3fdb96caab68280c5803db18548d8709a7828b2edf5318090662fb2c09",
+    "reports/level11_delivery.json": "4f2f995b0d03a7de2340f51a03ca26172c6428ee5a51a4ab099c4077e372d247"
   },
   "technology_scheme": "1",
-  "pck_files": 1048,
-  "bundle": "build\\KingdomRush-KR1-Levels01-10-Web.zip",
-  "bytes": 398432749,
-  "sha256": "6ffab70b3eefc5e1d1ee27bf066667696eb0b9434705e56db76ea7931c26f21f",
+  "pck_files": 1094,
+  "bundle": "build\\KingdomRush-KR1-Levels01-11-Web.zip",
+  "bytes": 442959631,
+  "sha256": "a574647ae970c691a0389a14025d3399fede27cbe9ad25ba7166080039b16cc9",
   "web_files": {
     "index.apple-touch-icon.png": {
       "bytes": 11939,
@@ -374,7 +396,7 @@
     },
     "index.html": {
       "bytes": 3146,
-      "sha256": "f33622aae7ac628618d0047d1ddf430e7fe52dc2a1506bdb8bdd0a8084dd87c4"
+      "sha256": "6c5bd2088a03921227f1457ebd23d232ef1d6d81720b4eaf2656a8dd703df5a5"
     },
     "index.icon.png": {
       "bytes": 5765,
@@ -385,8 +407,8 @@
       "sha256": "33c94cb3175f3333b82e2a3be5e8e86f77986f0aa2042b1631f6367a4e5bb6ba"
     },
     "index.pck": {
-      "bytes": 410613940,
-      "sha256": "bfd8ad679f1538ed7fedfe300b786f11caaf90a95fef48b8df0b67720b2b936d"
+      "bytes": 457721468,
+      "sha256": "647b8c28f775718af57f6fc79d80484800e8229ba10330ced6d1a5d2534c5458"
     },
     "index.png": {
       "bytes": 21443,
@@ -397,20 +419,20 @@
       "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
     },
     "export_receipt.json": {
-      "bytes": 80242,
-      "sha256": "0f5d30ba67ffb8a9111170dfda3522323a3fb38345de390e309267b343d195ae"
+      "bytes": 83673,
+      "sha256": "99613be3b331350ca7394ec66ac58c977ccc43f03d041ba61533cae79990b794"
     },
     "README.txt": {
-      "bytes": 7236,
-      "sha256": "e26e2e807cd6a6fa23aeb77c34ae0ce3d30fe3ba28a58d718aeaa7ce0e12c46c"
+      "bytes": 7522,
+      "sha256": "2bccbf92c8386f4c229ecd9b97accbc0c14e061e9a265e80233e950b31acdf4b"
     },
     "start_server.cmd": {
       "bytes": 180,
       "sha256": "8f021ad5511504a288354fec02c4bf8514f054a2457cc229710e1d6069558b32"
     },
     "pack_files.json": {
-      "bytes": 74096,
-      "sha256": "1a52507b5541f25dee2672700946434b51aa7e70c455d4dbc63585067dcbcb51"
+      "bytes": 76719,
+      "sha256": "fde25852d91cd47c419dfbe1de05ed80df0462b924c6befd66628b0ed651432b"
     }
   }
 }

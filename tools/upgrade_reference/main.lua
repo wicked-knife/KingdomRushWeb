@@ -50,8 +50,8 @@ function love.load()
         if reference_level and t.powers then p.powers=table.deepclone(t.powers)end
         if t.health then p.health={hp_max=t.health.hp_max,armor=t.health.armor,magic_armor=t.health.magic_armor,dead_lifetime=t.health.dead_lifetime,damage_factor=t.health.damage_factor,spiked_armor=t.health.spiked_armor}end
         if t.bullet then p.bullet={damage_min=t.bullet.damage_min,damage_max=t.bullet.damage_max,reduce_armor=t.bullet.reduce_armor,mods=t.bullet.mods,mod=t.bullet.mod,damage_radius=t.bullet.damage_radius}end
-        if reference_level==10 and n=="ray_tesla" then p.bounce_damage_min=t.bounce_damage_min;p.bounce_damage_max=t.bounce_damage_max end
-        if t.dps then p.dps={damage_min=t.dps.damage_min,damage_max=t.dps.damage_max};if reference_level==10 and n=="mod_ray_tesla" then for _,k in ipairs({"cocos_frames","cocos_cycles","damage_every","damage_type"})do p.dps[k]=t.dps[k]end end end
+        if reference_level and n=="ray_tesla" then p.bounce_damage_min=t.bounce_damage_min;p.bounce_damage_max=t.bounce_damage_max end
+        if t.dps then p.dps={damage_min=t.dps.damage_min,damage_max=t.dps.damage_max};if reference_level and n=="mod_ray_tesla" then for _,k in ipairs({"cocos_frames","cocos_cycles","damage_every","damage_type"})do p.dps[k]=t.dps[k]end end end
         if t.aura and (n=="power_scorched_earth" or n=="power_scorched_water")then p.aura={damage_min=t.aura.damage_min,damage_max=t.aura.damage_max,duration=t.aura.duration}end
         if n=="power_fireball"then p.scorch_earth=t.scorch_earth end
         if n=="power_fireball_control"then p.control={cooldown=t.cooldown,fireball_count=t.fireball_count,cataclysm_count=t.cataclysm_count}end

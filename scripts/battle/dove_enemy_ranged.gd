@@ -19,7 +19,7 @@ static func step(sim, enemy: Dictionary, template: Dictionary) -> bool:
 		# Source range_attacks rolls even for a guaranteed attack.
 		enemy.ranged_at = sim.tick
 		if sim.rng.randf() >= float(attack.chance): return true
-		enemy.ranged_cast = {"target": target.id, "at": sim.tick + sim.frames(attack.shoot_time), "end": sim.tick + Anim.duration(sim.animations, Anim.key(template.render.sprites[0], "shoot")), "fired": false}
+		enemy.ranged_cast = {"target": target.id, "at": sim.tick + sim.source_wait_ticks(sim.tick,float(attack.shoot_time)), "end": sim.tick + Anim.duration(sim.animations, Anim.key(template.render.sprites[0], "shoot")), "fired": false}
 		enemy.flip = target.pos.x < enemy.pos.x
 		sim._state(enemy, "shoot", true)
 	var casting: Dictionary = enemy.ranged_cast
@@ -31,7 +31,8 @@ static func step(sim, enemy: Dictionary, template: Dictionary) -> bool:
 		if not target.is_empty():
 			var offset: Vector2 = sim.vec(attack.bullet_start_offset[0]); offset.x *= -1 if enemy.flip else 1
 			var from: Vector2 = enemy.pos + offset
-			var flight: float = sim.templates[attack.bullet].bullet.flight_time
+			# Enemy magic bolts use source speed integration rather than flight_time.
+			var flight: float = float(sim.templates[attack.bullet].bullet.get("flight_time",0))
 			var to: Vector2 = target.pos + sim.vec(sim.templates[target.template].unit.hit_offset)
 			sim._projectile(attack.bullet, target.id, from, to, flight, enemy)
 			sim.projectiles[-1].source = enemy.id

@@ -1,0 +1,16 @@
+{
+	"checks": 86,
+	"failures": [],
+	"passed": true,
+	"scope": "representative stage-ten graveyard, demons, skeletons and Tesla source regressions",
+	"source_hashes": {
+		"data/level10/definition.json": "2d9f2440a2fb412b7e799078ef6bb62e8ae4ee45883dc45be149881b0cb24935",
+		"scripts/battle/dove_behaviors.gd": "c10b8fa0b98693287cbf2feff70cfb699fd0cf5317cd4faaa1cc30512371717d",
+		"scripts/battle/dove_enemy_projectiles.gd": "04ae879e5b0df6d4c077f99e84aaeb4e2b64635c47984fc32b8ce5f83d671caf",
+		"scripts/battle/dove_enemy_ranged.gd": "b063522295875727cc532016ea0543dd287be085898734931dc71d95999b3a5a",
+		"scripts/battle/level01_sim.gd": "4beda3afbc618cb55146342ceaf47e96f7938d1ff2ade028767f68966186153f",
+		"tests/fixtures/level10_source.json": "813201a6991cc543726f21bd766742570431f4140f7807625a15a9489df11502",
+		"tests/verify_level10.gd": "2efa565ebbad5f72cfd8b7df650db46537b011f87436c3113cbaa1b402cd137f",
+		"tests/verify_level11_shared.gd": "6ff78acf7c78538c1cacf85e758196c19789777d2a7beeba9051106ce0b4ab7e"
+	}
+}
