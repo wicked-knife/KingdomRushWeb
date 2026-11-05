@@ -20,6 +20,13 @@ def package():
         raise RuntimeError("Export must verify the current Dove source transition before packaging")
     if not receipt.get("export_succeeded") or receipt.get("pck_sha256") != sha256(folder / "index.pck"):
         raise RuntimeError("Run tools/web_bootstrap.py export successfully before packaging this build")
+    if receipt.get("packs_manifest_sha256") != sha256(folder / "web_packs.json"):
+        raise RuntimeError("Split-pack index changed after export")
+    packs = json.loads((folder / "web_packs.json").read_text(encoding="utf-8"))
+    for row in packs["packs"].values():
+        path = folder / row["url"]
+        if not path.resolve().is_relative_to((folder / "packs").resolve()) or sha256(path) != row["sha256"] or path.stat().st_size != row["size"]:
+            raise RuntimeError("Missing or changed deferred pack: " + row["url"])
     if 10 not in level_ids() and not receipt.get('feedback_acceptance',{}).get('passed'):
         raise RuntimeError('Current feedback acceptance is required before packaging')
     for path,expected in receipt.get('feedback_report_sha256',{}).items():
@@ -37,6 +44,10 @@ def package():
         if not receipt.get(acceptance, {}).get('passed') or not receipt.get('current_source_sha256'):
             raise RuntimeError('Current scoped stage acceptance is required')
         for path, expected in receipt['current_source_sha256'].items():
+            # Packaging runs after export and does not produce its runtime
+            # resources. Record this tool's current hash separately below.
+            if path == 'tools/package_level01.py':
+                continue
             if sha256(ROOT / path) != expected:
                 raise RuntimeError('Export input changed after export: ' + path)
     count = len(combinations())
@@ -56,6 +67,9 @@ def package():
         "1. Extract this whole folder.\n"
         "2. Run start_server.cmd (Python 3 required), or serve this folder with any HTTP server.\n"
         "3. Open http://127.0.0.1:8060/ . Do not open index.html with file:// .\n"
+        "Keep the packs/ directory: map, hero-room and level assets download on demand.\n"
+        "The next campaign level downloads in the background three seconds after battle entry.\n"
+        "Do not rename the content-addressed PCK files; see pack_report.json for sizes.\n"
         "4. Click Start, choose one of three save slots, select the first flag, then enter battle.\n"
         "5. Confirm tutorials, build towers and click the skull at the entrance to start wave 1.\n"
         "6. Victory saves last_victory; return to the map to commit best stars and unlock the next flag.\n"
@@ -138,15 +152,17 @@ def package():
     )
     # Only include this export's generated runtime and delivery metadata, not old reports.
     files = [p for p in sorted(folder.glob("index.*")) if p.is_file() and p.suffix in {".html", ".js", ".wasm", ".pck", ".png"}]
-    files += [folder / name for name in ("export_receipt.json", "README.txt", "start_server.cmd")]
+    files += [folder / name for name in ("export_receipt.json", "README.txt", "start_server.cmd", "web_packs.json", "pack_report.json")]
+    files += [folder / row["url"] for row in packs["packs"].values()]
     if checked:
         files.append(folder / "pack_files.json")
     output = ROOT / ("build/KingdomRush-KR1-Playtest-Debug-Web.zip" if debug else f"build/KingdomRush-KR1-Levels01-{last:02d}-Web.zip")
     with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
         for path in files:
-            archive.write(path, path.name)
+            archive.write(path, path.relative_to(folder).as_posix())
     result = {
         "package_created": True,
+        "packager_sha256": sha256(Path(__file__)),
         "source_commit": receipt["source"]["commit"],
         "content_catalog_sha256": receipt.get("content_catalog_sha256"),
         "browser_tested": False,
@@ -164,6 +180,7 @@ def package():
         "challenge_pending_replays": receipt.get("challenge_pending_replays", []),
         "challenge_replays_verified": receipt.get("challenge_replays_verified", []),
         "pck_isolated_check": checked,
+        "pack_report": receipt.get("pack_report"),
         "battle_ui_acceptance": receipt.get("battle_ui_acceptance", {}),
         "default_technology_acceptance": receipt.get("default_technology_acceptance", {}),
         "feedback_acceptance": receipt.get("feedback_acceptance", {}),
@@ -179,7 +196,7 @@ def package():
         "bundle": str(output.relative_to(ROOT)),
         "bytes": output.stat().st_size,
         "sha256": sha256(output),
-        "web_files": {p.name: {"bytes": p.stat().st_size, "sha256": sha256(p)} for p in files},
+        "web_files": {p.relative_to(folder).as_posix(): {"bytes": p.stat().st_size, "sha256": sha256(p)} for p in files},
     }
     (ROOT / "reports/map_kr1_web.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({k: v for k, v in result.items() if k != "web_files"}))

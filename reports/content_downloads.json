@@ -1,0 +1,12 @@
+{
+	"browser_tested": false,
+	"checks": 34,
+	"failures": [],
+	"independent_scenarios": 10,
+	"passed": true,
+	"source_hashes": {
+		"scripts/services/content_packs.gd": "31251825962fb8d60734f0ad9ae452d69a6879444d60ad78316d34ed9c1488b2",
+		"tests/verify_content_downloads.gd": "24f844f0bd0f71a48e278f7656839c04966b620803112e1b862bbfad4a001521",
+		"tools/check_content_downloads.py": "393bd559f4e8984d1bb729d86ec86f01f64711797d4143e6b3a45deb5adc9d34"
+	}
+}

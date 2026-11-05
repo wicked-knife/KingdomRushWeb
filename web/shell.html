@@ -47,6 +47,7 @@
       if (missing.length) throw new Error('浏览器缺少所需能力：' + missing.join(', '));
       const engine = new Engine($GODOT_CONFIG);
       engine.startGame({
+          args: ['--', '--content-base-url=' + new URL('./', window.location.href).href],
           onProgress(current, total) {
             if (total > 0) { progress.max = total; progress.value = current; }
             else { progress.removeAttribute('value'); }

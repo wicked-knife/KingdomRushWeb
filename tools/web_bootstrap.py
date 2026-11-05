@@ -51,6 +51,7 @@ def resource_paths():
         resources += level["resources"]
         data += level["data"] + [f"res://data/{level_name}/manifest.json"]
     resources += content["runtime_scripts"]
+    resources.append("res://scripts/services/content_packs.gd")
     resources += list(content["controllers"].values())
     campaign_map = json.loads((ROOT / "data/map_kr1/manifest.json").read_text(encoding="utf-8"))
     resources += campaign_map["resources"]
@@ -119,7 +120,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
     def end_headers(self):
         # Avoid stale local builds; no service worker or cross-origin isolation needed.
-        self.send_header("Cache-Control", "no-cache")
+        self.send_header("Cache-Control", "public, max-age=31536000, immutable" if self.path.startswith("/packs/") else "no-cache")
         super().end_headers()
 
 
@@ -199,13 +200,20 @@ def main():
                         raise RuntimeError(f"Battle UI acceptance is stale: {relative}")
                 ui_reports[key] = {k: result[k] for k in ("passed", "checks", "layout_only", "scope") if k in result}
         output = ROOT / "build/web/index.html"
+        source_output = ROOT / "build/web-source/index.html"
+        source_output.parent.mkdir(parents=True, exist_ok=True)
         output.parent.mkdir(parents=True, exist_ok=True)
         # Keep generated artifacts and the isolated verification project out of the editor.
         (ROOT / "build/.gdignore").touch()
         # An earlier build's verification must never be presented as this build's result.
         for name in ("pack_files.json", "export_receipt.json"):
             (output.parent / name).unlink(missing_ok=True)
-        subprocess.run([engine, "--headless", "--path", str(ROOT), "--export-debug" if args.debug else "--export-release", "Web Bootstrap", str(output)], check=True)
+        subprocess.run([engine, "--headless", "--path", str(ROOT), "--export-debug" if args.debug else "--export-release", "Web Bootstrap", str(source_output)], check=True)
+        for artifact in source_output.parent.iterdir():
+            if artifact.suffix in {".html", ".js", ".png", ".wasm"}:
+                shutil.copy2(artifact, output.parent / artifact.name)
+        from web_packs import split_export, digest_file
+        pack_index, pack_report = split_export(source_output.with_suffix(".pck"), output.parent)
         if args.check_pack:
             subprocess.run([engine, "--headless", "--path", str(ROOT), "--script", "res://tests/verify_web_pack.gd", "--", str(output.with_suffix(".pck"))], check=True)
         challenge_report_path = ROOT / "reports/challenges_logic.json"
@@ -254,6 +262,8 @@ def main():
             "challenge_replays_verified": [key for key, value in challenge_report.get("modes", {}).items() if value.get("replay_verified", False)],
             "pck_sha256": hashlib.sha256(output.with_suffix(".pck").read_bytes()).hexdigest(),
             "pck_isolated_check": args.check_pack,
+            "packs_manifest_sha256": digest_file(output.parent / "web_packs.json"),
+            "pack_report": pack_report,
             "browser_tested": False,
         }
         (output.parent / "export_receipt.json").write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")

@@ -11,6 +11,12 @@ var error_message := ""
 func initialize(manifest_path: String = MANIFEST) -> bool:
 	if loading: return false
 	loading = true; loaded = false; error_message = ""
+	var packs := get_tree().get_first_node_in_group("content_packs")
+	if packs != null:
+		packs.progress_changed.connect(_pack_progress)
+		var ready: bool = await packs.ensure_bundle("heroes")
+		packs.progress_changed.disconnect(_pack_progress)
+		if not ready: return _fail(packs.error_message)
 	if catalog != null: catalog.clear_cache()
 	catalog = Catalog.new("res://data/heroes/catalog.json")
 	var manifest: Variant = JSON.parse_string(FileAccess.get_file_as_string(manifest_path)) if FileAccess.file_exists(manifest_path) else null
@@ -38,6 +44,9 @@ func initialize(manifest_path: String = MANIFEST) -> bool:
 			if catalog.get_texture(path) == null: return _fail("英雄图片无法读取：" + path)
 		elif load(path) == null: return _fail("英雄资源无法读取：" + path)
 	loading = false; loaded = true; progress_changed.emit(paths.size(), paths.size()); return true
+
+func _pack_progress(done: int, total: int, _message: String) -> void:
+	progress_changed.emit(done, total)
 
 func _fail(message: String) -> bool:
 	error_message = message; loading = false; return false

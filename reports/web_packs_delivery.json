@@ -1,0 +1,57 @@
+{
+  "passed": true,
+  "original_pck_bytes": 457732152,
+  "startup_pck_bytes": 46466328,
+  "total_pck_bytes": 370251800,
+  "saved_bytes": 87480352,
+  "startup_reduction_percent": 89.85,
+  "deferred_packs": 41,
+  "resource_paths_compared": 1096,
+  "complete_union_check": {
+    "passed": true,
+    "mode_configurations": 33
+  },
+  "download_check": {
+    "passed": true,
+    "checks": 34,
+    "independent_scenarios": 10
+  },
+  "native_check": {
+    "passed": true,
+    "checks": 19,
+    "independent_scenarios": 8,
+    "native_input": true,
+    "native_audio_playback": true
+  },
+  "cloudflare_check": {
+    "passed": true,
+    "immutable_packs": 41,
+    "streamed_files": 2
+  },
+  "boot_sha256": "c130932686daabd10cbcc25692ed9b7f6f6a9368fcfb09a5a11d649b0bcfa3ef",
+  "manifest_sha256": "901d9b180fe1f54a4c0b61207b89490c2c14ec1bfed224c798aa9a8967c1db92",
+  "package": {
+    "path": "build/KingdomRush-KR1-Levels01-11-Web.zip",
+    "bytes": 356850481,
+    "sha256": "d04748f6446fa8d2552a6b2ef3e14ded857c61f67bb794f72754bb2bd69c8602"
+  },
+  "source_hashes": {
+    "scripts/app_root.gd": "886971f2362f44f3449916b38bc63d4a7421bcfd4dd48cacaa09912a5d399270",
+    "scripts/services/content_packs.gd": "31251825962fb8d60734f0ad9ae452d69a6879444d60ad78316d34ed9c1488b2",
+    "scripts/services/hero_loader.gd": "9286acebdccaa3b8c18df426c5419246bc8d0c1e1723c4097cefb2373fb30461",
+    "tests/test_web_packs.py": "7a9afbabb074de25de271263e3d0e72694447e50a389f80cf6863e5534135d85",
+    "tests/verify_content_downloads.gd": "24f844f0bd0f71a48e278f7656839c04966b620803112e1b862bbfad4a001521",
+    "tools/check_content_downloads.py": "393bd559f4e8984d1bb729d86ec86f01f64711797d4143e6b3a45deb5adc9d34",
+    "tools/check_web_packs_native.py": "ff316f29bdc2e03a609b1437c41a56a8c8def547723197c45e8e4ae5fcaf8d36",
+    "tools/package_level01.py": "2771bb4b1d5dc4c17af0d055ce54a35069acc87fb21ea2ec0944a67fc74062f6",
+    "tools/prepare_cloudflare.py": "b76e0481d5ce40b6bf2db2316abab04138612afa7dfa73da754ff1718b7bbaf1",
+    "tools/verify_cloudflare.mjs": "a88a201d37dc0e81eccf36ab484881dd5084753c5100bfea38b9f0236aea4c82",
+    "tools/verify_web_packs_delivery.py": "7fb252059e9cb06538b94948129673f50544c1adcfa350401d89f61c36d12cee",
+    "tools/web_bootstrap.py": "964f86d1a36ecdd2d43b6a53fb6764fdf1a1f70e0f73aedf54426aee9773318c",
+    "tools/web_packs.py": "26685d777718fb351998ee7e6394530c529cef28c82b17edfa9a76d28c951e32",
+    "web/shell.html": "1d63ae5b2b6730ae7f9c9e0c998a0dff260c43b3466f0d8a7c4e332c8df8f0f7"
+  },
+  "browser_tested": false,
+  "deployed": false,
+  "full_victory_replays_run": false
+}

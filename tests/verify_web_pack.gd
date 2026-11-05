@@ -35,6 +35,17 @@ func _run() -> void:
 		push_error("Unable to mount " + args[0])
 		quit(1)
 		return
+	# This checker validates the complete exported union. Cold boot and selective
+	# mounting are checked separately, so source files cannot hide missing packs.
+	var index_path := "res://data/web_packs.json"
+	if FileAccess.file_exists(index_path):
+		var pack_index: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(index_path))
+		for pack: Dictionary in pack_index.packs.values():
+			var path: String = args[0].get_base_dir().path_join(pack.url)
+			if FileAccess.get_sha256(path) != pack.sha256 or not ProjectSettings.load_resource_pack(path, false):
+				push_error("Unable to verify/mount " + path)
+				quit(1)
+				return
 	var manifest: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/menu_manifest.json"))
 	var expected: Array = [manifest.catalog, manifest.locale, manifest.sounds, manifest.font, manifest.background]
 	expected.append("res://data/save/definition.json")

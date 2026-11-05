@@ -11,6 +11,10 @@ const Battle = preload("res://scripts/battle/battle_view.gd")
 const MapScreen = preload("res://scripts/map/map_screen.gd")
 const MapLoader = preload("res://scripts/services/map_loader.gd")
 const SaveSlots = preload("res://scripts/services/save_slots.gd")
+const ContentPacks = preload("res://scripts/services/content_packs.gd")
+var packs: Node
+var back: Button
+var _prefetch_epoch := 0
 var battle: Control
 var campaign_map: Control
 var map_loader: Node
@@ -36,6 +40,9 @@ var settings_path := MenuSettings.DEFAULT_PATH
 
 func _ready() -> void:
 	get_tree().auto_accept_quit = false
+	packs = ContentPacks.new()
+	add_child(packs)
+	packs.progress_changed.connect(_on_progress)
 	settings = MenuSettings.new()
 	settings.name = "Settings"
 	add_child(settings)
@@ -90,7 +97,7 @@ func _build_loading() -> void:
 	loading.add_child(progress)
 	retry = Button.new()
 	retry.text = "Retry"
-	retry.position = Vector2(840, 735)
+	retry.position = Vector2(680, 735)
 	retry.size = Vector2(240, 65)
 	retry.pressed.connect(func():
 		if retry_action.is_valid(): retry_action.call()
@@ -98,10 +105,18 @@ func _build_loading() -> void:
 	)
 	retry.hide()
 	loading.add_child(retry)
+	back = Button.new()
+	back.text = "返回"
+	back.position = Vector2(1000, 735)
+	back.size = Vector2(240, 65)
+	back.pressed.connect(_recover_after_failure)
+	back.hide()
+	loading.add_child(back)
 
 
 func _start() -> void:
 	retry.hide()
+	back.hide()
 	settings.initialize(settings_path)
 	slots.initialize(slots_path if slots_path != "" else SaveSlots.DEFAULT_ROOT, settings)
 	loader.initialize()
@@ -123,7 +138,20 @@ func _on_progress(done: int, total: int, message: String) -> void:
 func _on_failed(message: String) -> void:
 	description.text = ("加载失败，请重试。\n" if _font_ready else "Loading failed. Please retry.\n") + message
 	retry.show()
+	back.visible = menu != null
 	retry.grab_focus()
+
+
+func _recover_after_failure() -> void:
+	retry_action = Callable()
+	transitioning = false
+	loading.hide(); retry.hide(); back.hide()
+	if campaign_map != null:
+		campaign_map.show()
+		campaign_map.set_process_input(true)
+	else:
+		menu.show()
+		menu.set_process_input(true)
 
 
 func _on_completed() -> void:
@@ -149,7 +177,13 @@ func _open_map() -> void:
 	transitioning = true
 	menu.hide()
 	menu.set_process_input(false)
-	loading.show(); retry.hide()
+	loading.show(); retry.hide(); back.hide()
+	move_child(loading, get_child_count() - 1)
+	if not await packs.ensure_bundle("map"):
+		transitioning = false
+		retry_action = _open_map
+		_on_failed(packs.error_message)
+		return
 	if map_loader != null: remove_child(map_loader); map_loader.queue_free()
 	map_loader = MapLoader.new(); add_child(map_loader)
 	map_loader.progress_changed.connect(_on_progress)
@@ -177,13 +211,29 @@ func _release_map() -> void:
 
 func _start_level(level_id: int, mode: int, difficulty: int) -> void:
 	if battle != null or transitioning or not campaign.is_playable(level_id, mode, difficulty): return
+	transitioning = true
+	loading.show(); retry.hide(); back.hide()
+	move_child(loading, get_child_count() - 1)
+	if not await packs.ensure_bundle("level%02d" % level_id):
+		_level_failed(packs.error_message, level_id, mode, difficulty)
+		return
 	var definition := preload("res://scripts/services/campaign_levels.gd").load_definition(level_id, mode, difficulty)
 	if definition.is_empty():
-		if campaign_map != null: campaign_map.show_message(preload("res://scripts/services/campaign_levels.gd").last_error)
+		_level_failed(preload("res://scripts/services/campaign_levels.gd").last_error, level_id, mode, difficulty)
 		return
+	var overrides: Array = definition.layout.get("level_mode_overrides", [])
+	var override: Dictionary = overrides[mode - 1] if overrides.size() >= mode else {}
+	if not override.get("locked_hero", definition.layout.get("locked_hero", false)):
+		var content: Dictionary = preload("res://scripts/services/campaign_levels.gd").catalog()
+		var hero_bundles: Array = []
+		for id: String in campaign.data.heroes.selected:
+			if content.get("combat_heroes", {}).has(id): hero_bundles.append("hero:" + id)
+		if not await packs.ensure_bundles(hero_bundles):
+			_level_failed(packs.error_message, level_id, mode, difficulty)
+			return
 	definition = preload("res://scripts/services/battle_setup.gd").create(definition, campaign.data)
 	if definition.is_empty():
-		if campaign_map != null: campaign_map.show_message(preload("res://scripts/services/battle_setup.gd").last_error)
+		_level_failed(preload("res://scripts/services/battle_setup.gd").last_error, level_id, mode, difficulty)
 		return
 	_release_map()
 	battle = Battle.new()
@@ -192,15 +242,38 @@ func _start_level(level_id: int, mode: int, difficulty: int) -> void:
 	battle.finished.connect(campaign.record_result)
 	battle.seen_flushed.connect(campaign.flush_seen)
 	battle.returned_to_map.connect(_return_to_map)
+	transitioning = false
+	retry_action = Callable()
+	loading.hide()
+	_prefetch_epoch += 1
+	_prefetch_next.call_deferred(level_id, _prefetch_epoch)
+
+
+func _level_failed(message: String, level_id: int, mode: int, difficulty: int) -> void:
+	transitioning = false
+	retry_action = _start_level.bind(level_id, mode, difficulty)
+	_on_failed(message)
+
+
+func _prefetch_next(level_id: int, epoch: int) -> void:
+	if not packs.enabled: return
+	await get_tree().create_timer(3.0).timeout
+	if epoch != _prefetch_epoch or battle == null: return
+	var next: String = packs.index.get("next_levels", {}).get("level%02d" % level_id, "")
+	if next != "": packs.prefetch_bundle(next)
 
 
 func _return_to_map() -> void:
+	_prefetch_epoch += 1
+	packs.stop_prefetch()
 	if battle != null:
 		remove_child(battle); battle.queue_free(); battle = null
 	_open_map()
 
 
 func _return_to_menu() -> void:
+	_prefetch_epoch += 1
+	packs.stop_prefetch()
 	_release_map()
 	if battle != null:
 		remove_child(battle)
