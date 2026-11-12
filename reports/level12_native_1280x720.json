@@ -1,0 +1,142 @@
+{
+	"captures": [
+		{
+			"path": "res://reports/challenges_level12_mode1_1280x720.png",
+			"state": "level12_mode1"
+		},
+		{
+			"gold": 1300,
+			"path": "res://reports/towers_twelfth_opening_1280x720.png",
+			"state": "twelfth_opening",
+			"tick": 4
+		},
+		{
+			"gold": 1200,
+			"path": "res://reports/towers_twelfth_castle_1280x720.png",
+			"state": "twelfth_castle",
+			"tick": 34
+		},
+		{
+			"gold": 1200,
+			"path": "res://reports/towers_twelfth_block_preHold_1280x720.png",
+			"state": "twelfth_block_preHold",
+			"tick": 66
+		},
+		{
+			"gold": 1200,
+			"path": "res://reports/towers_twelfth_portal_start_1280x720.png",
+			"state": "twelfth_portal_start",
+			"tick": 79
+		},
+		{
+			"gold": 1200,
+			"path": "res://reports/towers_twelfth_portal_active_1280x720.png",
+			"state": "twelfth_portal_active",
+			"tick": 119
+		},
+		{
+			"gold": 1200,
+			"path": "res://reports/towers_twelfth_transform_1280x720.png",
+			"state": "twelfth_transform",
+			"tick": 119
+		},
+		{
+			"gold": 1200,
+			"path": "res://reports/towers_twelfth_demon_1280x720.png",
+			"state": "twelfth_demon",
+			"tick": 150
+		},
+		{
+			"gold": 1200,
+			"path": "res://reports/towers_twelfth_death_1280x720.png",
+			"state": "twelfth_death",
+			"tick": 150
+		},
+		{
+			"gold": 1200,
+			"path": "res://reports/towers_twelfth_souls_1280x720.png",
+			"state": "twelfth_souls",
+			"tick": 260
+		},
+		{
+			"gold": 1200,
+			"path": "res://reports/towers_twelfth_white_start_1280x720.png",
+			"state": "twelfth_white_start",
+			"tick": 391
+		},
+		{
+			"gold": 1200,
+			"path": "res://reports/towers_twelfth_white_expanded_1280x720.png",
+			"state": "twelfth_white_expanded",
+			"tick": 471
+		},
+		{
+			"gold": 1200,
+			"path": "res://reports/towers_twelfth_death_end_1280x720.png",
+			"state": "twelfth_death_end",
+			"tick": 516
+		},
+		{
+			"gold": 1300,
+			"path": "res://reports/towers_twelfth_victory_1280x720.png",
+			"state": "twelfth_victory",
+			"tick": 0
+		},
+		{
+			"path": "res://reports/level12_comic1_final_1280x720.png",
+			"state": "comic1_final"
+		},
+		{
+			"path": "res://reports/level12_comic2_final_1280x720.png",
+			"state": "comic2_final"
+		},
+		{
+			"path": "res://reports/level12_map_settlement_1280x720.png",
+			"state": "map_settlement"
+		},
+		{
+			"path": "res://reports/challenges_level12_mode1_1280x720.png",
+			"state": "level12_mode1"
+		},
+		{
+			"path": "res://reports/challenges_level12_mode2_1280x720.png",
+			"state": "level12_mode2"
+		},
+		{
+			"gold": 1600,
+			"path": "res://reports/towers_twelfth_mode2_1280x720.png",
+			"state": "twelfth_mode2",
+			"tick": 4
+		},
+		{
+			"path": "res://reports/challenges_level12_mode3_1280x720.png",
+			"state": "level12_mode3"
+		},
+		{
+			"gold": 2800,
+			"path": "res://reports/towers_twelfth_mode3_1280x720.png",
+			"state": "twelfth_mode3",
+			"tick": 4
+		},
+		{
+			"path": "res://reports/challenges_level12_mode3_1280x720.png",
+			"state": "level12_mode3"
+		}
+	],
+	"checks": 100,
+	"failures": [],
+	"full_replays": false,
+	"layout_only": false,
+	"native_audio": true,
+	"native_input": true,
+	"passed": true,
+	"source_hashes": {
+		"data/kr1_end/definition.json": "e17b56b2658bb780ef6dc4e79a8b327cace4c9cbe547e67d8ca826b61fa560e8",
+		"scripts/app_root.gd": "253ce1da3f4f956348959dfe1241639f143e64499cbb512463b0144c95666679",
+		"scripts/battle/battle_view.gd": "f2c33805820fe085361cac6667528e155400841aad494b5d6f2cea732ff3f147",
+		"scripts/battle/dove_veznan.gd": "43bd9672be2058c4ffdac585289ce0ffc42f8971c3903e19efd47f203ac55457",
+		"scripts/battle/level01_sim.gd": "baf33bc858087240696a77ed2bcfff591d9fb0d90a20bc907cad51de1fc5cf1c",
+		"scripts/ui/kr1_ending.gd": "ac2688288d907e8bb38280a518d83280628807ed688cdcc6ed02a5e3e54ad6e0",
+		"tests/level12_visual.gd": "2b8b911cced416b65b31fe1723ba10a0c6ec6ce6293c3b1c54f3ccd03690233e"
+	}
+}

@@ -40,7 +40,7 @@ def package():
         if sha256(ROOT / path) != expected:
             raise RuntimeError('Stage validation report changed after export: ' + path)
     if 10 in level_ids():
-        acceptance = "eleventh_acceptance" if 11 in level_ids() else "tenth_acceptance"
+        acceptance = "twelfth_acceptance" if 12 in level_ids() else "eleventh_acceptance" if 11 in level_ids() else "tenth_acceptance"
         if not receipt.get(acceptance, {}).get('passed') or not receipt.get('current_source_sha256'):
             raise RuntimeError('Current scoped stage acceptance is required')
         for path, expected in receipt['current_source_sha256'].items():
@@ -77,6 +77,7 @@ def package():
         "Earn three campaign stars on a level to enter its challenges. Each challenge starts with one life.\n"
         "Heroic: 6 waves; Iron: 1 wave. First completion of each challenge grants one star.\n"
         f"Campaign three stars plus both challenges total {len(level_ids()) * 5} stars. Level {last + 1} is a preview.\n"
+        + ("Level 12 campaign Continue plays the main comic and epilogue, then settles on the map. Credits data is omitted.\n" if last >= 12 else "") +
         "Heroic gold (levels 1-9): 230/310/400/750/1000/1200/1000/1100/2000. Iron: 360/275/660/1500/1500/800/1200/1200/2400.\n"
         "Iron tower bans: L1 archer+mage; L2 barracks; L3 artillery; L4 mage+artillery; L5 barracks.\n"
         "L5 Iron has 3 free tier-3 archers and 2 elf ruins; camp repair/recruit/skills remain available.\n"
@@ -189,6 +190,7 @@ def package():
         "eighth_acceptance": receipt.get("eighth_acceptance", {}),
         "tenth_acceptance": receipt.get("tenth_acceptance", {}),
         "eleventh_acceptance": receipt.get("eleventh_acceptance", {}),
+        "twelfth_acceptance": receipt.get("twelfth_acceptance", {}),
         "ninth_acceptance": receipt.get("ninth_acceptance", {}),
         "validation_report_sha256": receipt.get("validation_report_sha256", {}),
         "technology_scheme": receipt.get("technology_scheme"),

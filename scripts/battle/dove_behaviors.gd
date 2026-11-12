@@ -6,6 +6,7 @@ const Wasteland = preload("res://scripts/battle/dove_wasteland.gd")
 const Sorcerer = preload("res://scripts/battle/dove_sorcerer.gd")
 const Sunray = preload("res://scripts/battle/dove_sunray.gd")
 const Jt = preload("res://scripts/battle/dove_jt.gd")
+const Veznan = preload("res://scripts/battle/dove_veznan.gd")
 const Ranger = preload("res://scripts/battle/dove_ranger.gd")
 const Elf = preload("res://scripts/battle/dove_elf.gd")
 const Spider = preload("res://scripts/battle/dove_spider.gd")
@@ -101,6 +102,7 @@ func role(template: String) -> String:
 	return catalog.behaviors.get(canonical(bindings.get(template, ""), catalog), "")
 
 static func supported(value: String) -> bool:
+	if value in ["veznan","veznan_block","veznan_portal","veznan_soul","veznan_souls"]:return true
 	return value in ROLES or value in ["enemy_bolt","necromancer","layout_spawner","tesla","tesla_ray","tesla_aura","graveyard","demon_mage","skeleton_aura","musketeer","shotgun","tunnel","unit_regen","hero_malik","fissure_aura","stun_modifier","bfg","missile","cluster","sasquash_holder","chieftain","sorcerer","sunray","jt","jt_spawn","jt_freeze","sheep","polymorph","armor_buff","speed_buff"]
 
 func projectile_role(template: Dictionary) -> String:
@@ -168,6 +170,7 @@ func soldier_step(sim, soldier: Dictionary, template: Dictionary) -> bool:
 	return role(soldier.template) == "soldier" and template.has("ranged") and Elf.ranged(sim, soldier, template)
 
 func enemy_inserted(sim, enemy: Dictionary) -> void:
+	if role(enemy.template)=="veznan":Veznan.initialize(sim,enemy)
 	sim.snow.enemy_inserted(sim,enemy)
 	if role(enemy.template)=="necromancer":Necromancer.initialize(sim,enemy)
 	if enemy.template=="enemy_lava_elemental":enemy.mixed_melee_job={};enemy.source_corpse=true
@@ -181,6 +184,7 @@ func enemy_inserted(sim, enemy: Dictionary) -> void:
 	if role(enemy.template) == "chieftain": Chieftain.initialize(sim,enemy)
 
 func enemy_step(sim, enemy: Dictionary, template: Dictionary) -> bool:
+	if enemy.has("veznan"):return sim.veznan.step_enemy(sim,enemy,template)
 	if Wasteland.enemy_step(sim,enemy,template):return true
 	if enemy.has("necromancer"):return Necromancer.step(sim,enemy,template)
 	if enemy.has("jt"):return Jt.step(sim,enemy,template)

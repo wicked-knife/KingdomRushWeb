@@ -109,6 +109,7 @@ def resource_owners():
     content = json.loads((ROOT / "data/campaign_content.json").read_text(encoding="utf-8"))
     manifest("data/map_kr1", "map")
     manifest("data/heroes", "heroes")
+    if "12" in content["levels"]:manifest("data/kr1_end", "kr1_end")
     for key, row in content["levels"].items():
         manifest("data/" + row["folder"], "level%02d" % int(key))
     for key, row in content.get("combat_heroes", {}).items():
@@ -214,6 +215,7 @@ def split_export(source, output):
     entries = read_pack(source)
     groups, content = classify(source, entries)
     bundles = {"map": [], "heroes": []}
+    if "12" in content["levels"]:bundles["kr1_end"] = []
     bundles.update({"level%02d" % int(key): [] for key in content["levels"]})
     bundles.update({"hero:" + key: [] for key in content.get("combat_heroes", {})})
     index = {"schema_version": 1, "engine_version": "4.7.2", "packs": {}, "bundles": bundles}

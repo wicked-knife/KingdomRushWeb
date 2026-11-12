@@ -40,7 +40,7 @@ static func step(sim: RefCounted, tower: Dictionary) -> void:
 			var offset: Vector2 = sim.vec(t.render.sprites[sid - 1].offset)
 			var bullet_offset: Vector2 = sim.vec(a.bullet_start_offset[0 if e.pos.y > center.y else 1])
 			bullet_offset.x *= 1 if e.pos.x > center.x else -1
-			sim._projectile(a.bullet, e.id, tower.pos + offset + bullet_offset, e.pos + sim.vec(sim.templates[e.template].unit.hit_offset), sim.templates[a.bullet].bullet.flight_time, tower)
+			sim._projectile(a.bullet, e.id, tower.pos + offset + bullet_offset, e.pos + sim.vec(sim.unit_template(e).unit.hit_offset), sim.templates[a.bullet].bullet.flight_time, tower)
 			var bullet: Dictionary = sim.projectiles[-1]
 			bullet.poison_level = int(tower.powers.poison); bullet.source = str(tower.id)
 			sim.event.emit("ranger_shot", {"target":e.id,"sid":sid,"tick":sim.tick})

@@ -91,9 +91,9 @@ static func projectile(sim, p: Dictionary, b: Dictionary) -> void:
 			var next:Dictionary={};var nearest:float=INF
 			for e:Dictionary in sim.enemies:
 				if e.id in p.seen or not sim.modifiers.flags_match(sim,e,{"vis_flags":t.bounce_vis_flags,"vis_bans":t.bounce_vis_bans}):continue
-				var d:float=sim.distance(p.to,e.pos+sim.vec(sim.templates[e.template].unit.hit_offset))
+				var d:float=sim.distance(p.to,e.pos+sim.vec(sim.unit_template(e).unit.hit_offset))
 				if e.hp>0 and d<=radius:
-					var squared:float=p.to.distance_squared_to(e.pos+sim.vec(sim.templates[e.template].unit.hit_offset))
+					var squared:float=p.to.distance_squared_to(e.pos+sim.vec(sim.unit_template(e).unit.hit_offset))
 					if squared<nearest:next=e;nearest=squared
 			if not next.is_empty():launch(sim,target,next,p.to,int(p.level),p)
 	p.done=sim.tick-int(p.at)>=Anim.duration(sim.animations,"ray_tesla")
@@ -104,9 +104,9 @@ static func track_sprite(sim, p:Dictionary, b:Dictionary) -> bool:
 	# endpoints before testing jumps. A failed track permanently hides this ray.
 	var old_from:Vector2=p.pos;var old_to:Vector2=p.to
 	var target:Dictionary=sim.unit_by_id(p.target)
-	if not target.is_empty():p.to=target.pos+sim.vec(sim.templates[target.template].unit.hit_offset)
+	if not target.is_empty():p.to=target.pos+sim.vec(sim.unit_template(target).unit.hit_offset)
 	var source:Dictionary=sim.unit_by_id(int(p.source)) if str(p.source).is_valid_int() else {}
-	if int(p.bounces)>0 and not source.is_empty():p.pos=source.pos+sim.vec(sim.templates[source.template].unit.hit_offset)
+	if int(p.bounces)>0 and not source.is_empty():p.pos=source.pos+sim.vec(sim.unit_template(source).unit.hit_offset)
 	if maxf(absf(p.pos.x-old_from.x),absf(p.pos.y-old_from.y))>float(b.max_track_distance) or maxf(absf(p.to.x-old_to.x),absf(p.to.y-old_to.y))>float(b.max_track_distance):
 		p.hidden=true;p.track_invalid=true;return false
 	p.rotation=(p.to-p.pos).angle()

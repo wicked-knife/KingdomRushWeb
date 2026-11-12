@@ -6,8 +6,8 @@
 	"source_hashes": {
 		"data/level08/definition.json": "036c581d231b4811f8e5f68f37779d4df295aa61ff77bb1f731eb6c161d57bbc",
 		"scripts/battle/dove_enemy_melee.gd": "dbd761b72b9d54871ae097b32d78a92783e018f162a216ca4bef4a1cdb23ad8f",
-		"scripts/battle/dove_enemy_ranged.gd": "b063522295875727cc532016ea0543dd287be085898734931dc71d95999b3a5a",
-		"scripts/battle/level01_sim.gd": "4beda3afbc618cb55146342ceaf47e96f7938d1ff2ade028767f68966186153f",
+		"scripts/battle/dove_enemy_ranged.gd": "871a01e1b18845b8fce199a5c7a7f3ffba4a908e3879e984db836bb2638e7ab9",
+		"scripts/battle/level01_sim.gd": "baf33bc858087240696a77ed2bcfff591d9fb0d90a20bc907cad51de1fc5cf1c",
 		"tests/fixtures/level08_source.json": "e56eca3d81984e8690f3f832024de4b9bfb9968f90ffdc24df42e23c4d02ac0f",
 		"tests/verify_level08.gd": "01b7b726a41bda72fa5b9230ff321fb8722cf2d7a9e5d28a49abf7358978a84f",
 		"tests/verify_level11_ranged_shared.gd": "dcffff998437394276c5e85921b0a2328d8e608d4b7690259754091ee0d9be6a"

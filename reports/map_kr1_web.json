@@ -1,8 +1,8 @@
 {
   "package_created": true,
-  "packager_sha256": "2771bb4b1d5dc4c17af0d055ce54a35069acc87fb21ea2ec0944a67fc74062f6",
+  "packager_sha256": "6133d1a6c5bb3b1600c49275c71627e4e0024f29144ec73f3d4a048ff589db1a",
   "source_commit": "4072b18bf4e418eec8b813a960c83003744cb710",
-  "content_catalog_sha256": "cb0af44d0d46f65b4f360eec63323f4baa028cd230ba84aa95fe6be2791f0bb9",
+  "content_catalog_sha256": "124b63f07c14a7fd298310da6661fbe67f1e82dfed936423d6a3ba17ab2fe400",
   "browser_tested": false,
   "build_type": "release",
   "developer_menu": false,
@@ -18,7 +18,8 @@
     8,
     9,
     10,
-    11
+    11,
+    12
   ],
   "playable_modes": [
     1,
@@ -190,6 +191,21 @@
       "level": 11,
       "mode": 3,
       "difficulty": 2
+    },
+    {
+      "level": 12,
+      "mode": 1,
+      "difficulty": 2
+    },
+    {
+      "level": 12,
+      "mode": 2,
+      "difficulty": 2
+    },
+    {
+      "level": 12,
+      "mode": 3,
+      "difficulty": 2
     }
   ],
   "challenge_validation_passed": true,
@@ -220,7 +236,9 @@
     "10/2",
     "10/3",
     "11/2",
-    "11/3"
+    "11/3",
+    "12/2",
+    "12/3"
   ],
   "challenge_replays_verified": [],
   "pck_isolated_check": true,
@@ -229,29 +247,31 @@
     "passed": true,
     "verification": {
       "passed": true,
-      "resource_paths": 1096,
-      "unique_payloads": 1058
+      "resource_paths": 1181,
+      "unique_payloads": 1134
     },
-    "original_bytes": 457732152,
-    "total_bytes": 370251800,
-    "saved_bytes": 87480352,
-    "boot_bytes": 46466328,
-    "deferred_pack_count": 41,
+    "original_bytes": 510134424,
+    "total_bytes": 398293704,
+    "saved_bytes": 111840720,
+    "boot_bytes": 46502796,
+    "deferred_pack_count": 45,
     "deferred_limit_bytes": 25165824,
     "first_download_bytes": {
       "map": 20465640,
       "heroes": 12424424,
+      "kr1_end": 1328700,
       "level01": 14014496,
       "level02": 14564860,
       "level03": 16816320,
       "level04": 36204880,
-      "level05": 39318660,
+      "level05": 39318768,
       "level06": 44203920,
       "level07": 42675756,
       "level08": 48090292,
       "level09": 59124620,
-      "level10": 48555288,
-      "level11": 51346172,
+      "level10": 48556376,
+      "level11": 51347260,
+      "level12": 56015988,
       "hero:hero_malik": 2312276
     },
     "sequential_campaign_incremental_bytes": {
@@ -259,25 +279,26 @@
       "level02": 11676068,
       "level03": 12242764,
       "level04": 33038904,
-      "level05": 33507424,
+      "level05": 33507532,
       "level06": 38374572,
       "level07": 36439676,
       "level08": 18563532,
       "level09": 28266408,
-      "level10": 41580064,
-      "level11": 21043112
+      "level10": 41581044,
+      "level11": 21043112,
+      "level12": 26675648
     },
     "browser_tested": false
   },
   "battle_ui_acceptance": {
-    "eleventh_native": {
+    "native": {
       "passed": true,
-      "checks": 118,
-      "scope": "three mode entry, source actor lifecycle/render queue, generator, build/spell input, restart and constructed result persistence"
+      "checks": 100,
+      "layout_only": false
     }
   },
   "default_technology_acceptance": {
-    "eleventh_source_patches": {
+    "source_patches": {
       "passed": true,
       "checks": 86,
       "source_patch_scenarios": 16
@@ -312,36 +333,62 @@
     "historical_scope": null
   },
   "eleventh_acceptance": {
+    "passed": null,
+    "playable_combinations": null,
+    "reports": null,
+    "failure_probes": null,
+    "compatibility": null,
+    "historical_scope": null
+  },
+  "twelfth_acceptance": {
     "passed": true,
-    "playable_combinations": 33,
+    "playable_combinations": 36,
     "reports": {
-      "level11_logic": {
+      "level12_logic": {
         "passed": true,
-        "checks": 1513,
+        "checks": 1195,
         "independent_modes": 3,
-        "timeline_waves": 26,
-        "births": 1472,
-        "source_scenarios": 35
+        "timeline_waves": 22,
+        "births": 1110,
+        "source_scenarios": 12
       },
-      "level11_upgrades": {
+      "level12_flow": {
         "passed": true,
-        "checks": 86,
-        "source_patch_scenarios": 16
+        "checks": 35
       },
-      "level11_native_1280x720": {
+      "level12_native_1280x720": {
         "passed": true,
-        "checks": 118,
-        "scope": "three mode entry, source actor lifecycle/render queue, generator, build/spell input, restart and constructed result persistence"
+        "checks": 100,
+        "layout_only": false
       },
-      "level11_assets": {
+      "level12_native_1024x768": {
         "passed": true,
-        "frames": 6612,
-        "animations": 501
+        "checks": 19,
+        "layout_only": true
+      },
+      "level12_assets": {
+        "passed": true,
+        "frames": 7411,
+        "animations": 543
+      },
+      "kr1_end_assets": {
+        "passed": true,
+        "frames": 19
       },
       "level11_shared_logic": {
         "passed": true,
         "checks": 86,
         "scope": "representative stage-ten graveyard, demons, skeletons and Tesla source regressions"
+      },
+      "level10_shared_logic": {
+        "passed": true,
+        "checks": 53,
+        "scope": "source Sorcerer/Sunray attacks; freeze/thaw, JT death, polymorph and elemental lifecycle; no campaign replay"
+      },
+      "level11_upgrades": {
+        "passed": true,
+        "checks": 86,
+        "source_patch_scenarios": 16
       },
       "level11_ranged_shared": {
         "passed": true,
@@ -351,59 +398,80 @@
       "hero_combat_logic": {
         "passed": true,
         "checks": 161
-      },
-      "tesla_animation_logic": {
-        "passed": true,
-        "checks": 12
       }
     },
     "failure_probes": [
       {
-        "missing": "enemy_necromancer",
+        "missing": "eb_veznan",
         "rejected": true,
-        "reason": "level11: behavior -> missing template enemy_necromancer"
+        "reason": "level12: behavior -> missing template eb_veznan"
       },
       {
-        "missing": "enemy_skeleton",
+        "missing": "veznan_soul",
         "rejected": true,
-        "reason": "level11: graveyard_controller -> missing runtime dependency enemy_skeleton"
+        "reason": "level12: eb_veznan -> missing runtime dependency veznan_soul"
       },
       {
-        "missing": "enemy_skeleton_big",
+        "missing": "veznan_souls_aura",
         "rejected": true,
-        "reason": "level11: graveyard_controller -> missing runtime dependency enemy_skeleton_big"
+        "reason": "level12: eb_veznan -> missing runtime dependency veznan_souls_aura"
       },
       {
-        "missing": "bolt_necromancer",
+        "missing": "veznan_portal",
         "rejected": true,
-        "reason": "level11: enemy_necromancer -> missing runtime dependency bolt_necromancer"
+        "reason": "level12: eb_veznan -> missing runtime dependency veznan_portal"
       },
       {
-        "missing": "enemy_lava_elemental",
+        "missing": "mod_veznan_tower",
         "rejected": true,
-        "reason": "level11: s11_lava_spawner -> missing runtime dependency enemy_lava_elemental"
+        "reason": "level12: eb_veznan -> missing runtime dependency mod_veznan_tower"
       },
       {
-        "missing": "s11_lava_spawner",
+        "missing": "decal_eb_veznan_white_circle",
         "rejected": true,
-        "reason": "level11: behavior -> missing template s11_lava_spawner"
+        "reason": "level12: eb_veznan -> missing runtime dependency decal_eb_veznan_white_circle"
       },
       {
-        "missing": "necromancer behavior",
+        "missing": "decal_s12_shoutbox",
         "rejected": true,
-        "reason": "level11: enemy_necromancer -> unsupported.missing: Unsupported Dove behavior: unsupported.missing"
+        "reason": "level12: missing template dependency: eb_veznan -> decal_s12_shoutbox"
       },
       {
-        "missing": "necromancer runtime resource",
+        "missing": "boss behavior",
         "rejected": true,
-        "reason": "Runtime dependency missing from export manifest: res://scripts/battle/dove_behaviors.gd -> res://scripts/battle/dove_necromancer.gd"
+        "reason": "level12: eb_veznan -> unsupported.missing: Unsupported Dove behavior: unsupported.missing"
+      },
+      {
+        "missing": "boss lethal callback",
+        "rejected": true,
+        "reason": "level12: eb_veznan -> missing required runtime field ['health', 'on_damage']"
+      },
+      {
+        "missing": "boss runtime module",
+        "rejected": true,
+        "reason": "Runtime dependency missing from export manifest: res://scripts/battle/dove_behaviors.gd -> res://scripts/battle/dove_veznan.gd"
+      },
+      {
+        "missing": "comic frames",
+        "rejected": true,
+        "reason": "endComic_box1"
+      },
+      {
+        "missing": "comic drawing order",
+        "rejected": true,
+        "reason": ""
+      },
+      {
+        "missing": "epilogue audio",
+        "rejected": true,
+        "reason": ""
       }
     ],
     "compatibility": {
-      "base_commit": "1f985e78c4127039b5ac0d211dabd5d70342b511",
-      "exact_files": 221
+      "base_commit": "00d09eaba3ba7eade8c1864cc87780af3c27d40a",
+      "exact_files": 246
     },
-    "historical_scope": "Levels 1-10 and ranger arena data unchanged byte for byte; representative shared runtime regressions run on current code."
+    "credits_data": false
   },
   "ninth_acceptance": {
     "passed": null,
@@ -412,21 +480,24 @@
     "failure_probes": null
   },
   "validation_report_sha256": {
-    "reports/level11_logic.json": "58235253f2e40bb3e477adb16068fb82920f62ddd9e858abdf6b43be540ffe1c",
-    "reports/level11_upgrades.json": "291365472ed32cf9b44b5783d0fe1ce0f8aa0e4d62cb29bea3aa1b713a94b882",
-    "reports/level11_native_1280x720.json": "c9817bb653a126e10a438278fbf3f31e8d21a6c07ea54deb71d66511ab646ff0",
-    "reports/level11_assets.json": "6dada48af763fcaa67ef4ce6d4a48e03549c945d78c48cfbafe0950d8793ff12",
-    "reports/level11_shared_logic.json": "7d05ab5bd25f6837b3215a758550b7d0d2dfd7cb6715997573ece7b58f03410c",
-    "reports/level11_ranged_shared.json": "47069a1445d58739c4db5a3ad26d48f4e6b24b6638f0938070b5fdfa556c3dda",
-    "reports/hero_combat_logic.json": "1b021b7c76929ba3c101b72f800afb7dbb4016ff4e3c04cb151861360fba4337",
-    "reports/tesla_animation_logic.json": "fc89ce3fdb96caab68280c5803db18548d8709a7828b2edf5318090662fb2c09",
-    "reports/level11_delivery.json": "0899c98cb1124de7753c793b695428530a9ce6bac36d910c62efba042e5f8425"
+    "reports/level12_logic.json": "592eff09d04f5e1984b510aaec84e7880fcc767f2245f49bc4e876c9af3255df",
+    "reports/level12_flow.json": "897ed92f327b5438d1c14383f0bb122bbfe80acb6dfc89b67b7d7c3af6c4fb3f",
+    "reports/level12_native_1280x720.json": "a1b1904c833544977c6574ab95f65de06386ce8aa0c550ecf2242834684fb29b",
+    "reports/level12_native_1024x768.json": "a31505403cda48cd4b8d9dcf458a0ac290547f0f113f95ab3ee246c1ff8196c8",
+    "reports/level12_assets.json": "651fb880221d2037aaa83674beff518c7605ba0de917d99ef6535c0252ddeee6",
+    "reports/kr1_end_assets.json": "c2de0571449a00750cd514606dbf4f0291ce1b2936e2da12776b3cb5868d02d0",
+    "reports/level11_shared_logic.json": "466a2e68c9aeb73365ed0b3f7aed0812433d51e180172cb0c19ab11b78f9f9d2",
+    "reports/level10_shared_logic.json": "0a658f8a0cdd878ed884af725cd305adda6cd03dd61ec8c9fa0a59ee33c95fce",
+    "reports/level11_upgrades.json": "539d760e463da537f083889ef7485e205317f40b16355dcb27fe6efa37d5a7a3",
+    "reports/level11_ranged_shared.json": "097ecdc617cb3a3e7ba331f56cd35e23b6c618d7ef34b6a8448536bed9d5cbb1",
+    "reports/hero_combat_logic.json": "5538fbd4bd211dc603b1dff54bddc0dbc7bbc7467ca31df4386ec031d1a8bef1",
+    "reports/level12_delivery.json": "cf25922305478848c87823540341b1db52c18e3d633b5b0c9d76849b0ae0213a"
   },
   "technology_scheme": "1",
-  "pck_files": 1097,
-  "bundle": "build\\KingdomRush-KR1-Levels01-11-Web.zip",
-  "bytes": 356850481,
-  "sha256": "d04748f6446fa8d2552a6b2ef3e14ded857c61f67bb794f72754bb2bd69c8602",
+  "pck_files": 1182,
+  "bundle": "build\\KingdomRush-KR1-Levels01-12-Web.zip",
+  "bytes": 382447156,
+  "sha256": "b67d354a71fd2f7839e771547bbbb0a78bba47f04791ae743d27d0f5d11349fa",
   "web_files": {
     "index.apple-touch-icon.png": {
       "bytes": 11939,
@@ -442,7 +513,7 @@
     },
     "index.html": {
       "bytes": 3297,
-      "sha256": "8065aa082c6f572e4666b63bce6098d57ee071b3ec74a525c5dbe5c5359d9448"
+      "sha256": "51e939778e95dbc1709c941baf6ad9e48284f3500a49279d8b1201eb5a3d516c"
     },
     "index.icon.png": {
       "bytes": 5765,
@@ -453,8 +524,8 @@
       "sha256": "33c94cb3175f3333b82e2a3be5e8e86f77986f0aa2042b1631f6367a4e5bb6ba"
     },
     "index.pck": {
-      "bytes": 46466328,
-      "sha256": "c130932686daabd10cbcc25692ed9b7f6f6a9368fcfb09a5a11d649b0bcfa3ef"
+      "bytes": 46502796,
+      "sha256": "dfa1875b2b8b8e9bb624ac89c3cd6f90a7185ea6949942e7289e056de91009e9"
     },
     "index.png": {
       "bytes": 21443,
@@ -465,24 +536,24 @@
       "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
     },
     "export_receipt.json": {
-      "bytes": 85087,
-      "sha256": "b9544ff43889227d8c02c66b6dc68360f634f7aa538659ec35002bc2d285cc27"
+      "bytes": 91843,
+      "sha256": "ffdbf24dc0b7bfd5d96bddcb5b1f8b6447cb0e4f9d0a794a1270396f2609379c"
     },
     "README.txt": {
-      "bytes": 7769,
-      "sha256": "641acdf78d1ae3cc82d66d6497312d4cc96ac00a47e708dd578d1d112b0d70f5"
+      "bytes": 7894,
+      "sha256": "f014641dc4df451a22e16c4a67625c4ed550c334e50dc2712e2e9d220076e81e"
     },
     "start_server.cmd": {
       "bytes": 180,
       "sha256": "8f021ad5511504a288354fec02c4bf8514f054a2457cc229710e1d6069558b32"
     },
     "web_packs.json": {
-      "bytes": 19667,
-      "sha256": "901d9b180fe1f54a4c0b61207b89490c2c14ec1bfed224c798aa9a8967c1db92"
+      "bytes": 21890,
+      "sha256": "af0ac0dd8d9860bab65aa7995dbd8cc3722b8c2b8db4d7b881ad5060a3301e3c"
     },
     "pack_report.json": {
-      "bytes": 831,
-      "sha256": "509b60a99b6f70300b96f1649936b2e4030e6c685609c5465ff1b9c05c224033"
+      "bytes": 888,
+      "sha256": "48ef2565a645838bcf69528d1b972018b5589c975c651cfab2b78c4cd038d2ae"
     },
     "packs/0559dbc7be658456b1064fcac7bf018aa41fdf956800cc2b02ec118bd617177b.pck": {
       "bytes": 71408,
@@ -491,6 +562,14 @@
     "packs/0c8450ffb5146d4e29ada7c6b91f7a7041579f5b54f24a89ae7683dbb2393a11.pck": {
       "bytes": 2277048,
       "sha256": "0c8450ffb5146d4e29ada7c6b91f7a7041579f5b54f24a89ae7683dbb2393a11"
+    },
+    "packs/0cd6abb3481b5366045c2be664d5598ac164d0999442f336d6733e46d159ce3f.pck": {
+      "bytes": 1328700,
+      "sha256": "0cd6abb3481b5366045c2be664d5598ac164d0999442f336d6733e46d159ce3f"
+    },
+    "packs/0fc4e9a737d959a3268416295622fa0abb810484214940aa670bc33f3e4a8848.pck": {
+      "bytes": 2753428,
+      "sha256": "0fc4e9a737d959a3268416295622fa0abb810484214940aa670bc33f3e4a8848"
     },
     "packs/151df86d90525d4e977d6635ff97a89dd7359f8e4c2cfc03e5f6906dbc3e9e6c.pck": {
       "bytes": 19380,
@@ -512,6 +591,10 @@
       "bytes": 23365304,
       "sha256": "1a932bf7cfccf8b9768928d9acfabb4388f9733d599453470310fed3f908c58d"
     },
+    "packs/25c029e6b8e7c2af7abc3baae0d0c521cba0e6932aceef6edc7b467971c22d41.pck": {
+      "bytes": 2315944,
+      "sha256": "25c029e6b8e7c2af7abc3baae0d0c521cba0e6932aceef6edc7b467971c22d41"
+    },
     "packs/282556049d741187312e61009405d61750e50e7b840f1fac14c6c3fcbc2e5102.pck": {
       "bytes": 1582392,
       "sha256": "282556049d741187312e61009405d61750e50e7b840f1fac14c6c3fcbc2e5102"
@@ -519,10 +602,6 @@
     "packs/2a90b9dc204cb7eafac53bb2c1b0692522df1cacfb6ac3ba21f00eca732c6e43.pck": {
       "bytes": 12347792,
       "sha256": "2a90b9dc204cb7eafac53bb2c1b0692522df1cacfb6ac3ba21f00eca732c6e43"
-    },
-    "packs/30779325370e14fc9dafb932f139e189ffe0a108e3ecc0fdf5c9ee8fce2fa240.pck": {
-      "bytes": 2753320,
-      "sha256": "30779325370e14fc9dafb932f139e189ffe0a108e3ecc0fdf5c9ee8fce2fa240"
     },
     "packs/320842fc0ca7d6eb78f87f463bf180c6d76539647fa1bbcee7449523e38ae49e.pck": {
       "bytes": 11915996,
@@ -544,9 +623,9 @@
       "bytes": 20365456,
       "sha256": "5c212bbd97bbfba6f7c4fa25db2bb7b0b369faa1d3f13286910c59d68a853c43"
     },
-    "packs/5c841a396564c5c55c163aa6a254003ebd18a42f384b7685271e515d56aaf328.pck": {
-      "bytes": 23327836,
-      "sha256": "5c841a396564c5c55c163aa6a254003ebd18a42f384b7685271e515d56aaf328"
+    "packs/6305f1e88b7f3217a08c3ebb2a2ad0d350b022ace3bb3e4d87357992c5868f34.pck": {
+      "bytes": 21637748,
+      "sha256": "6305f1e88b7f3217a08c3ebb2a2ad0d350b022ace3bb3e4d87357992c5868f34"
     },
     "packs/63d8f8a685325c918accb357626eae01b512d9e6f59294b765e0217904957ee6.pck": {
       "bytes": 68388,
@@ -556,9 +635,17 @@
       "bytes": 604192,
       "sha256": "649cae0d3f28ef258c0bf18072fbbca0e51d1614528f9fa43a63b975e0091ea8"
     },
+    "packs/67ea38eaf0c5d8984aaa497e7a8fd6975c69a0e34fb617ec7f459876fc8dd66f.pck": {
+      "bytes": 1691068,
+      "sha256": "67ea38eaf0c5d8984aaa497e7a8fd6975c69a0e34fb617ec7f459876fc8dd66f"
+    },
     "packs/7283545d01d3a47d21ab9f769eb29b35f9498447c5e6cc2bff9419dacdd217bf.pck": {
       "bytes": 727260,
       "sha256": "7283545d01d3a47d21ab9f769eb29b35f9498447c5e6cc2bff9419dacdd217bf"
+    },
+    "packs/7307c40367bd61bd797eb2775fd7f2e1d71221d1ade61e5766522e5be0d61e29.pck": {
+      "bytes": 24359704,
+      "sha256": "7307c40367bd61bd797eb2775fd7f2e1d71221d1ade61e5766522e5be0d61e29"
     },
     "packs/80230fde3ad451dc4c000467344d36280b436a966723f1a32dc5e41b35d3fe42.pck": {
       "bytes": 18252228,
@@ -649,8 +736,8 @@
       "sha256": "ffded8acdabc24de528f21220155e7584319ba750293d9afcfa9ed1f79f01b1f"
     },
     "pack_files.json": {
-      "bytes": 76847,
-      "sha256": "5f9a98ca57bb623a46bafd1f321fb9f0f87ac31d37803125e049600f69dc442b"
+      "bytes": 82482,
+      "sha256": "fed94db20f5520b1b4733875254640e90a0f0dafc709958d174ca93e32f7316b"
     }
   }
 }

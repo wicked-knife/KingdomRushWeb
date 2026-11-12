@@ -36,7 +36,7 @@ static func step(sim, p: Dictionary, bullet: Dictionary) -> void:
 		p.missile_phase="seek"
 		if target.is_empty() or target.hp<=0:target=_target(sim,p,target,bullet,false)
 		if not target.is_empty():
-			_reserve(p,target,bullet);p.to=target.pos+sim.vec(sim.templates[target.template].unit.hit_offset)
+			_reserve(p,target,bullet);p.to=target.pos+sim.vec(sim.unit_template(target).unit.hit_offset)
 	if p.pos.distance_squared_to(p.to)<=float(p.speed)*float(p.speed)*sim.STEP*sim.STEP:
 		_hit(sim,p,bullet,target);return
 	if target.is_empty() or target.hp<=0 or not sim.modifiers.flags_match(sim,target,{"vis_flags":bullet.vis_flags}):
@@ -44,7 +44,7 @@ static func step(sim, p: Dictionary, bullet: Dictionary) -> void:
 		if not target.is_empty():
 			if bullet.get("rot_dir_from_long_angle",false):p.rot_dir=-1 if target.pos.x<p.pos.x else 1
 			_reserve(p,target,bullet)
-	if not target.is_empty():p.to=target.pos+sim.vec(sim.templates[target.template].unit.hit_offset)
+	if not target.is_empty():p.to=target.pos+sim.vec(sim.unit_template(target).unit.hit_offset)
 	var direction: Vector2=p.to-p.pos
 	if absf(p.velocity.angle_to(direction))>float(bullet.get("max_seek_angle",PI/6)):
 		var rotation: float=float(bullet.turn_speed)*sim.STEP*int(p.rot_dir)

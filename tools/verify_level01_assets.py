@@ -22,7 +22,7 @@ def verify(level_id=1, ranger_arena=False):
         assert set(data["modes"]) == {"2", "3"}
         for mode in (2, 3):
             selected=data["modes"][str(mode)]
-            assert selected["waves"]["cash"] == {2:[230,310,400,750,1000,1200,1000,1100,2000,1800,2100],3:[360,275,660,1500,1500,800,1200,1200,2400,2200,2600]}[mode][level_id-1]
+            assert selected["waves"]["cash"] == {2:[230,310,400,750,1000,1200,1000,1100,2000,1800,2100,1600],3:[360,275,660,1500,1500,800,1200,1200,2400,2200,2600,2800]}[mode][level_id-1]
             assert selected["waves"]["lives"] == 1 and len(selected["waves"]["groups"]) == (6 if mode==2 else 1)
             assert all(e.get("editor.game_mode",0) in (0,mode) for e in selected["layout"]["entities_list"])
             assert f"kr1/data/waves/level{level_id:02d}_waves_{'heroic' if mode==2 else 'iron'}.lua" in data["source"]["inputs"]
@@ -52,7 +52,8 @@ def verify(level_id=1, ranger_arena=False):
     # Every default sprite must resolve, including suffixes such as explosion_big
     # and explode_small. Merely validating already-selected animations misses them.
     for template_name,template in data["templates"].items():
-        for sprite in template.get("render",{}).get("sprites",[]):
+        for sprite_index,sprite in enumerate(template.get("render",{}).get("sprites",[]),1):
+            if any(t.get("sprite_id")==sprite_index for t in template.get("texts",{}).get("list",[])): continue
             name=sprite.get("name", "").replace("%04i","0001")
             key=sprite.get("prefix", "")+"_"+name if sprite.get("prefix") else name
             script_states=[entry.split(":",1)[1] for entry in spec["export"].get("script_animation_starts",[]) if entry.split(":",1)[0]==template["template_name"]]

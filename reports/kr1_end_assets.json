@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "comic_pages": [
+    1,
+    1
+  ],
+  "frames": 19,
+  "credits_data": false,
+  "source_hashes": {
+    "data/kr1_end/atlas.json": "86ad90cba7471b4136d2c70f29aa994cab77cadbe586229330194f66c4a5ce5c",
+    "data/kr1_end/catalog.json": "4ea310bd53bb891e769382bdfee5f2245ec507ed81930037a6e7669a6f40054e",
+    "data/kr1_end/definition.json": "e17b56b2658bb780ef6dc4e79a8b327cace4c9cbe547e67d8ca826b61fa560e8",
+    "data/kr1_end/manifest.json": "7c187345a1fed7d9ceb5547398c9d3f3b64586c76244f42f65791f173f3d3965",
+    "data/kr1_end/sounds.json": "7dd821ee1ba6ba30fab07d80f49b7d9c9c0649147c7bf11d0d515aab6377383e",
+    "data/kr1_end/atlas_0.png": "8d71082cc444de6b290b51d7c55f0facb3fc3033e6843dda4bdbe56e0904d91b",
+    "tools/prepare_ending.py": "9c0ac73a224321dedd1cb3a786a0f5d8049fe9be523e0600e5b4179876b21463",
+    "tools/verify_ending_assets.py": "f8d2565df319afd84e9ae3cad31e55d866a69d0ef0821cb5582bbce5b06349a6",
+    "tools/ending_export/main.lua": "7bd9e999b27b10c3175ab929d6181d2ed1040fc81e936eeaec7b1522c461f110"
+  }
+}

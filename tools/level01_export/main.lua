@@ -77,7 +77,7 @@ local function run()
     local base=body:match('^tt = RT%([^,\n]+,%s*"([^"]+)"')
     if base and not E.entities[base] then load_game_template(base) end
     local header='local tt;local anchor_x,anchor_y,image_x,image_y=0,0,0,0;local scripts=require("game_scripts");local RLU=require("all.rally_utils");local v=vec_2;local vv=vec_1;local function adx(x) return x-anchor_x*image_x end;local function ady(y) return y-anchor_y*image_y end;'
-    chunk(path,header..body)
+    chunk(path,'local i18n=require("i18n");'..header..body)
   end
   -- Source wave/layout tables are dependency roots, not hand-maintained enemy lists.
   local source_tables={}
@@ -272,6 +272,9 @@ local function run()
   end
   local strings=chunk("_assets/kr1-desktop/strings/zh-Hans.lua")
   out.ui.strings={}
+  if has("veznan") then
+    for i=1,30 do local key=string.format("VEZNAN_TAUNT_%04d",i);out.ui.strings[key]=assert(strings[key],key) end
+  end
   local function collect(v)
     if type(v)=="string" and strings[v] then out.ui.strings[v]=strings[v]
     elseif type(v)=="table" then for _,value in pairs(v) do collect(value) end end

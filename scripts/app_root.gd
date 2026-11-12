@@ -16,6 +16,8 @@ var packs: Node
 var back: Button
 var _prefetch_epoch := 0
 var battle: Control
+var ending: Control
+var pending_route := ""
 var campaign_map: Control
 var map_loader: Node
 var slots: RefCounted
@@ -143,6 +145,8 @@ func _on_failed(message: String) -> void:
 
 
 func _recover_after_failure() -> void:
+	if pending_route!="":
+		pending_route="";transitioning=false;_return_to_map();return
 	retry_action = Callable()
 	transitioning = false
 	loading.hide(); retry.hide(); back.hide()
@@ -242,6 +246,7 @@ func _start_level(level_id: int, mode: int, difficulty: int) -> void:
 	battle.finished.connect(campaign.record_result)
 	battle.seen_flushed.connect(campaign.flush_seen)
 	battle.returned_to_map.connect(_return_to_map)
+	battle.routed.connect(_route_battle)
 	transitioning = false
 	retry_action = Callable()
 	loading.hide()
@@ -264,14 +269,42 @@ func _prefetch_next(level_id: int, epoch: int) -> void:
 
 
 func _return_to_map() -> void:
+	pending_route=""
+	if ending!=null:
+		remove_child(ending);ending.queue_free();ending=null
 	_prefetch_epoch += 1
 	packs.stop_prefetch()
 	if battle != null:
 		remove_child(battle); battle.queue_free(); battle = null
 	_open_map()
 
+func _route_battle(route:String) -> void:
+	if route!="kr1_end" or transitioning or ending!=null:return
+	pending_route=route
+	_open_ending()
+
+func _open_ending() -> void:
+	if transitioning or pending_route!="kr1_end":return
+	transitioning=true
+	_prefetch_epoch+=1;packs.stop_prefetch()
+	loading.show();retry.hide();back.hide();move_child(loading,get_child_count()-1)
+	if battle!=null:battle.set_process_input(false);battle.hide()
+	if not await packs.ensure_bundle("kr1_end"):
+		transitioning=false;retry_action=_open_ending;_on_failed(packs.error_message);return
+	var script=load("res://scripts/ui/kr1_ending.gd")
+	if script==null:
+		transitioning=false;retry_action=_open_ending;_on_failed("结尾资源无法载入，请重试。");return
+	ending=script.new();add_child(ending)
+	if not ending.initialize(loader,audio):
+		remove_child(ending);ending.queue_free();ending=null
+		transitioning=false;retry_action=_open_ending;_on_failed("结尾资源不完整，请重试或返回地图。");return
+	ending.completed.connect(_return_to_map)
+	transitioning=false;retry_action=Callable();loading.hide()
+
 
 func _return_to_menu() -> void:
+	if ending!=null:
+		remove_child(ending);ending.queue_free();ending=null
 	_prefetch_epoch += 1
 	packs.stop_prefetch()
 	_release_map()
@@ -294,6 +327,7 @@ func _input(event: InputEvent) -> void:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST and settings != null:
+		if ending!=null:get_tree().quit();return
 		if battle != null:
 			if not battle.sim.paused: battle.sim.command("pause")
 		elif campaign_map != null:

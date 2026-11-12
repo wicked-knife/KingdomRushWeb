@@ -28,6 +28,14 @@ __pycache__/
 # Generated output artifacts (kept locally)
 /output/
 
+!/reports/level12_assets.json
+!/reports/level12_logic.json
+!/reports/level12_flow.json
+!/reports/level12_native_1280x720.json
+!/reports/level12_native_1024x768.json
+!/reports/level12_delivery.json
+!/reports/kr1_end_assets.json
+
 !/reports/playtest_tools_logic.json
 !/reports/heroes_assets.json
 !/reports/heroes_logic.json

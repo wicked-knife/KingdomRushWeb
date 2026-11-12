@@ -28,6 +28,7 @@ const Snow = preload("res://scripts/battle/dove_snow.gd")
 var snow := Snow.new()
 var wasteland := Behaviors.Wasteland.new()
 var jt := Behaviors.Jt.new()
+var veznan := Behaviors.Veznan.new()
 var base_templates: Dictionary
 var controller: RefCounted
 var behaviors: RefCounted
@@ -148,6 +149,7 @@ func reset(seed_value: int = 1) -> void:
 	jt.reset()
 	snow.reset(self)
 	heroes.reset(self)
+	veznan.reset(self)
 
 static func vec(v: Dictionary) -> Vector2:
 	return Vector2(v.x, v.y)
@@ -257,7 +259,10 @@ func command(kind: String, args: Dictionary = {}) -> bool:
 		var unit:Dictionary=unit_by_id(int(args.get("id",0)))
 		if unit.is_empty() or unit.hp<=0 or not templates[unit.template].get("ui",{}).get("can_click",false):return false
 		unit.click_pending=true;return true
-	if kind=="tower_click":return jt.tower_click(self,str(args.get("id","")))
+	if kind=="tower_click":
+		var id:String=str(args.get("id",""))
+		var consumed:bool=jt.tower_click(self,id)
+		return veznan.tower_click(id) or consumed
 	if kind=="move_hero":return Heroes.move_command(self,unit_by_id(int(args.get("id",0))),args.get("pos",Vector2.ZERO))
 	match kind:
 		"build":
@@ -524,6 +529,7 @@ func step() -> void:
 	if not notices.is_empty(): return
 	controller.step(self)
 	jt.step_freezes(self)
+	veznan.step(self)
 	snow.step(self)
 	wasteland.step(self)
 	_decals_step()
@@ -537,7 +543,7 @@ func step() -> void:
 	for enemy: Dictionary in enemies: _enemy_step(enemy)
 	for bullet: Dictionary in projectiles.duplicate(): _bullet_step(bullet)
 	projectiles = projectiles.filter(func(p): return not p.done)
-	enemies = enemies.filter(func(e): return e.hp > 0 or tick - e.dead_at < frames(templates[e.template].health.dead_lifetime))
+	enemies = enemies.filter(func(e): return not e.get("remove_now",false) and (e.hp > 0 or tick - e.dead_at < frames(templates[e.template].health.dead_lifetime)))
 	soldiers = soldiers.filter(func(s): return s.has("hero") or s.hp > 0 or tick - s.dead_at < (frames(templates[s.template].health.dead_lifetime) if s.get("source_corpse",false) or templates[s.template].get("powers", {}).has("holystrike") or s.home == "" and not templates[s.template].has("reinforcement") else 60))
 	effects = effects.filter(func(e): return tick - e.at < e.duration)
 	if lives <= 0: _finish("defeat")
@@ -566,7 +572,10 @@ func _skip_wave() -> void:
 func _spawn_enemy(type: String, subpath: int = -1, path: int = 0, origin: String = "wave") -> Dictionary:
 	var t: Dictionary = templates[type]
 	if subpath < 0: subpath = rng.randi_range(0, data.paths.paths[path].size() - 1)
-	var hp := floori(float(t.health.hp_max) * float(data.rules.enemy_hp_factor))
+	var base_hp:Variant=t.health.hp_max
+	var hp_factor:float=1.0 if base_hp is Array else float(data.rules.enemy_hp_factor)
+	if base_hp is Array:base_hp=base_hp[int(data.level.difficulty)-1]
+	var hp := floori(float(base_hp) * hp_factor)
 	var e := {"id": next_id, "template": type, "hp": float(hp), "max_hp": float(hp), "pos": vec(data.paths.paths[path][subpath][0]), "path": path, "subpath": subpath, "node": 0, "progress": 0.0, "blocker": 0, "blockers": [], "attack_at": tick, "pending": {}, "state": "walkingDown", "state_at": tick, "dead_at": -1, "flip": false, "last_dir": Vector2.ZERO, "heal_at": tick, "casting": {}}
 	next_id += 1; enemies.append(e)
 	spawn_log.append({"tick": tick, "type": type, "path": path, "subpath": subpath, "wave": wave, "origin":origin})
@@ -609,13 +618,13 @@ func _tower_step(tower: Dictionary) -> void:
 			var target_id: int = target.get("id", 0)
 			if tower.type == "mage":
 				if not target.is_empty() and distance(tower.pos + vec(t.tower.range_offset), target.pos) <= float(t.attacks.range) * 1.1:
-					aim = target.pos + vec(templates[target.template].unit.hit_offset)
+					aim = target.pos + vec(unit_template(target).unit.hit_offset)
 				else: target_id = 0
 			elif not target.is_empty() and target.hp > 0:
 				if not bullet.has("flight_time"): flight = distance(tower.pos, target.pos) / float(bullet.get("max_speed", 300))
 				if tower.type == "engineer": aim = source_prediction(target,attack.get("node_prediction",false))
 				else:
-					aim = target.pos + vec(templates[target.template].unit.hit_offset)
+					aim = target.pos + vec(unit_template(target).unit.hit_offset)
 					if bullet.get("predict_target_pos", false) and target.blocker == 0: aim += target.last_dir * 30.0 * flight
 			_projectile(attack.bullet, target_id, tower.pos + offset, aim, flight, tower)
 		tower.pending = {}
@@ -775,7 +784,7 @@ func melee_slot(s: Dictionary, e: Dictionary) -> Vector2:
 	if forward == Vector2.ZERO:
 		var route: Array = data.paths.paths[e.path][e.subpath]
 		forward = vec(route[mini(e.node + 1, route.size() - 1)]) - e.pos
-	var slot := vec(templates[e.template].enemy.melee_slot) + offset + vec(unit_template(s).soldier.melee_slot_offset)
+	var slot:Vector2 = e.get("melee_slot_override",vec(templates[e.template].enemy.melee_slot)) + offset + vec(unit_template(s).soldier.melee_slot_offset)
 	slot.x *= 1 if forward.x > 0 else -1
 	return e.pos + slot
 
@@ -881,6 +890,8 @@ func _enemy_step(e: Dictionary) -> void:
 		event.emit("sound", {"id": "GUILooseLife"})
 
 func _melee(attacker: Dictionary, target: Dictionary, template: Dictionary) -> void:
+	if attacker.has("veznan"):
+		veznan.melee(self,attacker,target);return
 	if attacker.has("mixed_melee_job"):
 		Behaviors.EnemyMelee.melee(self,attacker,target,template); return
 	if template.has("soldier") and template.melee.attacks.size() > 1:
@@ -964,7 +975,7 @@ func _healer_step(e: Dictionary, template: Dictionary) -> bool:
 			for target: Dictionary in targets.slice(0, int(attack.max_count)):
 				var amount := float(rng.randi_range(int(modifier.hps.heal_min), int(modifier.hps.heal_max)))
 				target.hp = minf(target.max_hp, target.hp + amount)
-				add_effect(attack.mod, target.pos, {"target": target.id, "duration": frames(modifier.modifier.duration), "state": modifier.render.sprites[0].size_names[int(templates[target.template].unit.size) - 1]})
+				add_effect(attack.mod, target.pos, {"target": target.id, "duration": frames(modifier.modifier.duration), "state": modifier.render.sprites[0].size_names[int(unit_template(target).unit.size) - 1]})
 				event.emit("healed", {"source": e.id, "target": target.id, "amount": amount})
 		if tick < e.casting.ends_at: return true
 		e.casting = {}
@@ -1029,6 +1040,7 @@ func damage(unit: Dictionary, amount: float, type: int, source_id: int = 0, redu
 	if unit.is_empty() or unit.hp <= 0: return 0
 	var t: Dictionary = templates[unit.template]
 	if unit.get("ignore_damage",false) or (type & int(unit.get("move_immune",0)))!=0:return 0
+	if unit.has("veznan") and Behaviors.Veznan.lethal(self,unit,amount,type):return 0
 	if unit.has("jt") and unit.jt.phase!="done" and Behaviors.Jt.lethal(self,unit,amount,type):return 0
 	if unit.template=="enemy_rocketeer" and not unit.get("already_speed_up",false) and not modifiers.active.any(func(m):return m.target==unit.id and templates[m.template].modifier.get("type","")=="freeze"):
 		modifiers.apply(self,"mod_rocketeer_speed_buff",unit,1,str(unit.id))
@@ -1166,7 +1178,7 @@ func _bullet_step(p: Dictionary) -> void:
 		if not water: add_effect(str(b.get("hit_decal", "")), center)
 		if behavior == "fireball": upgrades.scorched(self, p.to)
 	elif not target.is_empty() and target.hp > 0:
-		var hit: Vector2 = target.pos + vec(templates[target.template].unit.hit_offset)
+		var hit: Vector2 = target.pos + vec(unit_template(target).unit.hit_offset)
 		if b.get("reset_to_target_pos",false) and behavior != "arrow_missile": p.to = hit
 		var missile_hit: bool = behavior == "arrow_missile" and p.pos.distance_to(hit) < float(p.hit_distance)
 		if behavior == "bolt" or missile_hit or (behavior != "arrow_missile" and p.to.distance_to(hit) < float(b.get("hit_distance", 22)) * 1.2):
@@ -1203,7 +1215,7 @@ func _bolt_step(p: Dictionary, bullet: Dictionary, target: Dictionary) -> bool:
 	p.last_step = tick
 	p.has_tracked = true
 	if not p.target_invalid and not target.is_empty():
-		var hit: Vector2 = target.pos + vec(templates[target.template].unit.hit_offset)
+		var hit: Vector2 = target.pos + vec(unit_template(target).unit.hit_offset)
 		var delta: Vector2 = hit - p.to
 		if maxf(absf(delta.x), absf(delta.y)) > float(bullet.max_track_distance): p.target_invalid = true
 		elif target.hp > 0: p.to = hit

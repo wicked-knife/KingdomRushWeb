@@ -1193,6 +1193,49 @@
         "go_enemies_wastelands",
         "go_enemies_blackburn"
       ]
+    },
+    "12": {
+      "id": 12,
+      "generation": 1,
+      "folder": "level12",
+      "modes": [
+        1,
+        2,
+        3
+      ],
+      "difficulties": [
+        2
+      ],
+      "controller": "level12",
+      "features": [
+        "base",
+        "wolf",
+        "healer",
+        "bandits",
+        "tier3",
+        "ranger",
+        "flying",
+        "enemy_ranged",
+        "paladin",
+        "arcane",
+        "musketeer",
+        "spider",
+        "barbarian",
+        "bfg",
+        "sorcerer",
+        "sunray",
+        "tesla",
+        "wasteland",
+        "necromancer",
+        "veznan"
+      ],
+      "atlas_groups": [
+        "go_stage12",
+        "go_stage12_bg",
+        "go_enemies_wastelands",
+        "go_enemies_blackburn"
+      ],
+      "background": "stage_12_0001"
     }
   },
   "arenas": {
@@ -2142,6 +2185,95 @@
       "inputs": [
         "kr1/template_groups/level11_templates.lua"
       ]
+    },
+    "veznan": {
+      "template_ids": [
+        "eb_veznan",
+        "veznan_portal",
+        "veznan_souls_aura",
+        "decal_eb_veznan_white_circle",
+        "veznan_soul",
+        "mod_veznan_tower",
+        "decal_s12_shoutbox"
+      ],
+      "fields": [
+        "pos_castle",
+        "souls_aura",
+        "white_circle",
+        "taunts",
+        "battle",
+        "demon",
+        "required_clicks",
+        "click_time",
+        "sound_click",
+        "sound_blocked",
+        "sound_released",
+        "spawn_groups",
+        "portal_idx",
+        "spawn_interval",
+        "pi",
+        "out_nodes",
+        "soul_phase",
+        "angle",
+        "angle_variation",
+        "min_angle",
+        "max_angle",
+        "speed",
+        "sound",
+        "count",
+        "interval",
+        "interrupt",
+        "souls",
+        "texts"
+      ],
+      "reference_fields": [
+        "souls_aura",
+        "white_circle",
+        "soul_effect",
+        "portal_name",
+        "decal_name"
+      ],
+      "animation_states": [
+        "idleDown",
+        "laugh",
+        "spellDown",
+        "spell",
+        "walkAway",
+        "demonTransform",
+        "soulDrainStart",
+        "soulDrainHold",
+        "soulDrainEnd",
+        "death",
+        "deathLoop",
+        "deathEnd",
+        "start",
+        "active",
+        "end",
+        "preHold",
+        "hold",
+        "remove"
+      ],
+      "local_update_bindings": [
+        "veznan_portal:kr1.level12.veznan_portal.update"
+      ],
+      "callback_templates": [
+        "eb_veznan"
+      ],
+      "inputs": [
+        "kr1/boss.lua",
+        "kr1/boss_scripts.lua",
+        "kr1/template_groups/level12_templates.lua",
+        "all/level_utils.lua"
+      ],
+      "constants": [
+        "F_ALL",
+        "F_RANGED",
+        "DAMAGE_DISINTEGRATE",
+        "DAMAGE_INSTAKILL"
+      ],
+      "script_animation_starts": [
+        "veznan_portal:start"
+      ]
     }
   },
   "controllers": {
@@ -2149,7 +2281,8 @@
     "level01": "res://scripts/battle/controllers/level01.gd",
     "level06": "res://scripts/battle/controllers/level06.gd",
     "level09": "res://scripts/battle/controllers/level09.gd",
-    "level10": "res://scripts/battle/controllers/level10.gd"
+    "level10": "res://scripts/battle/controllers/level10.gd",
+    "level12": "res://scripts/battle/controllers/level12.gd"
   },
   "behaviors": {
     "scripts.enemy_mixed.update": "ground",
@@ -2219,7 +2352,12 @@
     "game_scripts.aura_skeleton_big.update": "skeleton_aura",
     "game_scripts.enemy_necromancer.update": "necromancer",
     "kr1.level11.s11_lava_spawner.update": "layout_spawner",
-    "scripts.bolt_enemy.update": "enemy_bolt"
+    "scripts.bolt_enemy.update": "enemy_bolt",
+    "game_scripts.eb_veznan.update": "veznan",
+    "game_scripts.mod_veznan_tower.update": "veznan_block",
+    "game_scripts.veznan_souls_aura.update": "veznan_souls",
+    "game_scripts.veznan_soul.update": "veznan_soul",
+    "kr1.level12.veznan_portal.update": "veznan_portal"
   },
   "behavior_aliases": {
     "game_scripts.tower_archer.update": "scripts.tower_archer.update",
@@ -2298,7 +2436,9 @@
     "res://scripts/battle/dove_sunray.gd",
     "res://scripts/battle/dove_jt.gd",
     "res://scripts/battle/dove_tesla.gd",
-    "res://scripts/battle/dove_wasteland.gd"
+    "res://scripts/battle/dove_wasteland.gd",
+    "res://scripts/battle/dove_veznan.gd",
+    "res://scripts/battle/controllers/level12.gd"
   ],
   "callbacks": [
     "game_scripts.aura_apply_mod.insert",
@@ -2457,7 +2597,13 @@
     "kr1.level11.s11_lava_spawner.update",
     "game_scripts.enemy_necromancer.update",
     "scripts.bolt_enemy.insert",
-    "scripts.bolt_enemy.update"
+    "scripts.bolt_enemy.update",
+    "game_scripts.eb_veznan.on_damage",
+    "game_scripts.eb_veznan.update",
+    "game_scripts.mod_veznan_tower.update",
+    "game_scripts.veznan_souls_aura.update",
+    "game_scripts.veznan_soul.update",
+    "kr1.level12.veznan_portal.update"
   ],
   "runtime_callbacks": {
     "missile_bfg": {
@@ -2477,6 +2623,9 @@
     },
     "s11_lava_spawner": {
       "update": "kr1.level11.s11_lava_spawner.update"
+    },
+    "eb_veznan": {
+      "update": "game_scripts.eb_veznan.update"
     }
   },
   "runtime_dependencies": {
@@ -2545,6 +2694,13 @@
     ],
     "s11_lava_spawner": [
       "enemy_lava_elemental"
+    ],
+    "eb_veznan": [
+      "mod_veznan_tower",
+      "veznan_soul",
+      "veznan_souls_aura",
+      "decal_eb_veznan_white_circle",
+      "veznan_portal"
     ]
   },
   "combat_heroes": {
@@ -2589,6 +2745,15 @@
           "side_effect"
         ],
         "value": "kr1.enemies.enemy_slayer.side_effect"
+      }
+    ],
+    "eb_veznan": [
+      {
+        "path": [
+          "health",
+          "on_damage"
+        ],
+        "value": "game_scripts.eb_veznan.on_damage"
       }
     ]
   }

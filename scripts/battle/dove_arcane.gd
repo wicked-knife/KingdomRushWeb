@@ -90,7 +90,7 @@ static func step(sim, tower: Dictionary) -> void:
 static func projectile(sim, p: Dictionary, bullet: Dictionary) -> void:
 	var target: Dictionary = sim.unit_by_id(p.target)
 	if target.is_empty() or target.hp <= 0: p.done = true; return
-	p.to = target.pos + sim.vec(sim.templates[target.template].unit.hit_offset)
+	p.to = target.pos + sim.vec(sim.unit_template(target).unit.hit_offset)
 	p.pos = p.from; p.rotation = (p.to - p.from).angle()
 	p.sprite_scale = Vector2(p.from.distance_to(p.to) / float(sim.templates[p.template].image_width), 1)
 	if not p.get("applied", false):

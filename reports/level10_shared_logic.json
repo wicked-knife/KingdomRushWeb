@@ -5,12 +5,12 @@
 	"scope": "source Sorcerer/Sunray attacks; freeze/thaw, JT death, polymorph and elemental lifecycle; no campaign replay",
 	"source_hashes": {
 		"data/level09/definition.json": "5b0a505c2c2b58de0d0c461e132ac3d8a9e11af60ea15d81e6836a86fc6fef3a",
-		"scripts/battle/dove_behaviors.gd": "d8da938b37894df47d8d4abecbf9f66be2fa915afc27dfed99ed39559ed4becf",
+		"scripts/battle/dove_behaviors.gd": "592c9e854043665e9453a6d420caa9d562fc8d10316939f0aabec5268b89feeb",
 		"scripts/battle/dove_jt.gd": "52d06669df870a14cfe82089d12388a87dde05006d7437f72663802f2d5def51",
-		"scripts/battle/dove_modifiers.gd": "fa1f8136d1c61ee0d1087b49c3700581d79dde4baed7ad733a72324c32d9be5c",
+		"scripts/battle/dove_modifiers.gd": "c06a02be4cc16c67a8dcfece84b5687e13fcd9a3b0848172cd1d1d0b44452849",
 		"scripts/battle/dove_snow.gd": "68d0e91988485524909a4dd6d804482adc66a6d43146e875678a8ea01af984fd",
 		"scripts/battle/dove_sorcerer.gd": "d10210953a621e13d05af31f67d6b183d3735fcaf0a459262b8adf891d802038",
-		"scripts/battle/level01_sim.gd": "9cb5710e5391eba9db21a729ff67a4d731fc2e5929cc2655d35c4f6229ae3366",
+		"scripts/battle/level01_sim.gd": "baf33bc858087240696a77ed2bcfff591d9fb0d90a20bc907cad51de1fc5cf1c",
 		"tests/fixtures/level09_source.json": "dc441b9214fdd2f9f18bedaa3add201189db84e2876ed6525763d4183830f4ff",
 		"tests/verify_level09.gd": "e3a35c32f575e13640460ceae27bc3881bbb7b0d043f02fe4c19d9ba005b7e97",
 		"tests/verify_level10_shared.gd": "389674a5b7bbe103738c0c21a49ee2de95c32185fee0523000dbbc247de29114"

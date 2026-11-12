@@ -1,5 +1,12 @@
 -- Feature adapters evaluate frozen source templates without running gameplay.
 local adapters = {}
+  adapters.veznan = function(ctx)
+    local text=ctx.read("kr1/boss.lua")
+    local header=text:sub(1,assert(text:find('tt = RT(',1,true))-1)
+    local a=assert(text:find('tt = RT("eb_veznan"',1,true))
+    local b=assert(text:find('tt = RT("eb_sarelgaz"',a,true))
+    ctx.chunk("kr1/boss.lua",header..text:sub(a,b-1))
+  end
   adapters.tesla = function(ctx)
     local text=ctx.read("kr1/engineer_towers.lua")
     local header=text:sub(1,assert(text:find('tt = RT(',1,true))-1)

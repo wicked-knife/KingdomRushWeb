@@ -58,6 +58,7 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
     data["schema_version"]=1
     # Resolve the union of all mode placements before filtering into independent layouts.
     data["level"]={"generation":spec["generation"],"id":level_id,"mode":1,"difficulty":2,"root":f"res://data/{level_name}/","group":level_name,"controller":spec["controller"],"background":f"stage_{level_id}","music":"BattleMusic","prep_music":"PrepMusic"}
+    data["level"]["background"] = spec.get("background", data["level"]["background"])
     # all/scripts.lua editor_wave_flag.insert builds entrances from these markers.
     # game_gui.show_wave_flags indexes the sorted entrance array, not editor.path_id.
     # Level 4 deliberately has two editor markers with the same path ID.
@@ -157,7 +158,10 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
         return
     assets=ROOT/"assets/kingdom_rush"
     all_anims=json.loads((assets/"data/animations.json").read_text(encoding="utf-8"))["animations"]
-    wanted={f"stage_{level_id}"};animations={}
+    wanted={data["level"]["background"]};animations={}
+    if "veznan" in features:
+        for key, value in all_anims.items():
+            if key.startswith("eb_veznan_demon_"): animations[key] = value
     states=["idle","idleUp","idleDown","shoot","shootingUp","shootingDown","walkingRightLeft","walkingUp","walkingDown","running","attack","death","open","close","play","flying","heal","jump","small","medium","large"]
     states += spec["export"].get("animation_states", [])
     for template in data["templates"].values():
@@ -175,7 +179,9 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
                 assert key in all_anims, f"Missing particle animation: {key}"
                 animations[key] = all_anims[key]
             else: wanted.add(particle["name"])
-        for sprite in template.get("render",{}).get("sprites",[]):
+        for sprite_index, sprite in enumerate(template.get("render",{}).get("sprites",[]), 1):
+            if any(text.get("sprite_id") == sprite_index for text in template.get("texts", {}).get("list", [])):
+                continue
             name=sprite.get("name","");prefix=sprite.get("prefix","")
             if prefix:
                 if sprite.get("use_blood_color"):
@@ -245,6 +251,8 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
     for group in ui_groups:
         names=groups[group].get("lookup",groups[group]["frames"])
         wanted.update(n for n in names if n in ui_names or any(n.startswith(p) for p in ui_prefixes))
+    if "veznan" in features:
+        wanted.add(data["templates"]["eb_veznan"]["demon"]["info_portrait"])
     # Notification images and all labels come from this batch's source UI data.
     for notification in data["ui"]["notifications"].values():
         wanted.update(notification.get("images",[]))
@@ -322,6 +330,11 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
         for attack in t.get("melee",{}).get("attacks",[]):
             if attack.get("sound"): sound_ids.add(attack["sound"])
         if t.get("aura",{}).get("hit_sound"): sound_ids.add(t["aura"]["hit_sound"])
+    if "veznan" in features:
+        sound_ids.add("MusicBossFight")
+        for key in ("sound_click", "sound_blocked", "sound_released"):
+            sound_ids.add(data["templates"]["mod_veznan_tower"][key])
+        sound_ids.add(data["templates"]["eb_veznan"]["demon"]["transform_sound"])
     if advanced:
         for menu in data["ui"]["tower_menus"].values():
             for item in menu: sound_ids.update(item.get("sounds",[]))

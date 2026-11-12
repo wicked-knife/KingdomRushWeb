@@ -1,0 +1,24 @@
+{
+	"births": 1110,
+	"checks": 1195,
+	"failures": [],
+	"full_replays": false,
+	"independent_modes": 3,
+	"passed": true,
+	"source_hashes": {
+		"data/campaign_content.json": "124b63f07c14a7fd298310da6661fbe67f1e82dfed936423d6a3ba17ab2fe400",
+		"data/level12/definition.json": "e6ead4597aefed0f9390ca59d56b4b51256ae14c7481d41a96bac681e36a40a5",
+		"scripts/app_root.gd": "253ce1da3f4f956348959dfe1241639f143e64499cbb512463b0144c95666679",
+		"scripts/battle/battle_view.gd": "f2c33805820fe085361cac6667528e155400841aad494b5d6f2cea732ff3f147",
+		"scripts/battle/controllers/level12.gd": "854e401c8a49274062aa9987354d57b148a037aa8bb18ca775b074b4d55caa14",
+		"scripts/battle/dove_behaviors.gd": "592c9e854043665e9453a6d420caa9d562fc8d10316939f0aabec5268b89feeb",
+		"scripts/battle/dove_unit_info.gd": "605e83eb830176dd81d170825fe53ef942de9c0866e2c7370a3ec7df4884df8e",
+		"scripts/battle/dove_veznan.gd": "43bd9672be2058c4ffdac585289ce0ffc42f8971c3903e19efd47f203ac55457",
+		"scripts/battle/level01_sim.gd": "baf33bc858087240696a77ed2bcfff591d9fb0d90a20bc907cad51de1fc5cf1c",
+		"scripts/ui/kr1_ending.gd": "ac2688288d907e8bb38280a518d83280628807ed688cdcc6ed02a5e3e54ad6e0",
+		"tests/fixtures/level12_source.json": "1ea3a2f2b82a783f6432e30b8171a666d69717deb5c9e557ad0be9440f81a6ee",
+		"tests/verify_level12.gd": "f57cfb5dadf53440bbef73c2a0a706d0f37d7a31c9ea6acd89ec9c966609101e"
+	},
+	"source_scenarios": 12,
+	"timeline_waves": 22
+}

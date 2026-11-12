@@ -79,6 +79,9 @@ func _run() -> void:
 		var base: String="res://data/"+entry.folder+"/"
 		var combat: Dictionary=JSON.parse_string(FileAccess.get_file_as_string(base+"manifest.json"))
 		expected.append_array(combat.resources);expected.append_array(combat.data);expected.append(base+"manifest.json")
+	if content.levels.has("12"):
+		var end_manifest:Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/kr1_end/manifest.json"))
+		expected.append_array(end_manifest.resources);expected.append_array(end_manifest.data);expected.append("res://data/kr1_end/manifest.json")
 	var allowed_data := expected.duplicate()
 	allowed_data.append("res://data/menu_manifest.json")
 	var failures: Array[String] = []
@@ -147,7 +150,7 @@ func _run() -> void:
 		if not ResourceLoader.exists(script) or load(script) == null: failures.append("Interaction script missing: " + script)
 	for id: int in content.levels.keys().map(func(key): return int(key)):
 		var stage: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/level%02d/definition.json" % id))
-		if stage.get("locations", {}).get("entrances", []).size() != {1:1, 2:1, 3:2, 4:2, 5:3, 6:5, 7:3, 8:4, 9:3, 10:2, 11:2}[id]: failures.append("Exported entrances incomplete %d" % id)
+		if stage.get("locations", {}).get("entrances", []).size() != {1:1, 2:1, 3:2, 4:2, 5:3, 6:5, 7:3, 8:4, 9:3, 10:2, 11:2, 12:2}[id]: failures.append("Exported entrances incomplete %d" % id)
 		var art = load("res://scripts/dove_asset_catalog.gd").new(stage.level.root + "catalog.json")
 		for image: String in ["nextwaveTimer_Full", "nextwaveTimer_0001", "nextwaveTimer_0002", "nextwaveTimer_0020", "nextwaveTimer_glow_0001"]:
 			if art.get_frame(stage.level.group, image).is_empty(): failures.append("Exported wave flag art missing: " + image)
@@ -168,6 +171,16 @@ func _run() -> void:
 		var animations: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(stage.level.root + "animations.json"))
 		if not animations.get("animations",{}).has("decal_rally_feedback"): failures.append("Exported rally marker animation missing %d" % id)
 		var placement = sim_script.new(stage)
+		if id==12:
+			if placement.veznan.boss_id<=0 or placement.veznan.portals.size()!=3:failures.append("Pack twelfth controller missing")
+			var ending_art=load("res://scripts/dove_asset_catalog.gd").new("res://data/kr1_end/catalog.json")
+			var ending:Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/kr1_end/definition.json"))
+			if ending.comics.size()!=2 or ending.has("credits"):failures.append("Pack ending structure invalid")
+			for comic:Array in ending.comics:
+				for page:Dictionary in comic:
+					if page.order.is_empty():failures.append("Pack ending layers missing")
+					for sprite:Dictionary in page.sprites.values():
+						if ending_art.get_frame("kr1_end",sprite.image).is_empty():failures.append("Pack ending frame missing")
 		if id==11:
 			if placement.layout_spawners.size()!=1:failures.append("Pack eleventh generator missing")
 			for name:String in ["enemy_necromancer","enemy_lava_elemental","enemy_skeleton","enemy_skeleton_big","bolt_necromancer"]:
@@ -193,7 +206,7 @@ func _run() -> void:
 			for run: Dictionary in preview.runs:copy+=run.text
 			if not copy.contains("20→18") or not copy.contains("666→733") or not copy.contains("4.7%"):
 				failures.append("Exported safe skill comparison or percentage incorrect")
-		var grass: Vector2 = {1:Vector2(256,424), 2:Vector2(256,328), 3:Vector2(256,376), 4:Vector2(100,100), 5:Vector2(100,100), 6:Vector2(100,100), 7:Vector2(100,100), 8:Vector2(100,100),9:Vector2(100,100),10:Vector2(100,100),11:Vector2(100,100)}[id]
+		var grass: Vector2 = {1:Vector2(256,424), 2:Vector2(256,328), 3:Vector2(256,376), 4:Vector2(100,100), 5:Vector2(100,100), 6:Vector2(100,100), 7:Vector2(100,100), 8:Vector2(100,100),9:Vector2(100,100),10:Vector2(100,100),11:Vector2(100,100),12:Vector2(100,100)}[id]
 		if placement.valid_power_point("reinforcements", grass) or not placement.valid_power_point("reinforcements", placement.towers[0].rally): failures.append("Exported troop placement rules invalid %d" % id)
 		if id == 2:
 			placement.notices.clear(); placement.command("build", {"id":"5", "type":"barrack"})
@@ -236,7 +249,7 @@ func _run() -> void:
 				var art=load("res://scripts/dove_asset_catalog.gd").new(active.level.root+"catalog.json")
 				if art.get_frame(active.level.group,"victoryBadges_notxt_%04d" % {1:2,2:3,3:1}[mode]).is_empty():failures.append("Exported mode victory badge missing %d/%d" % [id,mode])
 				if mode==1:continue
-				if challenge.lives!=1 or challenge.gold!={2:[230,310,400,750,1000,1200,1000,1100,2000,1800,2100],3:[360,275,660,1500,1500,800,1200,1200,2400,2200,2600]}[mode][id-1] or active.waves.groups.size()!=(6 if mode==2 else 1):failures.append("Exported challenge initial state invalid %d/%d" % [id,mode])
+				if challenge.lives!=1 or challenge.gold!={2:[230,310,400,750,1000,1200,1000,1100,2000,1800,2100,1600],3:[360,275,660,1500,1500,800,1200,1200,2400,2200,2600,2800]}[mode][id-1] or active.waves.groups.size()!=(6 if mode==2 else 1):failures.append("Exported challenge initial state invalid %d/%d" % [id,mode])
 				while not challenge.notices.is_empty():challenge.command("confirm")
 				for kind: String in sim_script.TYPES:
 					if not challenge.tower_locked("tower_build_"+kind):continue
@@ -254,11 +267,11 @@ func _run() -> void:
 					if challenge.towers.filter(func(t):return t.template=="tower_archer_3" and t.spent==0).size()!=3:failures.append("Pack fifth iron free archers invalid")
 					for site in ["5","7"]:
 						if not challenge.command("upgrade",{"id":site,"upgrade_to":"tower_elf"}) or not challenge.command("buy_soldier",{"id":site,"type":"soldier_elf"}):failures.append("Pack fifth iron camp transaction failed "+site)
-		for id in [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]:
+		for id in [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]:
 			var stage: Dictionary = levels.load_definition(id)
 			if stage.is_empty(): failures.append("Exported campaign dependencies invalid %d" % id); continue
 			var campaign = sim_script.new(stage)
-			if campaign.towers.size() != {2: 7, 3: 12, 4: 15, 5:14, 6:15, 7:11, 8:13, 9:15, 10:14, 11:18}[id] or campaign.data.waves.groups.size() != {2: 7, 3: 11, 4: 13, 5:15, 6:17, 7:16, 8:18, 9:19, 10:19, 11:19}[id]: failures.append("Exported campaign initialization invalid %d" % id)
+			if campaign.towers.size() != {2: 7, 3: 12, 4: 15, 5:14, 6:15, 7:11, 8:13, 9:15, 10:14, 11:18, 12:13}[id] or campaign.data.waves.groups.size() != {2: 7, 3: 11, 4: 13, 5:15, 6:17, 7:16, 8:18, 9:19, 10:19, 11:19, 12:15}[id]: failures.append("Exported campaign initialization invalid %d" % id)
 			if id == 8:
 				campaign.notices.clear(); campaign.gold=10000
 				if campaign.snow.tunnels.size()!=1 or campaign.tower_by_id("91").template!="tower_sasquash_holder": failures.append("Pack eighth tunnel or frozen camp missing")

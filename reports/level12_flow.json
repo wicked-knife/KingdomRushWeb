@@ -1,0 +1,13 @@
+{
+	"checks": 35,
+	"failures": [],
+	"passed": true,
+	"source_hashes": {
+		"data/kr1_end/definition.json": "e17b56b2658bb780ef6dc4e79a8b327cace4c9cbe547e67d8ca826b61fa560e8",
+		"scripts/app_root.gd": "253ce1da3f4f956348959dfe1241639f143e64499cbb512463b0144c95666679",
+		"scripts/services/campaign_progress.gd": "63f8ea4460117fe0041ec0eccd9d57810a7b7c09022f74216e1ca00187e82827",
+		"scripts/services/save_slots.gd": "67e49ae38e412afaaebdcbac9945b01421db847bf16f4d1f3fea7e2de71363a3",
+		"scripts/ui/kr1_ending.gd": "ac2688288d907e8bb38280a518d83280628807ed688cdcc6ed02a5e3e54ad6e0",
+		"tests/verify_level12_flow.gd": "2ed30acaf881db7b980999177e7d64adbc7c0963ee9489a5c9c56fccae170bc6"
+	}
+}
