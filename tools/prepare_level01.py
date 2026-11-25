@@ -57,7 +57,8 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
             label.setdefault("font_name", "body" if slide_id.startswith("TB_") else "body_slides")
     data["schema_version"]=1
     # Resolve the union of all mode placements before filtering into independent layouts.
-    data["level"]={"generation":spec["generation"],"id":level_id,"mode":1,"difficulty":2,"root":f"res://data/{level_name}/","group":level_name,"controller":spec["controller"],"background":f"stage_{level_id}","music":"BattleMusic","prep_music":"PrepMusic"}
+    main_background = next((e.get("render.sprites[1].name") for e in data["layout"]["entities_list"] if e.get("template") == "decal_background" and e.get("render.sprites[1].z") == 1000 and e.get("render.sprites[1].name")), f"stage_{level_id}")
+    data["level"]={"generation":spec["generation"],"id":level_id,"mode":1,"difficulty":2,"root":f"res://data/{level_name}/","group":level_name,"controller":spec["controller"],"background":main_background,"music":"BattleMusic","prep_music":"PrepMusic"}
     # all/scripts.lua editor_wave_flag.insert builds entrances from these markers.
     # game_gui.show_wave_flags indexes the sorted entrance array, not editor.path_id.
     # Level 4 deliberately has two editor markers with the same path ID.
@@ -157,7 +158,7 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
         return
     assets=ROOT/"assets/kingdom_rush"
     all_anims=json.loads((assets/"data/animations.json").read_text(encoding="utf-8"))["animations"]
-    wanted={f"stage_{level_id}"};animations={}
+    wanted={data["level"]["background"]};animations={}
     states=["idle","idleUp","idleDown","shoot","shootingUp","shootingDown","walkingRightLeft","walkingUp","walkingDown","running","attack","death","open","close","play","flying","heal","jump","small","medium","large"]
     states += spec["export"].get("animation_states", [])
     for template in data["templates"].values():
@@ -175,7 +176,16 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
                 assert key in all_anims, f"Missing particle animation: {key}"
                 animations[key] = all_anims[key]
             else: wanted.add(particle["name"])
-        for sprite in template.get("render",{}).get("sprites",[]):
+        if template.get("demon", {}).get("sprites_prefix"):
+            demon_prefix = template["demon"]["sprites_prefix"]
+            for suffix in set(states + list(action_states) + script_states):
+                key = demon_prefix + "_" + suffix
+                if key in all_anims: animations[key] = all_anims[key]
+        if template.get("demon", {}).get("info_portrait"):
+            wanted.add(template["demon"]["info_portrait"])
+        text_sprite_ids = {int(item.get("sprite_id", 0)) for item in template.get("texts", {}).get("list", [])}
+        for sprite_index, sprite in enumerate(template.get("render",{}).get("sprites",[]), 1):
+            if sprite_index in text_sprite_ids: continue
             name=sprite.get("name","");prefix=sprite.get("prefix","")
             if prefix:
                 if sprite.get("use_blood_color"):
@@ -313,7 +323,11 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
         for field, key in (("timed_attacks", "list"), ("melee", "attacks"), ("attacks", "list")):
             for index, attack in enumerate(template.get(field, {}).get(key, [])):
                 require_sound(attack.get("sound"), f"{name}/{field}/{index}")
+                require_sound(attack.get("sound_hit"), f"{name}/{field}/{index}/sound_hit")
         require_sound(template.get("aura", {}).get("hit_sound"), f"{name}/aura/hit_sound")
+        require_sound(template.get("demon", {}).get("transform_sound"), f"{name}/demon/transform_sound")
+        for key in ("sound_blocked", "sound_click", "sound_released"):
+            require_sound(template.get(key), f"{name}/{key}")
     sound_ids={"MusicMainMenu","GUITowerBuilding","GUITowerSell","GUIQuickMenuOpen","GUIQuickMenuOver","GUINextWaveReady","GUINextWaveIncoming","GUICoins","GUIQuestCompleted","GUISpellRefresh","GUIWinStars","GUILooseLife","GUIButtonCommon","Sheep","DeathEplosion","BombExplosionSound","GUITowerOpenDoor","ReinforcementTaunt","MeleeSword"}
     for t in data["templates"].values():
         sound_ids.update(v for v in t.get("sound_events",{}).values() if isinstance(v,str))
@@ -321,7 +335,13 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
             if attack.get("sound"): sound_ids.add(attack["sound"])
         for attack in t.get("melee",{}).get("attacks",[]):
             if attack.get("sound"): sound_ids.add(attack["sound"])
+            if attack.get("sound_hit"): sound_ids.add(attack["sound_hit"])
         if t.get("aura",{}).get("hit_sound"): sound_ids.add(t["aura"]["hit_sound"])
+        if t.get("demon",{}).get("transform_sound"): sound_ids.add(t["demon"]["transform_sound"])
+        for key in ("sound_blocked", "sound_click", "sound_released"):
+            if t.get(key): sound_ids.add(t[key])
+    if "veznan" in features:
+        sound_ids.add("MusicBossFight")
     if advanced:
         for menu in data["ui"]["tower_menus"].values():
             for item in menu: sound_ids.update(item.get("sounds",[]))
@@ -331,10 +351,13 @@ def prepare(source, love, level_id=1, ranger_arena=False, reuse_resources=False)
     sound_groups=json.loads((assets/"data/sound_groups.json").read_text(encoding="utf-8"))
     stage_music=sound_groups.get(f"music_stage{level_id:02d}",{})
     if stage_music.get("files"):sounds["Level01Music"]=stage_music
+    elif level_id >= 12 and f"MusicBattle_{level_id:02d}" in sound_data:
+        sounds["Level01Music"]=sound_data[f"MusicBattle_{level_id:02d}"]
     if "Level01Music" not in sounds:
         music="MusicBattle_01" if "MusicBattle_01" in sound_data else None
         assert music,"Stage music unavailable";sounds["Level01Music"]=sound_data[music]
-    sounds["Level01PrepMusic"]=sound_data["MusicBattlePrep_01"]
+    prep_key = f"MusicBattlePrep_{level_id:02d}" if level_id >= 12 and f"MusicBattlePrep_{level_id:02d}" in sound_data else "MusicBattlePrep_01"
+    sounds["Level01PrepMusic"]=sound_data[prep_key]
     sounds["BattleMusic"]=sounds["Level01Music"]
     sounds["PrepMusic"]=sounds["Level01PrepMusic"]
     write(out/"sounds.json",sounds)

@@ -28,6 +28,8 @@ const Snow = preload("res://scripts/battle/dove_snow.gd")
 var snow := Snow.new()
 var wasteland := Behaviors.Wasteland.new()
 var jt := Behaviors.Jt.new()
+var veznan := Behaviors.Veznan.new()
+var custom_game_outcome := {}
 var base_templates: Dictionary
 var controller: RefCounted
 var behaviors: RefCounted
@@ -115,6 +117,8 @@ func reset(seed_value: int = 1) -> void:
 	towers.clear(); enemies.clear(); soldiers.clear(); projectiles.clear(); effects.clear(); decals.clear(); spawn_queue.clear(); spawn_log.clear()
 	eggs.clear()
 	pending_entities.clear(); spawners.clear(); auras.clear()
+	custom_game_outcome.clear()
+	veznan.reset(self)
 	controller.reset(self)
 	wasteland.reset()
 	Behaviors.Spawner.reset_layout(self)
@@ -257,7 +261,7 @@ func command(kind: String, args: Dictionary = {}) -> bool:
 		var unit:Dictionary=unit_by_id(int(args.get("id",0)))
 		if unit.is_empty() or unit.hp<=0 or not templates[unit.template].get("ui",{}).get("can_click",false):return false
 		unit.click_pending=true;return true
-	if kind=="tower_click":return jt.tower_click(self,str(args.get("id","")))
+	if kind=="tower_click":return jt.tower_click(self,str(args.get("id",""))) or veznan.tower_click(self,str(args.get("id","")))
 	if kind=="move_hero":return Heroes.move_command(self,unit_by_id(int(args.get("id",0))),args.get("pos",Vector2.ZERO))
 	match kind:
 		"build":
@@ -451,7 +455,7 @@ func resolve_rally_point(tower: Dictionary, point: Vector2) -> Vector2:
 
 func valid_power_point(power: String, point: Vector2) -> bool:
 	if not point.is_finite(): return false
-	if power == "reinforcements": return valid_ground(point)
+	if power == "reinforcements": return valid_ground(point) or (controller.has_method("extra_power_point") and controller.extra_power_point(point))
 	if power != "fire": return false
 	var terrain := _terrain_flags(point)
 	# The first four levels have no fn_can_power override. Fire additionally
@@ -524,6 +528,9 @@ func step() -> void:
 	if not notices.is_empty(): return
 	controller.step(self)
 	jt.step_freezes(self)
+	veznan.step_tower_locks(self)
+	veznan.step_portals(self)
+	veznan.step_souls(self)
 	snow.step(self)
 	wasteland.step(self)
 	_decals_step()
@@ -542,9 +549,11 @@ func step() -> void:
 	effects = effects.filter(func(e): return tick - e.at < e.duration)
 	if lives <= 0: _finish("defeat")
 	elif controller.can_finish(self):
-		# Dove game_gui delays the victory panel by two seconds while play continues.
-		if victory_ready_at < 0: victory_ready_at = tick + 60
-		if tick >= maxi(victory_ready_at, victory_animation_end): _finish("victory")
+		if not custom_game_outcome.is_empty(): _finish("victory")
+		else:
+			# Dove game_gui delays the victory panel by two seconds while play continues.
+			if victory_ready_at < 0: victory_ready_at = tick + 60
+			if tick >= maxi(victory_ready_at, victory_animation_end): _finish("victory")
 	else: victory_ready_at = -1
 
 func _finish(value: String) -> void:
@@ -566,8 +575,9 @@ func _skip_wave() -> void:
 func _spawn_enemy(type: String, subpath: int = -1, path: int = 0, origin: String = "wave") -> Dictionary:
 	var t: Dictionary = templates[type]
 	if subpath < 0: subpath = rng.randi_range(0, data.paths.paths[path].size() - 1)
-	var hp := floori(float(t.health.hp_max) * float(data.rules.enemy_hp_factor))
-	var e := {"id": next_id, "template": type, "hp": float(hp), "max_hp": float(hp), "pos": vec(data.paths.paths[path][subpath][0]), "path": path, "subpath": subpath, "node": 0, "progress": 0.0, "blocker": 0, "blockers": [], "attack_at": tick, "pending": {}, "state": "walkingDown", "state_at": tick, "dead_at": -1, "flip": false, "last_dir": Vector2.ZERO, "heal_at": tick, "casting": {}}
+	var hp_raw: Variant = t.health.hp_max
+	var hp: float = float(hp_raw[clampi(int(data.level.get("difficulty", 2)) - 1, 0, hp_raw.size() - 1)]) if hp_raw is Array else float(floori(float(hp_raw) * float(data.rules.enemy_hp_factor)))
+	var e := {"id": next_id, "template": type, "hp": hp, "max_hp": hp, "pos": vec(data.paths.paths[path][subpath][0]), "path": path, "subpath": subpath, "node": 0, "progress": 0.0, "blocker": 0, "blockers": [], "attack_at": tick, "pending": {}, "state": "walkingDown", "state_at": tick, "dead_at": -1, "flip": false, "last_dir": Vector2.ZERO, "heal_at": tick, "casting": {}}
 	next_id += 1; enemies.append(e)
 	spawn_log.append({"tick": tick, "type": type, "path": path, "subpath": subpath, "wave": wave, "origin":origin})
 	behaviors.enemy_inserted(self,e)
@@ -609,13 +619,13 @@ func _tower_step(tower: Dictionary) -> void:
 			var target_id: int = target.get("id", 0)
 			if tower.type == "mage":
 				if not target.is_empty() and distance(tower.pos + vec(t.tower.range_offset), target.pos) <= float(t.attacks.range) * 1.1:
-					aim = target.pos + vec(templates[target.template].unit.hit_offset)
+					aim = target.pos + target.get("hit_offset_override", vec(templates[target.template].unit.hit_offset))
 				else: target_id = 0
 			elif not target.is_empty() and target.hp > 0:
 				if not bullet.has("flight_time"): flight = distance(tower.pos, target.pos) / float(bullet.get("max_speed", 300))
 				if tower.type == "engineer": aim = source_prediction(target,attack.get("node_prediction",false))
 				else:
-					aim = target.pos + vec(templates[target.template].unit.hit_offset)
+					aim = target.pos + target.get("hit_offset_override", vec(templates[target.template].unit.hit_offset))
 					if bullet.get("predict_target_pos", false) and target.blocker == 0: aim += target.last_dir * 30.0 * flight
 			_projectile(attack.bullet, target_id, tower.pos + offset, aim, flight, tower)
 		tower.pending = {}
@@ -775,7 +785,7 @@ func melee_slot(s: Dictionary, e: Dictionary) -> Vector2:
 	if forward == Vector2.ZERO:
 		var route: Array = data.paths.paths[e.path][e.subpath]
 		forward = vec(route[mini(e.node + 1, route.size() - 1)]) - e.pos
-	var slot := vec(templates[e.template].enemy.melee_slot) + offset + vec(unit_template(s).soldier.melee_slot_offset)
+	var slot: Vector2 = e.get("melee_slot_override", vec(templates[e.template].enemy.melee_slot)) + offset + vec(unit_template(s).soldier.melee_slot_offset)
 	slot.x *= 1 if forward.x > 0 else -1
 	return e.pos + slot
 
@@ -845,7 +855,7 @@ func _enemy_step(e: Dictionary) -> void:
 		return
 	var t: Dictionary = templates[e.template]
 	# These source coroutines own the interrupt/animation waits of active attacks.
-	var coroutine_owned: bool = e.has("rage_job") or e.has("mixed_melee_job") or e.has("jt") or e.has("necromancer")
+	var coroutine_owned: bool = e.has("rage_job") or e.has("mixed_melee_job") or e.has("jt") or e.has("necromancer") or e.has("veznan")
 	if coroutine_owned and behaviors.enemy_step(self,e,t): return
 	if int(e.get("stun_count",0)) > 0:
 		# SU.y_enemy_stun switches to idle, including enemies stunned while walking.
@@ -1030,6 +1040,7 @@ func damage(unit: Dictionary, amount: float, type: int, source_id: int = 0, redu
 	var t: Dictionary = templates[unit.template]
 	if unit.get("ignore_damage",false) or (type & int(unit.get("move_immune",0)))!=0:return 0
 	if unit.has("jt") and unit.jt.phase!="done" and Behaviors.Jt.lethal(self,unit,amount,type):return 0
+	if unit.has("veznan") and Behaviors.Veznan.lethal(self,unit,amount,type):return 0
 	if unit.template=="enemy_rocketeer" and not unit.get("already_speed_up",false) and not modifiers.active.any(func(m):return m.target==unit.id and templates[m.template].modifier.get("type","")=="freeze"):
 		modifiers.apply(self,"mod_rocketeer_speed_buff",unit,1,str(unit.id))
 	if unit.has("hero"):

@@ -44,6 +44,11 @@ __pycache__/
 !/reports/level11_ranged_shared.json
 !/reports/level11_shared_logic.json
 !/reports/level11_upgrades.json
+!/reports/level12_assets.json
+!/reports/level12_delivery.json
+!/reports/level12_logic.json
+!/reports/level12_native_1280x720.json
+!/reports/level12_upgrades.json
 !/reports/map_kr1_assets.json
 !/reports/map_kr1_web.json
 !/reports/ranger_arena_assets.json

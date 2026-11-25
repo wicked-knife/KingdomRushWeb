@@ -29,6 +29,14 @@ local adapters = {}
     local b=assert(text:find('tt = RT("eb_veznan"',a,true))
     ctx.chunk("kr1/boss.lua",header..text:sub(a,b-1))
   end
+  adapters.veznan = function(ctx)
+    local text=ctx.read("kr1/boss.lua")
+    local header=text:sub(1,assert(text:find('tt = RT(',1,true))-1)
+    local a=assert(text:find('tt = RT("eb_veznan"',1,true))
+    local b=assert(text:find('tt = RT("eb_sarelgaz"',a,true))
+    ctx.chunk("kr1/boss.lua",header..text:sub(a,b-1))
+    for _,id in ipairs({"decal_s12_shoutbox","decal_veznan_strike","fx_veznan_demon_fire","mod_veznan_tower","veznan_soul","ps_veznan_soul","veznan_souls_aura","decal_eb_veznan_white_circle","fx_demon_portal_out"}) do ctx.template(id) end
+  end
   adapters.barbarian = function(ctx)
     local text=ctx.read("kr1/barrack_towers.lua")
     local header=text:sub(1,assert(text:find('tt = RT(',1,true))-1)

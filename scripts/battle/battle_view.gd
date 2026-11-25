@@ -48,6 +48,7 @@ var outcome := {}
 var return_label := "返回地图"
 var victory_elapsed := -1.0
 var victory_star_sounds := 0
+var gui_hidden := false
 var feedback: RefCounted
 
 func initialize(boot: Node, sound: Node, definition: Dictionary = {}, simulation_override: RefCounted = null) -> void:
@@ -107,6 +108,9 @@ func _on_event(kind: String, payload: Dictionary) -> void:
 		"stop_audio":
 			audio.stop_music()
 			for player:AudioStreamPlayer in fx_players:player.stop()
+		"hide_gui":
+			gui_hidden = true; selected = ""; selected_unit = 0; targeting = ""
+			feedback.sync_cursor()
 		"wave":
 			selected = ""; targeting = ""
 			feedback.sync_cursor()
@@ -122,6 +126,7 @@ func _on_event(kind: String, payload: Dictionary) -> void:
 				var stars := CampaignProgress.stars_for(sim.lives) if int(identity.get("mode", 1)) == 1 else (1 if sim.lives > 0 else 0)
 				outcome = {"generation": identity.get("generation", 1), "level_id": identity.get("id", 1), "mode": identity.get("mode", 1), "difficulty": identity.get("difficulty", 2), "result": sim.result, "lives": sim.lives, "stars": stars if sim.result == "victory" else 0, "developer_used": sim.developer_used}
 				outcome.unlock_towers = sim.data.layout.get("unlock_towers", []).duplicate()
+				if not sim.custom_game_outcome.is_empty(): outcome.custom_game_outcome = sim.custom_game_outcome.duplicate(true)
 				if sim.result == "victory": _begin_victory_audio()
 				finished.emit(outcome.duplicate())
 
@@ -223,11 +228,12 @@ func _draw() -> void:
 		if sim.templates[e.template].has("soldier") or sim.templates[e.template].has("enemy"): continue
 		if e.get("render.sprites[1].name","") == sim.data.level.background: continue
 		if sim.templates[e.template].has("delayed_play") or sim.templates[e.template].template_name == "decal_fish": continue
-		if sim.templates[e.template].has("particle_system") or sim.templates[e.template].has("tunnel") or sim.templates[e.template].template_name == "decal_tunnel_light": continue
+		if sim.templates[e.template].has("particle_system") or sim.templates[e.template].has("tunnel") or sim.templates[e.template].template_name == "decal_tunnel_light" or e.template == "veznan_portal": continue
 		_queue_template(e.template, Simulation.vec(e.pos))
 	sim.snow.queue(self)
 	sim.wasteland.queue(self)
 	sim.jt.queue(self)
+	sim.veznan.queue(self)
 	for decal: Dictionary in sim.decals:
 		if not decal.removed: _queue_template(decal.template, decal.pos, decal.state, decal.state_at, decal.flip, false, 1, false, "", decal)
 	for egg: Dictionary in sim.eggs:
@@ -277,6 +283,7 @@ func _draw() -> void:
 		if int(a.get("draw_order",1)) != int(b.get("draw_order",1)): return int(a.get("draw_order",1)) < int(b.get("draw_order",1))
 		return a.order < b.order)
 	for item: Dictionary in draw_list: _art(item.frame, world(item.pos), item.anchor, 1.0, item.tint, item.flip, -item.rotation, item.scale)
+	sim.veznan.draw_shoutboxes(self)
 	for unit: Dictionary in sim.enemies + sim.soldiers:
 		if unit.get("health_bar_hidden",false) or unit.hp <= 0 or unit.hp == unit.max_hp or unit.get("hidden", false) or unit.get("health_bar_hidden",false) or unit.has("boss"): continue
 		var p := world(unit.pos + Simulation.vec(sim.templates[unit.template].health_bar.offset))
@@ -285,14 +292,15 @@ func _draw() -> void:
 		# Dove uses a full-width cyan bar (fg2) for HP above the normal maximum.
 		var color := Color.CYAN if unit.hp > unit.max_hp else Color("67ce26")
 		draw_rect(Rect2(p + Vector2(-width / 2, -1), Vector2(width * clampf(unit.hp / unit.max_hp, 0, 1), 2)), color)
-	_draw_selection()
-	feedback.draw_rally_feedback()
-	interface.wave_flags.draw_path()
-	_draw_hud()
-	_draw_boss_bar()
-	developer.hud()
-	if message_time > 0: _text(message, Vector2(view_width / 2, 95), 20, INK, true)
-	feedback.draw_pointer()
+	if not gui_hidden:
+		_draw_selection()
+		feedback.draw_rally_feedback()
+		interface.wave_flags.draw_path()
+		_draw_hud()
+		_draw_boss_bar()
+		developer.hud()
+		if message_time > 0: _text(message, Vector2(view_width / 2, 95), 20, INK, true)
+		feedback.draw_pointer()
 	if developer.opened: developer.draw()
 	elif not sim.notices.is_empty(): _draw_notice(str(sim.notices[0]))
 	elif sim.result != "": _draw_result()
@@ -338,7 +346,8 @@ func _queue_template(template_name: String, point: Vector2, state: String = "", 
 			playback.loop = state not in ["attack", "attack2", "holystrike", "healing", "death", "play", "shoot", "ranged_attack", "heal", "jump", "small", "medium", "large"]
 			var shoot_angles: Array = sprite.get("angles", {}).get("shoot", [])
 			if state == "shoot" and not shoot_angles.is_empty(): playback.state = shoot_angles[0 if up else mini(1, shoot_angles.size() - 1)]
-			if state in ["attack", "attack2", "holystrike", "healing"] and int(playback.elapsed) >= SpriteAnimation.duration(animations, SpriteAnimation.key(sprite, state)):
+			var key_sprite: Dictionary = sprite if runtime.get("prefix", "") == "" else {"prefix": runtime.prefix, "name": sprite.get("name", "")}
+			if state in ["attack", "attack2", "holystrike", "healing"] and int(playback.elapsed) >= SpriteAnimation.duration(animations, SpriteAnimation.key(key_sprite, state)):
 				playback.state = "idle"; playback.loop = true
 		if runtime.has("playback_loop") and not layer.has("loop"): playback.loop = runtime.playback_loop
 		if sprite.has("hide_after_runs") and int(playback.elapsed)>=SpriteAnimation.duration(animations,SpriteAnimation.key(sprite,playback.state))*int(sprite.hide_after_runs):continue
@@ -382,7 +391,7 @@ func _draw_boss_bar() -> void:
 		draw_style_box(panel, Rect2(origin, Vector2(440, 42)))
 		draw_rect(Rect2(origin + Vector2(40, 26), Vector2(392, 8)), Color("801414"))
 		draw_rect(Rect2(origin + Vector2(40, 26), Vector2(392 * hp, 8)), Color("d94d33") if hp < 0.3 else Color("33d933"))
-		_art(sim.templates[unit.template].info.portrait, origin + Vector2(20, 21), Vector2(0.5, 0.5), 0.6)
+		_art(unit.get("portrait", sim.templates[unit.template].info.portrait), origin + Vector2(20, 21), Vector2(0.5, 0.5), 0.6)
 		_text(sim.data.ui.strings.get(unit.template.to_upper() + "_NAME", unit.template), origin + Vector2(40, 19), 14)
 
 func unit_info() -> Dictionary:
@@ -439,7 +448,7 @@ func _gui_input(input: InputEvent) -> void:
 			elif hit.enabled: _action(hit.action, hit.args)
 			return
 	interface.wave_flags.pending_click.clear()
-	if not sim.notices.is_empty() or sim.paused or sim.result != "": return
+	if not sim.notices.is_empty() or sim.paused or sim.result != "" or gui_hidden: return
 	var world_point := Vector2(point.x - margin, 768 - point.y)
 	if targeting != "":
 		var success: bool
@@ -562,7 +571,7 @@ func _action(action: String, args: Dictionary = {}) -> void:
 			flush_seen()
 			developer.close()
 			outcome.clear()
-			victory_elapsed = -1; victory_star_sounds = 0
+			victory_elapsed = -1; victory_star_sounds = 0; gui_hidden = false
 			sim.reset(); interface.reset(); selected = ""; selected_unit = 0; targeting = ""; invalid_point_time = 0; tip = ""
 			feedback.reset()
 			_music(sim.data.get("level", {}).get("prep_music", "Level01PrepMusic"))

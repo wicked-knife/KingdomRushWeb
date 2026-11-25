@@ -4,7 +4,7 @@
     "version": "2.1.0.6",
     "commit": "4072b18bf4e418eec8b813a960c83003744cb710"
   },
-  "registered_definitions": 17,
+  "registered_definitions": 18,
   "scope": "Direct verification of current Dove commit and source input hashes across all registered definitions",
   "source_hashes": {
     "data/level01/definition.json": "0d2f54757c759f9a6a8e5a69ea2e19ec4ce310d02eff0d25362e8a5f6f2472f5",
@@ -18,13 +18,14 @@
     "data/level09/definition.json": "5b0a505c2c2b58de0d0c461e132ac3d8a9e11af60ea15d81e6836a86fc6fef3a",
     "data/level10/definition.json": "2d9f2440a2fb412b7e799078ef6bb62e8ae4ee45883dc45be149881b0cb24935",
     "data/level11/definition.json": "aa68a35eb99cc68dad8de4152fd09c420ccfbbf200cf95a71ae1a089bdfd4eeb",
+    "data/level12/definition.json": "9c8d375c12c99ac675d5f74eb2876231257e048d563b99a4d7dc0f913237607b",
     "data/ranger_arena/definition.json": "a400adb80caa4eddcffe2e795a606224373a38f4d5aec0ed2283b6719abd4235",
     "data/heroes/definition.json": "384a7ae042b43b0c509108a59ff73d97816337fefa78cf999f97c999ad4aa9a5",
     "data/map_kr1/definition.json": "9daa48dcd11bff34ca4f7cb285d0230aef0611260d1af32ab5337d7dbfe78ce9",
     "data/upgrades/definition.json": "56649f49a635a3e0f67c8674def89782c2536fd0c096102babd51afaa0598815",
     "data/save/definition.json": "1c00ef59514087cf01824eb4f050c58ef5f6d5435ac48a90837053e84d6fbd0d",
     "data/hero_malik_combat/definition.json": "09d44221a8d038040827984babe85c0ce8dacc352e4eb1b58407c4263fd934b0",
-    "data/campaign_content.json": "cb0af44d0d46f65b4f360eec63323f4baa028cd230ba84aa95fe6be2791f0bb9",
+    "data/campaign_content.json": "a5a4b3887f071c08f7e66536689e09eb9af6dd9011e7d1305916d43eb4f9b432",
     "tools/verify_dove_update.py": "421d969ed9223f383f3a7eb85271bca93d4f33733311934eca5761a78d8a427c",
     "tools/dove_source.py": "bce6566730718d2360b09b29e654ce0a59900d24b791d1e989904afdc7b2d545"
   }

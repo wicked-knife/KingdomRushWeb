@@ -1,8 +1,8 @@
 {
   "package_created": true,
-  "packager_sha256": "2771bb4b1d5dc4c17af0d055ce54a35069acc87fb21ea2ec0944a67fc74062f6",
+  "packager_sha256": "284db72cecbb72875d4fb0450059487011241b5aa0812724c9dd457bc7ab08be",
   "source_commit": "4072b18bf4e418eec8b813a960c83003744cb710",
-  "content_catalog_sha256": "cb0af44d0d46f65b4f360eec63323f4baa028cd230ba84aa95fe6be2791f0bb9",
+  "content_catalog_sha256": "a5a4b3887f071c08f7e66536689e09eb9af6dd9011e7d1305916d43eb4f9b432",
   "browser_tested": false,
   "build_type": "release",
   "developer_menu": false,
@@ -18,7 +18,8 @@
     8,
     9,
     10,
-    11
+    11,
+    12
   ],
   "playable_modes": [
     1,
@@ -190,23 +191,37 @@
       "level": 11,
       "mode": 3,
       "difficulty": 2
+    },
+    {
+      "level": 12,
+      "mode": 1,
+      "difficulty": 2
+    },
+    {
+      "level": 12,
+      "mode": 2,
+      "difficulty": 2
+    },
+    {
+      "level": 12,
+      "mode": 3,
+      "difficulty": 2
     }
   ],
   "challenge_validation_passed": true,
   "challenge_acceptance_basis": "dove_configuration_and_functionality",
   "challenge_victory_replays_required": false,
   "challenge_replays_run": false,
-  "challenge_replay_files": [
+  "challenge_replay_files": [],
+  "challenge_pending_replays": [
     "1/2",
     "1/3",
-    "4/3"
-  ],
-  "challenge_pending_replays": [
     "2/2",
     "2/3",
     "3/2",
     "3/3",
     "4/2",
+    "4/3",
     "5/2",
     "5/3",
     "6/2",
@@ -220,7 +235,9 @@
     "10/2",
     "10/3",
     "11/2",
-    "11/3"
+    "11/3",
+    "12/2",
+    "12/3"
   ],
   "challenge_replays_verified": [],
   "pck_isolated_check": true,
@@ -229,124 +246,102 @@
     "passed": true,
     "verification": {
       "passed": true,
-      "resource_paths": 1096,
-      "unique_payloads": 1058
+      "resource_paths": 1174,
+      "unique_payloads": 1130
     },
-    "original_bytes": 457732152,
-    "total_bytes": 370251800,
-    "saved_bytes": 87480352,
-    "boot_bytes": 46466328,
-    "deferred_pack_count": 41,
+    "original_bytes": 510321360,
+    "total_bytes": 404802612,
+    "saved_bytes": 105518748,
+    "boot_bytes": 46512608,
+    "deferred_pack_count": 46,
     "deferred_limit_bytes": 25165824,
     "first_download_bytes": {
       "map": 20465640,
       "heroes": 12424424,
-      "level01": 14014496,
-      "level02": 14564860,
-      "level03": 16816320,
-      "level04": 36204880,
-      "level05": 39318660,
-      "level06": 44203920,
-      "level07": 42675756,
-      "level08": 48090292,
-      "level09": 59124620,
-      "level10": 48555288,
-      "level11": 51346172,
+      "level01": 14014612,
+      "level02": 14564976,
+      "level03": 16816436,
+      "level04": 36204996,
+      "level05": 39318884,
+      "level06": 44204036,
+      "level07": 42675872,
+      "level08": 48090524,
+      "level09": 59124852,
+      "level10": 48556168,
+      "level11": 51347052,
+      "level12": 55925216,
       "hero:hero_malik": 2312276
     },
     "sequential_campaign_incremental_bytes": {
-      "level01": 13943088,
+      "level01": 13943204,
       "level02": 11676068,
       "level03": 12242764,
       "level04": 33038904,
-      "level05": 33507424,
+      "level05": 33507532,
       "level06": 38374572,
       "level07": 36439676,
-      "level08": 18563532,
+      "level08": 18563648,
       "level09": 28266408,
-      "level10": 41580064,
-      "level11": 21043112
+      "level10": 41580720,
+      "level11": 21043112,
+      "level12": 34503536
     },
     "browser_tested": false
   },
   "battle_ui_acceptance": {
-    "eleventh_native": {
+    "twelfth_native": {
       "passed": true,
-      "checks": 118,
-      "scope": "three mode entry, source actor lifecycle/render queue, generator, build/spell input, restart and constructed result persistence"
+      "checks": 95,
+      "scope": "stage 12 three modes, foregrounds/forsale, taunt shoutbox, native 3-click tower lock release, portal, soul drain, demon fire, death souls/white circle/hide_gui, restart and settlement"
     }
   },
   "default_technology_acceptance": {
-    "eleventh_source_patches": {
+    "twelfth_source_patches": {
       "passed": true,
       "checks": 86,
       "source_patch_scenarios": 16
     }
   },
-  "feedback_acceptance": {
-    "passed": null,
-    "reports": null,
-    "historical_baseline_preserved": null,
-    "content_combinations": null,
-    "guard_scope": null
-  },
-  "feedback_report_sha256": {},
-  "seventh_acceptance": {
-    "passed": null,
-    "playable_combinations": null,
-    "reports": null,
-    "failure_probes": null,
-    "additive_audit": null
-  },
-  "eighth_acceptance": {
-    "passed": null,
-    "playable_combinations": null,
-    "reports": null,
-    "failure_probes": null
-  },
-  "tenth_acceptance": {
-    "passed": null,
-    "playable_combinations": null,
-    "reports": null,
-    "failure_probes": null,
-    "historical_scope": null
-  },
-  "eleventh_acceptance": {
+  "twelfth_acceptance": {
     "passed": true,
-    "playable_combinations": 33,
+    "playable_combinations": 36,
     "reports": {
-      "level11_logic": {
+      "level12_logic": {
         "passed": true,
-        "checks": 1513,
+        "checks": 1201,
         "independent_modes": 3,
-        "timeline_waves": 26,
-        "births": 1472,
-        "source_scenarios": 35
+        "timeline_waves": 22,
+        "births": 1110,
+        "source_scenarios": 10
       },
-      "level11_upgrades": {
+      "level12_upgrades": {
         "passed": true,
         "checks": 86,
         "source_patch_scenarios": 16
       },
-      "level11_native_1280x720": {
+      "level12_native_1280x720": {
         "passed": true,
-        "checks": 118,
-        "scope": "three mode entry, source actor lifecycle/render queue, generator, build/spell input, restart and constructed result persistence"
+        "checks": 95,
+        "scope": "stage 12 three modes, foregrounds/forsale, taunt shoutbox, native 3-click tower lock release, portal, soul drain, demon fire, death souls/white circle/hide_gui, restart and settlement"
       },
-      "level11_assets": {
+      "level12_assets": {
         "passed": true,
-        "frames": 6612,
-        "animations": 501
+        "frames": 7433,
+        "animations": 546
       },
-      "level11_shared_logic": {
+      "level09_logic": {
         "passed": true,
-        "checks": 86,
-        "scope": "representative stage-ten graveyard, demons, skeletons and Tesla source regressions"
+        "checks": 246,
+        "independent_modes": 3,
+        "timeline_waves": 26,
+        "births": 995
       },
-      "level11_ranged_shared": {
+      "level10_logic": {
         "passed": true,
-        "checks": 18,
-        "scope": "six source axe-thrower ranged timing and interruption regressions"
+        "checks": 168,
+        "independent_modes": 3,
+        "timeline_waves": 26,
+        "births": 1160
       },
       "hero_combat_logic": {
         "passed": true,
@@ -359,74 +354,78 @@
     },
     "failure_probes": [
       {
-        "missing": "enemy_necromancer",
+        "missing": "eb_veznan",
         "rejected": true,
-        "reason": "level11: behavior -> missing template enemy_necromancer"
+        "reason": "level12: behavior -> missing template eb_veznan"
       },
       {
-        "missing": "enemy_skeleton",
+        "missing": "mod_veznan_tower",
         "rejected": true,
-        "reason": "level11: graveyard_controller -> missing runtime dependency enemy_skeleton"
+        "reason": "level12: eb_veznan -> missing runtime dependency mod_veznan_tower"
       },
       {
-        "missing": "enemy_skeleton_big",
+        "missing": "veznan_portal",
         "rejected": true,
-        "reason": "level11: graveyard_controller -> missing runtime dependency enemy_skeleton_big"
+        "reason": "level12: behavior -> missing template veznan_portal"
       },
       {
-        "missing": "bolt_necromancer",
+        "missing": "veznan_souls_aura",
         "rejected": true,
-        "reason": "level11: enemy_necromancer -> missing runtime dependency bolt_necromancer"
+        "reason": "level12: eb_veznan -> missing runtime dependency veznan_souls_aura"
       },
       {
-        "missing": "enemy_lava_elemental",
+        "missing": "veznan_soul",
         "rejected": true,
-        "reason": "level11: s11_lava_spawner -> missing runtime dependency enemy_lava_elemental"
+        "reason": "level12: eb_veznan -> missing runtime dependency veznan_soul"
       },
       {
-        "missing": "s11_lava_spawner",
+        "missing": "ps_veznan_soul",
         "rejected": true,
-        "reason": "level11: behavior -> missing template s11_lava_spawner"
+        "reason": "level12: eb_veznan -> missing runtime dependency ps_veznan_soul"
       },
       {
-        "missing": "necromancer behavior",
+        "missing": "decal_s12_shoutbox",
         "rejected": true,
-        "reason": "level11: enemy_necromancer -> unsupported.missing: Unsupported Dove behavior: unsupported.missing"
+        "reason": "level12: eb_veznan -> missing runtime dependency decal_s12_shoutbox"
       },
       {
-        "missing": "necromancer runtime resource",
+        "missing": "decal_eb_veznan_white_circle",
         "rejected": true,
-        "reason": "Runtime dependency missing from export manifest: res://scripts/battle/dove_behaviors.gd -> res://scripts/battle/dove_necromancer.gd"
+        "reason": "level12: eb_veznan -> missing runtime dependency decal_eb_veznan_white_circle"
+      },
+      {
+        "missing": "veznan behavior",
+        "rejected": true,
+        "reason": "level12: eb_veznan -> unsupported.missing: Unsupported Dove behavior: unsupported.missing"
+      },
+      {
+        "missing": "veznan runtime resource",
+        "rejected": true,
+        "reason": "Runtime dependency missing from export manifest: res://scripts/battle/dove_behaviors.gd -> res://scripts/battle/dove_veznan.gd"
       }
     ],
     "compatibility": {
-      "base_commit": "1f985e78c4127039b5ac0d211dabd5d70342b511",
-      "exact_files": 221
+      "base_commit": "52b9a4ea389dde4218e3c081deec6ff4883afe23",
+      "exact_files": 246
     },
-    "historical_scope": "Levels 1-10 and ranger arena data unchanged byte for byte; representative shared runtime regressions run on current code."
-  },
-  "ninth_acceptance": {
-    "passed": null,
-    "playable_combinations": null,
-    "reports": null,
-    "failure_probes": null
+    "historical_scope": "Levels 1-11 and ranger arena data unchanged byte for byte; representative shared runtime regressions run on current code."
   },
   "validation_report_sha256": {
-    "reports/level11_logic.json": "58235253f2e40bb3e477adb16068fb82920f62ddd9e858abdf6b43be540ffe1c",
-    "reports/level11_upgrades.json": "291365472ed32cf9b44b5783d0fe1ce0f8aa0e4d62cb29bea3aa1b713a94b882",
-    "reports/level11_native_1280x720.json": "c9817bb653a126e10a438278fbf3f31e8d21a6c07ea54deb71d66511ab646ff0",
-    "reports/level11_assets.json": "6dada48af763fcaa67ef4ce6d4a48e03549c945d78c48cfbafe0950d8793ff12",
-    "reports/level11_shared_logic.json": "7d05ab5bd25f6837b3215a758550b7d0d2dfd7cb6715997573ece7b58f03410c",
-    "reports/level11_ranged_shared.json": "47069a1445d58739c4db5a3ad26d48f4e6b24b6638f0938070b5fdfa556c3dda",
-    "reports/hero_combat_logic.json": "1b021b7c76929ba3c101b72f800afb7dbb4016ff4e3c04cb151861360fba4337",
-    "reports/tesla_animation_logic.json": "fc89ce3fdb96caab68280c5803db18548d8709a7828b2edf5318090662fb2c09",
-    "reports/level11_delivery.json": "0899c98cb1124de7753c793b695428530a9ce6bac36d910c62efba042e5f8425"
+    "reports/level12_logic.json": "b1cfb41985231f96bf4764b6ceed7bfef80a106d84b338fddefb317f68995dce",
+    "reports/level12_upgrades.json": "60d5c475fabc5ae3b26b8087d3a3b2eacc45c76aa6d90e238969e8f77478736a",
+    "reports/level12_native_1280x720.json": "4cf04cbc88c7652aceedeee848f140ead44adaff056ffdb4dcf041b1cd9544b9",
+    "reports/level12_assets.json": "2bd94e6ba0c98f70bdf16027e23776d028c777194e8bcde5b5c7e2a31d824055",
+    "reports/level09_logic.json": "b5bec7ad9c264632dde98d0b2f25199bd3a64de132112b01d5b9ddd96a4b39e5",
+    "reports/level10_logic.json": "b4fdf8d4a6a69a27f0b5df856f0c185bf6cc2c27c1e191b59acd6fa4de04cc14",
+    "reports/hero_combat_logic.json": "870072290836ca8129deead75ebea7a45c5feb3df0b0a429ab69ee585d12764d",
+    "reports/tesla_animation_logic.json": "ddc3c76fac952ab397a2da4d0fb6109fdd5483e85b38c8e32dddce6ccc00662a",
+    "reports/level12_delivery.json": "5ba80a2acf0c221aa5fc0da3d2bdb894cba13e91468fc6dd0ba0d74c05e70e87"
   },
   "technology_scheme": "1",
-  "pck_files": 1097,
-  "bundle": "build\\KingdomRush-KR1-Levels01-11-Web.zip",
-  "bytes": 356850481,
-  "sha256": "d04748f6446fa8d2552a6b2ef3e14ded857c61f67bb794f72754bb2bd69c8602",
+  "pck_files": 1175,
+  "bundle": "build\\KingdomRush-KR1-Levels01-12-Web.zip",
+  "bytes": 388873739,
+  "sha256": "2d2b346ac93c920a88a37dd9b38932efb5c65f8dcf9115ea0e473390541471e2",
   "web_files": {
     "index.apple-touch-icon.png": {
       "bytes": 11939,
@@ -442,7 +441,7 @@
     },
     "index.html": {
       "bytes": 3297,
-      "sha256": "8065aa082c6f572e4666b63bce6098d57ee071b3ec74a525c5dbe5c5359d9448"
+      "sha256": "4cf6e048d97be20d469c2c7357b70d13eb66d2062e7233381b13abe90c9408c0"
     },
     "index.icon.png": {
       "bytes": 5765,
@@ -453,8 +452,8 @@
       "sha256": "33c94cb3175f3333b82e2a3be5e8e86f77986f0aa2042b1631f6367a4e5bb6ba"
     },
     "index.pck": {
-      "bytes": 46466328,
-      "sha256": "c130932686daabd10cbcc25692ed9b7f6f6a9368fcfb09a5a11d649b0bcfa3ef"
+      "bytes": 46512608,
+      "sha256": "4352d78862c223f8e6667d78c74ba167f4e0bbe8b8576eea6d69ab3e0b5fbe78"
     },
     "index.png": {
       "bytes": 21443,
@@ -465,32 +464,40 @@
       "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
     },
     "export_receipt.json": {
-      "bytes": 85087,
-      "sha256": "b9544ff43889227d8c02c66b6dc68360f634f7aa538659ec35002bc2d285cc27"
+      "bytes": 88047,
+      "sha256": "824a3742e2fe5e87abf7ceb6f43aba290c4bc9b3c3bcc88414391f60a39cbf00"
     },
     "README.txt": {
-      "bytes": 7769,
-      "sha256": "641acdf78d1ae3cc82d66d6497312d4cc96ac00a47e708dd578d1d112b0d70f5"
+      "bytes": 8243,
+      "sha256": "5a83a61022139d86d4c3d315863eee863db27349c80a7d592d312decf1773f70"
     },
     "start_server.cmd": {
       "bytes": 180,
       "sha256": "8f021ad5511504a288354fec02c4bf8514f054a2457cc229710e1d6069558b32"
     },
     "web_packs.json": {
-      "bytes": 19667,
-      "sha256": "901d9b180fe1f54a4c0b61207b89490c2c14ec1bfed224c798aa9a8967c1db92"
+      "bytes": 22990,
+      "sha256": "d2982e0091ac9505288123814c2003e398527c4eef6540cb913d4cec484c7ae5"
     },
     "pack_report.json": {
-      "bytes": 831,
-      "sha256": "509b60a99b6f70300b96f1649936b2e4030e6c685609c5465ff1b9c05c224033"
+      "bytes": 870,
+      "sha256": "b8f3e24ac7441014e14d3ae574b57ed582fb53b80926c1246733c5b2e42c7fde"
     },
     "packs/0559dbc7be658456b1064fcac7bf018aa41fdf956800cc2b02ec118bd617177b.pck": {
       "bytes": 71408,
       "sha256": "0559dbc7be658456b1064fcac7bf018aa41fdf956800cc2b02ec118bd617177b"
     },
+    "packs/05fe7f2d87b4d1847123881393213ebd4a0fdffa6c9f55177afa96ddcf8b9e1c.pck": {
+      "bytes": 9954816,
+      "sha256": "05fe7f2d87b4d1847123881393213ebd4a0fdffa6c9f55177afa96ddcf8b9e1c"
+    },
     "packs/0c8450ffb5146d4e29ada7c6b91f7a7041579f5b54f24a89ae7683dbb2393a11.pck": {
       "bytes": 2277048,
       "sha256": "0c8450ffb5146d4e29ada7c6b91f7a7041579f5b54f24a89ae7683dbb2393a11"
+    },
+    "packs/0fc4e9a737d959a3268416295622fa0abb810484214940aa670bc33f3e4a8848.pck": {
+      "bytes": 2753428,
+      "sha256": "0fc4e9a737d959a3268416295622fa0abb810484214940aa670bc33f3e4a8848"
     },
     "packs/151df86d90525d4e977d6635ff97a89dd7359f8e4c2cfc03e5f6906dbc3e9e6c.pck": {
       "bytes": 19380,
@@ -512,17 +519,29 @@
       "bytes": 23365304,
       "sha256": "1a932bf7cfccf8b9768928d9acfabb4388f9733d599453470310fed3f908c58d"
     },
+    "packs/23a8c8571ffda6954f1ea7307171990978414ee6922f38fefb8010dfea67d0d4.pck": {
+      "bytes": 1163380,
+      "sha256": "23a8c8571ffda6954f1ea7307171990978414ee6922f38fefb8010dfea67d0d4"
+    },
+    "packs/25de242564fec0a422f23fec5879f925f81f70f444922178762297cf598b9acd.pck": {
+      "bytes": 15316008,
+      "sha256": "25de242564fec0a422f23fec5879f925f81f70f444922178762297cf598b9acd"
+    },
+    "packs/27555bb4d3ac6a24649d56ec0bed7723a30a87dac79c4c768ed9ffa7fe4071fa.pck": {
+      "bytes": 1609796,
+      "sha256": "27555bb4d3ac6a24649d56ec0bed7723a30a87dac79c4c768ed9ffa7fe4071fa"
+    },
     "packs/282556049d741187312e61009405d61750e50e7b840f1fac14c6c3fcbc2e5102.pck": {
       "bytes": 1582392,
       "sha256": "282556049d741187312e61009405d61750e50e7b840f1fac14c6c3fcbc2e5102"
     },
+    "packs/285fe29005c5f0ed7be806aef025af82fa7e31c85a1006c148df2bcabe9d8db0.pck": {
+      "bytes": 8012484,
+      "sha256": "285fe29005c5f0ed7be806aef025af82fa7e31c85a1006c148df2bcabe9d8db0"
+    },
     "packs/2a90b9dc204cb7eafac53bb2c1b0692522df1cacfb6ac3ba21f00eca732c6e43.pck": {
       "bytes": 12347792,
       "sha256": "2a90b9dc204cb7eafac53bb2c1b0692522df1cacfb6ac3ba21f00eca732c6e43"
-    },
-    "packs/30779325370e14fc9dafb932f139e189ffe0a108e3ecc0fdf5c9ee8fce2fa240.pck": {
-      "bytes": 2753320,
-      "sha256": "30779325370e14fc9dafb932f139e189ffe0a108e3ecc0fdf5c9ee8fce2fa240"
     },
     "packs/320842fc0ca7d6eb78f87f463bf180c6d76539647fa1bbcee7449523e38ae49e.pck": {
       "bytes": 11915996,
@@ -544,21 +563,21 @@
       "bytes": 20365456,
       "sha256": "5c212bbd97bbfba6f7c4fa25db2bb7b0b369faa1d3f13286910c59d68a853c43"
     },
-    "packs/5c841a396564c5c55c163aa6a254003ebd18a42f384b7685271e515d56aaf328.pck": {
-      "bytes": 23327836,
-      "sha256": "5c841a396564c5c55c163aa6a254003ebd18a42f384b7685271e515d56aaf328"
-    },
     "packs/63d8f8a685325c918accb357626eae01b512d9e6f59294b765e0217904957ee6.pck": {
       "bytes": 68388,
       "sha256": "63d8f8a685325c918accb357626eae01b512d9e6f59294b765e0217904957ee6"
     },
-    "packs/649cae0d3f28ef258c0bf18072fbbca0e51d1614528f9fa43a63b975e0091ea8.pck": {
-      "bytes": 604192,
-      "sha256": "649cae0d3f28ef258c0bf18072fbbca0e51d1614528f9fa43a63b975e0091ea8"
-    },
     "packs/7283545d01d3a47d21ab9f769eb29b35f9498447c5e6cc2bff9419dacdd217bf.pck": {
       "bytes": 727260,
       "sha256": "7283545d01d3a47d21ab9f769eb29b35f9498447c5e6cc2bff9419dacdd217bf"
+    },
+    "packs/73fb3461b3ce505b1a1dbc7f2ca3d486b01f6b8ea17f41a3e4f5e0bfda430e78.pck": {
+      "bytes": 24548720,
+      "sha256": "73fb3461b3ce505b1a1dbc7f2ca3d486b01f6b8ea17f41a3e4f5e0bfda430e78"
+    },
+    "packs/790c62b574a5d590eac6e60df51c504e237b0d9769c63f5904cf698ba9fad54f.pck": {
+      "bytes": 591548,
+      "sha256": "790c62b574a5d590eac6e60df51c504e237b0d9769c63f5904cf698ba9fad54f"
     },
     "packs/80230fde3ad451dc4c000467344d36280b436a966723f1a32dc5e41b35d3fe42.pck": {
       "bytes": 18252228,
@@ -588,6 +607,10 @@
       "bytes": 23800328,
       "sha256": "9db48dbe86d04ce439dee405ede8f21133cc18062a87812e3315d945fa4c4bea"
     },
+    "packs/a0d51c9d6c5c6c2087ca0d03a7c53f39369133f4980d123a74804a77cbf2b944.pck": {
+      "bytes": 12760,
+      "sha256": "a0d51c9d6c5c6c2087ca0d03a7c53f39369133f4980d123a74804a77cbf2b944"
+    },
     "packs/a6596b325416e8823eac697776e76cc7d9095b1699e9fb79c2714761b05a8407.pck": {
       "bytes": 197780,
       "sha256": "a6596b325416e8823eac697776e76cc7d9095b1699e9fb79c2714761b05a8407"
@@ -607,10 +630,6 @@
     "packs/b89a0651519323ab5ea57b02f8d8beed5cc9b9317ca1859f6ca2e1636ff3cf8b.pck": {
       "bytes": 1752460,
       "sha256": "b89a0651519323ab5ea57b02f8d8beed5cc9b9317ca1859f6ca2e1636ff3cf8b"
-    },
-    "packs/bab1de7141ab5a8c52b36b770b37f26928290d53ff48a32c4b1fe6046debbb42.pck": {
-      "bytes": 2773060,
-      "sha256": "bab1de7141ab5a8c52b36b770b37f26928290d53ff48a32c4b1fe6046debbb42"
     },
     "packs/ce840256defa636b19be1864b99a79550d738166af100139a4ae9afd82a9ce06.pck": {
       "bytes": 28776,
@@ -649,8 +668,8 @@
       "sha256": "ffded8acdabc24de528f21220155e7584319ba750293d9afcfa9ed1f79f01b1f"
     },
     "pack_files.json": {
-      "bytes": 76847,
-      "sha256": "5f9a98ca57bb623a46bafd1f321fb9f0f87ac31d37803125e049600f69dc442b"
+      "bytes": 82349,
+      "sha256": "9eede172c959cdf06b6155ad9e1bdbf2f77fc7bfd28fe0cc08ae78f809de9149"
     }
   }
 }

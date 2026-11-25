@@ -20,6 +20,12 @@ def template_dependencies(value, reference_fields=()):
                 if key in ("mods", "entity_names") and isinstance(child, list): found.update(x for x in child if isinstance(x, str) and x)
                 if key == "auras" and isinstance(child, dict):
                     found.update(a["name"] for a in child.get("list", []) if a.get("name"))
+                if key == "spawn_groups" and isinstance(child, list):
+                    for group in child:
+                        for entry in group:
+                            for row in (entry[1] if len(entry) > 1 else []):
+                                if len(row) >= 3 and isinstance(row[2], str) and row[2]:
+                                    found.add(row[2])
                 visit(child)
         elif isinstance(node, list):
             for child in node: visit(child)
@@ -136,7 +142,7 @@ def validate_definition(data, spec):
     validate_callbacks(templates, "templates")
     for name, template in templates.items():
         active_tower = "tower" in template and not template.get("tower", {}).get("type", "").startswith("holder")
-        if (template.get("entity") and "cooldown_after" in template) or active_tower or any(key in template for key in ("enemy", "soldier", "bullet", "modifier", "aura", "spawner", "graveyard", "fireball_count")):
+        if (template.get("entity") and "cooldown_after" in template) or "spawn_groups" in template or ("particles_name" in template and "angle_variation" in template) or active_tower or any(key in template for key in ("enemy", "soldier", "bullet", "modifier", "aura", "spawner", "graveyard", "fireball_count")):
             source_id = data.get("behaviors", {}).get(name)
             if not source_id:
                 raise ValueError(f"{identity}: missing behavior binding for {name}")
@@ -153,7 +159,7 @@ def validate_definition(data, spec):
     waves = [data["waves"], *(row["waves"] for row in data.get("modes", {}).values())]
     for layout in layouts:
         for entity in layout["entities_list"]:
-            required = "tower.holder_id" in entity or entity["template"].startswith(("tunnel", "decal_tunnel_light", "ps_snow", "graveyard_controller"))
+            required = "tower.holder_id" in entity or entity["template"].startswith(("tunnel", "decal_tunnel_light", "ps_snow", "graveyard_controller", "veznan_portal"))
             if required and entity["template"] not in templates:
                 raise ValueError(f"{identity}: layout -> missing template {entity['template']}")
     for program in waves:

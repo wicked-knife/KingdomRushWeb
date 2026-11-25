@@ -3752,7 +3752,7 @@
 	"passed": true,
 	"scenarios": 4,
 	"source_hashes": {
-		"scripts/battle/battle_view.gd": "7bc3f20bf1d3eccab023da3c5a6519650ff51a74af74275abf560ec5af5868c9",
+		"scripts/battle/battle_view.gd": "027a4602c5a867080d4d5dd0a073cb45bf1e0016db3f8b2097e8256a8023e8d2",
 		"scripts/battle/dove_tesla.gd": "7c695c71c4d0a399b1e1e8d14db4bcad5831f73179fefe02c52f06e29a9e03b9",
 		"tests/fixtures/level10_source.json": "813201a6991cc543726f21bd766742570431f4140f7807625a15a9489df11502",
 		"tests/verify_tesla_animation.gd": "37d722233a665150ec397ee943e8eeb57678d21ab8383b46072fc17bba196870",

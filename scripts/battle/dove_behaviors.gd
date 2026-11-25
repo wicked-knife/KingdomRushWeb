@@ -6,6 +6,7 @@ const Wasteland = preload("res://scripts/battle/dove_wasteland.gd")
 const Sorcerer = preload("res://scripts/battle/dove_sorcerer.gd")
 const Sunray = preload("res://scripts/battle/dove_sunray.gd")
 const Jt = preload("res://scripts/battle/dove_jt.gd")
+const Veznan = preload("res://scripts/battle/dove_veznan.gd")
 const Ranger = preload("res://scripts/battle/dove_ranger.gd")
 const Elf = preload("res://scripts/battle/dove_elf.gd")
 const Spider = preload("res://scripts/battle/dove_spider.gd")
@@ -22,7 +23,7 @@ const AdvancedBarrack = preload("res://scripts/battle/dove_advanced_barrack.gd")
 const Sasquash = preload("res://scripts/battle/dove_sasquash.gd")
 const Chieftain = preload("res://scripts/battle/dove_chieftain.gd")
 const EnemyMelee = preload("res://scripts/battle/dove_enemy_melee.gd")
-const ROLES := ["ground", "healer", "spider", "soldier", "reinforcement", "archer", "mage", "engineer", "barrack", "mercenary", "ranger", "building", "arrow", "bolt", "bomb", "fireball", "arrow_missile", "thorn_aura", "spawner", "dps", "track_modifier", "heal_modifier", "thorn_modifier", "fire_control", "passive", "juggernaut", "arcane", "ray", "arcane_damage", "disintegrate", "teleport", "mod_aura", "enemy_missile", "enemy_bomb", "tower_decal", "instant_damage", "damage_aura", "enemy_bolt", "necromancer", "layout_spawner", "tesla", "tesla_ray", "tesla_aura", "graveyard", "demon_mage", "skeleton_aura", "musketeer", "shotgun", "tunnel", "unit_regen", "hero_malik", "fissure_aura", "stun_modifier", "bfg", "missile", "cluster", "sasquash_holder", "chieftain", "sorcerer", "sunray", "jt", "jt_spawn", "jt_freeze", "sheep", "polymorph", "armor_buff", "speed_buff"]
+const ROLES := ["ground", "healer", "spider", "soldier", "reinforcement", "archer", "mage", "engineer", "barrack", "mercenary", "ranger", "building", "arrow", "bolt", "bomb", "fireball", "arrow_missile", "thorn_aura", "spawner", "dps", "track_modifier", "heal_modifier", "thorn_modifier", "fire_control", "passive", "juggernaut", "arcane", "ray", "arcane_damage", "disintegrate", "teleport", "mod_aura", "enemy_missile", "enemy_bomb", "tower_decal", "instant_damage", "damage_aura", "enemy_bolt", "necromancer", "layout_spawner", "tesla", "tesla_ray", "tesla_aura", "graveyard", "demon_mage", "skeleton_aura", "musketeer", "shotgun", "tunnel", "unit_regen", "hero_malik", "fissure_aura", "stun_modifier", "bfg", "missile", "cluster", "sasquash_holder", "chieftain", "sorcerer", "sunray", "jt", "jt_spawn", "jt_freeze", "sheep", "polymorph", "armor_buff", "speed_buff", "veznan", "veznan_tower", "veznan_souls_aura", "veznan_soul", "veznan_portal"]
 var catalog: Dictionary
 var bindings: Dictionary
 
@@ -60,7 +61,7 @@ static func validate(definition: Dictionary, content_catalog: Dictionary) -> Str
 		for child: String in content_catalog.runtime_dependencies[owner]:
 			if not templates.has(child): return "%s: %s -> missing runtime dependency %s" % [content,owner,child]
 	for entity: Dictionary in definition.get("layout", {}).get("entities_list", []):
-		var required: bool = entity.has("tower.holder_id") or str(entity.template).begins_with("tunnel") or str(entity.template).begins_with("decal_tunnel_light") or str(entity.template).begins_with("ps_snow")
+		var required: bool = entity.has("tower.holder_id") or str(entity.template).begins_with("tunnel") or str(entity.template).begins_with("decal_tunnel_light") or str(entity.template).begins_with("ps_snow") or str(entity.template).begins_with("veznan_portal")
 		if required and not templates.has(entity.template): return "%s: layout -> missing template %s" % [content,entity.template]
 	for name: String in definition.get("callbacks", {}):
 		for event: String in definition.callbacks[name]:
@@ -74,7 +75,7 @@ static func validate(definition: Dictionary, content_catalog: Dictionary) -> Str
 		if not templates.has(name) or not supported(implementation): return "%s: %s -> unsupported Dove behavior '%s'" % [content, name, source_id]
 	for name: String in templates:
 		var template: Dictionary = templates[name]
-		var actor: bool = (template.has("entity") and template.has("cooldown_after")) or template.has("graveyard") or template.has("enemy") or template.has("soldier") or template.has("bullet") or template.has("modifier") or template.has("aura") or template.has("spawner") or template.has("fireball_count") or (template.has("tower") and not str(template.tower.get("type", "")).begins_with("holder"))
+		var actor: bool = (template.has("entity") and template.has("cooldown_after")) or template.has("spawn_groups") or (template.has("particles_name") and template.has("angle_variation")) or template.has("graveyard") or template.has("enemy") or template.has("soldier") or template.has("bullet") or template.has("modifier") or template.has("aura") or template.has("spawner") or template.has("fireball_count") or (template.has("tower") and not str(template.tower.get("type", "")).begins_with("holder"))
 		if not actor: continue
 		var source_id: String = definition.get("behaviors", {}).get(name, "")
 		var role: String = content_catalog.get("behaviors", {}).get(canonical(source_id, content_catalog), "")
@@ -186,6 +187,7 @@ func enemy_step(sim, enemy: Dictionary, template: Dictionary) -> bool:
 	if Wasteland.enemy_step(sim,enemy,template):return true
 	if enemy.has("necromancer"):return Necromancer.step(sim,enemy,template)
 	if enemy.has("jt"):return Jt.step(sim,enemy,template)
+	if enemy.has("veznan"):return sim.veznan.step(sim,enemy,template)
 	if role(enemy.template)=="sheep" and Sorcerer.sheep_step(sim,enemy):return true
 	if enemy.has("mixed_melee_job"): return EnemyMelee.step(sim,enemy,template)
 	match role(enemy.template):
