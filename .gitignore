@@ -27,6 +27,7 @@ __pycache__/
 !/reports/godot_assets_verification.json
 !/reports/hero_combat_logic.json
 !/reports/heroes_assets.json
+!/reports/kr1_end_assets.json
 !/reports/level01_assets.json
 !/reports/level02_assets.json
 !/reports/level03_assets.json
@@ -37,6 +38,7 @@ __pycache__/
 !/reports/level08_assets.json
 !/reports/level09_assets.json
 !/reports/level10_assets.json
+!/reports/level10_shared_logic.json
 !/reports/level11_assets.json
 !/reports/level11_delivery.json
 !/reports/level11_logic.json
@@ -46,9 +48,10 @@ __pycache__/
 !/reports/level11_upgrades.json
 !/reports/level12_assets.json
 !/reports/level12_delivery.json
+!/reports/level12_flow.json
 !/reports/level12_logic.json
+!/reports/level12_native_1024x768.json
 !/reports/level12_native_1280x720.json
-!/reports/level12_upgrades.json
 !/reports/map_kr1_assets.json
 !/reports/map_kr1_web.json
 !/reports/ranger_arena_assets.json

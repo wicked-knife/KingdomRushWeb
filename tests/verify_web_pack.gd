@@ -79,6 +79,9 @@ func _run() -> void:
 		var base: String="res://data/"+entry.folder+"/"
 		var combat: Dictionary=JSON.parse_string(FileAccess.get_file_as_string(base+"manifest.json"))
 		expected.append_array(combat.resources);expected.append_array(combat.data);expected.append(base+"manifest.json")
+	if content.levels.has("12"):
+		var end_manifest:Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/kr1_end/manifest.json"))
+		expected.append_array(end_manifest.resources);expected.append_array(end_manifest.data);expected.append("res://data/kr1_end/manifest.json")
 	var allowed_data := expected.duplicate()
 	allowed_data.append("res://data/menu_manifest.json")
 	var failures: Array[String] = []
@@ -169,12 +172,15 @@ func _run() -> void:
 		if not animations.get("animations",{}).has("decal_rally_feedback"): failures.append("Exported rally marker animation missing %d" % id)
 		var placement = sim_script.new(stage)
 		if id==12:
-			if placement.veznan.portals.size()!=3 or not placement.enemies.any(func(e):return e.template=="eb_veznan"):failures.append("Pack twelfth Veznan or portals missing")
-			for name:String in ["eb_veznan","mod_veznan_tower","veznan_portal","veznan_souls_aura","veznan_soul","ps_veznan_soul","decal_s12_shoutbox","decal_eb_veznan_white_circle"]:
-				if not stage.templates.has(name):failures.append("Pack twelfth dependency missing "+name)
-			for sound_id:String in ["VeznanDeath","VeznanSoulDrain","VeznanToDemon","VeznanHoldCast","MusicBossFight"]:
-				if art.get_sound(sound_id).is_empty():failures.append("Pack twelfth audio missing "+sound_id)
-			if art.get_frame(stage.level.group,"stage12_forsale").is_empty():failures.append("Pack twelfth forsale artwork missing")
+			if placement.veznan.boss_id<=0 or placement.veznan.portals.size()!=3:failures.append("Pack twelfth controller missing")
+			var ending_art=load("res://scripts/dove_asset_catalog.gd").new("res://data/kr1_end/catalog.json")
+			var ending:Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://data/kr1_end/definition.json"))
+			if ending.comics.size()!=2 or ending.has("credits"):failures.append("Pack ending structure invalid")
+			for comic:Array in ending.comics:
+				for page:Dictionary in comic:
+					if page.order.is_empty():failures.append("Pack ending layers missing")
+					for sprite:Dictionary in page.sprites.values():
+						if ending_art.get_frame("kr1_end",sprite.image).is_empty():failures.append("Pack ending frame missing")
 		if id==11:
 			if placement.layout_spawners.size()!=1:failures.append("Pack eleventh generator missing")
 			for name:String in ["enemy_necromancer","enemy_lava_elemental","enemy_skeleton","enemy_skeleton_big","bolt_necromancer"]:

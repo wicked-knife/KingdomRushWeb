@@ -76,8 +76,8 @@ local function run()
     local body=text:sub(a,b-1)
     local base=body:match('^tt = RT%([^,\n]+,%s*"([^"]+)"')
     if base and not E.entities[base] then load_game_template(base) end
-    local header='local tt;local anchor_x,anchor_y,image_x,image_y=0,0,0,0;local scripts=require("game_scripts");local RLU=require("all.rally_utils");local i18n=require("i18n");local v=vec_2;local vv=vec_1;local function d2r(x) return x*math.pi/180 end;local function adx(x) return x-anchor_x*image_x end;local function ady(y) return y-anchor_y*image_y end;'
-    chunk(path,header..body)
+    local header='local tt;local anchor_x,anchor_y,image_x,image_y=0,0,0,0;local scripts=require("game_scripts");local RLU=require("all.rally_utils");local v=vec_2;local vv=vec_1;local function adx(x) return x-anchor_x*image_x end;local function ady(y) return y-anchor_y*image_y end;'
+    chunk(path,'local i18n=require("i18n");'..header..body)
   end
   -- Source wave/layout tables are dependency roots, not hand-maintained enemy lists.
   local source_tables={}
@@ -162,8 +162,7 @@ local function run()
   for _,id in ipairs({"re_farmer_well_fed","re_conscript","re_warrior","re_legionnaire","re_legionnaire_ranged","spear_legionnaire","mod_arcane_shatter","mod_arcane_shatter_little","mod_slow_curse","mod_blood_elves","power_scorched_earth","power_scorched_water","pop_crit"}) do table.insert(template_ids,id) end
   for _,id in ipairs(enemy_ids) do table.insert(template_ids,id) end
   for _,entity in ipairs(out.layout.entities_list) do
-    local main_bg = entity.template == "decal_background" and (entity["render.sprites[1].name"] == "stage_" .. level_id or entity["render.sprites[1].z"] == 1000)
-    local foreground = entity.template == "decal_background" and not main_bg
+    local foreground = entity.template == "decal_background" and entity["render.sprites[1].name"] ~= "stage_" .. level_id
     if foreground or (entity.template ~= "decal_background" and entity.template ~= "decal_defend_point" and entity.template ~= "editor_wave_flag") then
       assert(E.entities[entity.template],spec.folder..": layout -> missing template "..entity.template)
       table.insert(template_ids,entity.template)
@@ -175,7 +174,7 @@ local function run()
   local function export_template(id,origin)
     if out.templates[id] then return end
     if not E.entities[id] and (id:match('^enemy_') or enemies:find('tt = RT("'..id..'"',1,true)) then load_enemy(id) end
-    if not E.entities[id] and (has("arcane") or has("paladin") or has("juggernaut") or has("musketeer") or has("snow") or has("tesla") or has("wasteland") or has("veznan")) then load_game_template(id) end
+    if not E.entities[id] and (has("arcane") or has("paladin") or has("juggernaut") or has("musketeer") or has("snow") or has("tesla") or has("wasteland")) then load_game_template(id) end
     assert(E.entities[id],spec.folder..": "..origin.." -> missing template "..id)
     local t=E:get_template(id);local filtered={};for _,key in ipairs(fields) do if t[key]~=nil then filtered[key]=clean(t[key]) end end
     if spec.export.validate_callbacks then
@@ -200,7 +199,7 @@ local function run()
         if type(fn)=="function" then out.callbacks[id][key]=assert(behavior_names[fn],spec.folder..": "..id..".main_script."..key.." -> unmapped source callback") end
       end
     end
-    if (t.entity and t.cooldown_after) or t.spawn_groups or t.graveyard or t.modifier or t.aura or t.spawner or t.fireball_count or t.enemy or t.soldier or t.bullet or t.unfreeze_upgrade_to or (t.tower and not t.tower_holder) or (t.particles_name and t.angle_variation) then
+    if (t.entity and t.cooldown_after) or t.graveyard or t.modifier or t.aura or t.spawner or t.fireball_count or t.enemy or t.soldier or t.bullet or t.unfreeze_upgrade_to or (t.tower and not t.tower_holder) then
       local fn=t.main_script and (t.main_script.update or t.main_script.insert)
       assert(fn and behavior_names[fn],spec.folder..": "..id.." has an unmapped behavior")
       out.behaviors[id]=behavior_names[fn]
@@ -218,13 +217,6 @@ local function run()
     if t.death_spawns and t.death_spawns.name then found[t.death_spawns.name]=true end
     for _,spawn in ipairs(t.graveyard and t.graveyard.spawns_by_health or {}) do found[spawn[1]]=true end
     for _,a in ipairs(t.auras and t.auras.list or {}) do if a.name then found[a.name]=true end end
-    if t.spawn_groups then
-      for _,group in ipairs(t.spawn_groups) do
-        for _,entry in ipairs(group) do
-          for _,row in ipairs(entry[2] or {}) do if type(row[3])=="string" and row[3]~="" then found[row[3]]=true end end
-        end
-      end
-    end
     -- miss_decal is a raw sprite, whereas miss_fx_water is an entity.
     if id=="spear_legionnaire" then found[t.bullet.miss_fx_water]=true end
     local dependencies={};for child in pairs(found) do dependencies[#dependencies+1]=child end;table.sort(dependencies)
@@ -280,6 +272,9 @@ local function run()
   end
   local strings=chunk("_assets/kr1-desktop/strings/zh-Hans.lua")
   out.ui.strings={}
+  if has("veznan") then
+    for i=1,30 do local key=string.format("VEZNAN_TAUNT_%04d",i);out.ui.strings[key]=assert(strings[key],key) end
+  end
   local function collect(v)
     if type(v)=="string" and strings[v] then out.ui.strings[v]=strings[v]
     elseif type(v)=="table" then for _,value in pairs(v) do collect(value) end end
@@ -345,16 +340,6 @@ local function run()
       local names={};for i=1,t.info.random_name_count do local k=string.format(t.info.random_name_format,i);names[i]=strings[k] or k end;out.ui.unit_names[id]=names
     end
     if t.info then local key=(t.info.i18n_key or string.upper(id)).."_NAME";out.ui.strings[key]=strings[key] or key end
-    if t.taunts and t.taunts.sets then
-      for _,set in pairs(t.taunts.sets) do
-        if set.format and set.end_idx then
-          for idx=(set.start_idx or 1),set.end_idx do
-            local k=string.format(set.format,idx)
-            if strings[k] then out.ui.strings[k]=strings[k] end
-          end
-        end
-      end
-    end
   end
   for _,id in ipairs({"TB_BUILD","TB_START","TB_POWER1","TB_POWER2","TB_ROAD"}) do out.ui.slides[id]=clean(gui.notification_slides[id]);collect(out.ui.slides[id]) end
   for _,key in ipairs({"INSTRUCTIONS","HINT","NEW SPECIAL POWER!","POWER_REINFORCEMENTS_NAME","POWER_REINFORCEMENTS_LARGE_DESCRIPTION","POWER_FIREBALL_NAME","POWER_FIREBALL_LARGE_DESCRIPTION","MENU_HUD_WAVES","I'm ready. Now bring it on!"}) do out.ui.strings[key]=strings[key] or key end

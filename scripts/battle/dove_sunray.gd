@@ -87,10 +87,10 @@ static func projectile(sim,p:Dictionary,b:Dictionary) -> void:
 	var t:Dictionary=sim.templates[p.template]
 	if not p.has("ray_initialized"):
 		p.ray_initialized=true
-		if not target.is_empty() and t.get("track_target",false):p.to=target.pos+sim.vec(sim.templates[target.template].unit.hit_offset)
+		if not target.is_empty() and t.get("track_target",false):p.to=target.pos+sim.vec(sim.unit_template(target).unit.hit_offset)
 	if not target.is_empty() and (int(target.get("vis",sim.templates[target.template].vis).bans)&2)!=0:p.ray_lost=true
 	if not target.is_empty() and t.get("track_target",false) and not p.get("ray_lost",false):
-		var point:Vector2=target.pos+sim.vec(sim.templates[target.template].unit.hit_offset)
+		var point:Vector2=target.pos+sim.vec(sim.unit_template(target).unit.hit_offset)
 		if maxf(absf(point.x-p.to.x),absf(point.y-p.to.y))>float(b.max_track_distance):p.ray_lost=true
 		else:p.ray_dest=point
 	p.pos=p.from;p.rotation=(p.get("ray_dest",p.to)-p.from).angle()

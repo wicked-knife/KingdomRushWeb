@@ -87,7 +87,7 @@ static func _fire(sim, tower: Dictionary, job: Dictionary) -> void:
 			p.damage_min = float(sim.templates[attack.bullet].bullet.damage_min)+float(sim.templates[attack.bullet].bullet.damage_min_inc)*int(p.level)
 			p.damage_max = float(sim.templates[attack.bullet].bullet.damage_max)+float(sim.templates[attack.bullet].bullet.damage_max_inc)*int(p.level)
 	else:
-		sim._projectile(attack.bullet,enemy.id,point,enemy.pos+sim.vec(sim.templates[enemy.template].unit.hit_offset),1.0,tower)
+		sim._projectile(attack.bullet,enemy.id,point,enemy.pos+sim.vec(sim.unit_template(enemy).unit.hit_offset),1.0,tower)
 		var p: Dictionary = sim.projectiles[-1]
 		p.level = int(tower.powers.sniper) if index > 0 else 0
 		if index == 1:
@@ -162,7 +162,7 @@ static func projectile(sim, p: Dictionary, b: Dictionary) -> void:
 		if not p.target_invalid:
 			if target.is_empty(): p.target_invalid=true
 			else:
-				var delta: Vector2 = target.pos+sim.vec(sim.templates[target.template].unit.hit_offset)-p.to
+				var delta: Vector2 = target.pos+sim.vec(sim.unit_template(target).unit.hit_offset)-p.to
 				if maxf(absf(delta.x),absf(delta.y))>float(b.max_track_distance) or (int(target.get("vis",sim.templates[target.template].vis).bans)&int(sim.data.constants.F_RANGED))!=0: p.target_invalid=true
 		p.pos += p.pos.direction_to(p.to)*speed/30
 		p.rotation=(p.to-p.pos).angle()
@@ -181,7 +181,7 @@ static func projectile(sim, p: Dictionary, b: Dictionary) -> void:
 			var fx: String = sim.templates[target.template].unit.get("explode_fx","")
 			if sim.templates.has(fx):
 				var sprite: Dictionary = sim.templates[fx].render.sprites[0]
-				var size: int = int(sim.templates[target.template].unit.size)
+				var size: int = int(sim.unit_template(target).unit.size)
 				sim.add_effect(fx,target.pos,{"state":sprite.size_names[size-1]})
 				target.hidden = true
 		if not p.get("critical",false) and b.get("pop",[]).has("pop_headshot"):
@@ -189,7 +189,7 @@ static func projectile(sim, p: Dictionary, b: Dictionary) -> void:
 		if p.get("critical",false): sim.add_effect("pop_crit",target.pos+Vector2(0,float(sim.templates.pop_crit.pop_y_offset)))
 		var mods: Array = [b.mod] if b.has("mod") else b.get("mods",[])
 		for name: String in mods: sim.modifiers.apply(sim,name,target,maxi(1,int(p.level)),str(p.source),-1,float(p.damage_factor),{"value":raw,"type":type,"reduce_armor":float(b.get("reduce_armor",0))})
-		var hit: Vector2 = target.pos+sim.vec(sim.templates[target.template].unit.hit_offset)
+		var hit: Vector2 = target.pos+sim.vec(sim.unit_template(target).unit.hit_offset)
 		sim.add_effect(str(b.get("hit_fx","")),hit)
 		sim.add_effect(str(b.get("hit_blood_fx","")),hit,{"rotation":p.rotation})
 	else: sim.add_effect(str(b.get("miss_fx","")),p.to)

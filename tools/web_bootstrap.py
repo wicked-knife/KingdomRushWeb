@@ -51,6 +51,10 @@ def resource_paths():
         resources += level["resources"]
         data += level["data"] + [f"res://data/{level_name}/manifest.json"]
     resources += content["runtime_scripts"]
+    if 12 in level_ids():
+        ending = json.loads((ROOT / "data/kr1_end/manifest.json").read_text(encoding="utf-8"))
+        resources += ending["resources"]
+        data += ending["data"] + ["res://data/kr1_end/manifest.json"]
     resources.append("res://scripts/services/content_packs.gd")
     resources += list(content["controllers"].values())
     campaign_map = json.loads((ROOT / "data/map_kr1/manifest.json").read_text(encoding="utf-8"))
@@ -138,11 +142,74 @@ def main():
         engine = godot_path(args.godot)
         from verify_dove_update import run as verify_source_transition
         verify_source_transition()
-        from verify_level12_delivery import verify as verify_twelfth
-        twelfth = verify_twelfth()
-        hero_reports = {"logic": twelfth["reports"]["hero_combat_logic"]}
-        technology_reports = {"twelfth_source_patches": twelfth["reports"]["level12_upgrades"]}
-        ui_reports = {"twelfth_native": twelfth["reports"]["level12_native_1280x720"]}
+        tenth, eleventh, twelfth = {}, {}, {}
+        if 12 in level_ids():
+            from verify_level12_delivery import verify as verify_twelfth
+            twelfth = verify_twelfth()
+            hero_reports = {"logic": twelfth["reports"]["hero_combat_logic"]}
+            feedback, seventh, eighth, ninth = {}, {}, {}, {}
+            technology_reports = {"source_patches": twelfth["reports"]["level11_upgrades"]}
+            ui_reports = {"native": twelfth["reports"]["level12_native_1280x720"]}
+        elif 11 in level_ids():
+            from verify_level11_delivery import verify as verify_eleventh
+            eleventh = verify_eleventh()
+            hero_reports = {"logic": eleventh["reports"]["hero_combat_logic"]}
+            feedback, seventh, eighth, ninth = {}, {}, {}, {}
+            technology_reports = {"eleventh_source_patches": eleventh["reports"]["level11_upgrades"]}
+            ui_reports = {"eleventh_native": eleventh["reports"]["level11_native_1280x720"]}
+        elif 10 in level_ids():
+            from verify_level10_delivery import verify as verify_tenth
+            tenth = verify_tenth()
+            hero_reports = {"logic": tenth["reports"]["hero_combat_logic"]}
+            feedback, seventh, eighth, ninth = {}, {}, {}, {}
+            technology_reports = {"tenth_source_patches": tenth["reports"]["level10_upgrades"]}
+            ui_reports = {"tenth_native": tenth["reports"]["level10_native_1280x720"]}
+        else:
+            hero_reports = {}
+            if read_catalog().get("combat_heroes"):
+                for name in ("hero_combat_logic", "hero_malik_native_1280x720", "hero_malik_assets"):
+                    report = json.loads((ROOT / f"reports/{name}.json").read_text(encoding="utf-8"))
+                    if not report.get("passed") or not report.get("source_hashes"):
+                        raise RuntimeError("Hero acceptance failed: " + name)
+                    for path, expected in report["source_hashes"].items():
+                        if hashlib.sha256((ROOT / path).read_bytes()).hexdigest() != expected:
+                            raise RuntimeError("Hero acceptance is stale: " + path)
+                    hero_reports[name] = {key: report[key] for key in ("passed", "checks", "behavior_scenarios", "frames", "animations", "native_input", "native_audio") if key in report}
+            from verify_feedback_delivery import verify as verify_feedback
+            feedback=verify_feedback()
+            seventh = {}
+            if 7 in level_ids():
+                from verify_level07_delivery import verify as verify_seventh
+                verify_seventh()
+                seventh = json.loads((ROOT / "reports/level07_delivery.json").read_text(encoding="utf-8"))
+            eighth = {}
+            if 8 in level_ids():
+                from verify_level08_delivery import verify as verify_eighth
+                eighth = verify_eighth()
+            ninth = {}
+            if 9 in level_ids():
+                from verify_level09_delivery import verify as verify_ninth
+                ninth = verify_ninth()
+            technology_reports = {}
+            for key in ("logic", "native_1280x720", "native_1024x768", "assets"):
+                path = ROOT / f"reports/upgrades_{key}.json"
+                result = json.loads(path.read_text(encoding="utf-8"))
+                if not result.get("passed") or not result.get("source_hashes"):
+                    raise RuntimeError(f"Technology acceptance failed: {path}")
+                for relative, expected in result["source_hashes"].items():
+                    if hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() != expected:
+                        raise RuntimeError(f"Technology acceptance is stale: {relative}")
+                technology_reports[key] = {k: result[k] for k in ("passed", "checks", "source_patch_scenarios", "source_template_rows", "behavior_scenarios", "content_combinations", "native_input", "native_audio") if k in result}
+            ui_reports = {}
+            for key in ("logic", "1280x720", "1024x768", "assets"):
+                path = ROOT / f"reports/battle_ui_{key}.json"
+                result = json.loads(path.read_text(encoding="utf-8"))
+                if not result.get("passed"):
+                    raise RuntimeError(f"Battle UI acceptance failed: {path}")
+                for relative, expected in result.get("source_hashes", {}).items():
+                    if hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() != expected:
+                        raise RuntimeError(f"Battle UI acceptance is stale: {relative}")
+                ui_reports[key] = {k: result[k] for k in ("passed", "checks", "layout_only", "scope") if k in result}
         output = ROOT / "build/web/index.html"
         source_output = ROOT / "build/web-source/index.html"
         source_output.parent.mkdir(parents=True, exist_ok=True)
@@ -160,7 +227,14 @@ def main():
         pack_index, pack_report = split_export(source_output.with_suffix(".pck"), output.parent)
         if args.check_pack:
             subprocess.run([engine, "--headless", "--path", str(ROOT), "--script", "res://tests/verify_web_pack.gd", "--", str(output.with_suffix(".pck"))], check=True)
-        current = twelfth
+        challenge_report_path = ROOT / "reports/challenges_logic.json"
+        challenge_report = json.loads(challenge_report_path.read_text(encoding="utf-8")) if challenge_report_path.exists() else {}
+        sixth_path = ROOT / "reports/level06_logic.json"
+        sixth_report = json.loads(sixth_path.read_text(encoding="utf-8")) if sixth_path.exists() else {}
+        native_path = ROOT / "reports/level06_native.json"
+        native_report = json.loads(native_path.read_text(encoding="utf-8")) if native_path.exists() else {}
+        sixth_required = 6 in level_ids()
+        current = twelfth or eleventh or tenth
         receipt = {
             "source": read_catalog()["source"],
             "source_transition_verified": True,
@@ -174,21 +248,30 @@ def main():
             "playable_modes": sorted({row["mode"] for row in combinations()}),
             "playable_combinations": combinations(),
             "content_catalog_sha256": hashlib.sha256((ROOT / "data/campaign_content.json").read_bytes()).hexdigest(),
-            "challenge_validation_passed": twelfth.get("passed", False),
-            "challenge_checks": twelfth["reports"]["level12_logic"]["checks"],
-            "challenge_check_scope": "Current twelfth-stage source/native acceptance; exact preservation of levels 1-11; representative shared regressions",
-            "twelfth_acceptance": {k: twelfth.get(k) for k in ("passed", "playable_combinations", "reports", "failure_probes", "compatibility", "historical_scope")},
+            "challenge_validation_passed": twelfth.get("passed", False) if twelfth else eleventh.get("passed", False) if eleventh else tenth.get("passed", False) if 10 in level_ids() else challenge_report.get("passed", False) and (not sixth_required or sixth_report.get("passed", False) and native_report.get("passed", False)) and (7 not in level_ids() or seventh.get("passed", False)) and (8 not in level_ids() or eighth.get("passed", False)) and (9 not in level_ids() or ninth.get("passed", False)),
+            "challenge_checks": twelfth["reports"]["level12_logic"]["checks"] if twelfth else eleventh["reports"]["level11_logic"]["checks"] if eleventh else tenth["reports"]["level10_logic"]["checks"] if tenth else challenge_report.get("checks", 0),
+            "challenge_check_scope": "Current twelfth-stage source/native acceptance; exact preservation of levels 1-11; representative shared regressions" if twelfth else "Current eleventh-stage source/native acceptance; exact preservation of levels 1-10; representative shared regressions" if eleventh else "Current tenth-stage source/native acceptance and representative shared regressions; levels 1-9 prior configurations preserved by additive audit" if tenth else "levels 1-5; sixth through ninth source data/mechanisms and native flow are reported separately",
+            "sixth_logic": {k: sixth_report.get(k) for k in ("passed", "checks", "independent_modes", "timeline_waves", "births", "full_replays")},
+            "sixth_native": {k: native_report.get(k) for k in ("passed", "checks", "scope")},
+            "seventh_acceptance": {k: seventh.get(k) for k in ("passed", "playable_combinations", "reports", "failure_probes", "additive_audit")},
+            "eighth_acceptance": {k: eighth.get(k) for k in ("passed", "playable_combinations", "reports", "failure_probes")},
+            "ninth_acceptance": {k: ninth.get(k) for k in ("passed", "playable_combinations", "reports", "failure_probes")},
+            "tenth_acceptance": {k: tenth.get(k) for k in ("passed", "playable_combinations", "reports", "failure_probes", "historical_scope")},
+            "twelfth_acceptance": {k: twelfth.get(k) for k in ("passed", "playable_combinations", "reports", "failure_probes", "compatibility", "credits_data")},
+            "eleventh_acceptance": {k: eleventh.get(k) for k in ("passed", "playable_combinations", "reports", "failure_probes", "compatibility", "historical_scope")},
             "current_source_sha256": current.get("source_hashes", {}),
-            "validation_report_sha256": {**current.get("report_sha256", {}), "reports/level12_delivery.json": hashlib.sha256((ROOT / "reports/level12_delivery.json").read_bytes()).hexdigest()},
+            "validation_report_sha256": {**current.get("report_sha256", {}), f"reports/level{12 if twelfth else 11 if eleventh else 10}_delivery.json": hashlib.sha256((ROOT / f"reports/level{12 if twelfth else 11 if eleventh else 10}_delivery.json").read_bytes()).hexdigest()} if current else {path.relative_to(ROOT).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest() for path in sorted([*(ROOT / "reports").glob("level07_*.json"), *(ROOT / "reports").glob("level08_*.json"), *(ROOT / "reports").glob("level09_*.json")]) if not path.name.endswith(("_timelines.json", "_comparisons.json"))},
             "battle_ui_acceptance": ui_reports,
             "default_technology_acceptance": technology_reports,
+            "feedback_acceptance": {k:feedback.get(k) for k in ('passed','reports','historical_baseline_preserved','content_combinations','guard_scope')},
+            "feedback_report_sha256": {} if current else {path.relative_to(ROOT).as_posix():hashlib.sha256(path.read_bytes()).hexdigest() for path in sorted([*(ROOT/'reports').glob('feedback_*.json'),*(ROOT/'reports').glob('followup_*.json')])},
             "technology_scheme": "1",
-            "challenge_acceptance_basis": "dove_configuration_and_functionality",
+            "challenge_acceptance_basis": challenge_report.get("acceptance_basis", "dove_configuration_and_functionality"),
             "challenge_victory_replays_required": False,
-            "challenge_replays_run": False,
-            "challenge_replay_files": [],
-            "challenge_pending_replays": [f"{row['level']}/{row['mode']}" for row in combinations() if row["mode"] != 1],
-            "challenge_replays_verified": [],
+            "challenge_replays_run": challenge_report.get("replays_run", False),
+            "challenge_replay_files": [key for key, value in challenge_report.get("modes", {}).items() if value.get("replay_available", False)],
+            "challenge_pending_replays": [f"{row['level']}/{row['mode']}" for row in combinations() if row["mode"] != 1 and not challenge_report.get("modes", {}).get(f"{row['level']}/{row['mode']}", {}).get("replay_available", False)],
+            "challenge_replays_verified": [key for key, value in challenge_report.get("modes", {}).items() if value.get("replay_verified", False)],
             "pck_sha256": hashlib.sha256(output.with_suffix(".pck").read_bytes()).hexdigest(),
             "pck_isolated_check": args.check_pack,
             "packs_manifest_sha256": digest_file(output.parent / "web_packs.json"),

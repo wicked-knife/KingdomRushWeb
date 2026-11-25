@@ -14,13 +14,13 @@ static func step(sim, p: Dictionary, b: Dictionary) -> bool:
 			trail(sim,p,b); return false
 		p.seeking = true
 		p.hit_distance = float(b.hit_distance)
-		if not target.is_empty() and target.hp > 0 and p.pos.distance_to(target.pos + sim.vec(sim.templates[target.template].unit.hit_offset)) < float(p.hit_distance):
+		if not target.is_empty() and target.hp > 0 and p.pos.distance_to(target.pos + sim.vec(sim.unit_template(target).unit.hit_offset)) < float(p.hit_distance):
 			return true
 	if target.is_empty() or target.hp <= 0 or not sim.modifiers.flags_match(sim,target,b):
 		target = sim._target(p.pos,float(b.get("retarget_range",300)))
 		if target.is_empty(): return true
 		p.target = target.id
-	p.to = target.pos + sim.vec(sim.templates[target.template].unit.hit_offset)
+	p.to = target.pos + sim.vec(sim.unit_template(target).unit.hit_offset)
 	var speed: float = p.velocity.length()
 	if p.pos.distance_to(p.to) <= speed * sim.STEP:
 		p.hit_distance = maxf(speed * sim.STEP,float(b.hit_distance) * 1.2)

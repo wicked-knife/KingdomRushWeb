@@ -106,7 +106,7 @@ func apply(sim: RefCounted, template: String, target: Dictionary, level: int, so
 			_release(sim, m); active.erase(m)
 		elif m.target == target.id and m.template == template:
 			m.visible = false
-	var size_index := clampi(int(sim.templates[target.template].unit.size) - 1, 0, 2)
+	var size_index := clampi(int(sim.unit_template(target).unit.size) - 1, 0, 2)
 	var m := {"template":template, "target":target.id, "level":level, "source":source, "born":sim.tick,
 		"at":sim.tick, "expires":sim.tick + mini(1000000000,sim.frames(minf(30000000,duration if duration >= 0 else float(rule.duration)))), "next_hit":sim.tick + 1,
 		"state":"", "prefix":"", "scale":Vector2.ONE, "phase":"loop", "visible":true}

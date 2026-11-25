@@ -16,6 +16,7 @@
 python tools/sync_dove_assets.py
 python tools/prepare_upgrades.py
 python tools/prepare_level01.py --all
+python tools/prepare_ending.py
 python tools/prepare_level01.py --ranger-arena
 python tools/prepare_map.py
 python tools/prepare_heroes.py
@@ -28,7 +29,7 @@ Python 依赖见 `tools/requirements.txt`。导出脚本默认使用本机源码
 
 ## 专项检查
 
-当前第十一关交付使用 [第十一关专项](LEVEL11.md) 的逻辑、原生、科技、像素与共享回归，生成 `reports/level11_delivery.json`；导出检查当前实现与报告哈希。第七至九关文档保留历史实现记录，旧多分辨率报告不冒充当前验收。
+当前第十二关交付使用 [第十二关专项](LEVEL12.md) 的逻辑、原生、结尾、像素与共享回归，生成 `reports/level12_delivery.json`；导出检查当前实现与报告哈希。第七至十一关文档保留历史实现记录，旧多分辨率报告不冒充当前验收。
 
 只运行与改动相关的检查，范围见 [验证约定](TEST_REDUNDANCY_REVIEW.md)。共用战斗变更的代表命令：
 
@@ -79,8 +80,8 @@ python tools/package_level01.py
 python tools/web_bootstrap.py serve
 ```
 
-交付时集中导出一次。发布包在 `build/KingdomRush-KR1-Levels01-11-Web.zip`，目录在 `build/web`；使用 HTTP 服务访问，不能直接打开 HTML 文件。导出默认 release，开发者入口关闭；需要调试包时显式加 `--debug`。隔离 PCK 检查验证菜单、地图、英雄房间和全部 33 个组合的资源，不代替浏览器验收。浏览器由用户手动检查输入、声音解锁、后台标签页和持久化。
+交付时集中导出一次。发布包在 `build/KingdomRush-KR1-Levels01-12-Web.zip`，目录在 `build/web`；使用 HTTP 服务访问，不能直接打开 HTML 文件。导出默认 release，开发者入口关闭；需要调试包时显式加 `--debug`。隔离 PCK 检查验证菜单、地图、英雄房间和全部 36 个组合的资源，不代替浏览器验收。浏览器由用户手动检查输入、声音解锁、后台标签页和持久化。
 
-当前发布包由 [第十一关专项](LEVEL11.md) 的逻辑、原生、科技、像素与共享回归及 `python tools/verify_level11_delivery.py` 门禁守护，导出时自动核验。继续在 Godot 验证，最终集中导出一次；浏览器手动验收。
+当前发布包要求 `python tools/verify_level12_delivery.py` 通过，并自动纳入最终导出；覆盖三模式、结尾、资源、前十一关内容校验及必要相邻回归。交付结果见 [第十二关交付报告](LEVEL12_DELIVERY.md)。
 
 历史战斗快照的当前基准由 `tests/verify_content_unification.gd` 维护。

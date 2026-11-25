@@ -1,5 +1,5 @@
 {
-  "base_commit": "52b9a4ea389dde4218e3c081deec6ff4883afe23",
+  "base_commit": "00d09eaba3ba7eade8c1864cc87780af3c27d40a",
   "sha256": {
     "data/level01/animations.json": "50b38bdb6a087b1f4a7f0105ca687da4b2ca2b789a9e73d88d81bb1b9628eee8",
     "data/level01/atlas.json": "10d017a1fa0824f5d0aa370d28fcc026260aa062877af2b0673a2badba40f78b",

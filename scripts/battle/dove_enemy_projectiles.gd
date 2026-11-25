@@ -9,7 +9,7 @@ static func bolt(sim, p:Dictionary, bullet:Dictionary) -> void:
 		var target:Dictionary=sim.unit_by_id(p.target)
 		p.tracked_target=target.get("id",0)
 		if not target.is_empty():
-			var hit:Vector2=target.pos+sim.vec(sim.templates[target.template].unit.hit_offset)
+			var hit:Vector2=target.pos+sim.vec(sim.unit_template(target).unit.hit_offset)
 			if target.hp<=0 or (int(target.get("vis",sim.templates[target.template].vis).get("bans",0))&int(sim.data.constants.F_RANGED))!=0:
 				p.target=0;p.tracked_target=0
 			elif bullet.has("max_track_distance"):
@@ -49,11 +49,11 @@ static func step(sim, projectile: Dictionary, bullet: Dictionary, role: String) 
 			return true
 		projectile.missile_phase = "seek"
 		if target.is_empty() or target.hp <= 0: target = retarget(sim, projectile, target, bullet)
-		if not target.is_empty(): projectile.to = target.pos + sim.vec(sim.templates[target.template].unit.hit_offset)
+		if not target.is_empty(): projectile.to = target.pos + sim.vec(sim.unit_template(target).unit.hit_offset)
 	if projectile.pos.distance_to(projectile.to) <= float(projectile.speed) * sim.STEP:
 		projectile.done = true
 		for soldier: Dictionary in sim.soldiers:
-			var hit: Vector2 = soldier.pos + sim.vec(sim.templates[soldier.template].unit.hit_offset)
+			var hit: Vector2 = soldier.pos + sim.vec(sim.unit_template(soldier).unit.hit_offset)
 			if Targets.matches(sim, soldier, bullet, true) and sim.distance(hit, projectile.to) <= float(bullet.damage_radius):
 				var factor = clampf(sim.distance(hit, projectile.pos) / float(bullet.damage_radius), 0, 1)
 				sim.damage(soldier, lerpf(float(bullet.damage_max), float(bullet.damage_min), factor) * float(projectile.get("damage_factor",1.0)), int(bullet.damage_type))
@@ -63,7 +63,7 @@ static func step(sim, projectile: Dictionary, bullet: Dictionary, role: String) 
 	if target.is_empty() or not Targets.matches(sim, target, bullet):
 		target = retarget(sim, projectile, target, bullet)
 		if not target.is_empty(): projectile.rot_dir = -1 if target.pos.x < projectile.pos.x else 1
-	if not target.is_empty(): projectile.to = target.pos + sim.vec(sim.templates[target.template].unit.hit_offset)
+	if not target.is_empty(): projectile.to = target.pos + sim.vec(sim.unit_template(target).unit.hit_offset)
 	var direction: Vector2 = projectile.to - projectile.pos
 	var angle: float = projectile.velocity.angle_to(direction)
 	if absf(angle) > float(bullet.get("max_seek_angle", 0.2)):

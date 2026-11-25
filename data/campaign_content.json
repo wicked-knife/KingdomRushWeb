@@ -1230,11 +1230,12 @@
         "veznan"
       ],
       "atlas_groups": [
-        "go_stage12_bg",
         "go_stage12",
+        "go_stage12_bg",
         "go_enemies_wastelands",
         "go_enemies_blackburn"
-      ]
+      ],
+      "background": "stage_12_0001"
     }
   },
   "arenas": {
@@ -2188,15 +2189,12 @@
     "veznan": {
       "template_ids": [
         "eb_veznan",
-        "decal_s12_shoutbox",
-        "decal_veznan_strike",
-        "fx_veznan_demon_fire",
-        "mod_veznan_tower",
-        "veznan_soul",
-        "ps_veznan_soul",
+        "veznan_portal",
         "veznan_souls_aura",
         "decal_eb_veznan_white_circle",
-        "fx_demon_portal_out"
+        "veznan_soul",
+        "mod_veznan_tower",
+        "decal_s12_shoutbox"
       ],
       "fields": [
         "pos_castle",
@@ -2205,76 +2203,76 @@
         "taunts",
         "battle",
         "demon",
-        "souls",
-        "click_time",
-        "duration",
         "required_clicks",
-        "sound_blocked",
+        "click_time",
         "sound_click",
+        "sound_blocked",
         "sound_released",
         "spawn_groups",
         "portal_idx",
         "spawn_interval",
         "pi",
-        "fx_out",
+        "out_nodes",
+        "soul_phase",
+        "angle",
         "angle_variation",
-        "max_angle",
         "min_angle",
-        "particles_name",
+        "max_angle",
         "speed",
-        "texts",
-        "tween"
+        "sound",
+        "count",
+        "interval",
+        "interrupt",
+        "souls",
+        "texts"
       ],
       "reference_fields": [
         "souls_aura",
         "white_circle",
-        "decal_name",
         "soul_effect",
-        "particles_name",
         "portal_name",
-        "fx_out"
+        "decal_name"
+      ],
+      "animation_states": [
+        "idleDown",
+        "laugh",
+        "spellDown",
+        "spell",
+        "walkAway",
+        "demonTransform",
+        "soulDrainStart",
+        "soulDrainHold",
+        "soulDrainEnd",
+        "death",
+        "deathLoop",
+        "deathEnd",
+        "start",
+        "active",
+        "end",
+        "preHold",
+        "hold",
+        "remove"
       ],
       "local_update_bindings": [
         "veznan_portal:kr1.level12.veznan_portal.update"
       ],
-      "animation_states": [
-        "laugh",
-        "spellDown",
-        "spell",
-        "soulDrain",
-        "soulDrainStart",
-        "soulDrainHold",
-        "soulDrainEnd",
-        "walkAway",
-        "demonTransform",
-        "deathLoop",
-        "deathEnd",
-        "start",
-        "preHold",
-        "hold",
-        "remove",
-        "active",
-        "end"
+      "callback_templates": [
+        "eb_veznan"
       ],
       "inputs": [
         "kr1/boss.lua",
         "kr1/boss_scripts.lua",
-        "kr1/game_scripts.lua",
-        "kr1/template_groups/level12_templates.lua"
+        "kr1/template_groups/level12_templates.lua",
+        "all/level_utils.lua"
       ],
       "constants": [
         "F_ALL",
         "F_RANGED",
         "DAMAGE_DISINTEGRATE",
-        "DAMAGE_INSTAKILL",
-        "UNIT_SIZE_LARGE"
+        "DAMAGE_INSTAKILL"
       ],
-      "callback_templates": [
-        "eb_veznan",
-        "mod_veznan_tower",
-        "veznan_souls_aura",
-        "veznan_soul",
-        "veznan_portal"
+      "script_animation_starts": [
+        "veznan_portal:start"
       ]
     }
   },
@@ -2356,8 +2354,8 @@
     "kr1.level11.s11_lava_spawner.update": "layout_spawner",
     "scripts.bolt_enemy.update": "enemy_bolt",
     "game_scripts.eb_veznan.update": "veznan",
-    "game_scripts.mod_veznan_tower.update": "veznan_tower",
-    "game_scripts.veznan_souls_aura.update": "veznan_souls_aura",
+    "game_scripts.mod_veznan_tower.update": "veznan_block",
+    "game_scripts.veznan_souls_aura.update": "veznan_souls",
     "game_scripts.veznan_soul.update": "veznan_soul",
     "kr1.level12.veznan_portal.update": "veznan_portal"
   },
@@ -2439,7 +2437,8 @@
     "res://scripts/battle/dove_jt.gd",
     "res://scripts/battle/dove_tesla.gd",
     "res://scripts/battle/dove_wasteland.gd",
-    "res://scripts/battle/dove_veznan.gd"
+    "res://scripts/battle/dove_veznan.gd",
+    "res://scripts/battle/controllers/level12.gd"
   ],
   "callbacks": [
     "game_scripts.aura_apply_mod.insert",
@@ -2625,8 +2624,8 @@
     "s11_lava_spawner": {
       "update": "kr1.level11.s11_lava_spawner.update"
     },
-    "veznan_portal": {
-      "update": "kr1.level12.veznan_portal.update"
+    "eb_veznan": {
+      "update": "game_scripts.eb_veznan.update"
     }
   },
   "runtime_dependencies": {
@@ -2697,26 +2696,11 @@
       "enemy_lava_elemental"
     ],
     "eb_veznan": [
-      "decal_s12_shoutbox",
-      "decal_veznan_strike",
-      "fx_veznan_demon_fire",
       "mod_veznan_tower",
       "veznan_soul",
-      "ps_veznan_soul",
       "veznan_souls_aura",
-      "decal_eb_veznan_white_circle"
-    ],
-    "veznan_portal": [
-      "enemy_demon",
-      "enemy_demon_wolf",
-      "enemy_demon_mage",
-      "fx_demon_portal_out"
-    ],
-    "veznan_souls_aura": [
-      "veznan_soul"
-    ],
-    "veznan_soul": [
-      "ps_veznan_soul"
+      "decal_eb_veznan_white_circle",
+      "veznan_portal"
     ]
   },
   "combat_heroes": {
@@ -2725,15 +2709,6 @@
     }
   },
   "runtime_fields": {
-    "eb_veznan": [
-      {
-        "path": [
-          "health",
-          "on_damage"
-        ],
-        "value": "game_scripts.eb_veznan.on_damage"
-      }
-    ],
     "eb_jt": [
       {
         "path": [
@@ -2770,6 +2745,15 @@
           "side_effect"
         ],
         "value": "kr1.enemies.enemy_slayer.side_effect"
+      }
+    ],
+    "eb_veznan": [
+      {
+        "path": [
+          "health",
+          "on_damage"
+        ],
+        "value": "game_scripts.eb_veznan.on_damage"
       }
     ]
   }

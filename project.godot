@@ -19,6 +19,10 @@ config/icon="res://icon.svg"
 config/custom_user_dir_name.windows="Godot/app_userdata/Kingdom Rush Dove Web"
 config/custom_user_dir_name.macos="Godot/app_userdata/Kingdom Rush Dove Web"
 
+[autoload]
+
+_mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
+
 [display]
 
 window/size/viewport_width=1920
@@ -29,6 +33,10 @@ window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/size/min_width=640
 window/size/min_height=360
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot_ai/plugin.cfg")
 
 [physics]
 

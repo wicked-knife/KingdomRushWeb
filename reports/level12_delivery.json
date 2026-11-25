@@ -4,48 +4,58 @@
   "reports": {
     "level12_logic": {
       "passed": true,
-      "checks": 1201,
+      "checks": 1195,
       "independent_modes": 3,
       "timeline_waves": 22,
       "births": 1110,
-      "source_scenarios": 10
+      "source_scenarios": 12
     },
-    "level12_upgrades": {
+    "level12_flow": {
+      "passed": true,
+      "checks": 35
+    },
+    "level12_native_1280x720": {
+      "passed": true,
+      "checks": 100,
+      "layout_only": false
+    },
+    "level12_native_1024x768": {
+      "passed": true,
+      "checks": 19,
+      "layout_only": true
+    },
+    "level12_assets": {
+      "passed": true,
+      "frames": 7411,
+      "animations": 543
+    },
+    "kr1_end_assets": {
+      "passed": true,
+      "frames": 19
+    },
+    "level11_shared_logic": {
+      "passed": true,
+      "checks": 86,
+      "scope": "representative stage-ten graveyard, demons, skeletons and Tesla source regressions"
+    },
+    "level10_shared_logic": {
+      "passed": true,
+      "checks": 53,
+      "scope": "source Sorcerer/Sunray attacks; freeze/thaw, JT death, polymorph and elemental lifecycle; no campaign replay"
+    },
+    "level11_upgrades": {
       "passed": true,
       "checks": 86,
       "source_patch_scenarios": 16
     },
-    "level12_native_1280x720": {
+    "level11_ranged_shared": {
       "passed": true,
-      "checks": 95,
-      "scope": "stage 12 three modes, foregrounds/forsale, taunt shoutbox, native 3-click tower lock release, portal, soul drain, demon fire, death souls/white circle/hide_gui, restart and settlement"
-    },
-    "level12_assets": {
-      "passed": true,
-      "frames": 7433,
-      "animations": 546
-    },
-    "level09_logic": {
-      "passed": true,
-      "checks": 246,
-      "independent_modes": 3,
-      "timeline_waves": 26,
-      "births": 995
-    },
-    "level10_logic": {
-      "passed": true,
-      "checks": 168,
-      "independent_modes": 3,
-      "timeline_waves": 26,
-      "births": 1160
+      "checks": 18,
+      "scope": "six source axe-thrower ranged timing and interruption regressions"
     },
     "hero_combat_logic": {
       "passed": true,
       "checks": 161
-    },
-    "tesla_animation_logic": {
-      "passed": true,
-      "checks": 12
     }
   },
   "failure_probes": [
@@ -55,14 +65,9 @@
       "reason": "level12: behavior -> missing template eb_veznan"
     },
     {
-      "missing": "mod_veznan_tower",
+      "missing": "veznan_soul",
       "rejected": true,
-      "reason": "level12: eb_veznan -> missing runtime dependency mod_veznan_tower"
-    },
-    {
-      "missing": "veznan_portal",
-      "rejected": true,
-      "reason": "level12: behavior -> missing template veznan_portal"
+      "reason": "level12: eb_veznan -> missing runtime dependency veznan_soul"
     },
     {
       "missing": "veznan_souls_aura",
@@ -70,19 +75,14 @@
       "reason": "level12: eb_veznan -> missing runtime dependency veznan_souls_aura"
     },
     {
-      "missing": "veznan_soul",
+      "missing": "veznan_portal",
       "rejected": true,
-      "reason": "level12: eb_veznan -> missing runtime dependency veznan_soul"
+      "reason": "level12: eb_veznan -> missing runtime dependency veznan_portal"
     },
     {
-      "missing": "ps_veznan_soul",
+      "missing": "mod_veznan_tower",
       "rejected": true,
-      "reason": "level12: eb_veznan -> missing runtime dependency ps_veznan_soul"
-    },
-    {
-      "missing": "decal_s12_shoutbox",
-      "rejected": true,
-      "reason": "level12: eb_veznan -> missing runtime dependency decal_s12_shoutbox"
+      "reason": "level12: eb_veznan -> missing runtime dependency mod_veznan_tower"
     },
     {
       "missing": "decal_eb_veznan_white_circle",
@@ -90,44 +90,110 @@
       "reason": "level12: eb_veznan -> missing runtime dependency decal_eb_veznan_white_circle"
     },
     {
-      "missing": "veznan behavior",
+      "missing": "decal_s12_shoutbox",
+      "rejected": true,
+      "reason": "level12: missing template dependency: eb_veznan -> decal_s12_shoutbox"
+    },
+    {
+      "missing": "boss behavior",
       "rejected": true,
       "reason": "level12: eb_veznan -> unsupported.missing: Unsupported Dove behavior: unsupported.missing"
     },
     {
-      "missing": "veznan runtime resource",
+      "missing": "boss lethal callback",
+      "rejected": true,
+      "reason": "level12: eb_veznan -> missing required runtime field ['health', 'on_damage']"
+    },
+    {
+      "missing": "boss runtime module",
       "rejected": true,
       "reason": "Runtime dependency missing from export manifest: res://scripts/battle/dove_behaviors.gd -> res://scripts/battle/dove_veznan.gd"
+    },
+    {
+      "missing": "comic frames",
+      "rejected": true,
+      "reason": "endComic_box1"
+    },
+    {
+      "missing": "comic drawing order",
+      "rejected": true,
+      "reason": ""
+    },
+    {
+      "missing": "epilogue audio",
+      "rejected": true,
+      "reason": ""
     }
   ],
   "source_hashes": {
-    "data/campaign_content.json": "a5a4b3887f071c08f7e66536689e09eb9af6dd9011e7d1305916d43eb4f9b432",
-    "data/level12/definition.json": "9c8d375c12c99ac675d5f74eb2876231257e048d563b99a4d7dc0f913237607b",
-    "scripts/battle/controllers/level12.gd": "f5014ac898bc2525036d78d9a8b89d73b150c33bce54cfe30ad2e4eafeb88b62",
-    "scripts/battle/dove_behaviors.gd": "75d3861caf53fc647acd327813c27ce1540561f7b5a67e50afe80918d2096981",
-    "scripts/battle/dove_unit_info.gd": "5459df81ef1c3e20cbd0eb167faddfb7dc16c9c3088d0c6e1d6f3bea4e075a67",
-    "scripts/battle/dove_veznan.gd": "8784738ad041edd2bad07f66522436225f1d97889c397f6609af963b4e356023",
-    "scripts/battle/level01_sim.gd": "5ddc3d624a038e407e17ac6e53628fcce727fe26a887ec699686cd8d14d4ffd6",
-    "tests/fixtures/level12_source.json": "9d8f7a50d5f41e8b4d87d83ccbae7f5337ebf5ea187933ad40f271fa39728b7a",
-    "tests/verify_level12.gd": "ff3229bc98324c0d9c8d6cedc1f1a40e5e25297599b5feb96f1e6021b720e30a",
+    "data/campaign_content.json": "124b63f07c14a7fd298310da6661fbe67f1e82dfed936423d6a3ba17ab2fe400",
+    "data/level12/definition.json": "e6ead4597aefed0f9390ca59d56b4b51256ae14c7481d41a96bac681e36a40a5",
+    "scripts/app_root.gd": "253ce1da3f4f956348959dfe1241639f143e64499cbb512463b0144c95666679",
+    "scripts/battle/battle_view.gd": "f2c33805820fe085361cac6667528e155400841aad494b5d6f2cea732ff3f147",
+    "scripts/battle/controllers/level12.gd": "854e401c8a49274062aa9987354d57b148a037aa8bb18ca775b074b4d55caa14",
+    "scripts/battle/dove_behaviors.gd": "592c9e854043665e9453a6d420caa9d562fc8d10316939f0aabec5268b89feeb",
+    "scripts/battle/dove_unit_info.gd": "605e83eb830176dd81d170825fe53ef942de9c0866e2c7370a3ec7df4884df8e",
+    "scripts/battle/dove_veznan.gd": "43bd9672be2058c4ffdac585289ce0ffc42f8971c3903e19efd47f203ac55457",
+    "scripts/battle/level01_sim.gd": "baf33bc858087240696a77ed2bcfff591d9fb0d90a20bc907cad51de1fc5cf1c",
+    "scripts/ui/kr1_ending.gd": "ac2688288d907e8bb38280a518d83280628807ed688cdcc6ed02a5e3e54ad6e0",
+    "tests/fixtures/level12_source.json": "1ea3a2f2b82a783f6432e30b8171a666d69717deb5c9e557ad0be9440f81a6ee",
+    "tests/verify_level12.gd": "f57cfb5dadf53440bbef73c2a0a706d0f37d7a31c9ea6acd89ec9c966609101e",
+    "data/kr1_end/definition.json": "e17b56b2658bb780ef6dc4e79a8b327cace4c9cbe547e67d8ca826b61fa560e8",
+    "scripts/services/campaign_progress.gd": "63f8ea4460117fe0041ec0eccd9d57810a7b7c09022f74216e1ca00187e82827",
+    "scripts/services/save_slots.gd": "67e49ae38e412afaaebdcbac9945b01421db847bf16f4d1f3fea7e2de71363a3",
+    "tests/verify_level12_flow.gd": "2ed30acaf881db7b980999177e7d64adbc7c0963ee9489a5c9c56fccae170bc6",
+    "tests/level12_visual.gd": "2b8b911cced416b65b31fe1723ba10a0c6ec6ce6293c3b1c54f3ccd03690233e",
+    "data/kr1_end/atlas.json": "86ad90cba7471b4136d2c70f29aa994cab77cadbe586229330194f66c4a5ce5c",
+    "data/kr1_end/catalog.json": "4ea310bd53bb891e769382bdfee5f2245ec507ed81930037a6e7669a6f40054e",
+    "data/kr1_end/manifest.json": "7c187345a1fed7d9ceb5547398c9d3f3b64586c76244f42f65791f173f3d3965",
+    "data/kr1_end/sounds.json": "7dd821ee1ba6ba30fab07d80f49b7d9c9c0649147c7bf11d0d515aab6377383e",
+    "data/kr1_end/atlas_0.png": "8d71082cc444de6b290b51d7c55f0facb3fc3033e6843dda4bdbe56e0904d91b",
+    "tools/prepare_ending.py": "9c0ac73a224321dedd1cb3a786a0f5d8049fe9be523e0600e5b4179876b21463",
+    "tools/verify_ending_assets.py": "f8d2565df319afd84e9ae3cad31e55d866a69d0ef0821cb5582bbce5b06349a6",
+    "tools/ending_export/main.lua": "7bd9e999b27b10c3175ab929d6181d2ed1040fc81e936eeaec7b1522c461f110",
+    "data/level10/definition.json": "2d9f2440a2fb412b7e799078ef6bb62e8ae4ee45883dc45be149881b0cb24935",
+    "scripts/battle/dove_enemy_projectiles.gd": "b2f25efbfad154a3d5b07d88a6e3b5f629c15076328f15efcd088e9809b07a85",
+    "scripts/battle/dove_enemy_ranged.gd": "871a01e1b18845b8fce199a5c7a7f3ffba4a908e3879e984db836bb2638e7ab9",
+    "tests/fixtures/level10_source.json": "813201a6991cc543726f21bd766742570431f4140f7807625a15a9489df11502",
+    "tests/verify_level10.gd": "2efa565ebbad5f72cfd8b7df650db46537b011f87436c3113cbaa1b402cd137f",
+    "tests/verify_level11_shared.gd": "6ff78acf7c78538c1cacf85e758196c19789777d2a7beeba9051106ce0b4ab7e",
+    "data/level09/definition.json": "5b0a505c2c2b58de0d0c461e132ac3d8a9e11af60ea15d81e6836a86fc6fef3a",
+    "scripts/battle/dove_jt.gd": "52d06669df870a14cfe82089d12388a87dde05006d7437f72663802f2d5def51",
+    "scripts/battle/dove_modifiers.gd": "c06a02be4cc16c67a8dcfece84b5687e13fcd9a3b0848172cd1d1d0b44452849",
+    "scripts/battle/dove_snow.gd": "68d0e91988485524909a4dd6d804482adc66a6d43146e875678a8ea01af984fd",
+    "scripts/battle/dove_sorcerer.gd": "d10210953a621e13d05af31f67d6b183d3735fcaf0a459262b8adf891d802038",
+    "tests/fixtures/level09_source.json": "dc441b9214fdd2f9f18bedaa3add201189db84e2876ed6525763d4183830f4ff",
+    "tests/verify_level09.gd": "e3a35c32f575e13640460ceae27bc3881bbb7b0d043f02fe4c19d9ba005b7e97",
+    "tests/verify_level10_shared.gd": "389674a5b7bbe103738c0c21a49ee2de95c32185fee0523000dbbc247de29114",
+    "data/level11/definition.json": "aa68a35eb99cc68dad8de4152fd09c420ccfbbf200cf95a71ae1a089bdfd4eeb",
     "data/upgrades/definition.json": "56649f49a635a3e0f67c8674def89782c2536fd0c096102babd51afaa0598815",
-    "scripts/app_root.gd": "886971f2362f44f3449916b38bc63d4a7421bcfd4dd48cacaa09912a5d399270",
-    "scripts/battle/battle_view.gd": "027a4602c5a867080d4d5dd0a073cb45bf1e0016db3f8b2097e8256a8023e8d2",
-    "scripts/battle/dove_arcane.gd": "910616929963c924a84a268a3fb9f215f18c5dff39aaf625d97b70cb0194576a",
-    "scripts/battle/dove_modifiers.gd": "fa1f8136d1c61ee0d1087b49c3700581d79dde4baed7ad733a72324c32d9be5c",
-    "scripts/battle/dove_upgrades.gd": "6e43a1b8a2f7f579119114c95f655c22cf6b7793016f67df12497355482045ed",
+    "scripts/battle/dove_arcane.gd": "dc944420788902b27f7692046a20825306cc302211284a6e85d813177ec59f88",
+    "scripts/battle/dove_upgrades.gd": "71a92ac94fb4320c61c525dab58650d71f2b33ceb4119cdd8350b7165b98b458",
     "scripts/map/map_interface.gd": "6539338f2a5585a7611ec825a8b51768f90a7d6ff027550aaaea846bd6470044",
     "scripts/map/map_screen.gd": "16713179a9a97d74659daefbc11ef36299d03c2513a5e984e25e332e2110c0fb",
     "scripts/map/upgrades_room.gd": "e4089ec1068641eac1185c99c0f78d95ccac00279e456bd2c1b22006f2caabf8",
     "scripts/services/battle_setup.gd": "ecc0636937834eaeb63af06ab9068f86235cc00597644c56713189dcc44ea9d3",
     "scripts/services/campaign_levels.gd": "da30a1fdd2463ea40be1083c3a83215738985442037aac0d48b410352297c1af",
-    "scripts/services/campaign_progress.gd": "63f8ea4460117fe0041ec0eccd9d57810a7b7c09022f74216e1ca00187e82827",
-    "tests/fixtures/level12_upgrades_source.json": "4b3307d585c75b2889d0764614cc344df360e4971e0d5fb998c6e5513fcb382a",
-    "tests/verify_level12_upgrades.gd": "b61120ad0e3be9aaae92f20cce60da094d03e3d2eb9d10d4d538af226a7cc1f8",
+    "tests/fixtures/level11_upgrades_source.json": "b26c70586566fc1044cc32b0a08e7c432352e132d7aa07c93c7bb04434b5a5e8",
+    "tests/verify_level11_upgrades.gd": "62e05188083f7a56b3f343819923d3fd46e95925d0f99e82b9ab8ab5b827432c",
     "tools/upgrade_reference/main.lua": "dd05d64423e694ab3104ee23c152cfaf844a5bff82f937640a39abf8d905da7b",
-    "tests/level12_visual.gd": "f07f23c197ffe2a6b52fdbcd732aa43eeec0b68e2f1be752f12b7bcfc2131d19",
-    "data/level12/animations.json": "b0ff2bc5818c04576fea1e4443a8fbc1881447f8e95d9b180381cbe7f2b737fd",
-    "data/level12/atlas.json": "4ebcd11eaa4afc4a8ee4c0953e9dd8f7fb2283b99124a02e0b8fedc94c9f1083",
+    "data/level08/definition.json": "036c581d231b4811f8e5f68f37779d4df295aa61ff77bb1f731eb6c161d57bbc",
+    "scripts/battle/dove_enemy_melee.gd": "dbd761b72b9d54871ae097b32d78a92783e018f162a216ca4bef4a1cdb23ad8f",
+    "tests/fixtures/level08_source.json": "e56eca3d81984e8690f3f832024de4b9bfb9968f90ffdc24df42e23c4d02ac0f",
+    "tests/verify_level08.gd": "01b7b726a41bda72fa5b9230ff321fb8722cf2d7a9e5d28a49abf7358978a84f",
+    "tests/verify_level11_ranged_shared.gd": "dcffff998437394276c5e85921b0a2328d8e608d4b7690259754091ee0d9be6a",
+    "data/hero_malik_combat/definition.json": "09d44221a8d038040827984babe85c0ce8dacc352e4eb1b58407c4263fd934b0",
+    "scripts/battle/dove_grid_path.gd": "4a89d8916ce8d76c0371d2f434ed844a133b1171b62819dba90d6c676483ae9d",
+    "scripts/battle/dove_heroes.gd": "2a9f3f4c4d211ddf567162136e52370a4cf016e57f501d1b0e21e496dad984a1",
+    "scripts/services/hero_combat.gd": "20c72e1acfdc8f01e0c87cbb4c883d4adcf27121adc28d25867240ef88ee479c",
+    "tests/fixtures/hero_malik_source.json": "f81848a28015999be84df1370b5f3d1beaf867f30991ffb85d993139c84e5db0",
+    "tests/verify_hero_malik.gd": "6cd4b79a6cdbaa8ccc3547841febdaac5a52bb6da2261ac70b49d30d9207eb68",
+    "output/level12-logic.log": "0e43e5e2c25190f8b62baa22eb6105aa6795f45912dc3a9ef053241b224fd6b4",
+    "output/level12-flow.log": "18a228a4136280d1b691114c2e5414cdd547b1b28c076e511d4e6f3fa9929ac3",
+    "output/level12-native.log": "1d282df4d83ad4b73a7514c0419df1d158eb9c40dab30249b39cd2f400a5a023",
+    "output/level12-native-1024.log": "c1f288ccac8f9ecc0f7c04a0d7e5d104e95d8f00ebf029b3309d20dc492edf12",
+    "data/level12/animations.json": "093b948df9a74f2282a1f9510b85397c519b6ce6b6715076b9c1902f4aa5e33a",
+    "data/level12/atlas.json": "50f24478b9c6ecda40a4a285f058d40c16e70d8b515057ab8d81b2fc6c8f96b7",
     "data/level12/atlas_0.png": "dc59870ddfddfbb1a1cdf161ca055914b9b8069859ba397a13e1931250f6f322",
     "data/level12/atlas_1.png": "28c66deb97779e471f2249c449f6bbf15de284d71bb7f4165ba6ade18e3420e8",
     "data/level12/atlas_10.png": "d87c0efb877aca819177424808dd0545e114671df530e642e3f7e872bfdd5f33",
@@ -135,13 +201,13 @@
     "data/level12/atlas_12.png": "67baf05515394563984dc0c90663377084d2157d8a0d45d16346559936a4436a",
     "data/level12/atlas_13.png": "4836550229ee27a8fb412c2c5cedfe12be15cde0dbd3f6f4158b5449d84e21d0",
     "data/level12/atlas_14.png": "cea9abf15acee47ea8e36c35f456eed2e7830c98e7c4c202c1d8ca486607557d",
-    "data/level12/atlas_15.png": "5de38b9347bd7d174011ada06aa59028e881ffccae67d261cff10f7ed0bd0bda",
-    "data/level12/atlas_16.png": "ab9d14227abe9831f3d577f0636a543d5e28bc230c45fc9d2718ca42118735c9",
-    "data/level12/atlas_17.png": "5d7232c18c2773bf00ed7d5462bb860d16668f59a22e391daf0870235806e4d5",
-    "data/level12/atlas_18.png": "65b3b6056c61eb69e5b77d7c7bac155020dd14a4fc3398b6561015aceef82d35",
-    "data/level12/atlas_19.png": "1b7c1d6842856f0eb392aba3d6d8bd329e25b0ab28f9222a5ef1f9b6c777ae8f",
+    "data/level12/atlas_15.png": "29044fc78b757ce444732e660d3ee1ec4bf45675d5c6210e173110af7af977b3",
+    "data/level12/atlas_16.png": "bd2575c03c7eed1d6b5e4e703e57171e6bf4863f078d3b857dacbe2a78702766",
+    "data/level12/atlas_17.png": "be3ef5fad868f8b27de1a3989d48279bab9580c0fbbc2d26f66acefe247dc83c",
+    "data/level12/atlas_18.png": "2efda6f7075480a2d5d295f638b0bdac84d00f06bd2408bec1cdd7db801e5180",
+    "data/level12/atlas_19.png": "3f06fa4389a2c3bbf080e1f83294f68699047ff5aa323e101e369872bb0ec3b2",
     "data/level12/atlas_2.png": "40c6d14c489d238669309697f37119cc746f5534a955a1095e5877a722007a66",
-    "data/level12/atlas_20.png": "70f9bd426a81b35ec1375eb262100c85733b09cabbb6e9d06f6afc43b0585b34",
+    "data/level12/atlas_20.png": "4796b3ebd61af517aa65ce5b3669e1f8dcb7d4f24f729bb554eae69ddc85e0d0",
     "data/level12/atlas_3.png": "2fedbf94b006fdfdac868ea858738725ddeae867c57a5a3eac11aae96ec74ffd",
     "data/level12/atlas_4.png": "aef78902e29df7affec927bc3fc636d7d1e2b67e49e6367d83773fa136cd824e",
     "data/level12/atlas_5.png": "0077cb0f15a4750fa33f96789020f2b5e2255277406e3308ac05f2843fe47990",
@@ -150,8 +216,8 @@
     "data/level12/atlas_8.png": "b458453899ff3797f56a97213ac7f657bc2087c3cc9de2abda0542461f1a5c52",
     "data/level12/atlas_9.png": "7648ab09443badd330a6ff595baff323d193ae7311c25816d01620e2e06e6802",
     "data/level12/catalog.json": "ce9e2adb9a4c630a276b6c9dbd87dfba3261a7d63c32968b8cb3613e0f24d046",
-    "data/level12/manifest.json": "921fed13c5f51d241423ab60c807f16c89953b29e7a55023daf981762e7c0622",
-    "data/level12/sounds.json": "91c22ee61a645805996e4f046af219f8b2514c8715a56b1cbe94186a052db995",
+    "data/level12/manifest.json": "1368b2511cf757ccba38d049200b29f1ead3989db0c55bd05393351e4c1e623b",
+    "data/level12/sounds.json": "de51e72d49966b9cb27db892a52ffeec5f192692d0f81cfa54f0bb3dfa704158",
     "scenes/app_root.tscn": "b452a555a0b30d76be62d70426a96b637a4deea36507b27a4cc28df4688201c8",
     "scenes/main_menu.tscn": "8ea06da12004ac24204e90fdd350b931513a05c9916eff9decc050522542445e",
     "scripts/dove_asset_catalog.gd": "ae7a7505fa1aa3b788e7c31eaef9c633dfa743915699dc0025e15a986ce66cc8",
@@ -161,7 +227,6 @@
     "scripts/ui/menu_art.gd": "930502cec28b2109ae415b97df96b9930a47dfd16c3d2f7abb8034792c5901ca",
     "scripts/ui/main_menu.gd": "047fdeefdad27fc711dbf1c07a5dc795f221452b39618a18628999c7c972e029",
     "scripts/services/dove_fonts.gd": "d10ef84e1e0f7a6d40970ed98fcd10215c1a19edc0f54e4baa6ba4657c62b3f9",
-    "scripts/services/save_slots.gd": "67e49ae38e412afaaebdcbac9945b01421db847bf16f4d1f3fea7e2de71363a3",
     "assets/kingdom_rush/all-desktop/fonts/msyh.ttc": "d79c55e68b1131eea0cc1c47be4f572d964f28c682e143db2ad09c1e4cb07a3f",
     "assets/kingdom_rush/all-desktop/fonts/msyhbd.ttc": "4508821b3dffe01f0ef5e5326a3e60df705a44633858811f67b6982dce3f6ee6",
     "assets/kingdom_rush/all-desktop/fonts/JIMOJW.ttf": "aa07ea1b5fa02a4ec1afcbb2a91038c57fc6154d8c3b7ba8f6db5eae9c2b8204",
@@ -463,11 +528,8 @@
     "data/level11/atlas_16.png": "c028912371fb9dafd6f07ea83a12c0aff3b29bd40c34da69652c5d75f43518b9",
     "data/level11/atlas_17.png": "3f06fa4389a2c3bbf080e1f83294f68699047ff5aa323e101e369872bb0ec3b2",
     "data/level11/atlas_18.png": "c258b5f09f2213b936eea0ce6bb0718eea1d864d851f9497741de27ac8bde9d3",
-    "assets/kingdom_rush/kr1-desktop/sounds/files/KingdomRushWastelandVeznanCastle.ogg": "db29c8951258cac858aa51436b336c55cf649a53146fcc36e888971826d306ae",
-    "assets/kingdom_rush/kr1-desktop/sounds/files/MusicBattlePreparationsWastelands.ogg": "5919b7976c37701acb98ea3cf62838a46cb03225d72153e2acff83f26974d1a1",
     "assets/kingdom_rush/kr1-desktop/sounds/files/Soul_Drain.ogg": "3b44fb46cd3ee282536fc068f3f181e40fb6eda8177e3f30471a4dd22bc7aaa6",
     "assets/kingdom_rush/kr1-desktop/sounds/files/Sound_DemonPortal_Summon.ogg": "1aa6407c470ae5e64e7586108437f0af366160b249c16dfd1a6f989a8aa58380",
-    "assets/kingdom_rush/kr1-desktop/sounds/files/Sound_EnemyVeznan_attack.ogg": "87bbe59e4e049f2a90ad2eb514ec9daa660ab9fbccf6669b6856a3af031968db",
     "assets/kingdom_rush/kr1-desktop/sounds/files/Sound_EnemyVeznan_death.ogg": "1062c3f975e31aedd25107f43f77b9ef6e10f8ce1b0e9f3c363cfd29aa94db6b",
     "assets/kingdom_rush/kr1-desktop/sounds/files/Sound_EnemyVeznan_demonFire.ogg": "63a7899b64c39a2782488aed0b2c62121ffd1a621c4b29bd07a0238104b9616c",
     "assets/kingdom_rush/kr1-desktop/sounds/files/Sound_EnemyVeznan_toDemon.ogg": "bc0153cb5bae2c0bbd8e6dbcc62f705aef8aa67143a8e0471cb8106c40108d07",
@@ -475,7 +537,6 @@
     "assets/kingdom_rush/kr1-desktop/sounds/files/Sound_SpellTowerHold_Dissipate.ogg": "00dcd673ad78ca2d2a431cca978f5e7d0b72d9b079b4007060bde31679e24d08",
     "assets/kingdom_rush/kr1-desktop/sounds/files/Sound_SpellTowerHold_Hit.ogg": "6dde2638272232bd64c8478a2d66663da3697510299439dcb50e13f82c32994c",
     "assets/kingdom_rush/kr1-desktop/sounds/files/Sound_SpellTowerHold_Trap.ogg": "b1641f676104fa1f0755f4ea3b1f67cf729a0d89239036ea5f8cad3a285968ea",
-    "assets/kingdom_rush/kr1-desktop/sounds/files/Sound_SpiderAttack2.ogg": "da81fdb64279135aabc2b8b5436208051b8b2226f38734b819ad171f40e58077",
     "scripts/battle/dove_necromancer.gd": "126392bfdd5adc570b6ec4dd88bb989467bde587eb59179aa188f1d63d8e3982",
     "scripts/battle/battle_ui.gd": "ca255d9084e777b055b4260b335d4cd36c066d2b21ddc5440123bc971371b7b2",
     "scripts/battle/battle_feedback.gd": "f3d0dbd1d2225281d8eef83c7f3534350e6c4127ab9af1dc389a5289ad996241",
@@ -485,36 +546,30 @@
     "scripts/battle/dove_projectile.gd": "6dc4815a1561da7fd89fc732ec2115738883d09a9a1ea8505d234af256231c0c",
     "scripts/battle/battle_developer.gd": "11e43667873e2d266704471239dcd6186f9716e6b5ae9a6ee242f861e2b9ad0d",
     "scripts/battle/battle_wave_flags.gd": "cf3daa90f148cf81e3d0dee7c257d75b2ec918adea6bd3bda43b1ee0e93b1735",
-    "scripts/battle/dove_ranger.gd": "0e745150c7b0d093ee10a1d091b9ac569b02309e66bd9f7fef28994960637057",
-    "scripts/battle/dove_elf.gd": "20d41c951bbf094578a3341f65e2cd917cbd395a0a8fef9f8cfb0d70bb226bd8",
+    "scripts/battle/dove_ranger.gd": "a716567064c005feba71c23fa07d3efad14f9e64d92627230c37bf6d8f223928",
+    "scripts/battle/dove_elf.gd": "f83fe51e05a42f44239e73dba218f618e0107bef83687a39af9fd67ead23b534",
     "scripts/battle/dove_spider.gd": "6205a6afd61d1a80aa6de6f07aced69107f1dd2199ff254783ada2189342860d",
-    "scripts/battle/dove_arrow_missile.gd": "102941d47e64bdabe7b115fe4c5b9f2a7d60c7f13138eff6f0ad336d84e5924b",
+    "scripts/battle/dove_arrow_missile.gd": "c267f48a60630c88eed8a9e424dd0968251dd90addb06bf980ba57a66aae45ef",
     "scripts/battle/dove_level_controller.gd": "40b9ae44e2011031c79105db5a9e528bce4275c8fd92343fa6549260ca315e29",
     "scripts/map/dove_map_flag.gd": "c1651317079f3776e5688d39509a4e39c3da201042f7df9568959efbe045d489",
     "scripts/battle/dove_targeting.gd": "8e2f4073f6de7edc946b8b537ecbfc9da845066e94908de59b171abfefef1180",
-    "scripts/battle/dove_enemy_ranged.gd": "b063522295875727cc532016ea0543dd287be085898734931dc71d95999b3a5a",
     "scripts/battle/dove_paladin.gd": "e222ca537c0febb079f368d44e7a2f9b19f6056aed49dc05bad8a3dd3010fc76",
-    "scripts/battle/dove_enemy_projectiles.gd": "04ae879e5b0df6d4c077f99e84aaeb4e2b64635c47984fc32b8ce5f83d671caf",
     "scripts/battle/dove_spawner.gd": "6263f6da1530752cc9dcf73377933cc6ac567af96cc66c1f2a0856438876a17d",
     "scripts/battle/dove_juggernaut.gd": "4aa01398736a88c11a7b0eb6421645ed2180e934c99753cbb6efea11f5a7e728",
     "scripts/battle/dove_damage_factors.gd": "7b66d2cb419c3a0ab3212c8e0536bdf39f809f7d7818e5634c3f1e4ee2d84865",
-    "scripts/battle/dove_musketeer.gd": "93a64ba142b1e83e6650680add14a08f540bedc9c33d1092889714674cf6ebd1",
-    "scripts/battle/dove_snow.gd": "68d0e91988485524909a4dd6d804482adc66a6d43146e875678a8ea01af984fd",
+    "scripts/battle/dove_musketeer.gd": "85c11e0569751561bafab11837dcb94579be1d44383ee1481385cbba1404161c",
     "scripts/battle/dove_power_preview.gd": "8701b14ac3747b3f9409fdb93a168fa800b42e6b9679a8182e131369c67bd8fd",
-    "scripts/battle/dove_heroes.gd": "2a9f3f4c4d211ddf567162136e52370a4cf016e57f501d1b0e21e496dad984a1",
-    "scripts/battle/dove_grid_path.gd": "4a89d8916ce8d76c0371d2f434ed844a133b1171b62819dba90d6c676483ae9d",
-    "scripts/services/hero_combat.gd": "5ffbace94699a9d21b6459cf1adc7a5f47d708cdd9bc176d5965058abed7890b",
     "scripts/battle/dove_bfg.gd": "aafec6e8bc9aa67e0c32fca91b73b186e7e892ff3614dc1a218c9d7849d439f2",
-    "scripts/battle/dove_missile.gd": "c96703f9521dc1c7af80eeecafee18c786069746219b36072ab213de69e131aa",
+    "scripts/battle/dove_missile.gd": "57fdd78ea06aac5301dfc637869d6ec59b3ab4a9a2c02e7bb545d1d2ce0fe533",
     "scripts/battle/dove_advanced_barrack.gd": "2363aae084523e9b94588e549f399643158d2ef2e9de9ff10c0c4f4f08cd7113",
     "scripts/battle/dove_sasquash.gd": "681297953dde1d6c89c8d495c8d3964951aecb96b83bbefac724308cfb992a5d",
     "scripts/battle/dove_chieftain.gd": "7b5fb215dbfbd9951cc4d802faeabb1774fdae2c5cee619f1c5b17d32a388524",
-    "scripts/battle/dove_enemy_melee.gd": "dbd761b72b9d54871ae097b32d78a92783e018f162a216ca4bef4a1cdb23ad8f",
-    "scripts/battle/dove_sorcerer.gd": "d10210953a621e13d05af31f67d6b183d3735fcaf0a459262b8adf891d802038",
-    "scripts/battle/dove_sunray.gd": "f3e00f93575bb2bbda6ae7ea36e9206c0e527d947e147190d803c1207d3efb8d",
-    "scripts/battle/dove_jt.gd": "52d06669df870a14cfe82089d12388a87dde05006d7437f72663802f2d5def51",
-    "scripts/battle/dove_tesla.gd": "7c695c71c4d0a399b1e1e8d14db4bcad5831f73179fefe02c52f06e29a9e03b9",
+    "scripts/battle/dove_sunray.gd": "e1b554f6393baefff73ccadb28dd13beff709b8625759e2087cbc9fbdd302fe8",
+    "scripts/battle/dove_tesla.gd": "059592c2306142a6850418edda679fb4af093e1c423fa818aa0a4e9ddddcaf4a",
     "scripts/battle/dove_wasteland.gd": "7e05de5929927736c203b8110e80b54bcfa6adcd93a2f5555d256bdb5612b9f1",
+    "assets/kingdom_rush/kr1-desktop/sounds/files/MusicEndCredits.ogg": "ed37b1bc89e28734b8ab6974df1d70c204cb4ca521ee98033a0674f8007dd121",
+    "assets/kingdom_rush/kr1-desktop/sounds/files/MusicSuspense.ogg": "5399d8ee9c078d311f36e07ca84f58cff6b07289cabf8a63c4b6662afe41a35c",
+    "assets/kingdom_rush/kr1-desktop/sounds/files/Sound_NotificationPaperOver.ogg": "13af63729a5693953a200d58fe27a2209cef5ee4d63de354c93a57610b526bfe",
     "scripts/services/content_packs.gd": "31251825962fb8d60734f0ad9ae452d69a6879444d60ad78316d34ed9c1488b2",
     "scripts/battle/controllers/default_level.gd": "729f34ba27941e516abc7fa76f9081885ea9a8f6d19840630e53abf5ab2067e7",
     "scripts/battle/controllers/level01.gd": "1a2a24509882287000669f9803f8467fada7449ae91fafc15a4d0dbf5d7cbcbc",
@@ -539,7 +594,7 @@
     "assets/kingdom_rush/kr1-desktop/sounds/files/Sound_MapNewFlag.ogg": "0b98afb3a81e2233d6fb0ac2eed4646c156d5a4a71bcb2bd597b6d96ea357061",
     "assets/kingdom_rush/kr1-desktop/sounds/files/Sound_MapRoad.ogg": "958c97d5029e94a11c4b9d0288e050c1d26208a245b7ba53f095807abb1e893f",
     "scripts/map/map_animations.gd": "f3662e7b951f7576f5bbb81a675eb71e7c571ca00c598c008e5c4ba2ea6c2423",
-    "scripts/services/map_loader.gd": "837eb852538b63085abc7e6feaa0685410c81b4d4d6fe9943588ec24c9dc787f",
+    "scripts/services/map_loader.gd": "3b87d6f0b63506c1aeb04bcc590900528d209472203f61de96eaa9c4e0c4f857",
     "data/heroes/atlas_0.png": "614351daa20917f62d8b2ec93ebe9fb74ea21a235875f9381163f320be9b180d",
     "data/heroes/atlas_1.png": "4508ecac73e86e3dc9f8e1b2ad12196717af8b86879f1147d34ce1cb5eb60f0f",
     "data/heroes/atlas_2.png": "9f5774d0f9da26f8675b0d20bfd3cc82e07c049342a653ca23cbe625b91005b1",
@@ -701,25 +756,21 @@
     "data/level07/sounds.json": "414ba47965790fc28110cb5825ce6c8630c6a2481e170a5ea240aae3d4aca502",
     "data/level07/catalog.json": "20bfe1adc6b4a3417c695ca8412988e08c4b4ba8f5299effe2d16faa294285c7",
     "data/level07/manifest.json": "6b7dffbfcd401128d1c1b1626b20afcd5143ede3c7598a18e645df59bf896a8e",
-    "data/level08/definition.json": "036c581d231b4811f8e5f68f37779d4df295aa61ff77bb1f731eb6c161d57bbc",
     "data/level08/atlas.json": "d63b55263b72a1faed331888cc9772b8ee31ef0211bd9c29ef49b7aa173b5bd1",
     "data/level08/animations.json": "7b29823f9a0c87b6af3fa04fdb2e7ea9f4d24d2e9f59c7720405214088002635",
     "data/level08/sounds.json": "c87c5644bd3e5fab26ec832e4315dd16148dda484980099c31bf1bd2023f28e7",
     "data/level08/catalog.json": "4e498189bc15e1c8b44e62c43f8bcbef880f3e827610630950f0743c7847d72f",
     "data/level08/manifest.json": "3daa290ec9ea1aa4962bef2d4532751db591fdfa509e1997845cd9a5cc74b9ea",
-    "data/level09/definition.json": "5b0a505c2c2b58de0d0c461e132ac3d8a9e11af60ea15d81e6836a86fc6fef3a",
     "data/level09/atlas.json": "59e32e821082496c8ede843364f94650cc01e004a4d6f0fa02bdfd5a414ae45f",
     "data/level09/animations.json": "8788bd93f019d21d0f78af9d30abb67dc58d3108937ab377d8884680cdc0c179",
     "data/level09/sounds.json": "88e798b6226b1831093aee13daa152b966d1f984ca970ba7694b154b28ad33c9",
     "data/level09/catalog.json": "446d9f5062c2d15c8e0fdee7e5927ed4f97940bbc25bc373d181071a4f5dd87c",
     "data/level09/manifest.json": "f4fa96337ffce8de1600e81581fd8201c60988d997dca1ba92dd0fc230de4cc2",
-    "data/level10/definition.json": "2d9f2440a2fb412b7e799078ef6bb62e8ae4ee45883dc45be149881b0cb24935",
     "data/level10/atlas.json": "49b55a5d1611576034850650820ca8a836ff5561cbd893ce1a1e828bacb6e1db",
     "data/level10/animations.json": "d53be31393eb1a0731816460c76b368564137e5fde4cfe852b9b2037d1931d7d",
     "data/level10/sounds.json": "77a37e77702c76cfe017f936883b8a077cb7cf7905c7b452e43f5605b062b80f",
     "data/level10/catalog.json": "413013f026c4368ed8fcc626387288051b615e85a16420594b0c3b19b9696d70",
     "data/level10/manifest.json": "8e0e4c67a3bced05dad72fe37cdc7d0caa0f0ea2847f39685b71ce90b19a803a",
-    "data/level11/definition.json": "aa68a35eb99cc68dad8de4152fd09c420ccfbbf200cf95a71ae1a089bdfd4eeb",
     "data/level11/atlas.json": "089357ab5470387cba2a000253216852076766105ccfeca9127eebefffeba115",
     "data/level11/animations.json": "d24d6b40d714031c759e7da53350827dcbcd55e420f85bce30a5b85c5e24d754",
     "data/level11/sounds.json": "77a37e77702c76cfe017f936883b8a077cb7cf7905c7b452e43f5605b062b80f",
@@ -735,37 +786,40 @@
     "data/heroes/atlas.json": "4e16162f241515e956b5080c3183aa3281e3836fb35a07ae0ec0f73e911fb8c5",
     "data/heroes/sounds.json": "46366b3a520ef613fc558e4b8f3fbdbe42ce0a8f710880c6a6c62d5e118c6e97",
     "data/heroes/manifest.json": "8c37897fa60df963853a0b0c5590edb4188ba624f16a1a280bbbf71ce7a4dac4",
-    "data/hero_malik_combat/definition.json": "09d44221a8d038040827984babe85c0ce8dacc352e4eb1b58407c4263fd934b0",
     "data/hero_malik_combat/atlas.json": "34193c974d17fa5849e3112cefe80863758162e5d2114e8c985b86ae431a8a7c",
     "data/hero_malik_combat/animations.json": "9875d267bb015425ac0ee56f9e3afdfd5d88f502dddd4b3def2e1da3c5880b8c",
     "data/hero_malik_combat/sounds.json": "fec7d40e7bbede1fb8b8bf59b3924a388afe63db0519b3538bf7cfaa0f531d53",
     "data/hero_malik_combat/catalog.json": "67eeb2b9c27085abc6cea74147baf4690b26e07d6687fd0730137904819e28b8",
     "data/hero_malik_combat/manifest.json": "471b196c97448927dea2afa43e8f8444db84dae05fa651d4610cb3536f5b5ebb",
-    "tools/verify_level12_delivery.py": "818b194f41877c0a83f1907927f5bcbb4dbd55ba06bd01f2263818bef7eb5beb",
-    "tools/web_bootstrap.py": "1ff58538a79db575f5aca1d4454c6b393b8eb01eba38f4db36a940e5e11f486d",
-    "tools/package_level01.py": "284db72cecbb72875d4fb0450059487011241b5aa0812724c9dd457bc7ab08be",
-    "tools/prepare_level12_reference.py": "d73691d5587d95291aa166979d65850c6721d5b470ac03044ed94d62bb77b9d9",
-    "tests/verify_web_pack.gd": "7b452417fdfef86e293c5e13d0348939abc6632203856c5be068217d16d01b86",
-    "tests/fixtures/level12_compatibility.json": "21509f95eb0c322bf6e73cd77f2d4edf3abb4f05c025ac453433b56820e0c7f5",
-    "tools/level12_reference/behavior.lua": "af47f543c763cfd1e9a6577b8ad61fceb978d2121cab45e6241ae6a076d734b4",
-    "tools/level12_reference/main.lua": "18d329087784b9190798371b93c97f9ddced8ed6ad7873878b21a0a4c16a30b8"
+    "tools/verify_level12_delivery.py": "c5355c2d04185510b1e5c7fa3d10937f866096f95a524db7d5b622350ced1c5c",
+    "tools/web_bootstrap.py": "6aa0c3ce782fc24923014316d7aa8974a7ab9f3e959ffbf1c5e1ef11795e2d88",
+    "tools/web_packs.py": "133bde46dd6e52846ac0e6647a909f4d2de55b494b4b0bb92daa38a1c7c0be7a",
+    "tools/package_level01.py": "6133d1a6c5bb3b1600c49275c71627e4e0024f29144ec73f3d4a048ff589db1a",
+    "tools/prepare_level12_reference.py": "659124829f6d177a2a0f592b8568a0ab2f3aaca0bd905fb1c56fc4e0ec662808",
+    "tests/verify_web_pack.gd": "f0b02e14d61fbe5121f1651ab523916ac0338582fc4159139f1c53ad774ec42e",
+    "tests/fixtures/level12_compatibility.json": "f1a74cb84b1fe2395a299a6cb99377683e1ce447922bd78a53bf27ab4f5810c0",
+    "tools/level12_reference/behavior.lua": "fb2c620428ffd94a9939362e6614df7d87093de2ced69ec6d7206fa688f5c6d5",
+    "tools/level12_reference/main.lua": "6df72bc3bc062f2768d9db4c7e1c55e4bc7e3f5f9f336a8069ad4d94987f13f1"
   },
   "report_sha256": {
-    "reports/level12_logic.json": "b1cfb41985231f96bf4764b6ceed7bfef80a106d84b338fddefb317f68995dce",
-    "reports/level12_upgrades.json": "60d5c475fabc5ae3b26b8087d3a3b2eacc45c76aa6d90e238969e8f77478736a",
-    "reports/level12_native_1280x720.json": "4cf04cbc88c7652aceedeee848f140ead44adaff056ffdb4dcf041b1cd9544b9",
-    "reports/level12_assets.json": "2bd94e6ba0c98f70bdf16027e23776d028c777194e8bcde5b5c7e2a31d824055",
-    "reports/level09_logic.json": "b5bec7ad9c264632dde98d0b2f25199bd3a64de132112b01d5b9ddd96a4b39e5",
-    "reports/level10_logic.json": "b4fdf8d4a6a69a27f0b5df856f0c185bf6cc2c27c1e191b59acd6fa4de04cc14",
-    "reports/hero_combat_logic.json": "870072290836ca8129deead75ebea7a45c5feb3df0b0a429ab69ee585d12764d",
-    "reports/tesla_animation_logic.json": "ddc3c76fac952ab397a2da4d0fb6109fdd5483e85b38c8e32dddce6ccc00662a"
+    "reports/level12_logic.json": "592eff09d04f5e1984b510aaec84e7880fcc767f2245f49bc4e876c9af3255df",
+    "reports/level12_flow.json": "897ed92f327b5438d1c14383f0bb122bbfe80acb6dfc89b67b7d7c3af6c4fb3f",
+    "reports/level12_native_1280x720.json": "a1b1904c833544977c6574ab95f65de06386ce8aa0c550ecf2242834684fb29b",
+    "reports/level12_native_1024x768.json": "a31505403cda48cd4b8d9dcf458a0ac290547f0f113f95ab3ee246c1ff8196c8",
+    "reports/level12_assets.json": "651fb880221d2037aaa83674beff518c7605ba0de917d99ef6535c0252ddeee6",
+    "reports/kr1_end_assets.json": "c2de0571449a00750cd514606dbf4f0291ce1b2936e2da12776b3cb5868d02d0",
+    "reports/level11_shared_logic.json": "466a2e68c9aeb73365ed0b3f7aed0812433d51e180172cb0c19ab11b78f9f9d2",
+    "reports/level10_shared_logic.json": "0a658f8a0cdd878ed884af725cd305adda6cd03dd61ec8c9fa0a59ee33c95fce",
+    "reports/level11_upgrades.json": "539d760e463da537f083889ef7485e205317f40b16355dcb27fe6efa37d5a7a3",
+    "reports/level11_ranged_shared.json": "097ecdc617cb3a3e7ba331f56cd35e23b6c618d7ef34b6a8448536bed9d5cbb1",
+    "reports/hero_combat_logic.json": "5538fbd4bd211dc603b1dff54bddc0dbc7bbc7467ca31df4386ec031d1a8bef1"
   },
   "browser_tested": false,
   "victory_replays_required": false,
-  "historical_reports_revalidated": false,
+  "credits_data": false,
   "compatibility": {
-    "base_commit": "52b9a4ea389dde4218e3c081deec6ff4883afe23",
+    "base_commit": "00d09eaba3ba7eade8c1864cc87780af3c27d40a",
     "exact_files": 246
   },
-  "historical_scope": "Levels 1-11 and ranger arena data unchanged byte for byte; representative shared runtime regressions run on current code."
+  "historical_scope": "Levels 1-11 and ranger arena data unchanged byte for byte; current representative JT, graveyard, technology, Malik and shared combat regressions."
 }

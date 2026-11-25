@@ -23,7 +23,7 @@ const AdvancedBarrack = preload("res://scripts/battle/dove_advanced_barrack.gd")
 const Sasquash = preload("res://scripts/battle/dove_sasquash.gd")
 const Chieftain = preload("res://scripts/battle/dove_chieftain.gd")
 const EnemyMelee = preload("res://scripts/battle/dove_enemy_melee.gd")
-const ROLES := ["ground", "healer", "spider", "soldier", "reinforcement", "archer", "mage", "engineer", "barrack", "mercenary", "ranger", "building", "arrow", "bolt", "bomb", "fireball", "arrow_missile", "thorn_aura", "spawner", "dps", "track_modifier", "heal_modifier", "thorn_modifier", "fire_control", "passive", "juggernaut", "arcane", "ray", "arcane_damage", "disintegrate", "teleport", "mod_aura", "enemy_missile", "enemy_bomb", "tower_decal", "instant_damage", "damage_aura", "enemy_bolt", "necromancer", "layout_spawner", "tesla", "tesla_ray", "tesla_aura", "graveyard", "demon_mage", "skeleton_aura", "musketeer", "shotgun", "tunnel", "unit_regen", "hero_malik", "fissure_aura", "stun_modifier", "bfg", "missile", "cluster", "sasquash_holder", "chieftain", "sorcerer", "sunray", "jt", "jt_spawn", "jt_freeze", "sheep", "polymorph", "armor_buff", "speed_buff", "veznan", "veznan_tower", "veznan_souls_aura", "veznan_soul", "veznan_portal"]
+const ROLES := ["ground", "healer", "spider", "soldier", "reinforcement", "archer", "mage", "engineer", "barrack", "mercenary", "ranger", "building", "arrow", "bolt", "bomb", "fireball", "arrow_missile", "thorn_aura", "spawner", "dps", "track_modifier", "heal_modifier", "thorn_modifier", "fire_control", "passive", "juggernaut", "arcane", "ray", "arcane_damage", "disintegrate", "teleport", "mod_aura", "enemy_missile", "enemy_bomb", "tower_decal", "instant_damage", "damage_aura"]
 var catalog: Dictionary
 var bindings: Dictionary
 
@@ -61,7 +61,7 @@ static func validate(definition: Dictionary, content_catalog: Dictionary) -> Str
 		for child: String in content_catalog.runtime_dependencies[owner]:
 			if not templates.has(child): return "%s: %s -> missing runtime dependency %s" % [content,owner,child]
 	for entity: Dictionary in definition.get("layout", {}).get("entities_list", []):
-		var required: bool = entity.has("tower.holder_id") or str(entity.template).begins_with("tunnel") or str(entity.template).begins_with("decal_tunnel_light") or str(entity.template).begins_with("ps_snow") or str(entity.template).begins_with("veznan_portal")
+		var required: bool = entity.has("tower.holder_id") or str(entity.template).begins_with("tunnel") or str(entity.template).begins_with("decal_tunnel_light") or str(entity.template).begins_with("ps_snow")
 		if required and not templates.has(entity.template): return "%s: layout -> missing template %s" % [content,entity.template]
 	for name: String in definition.get("callbacks", {}):
 		for event: String in definition.callbacks[name]:
@@ -75,7 +75,7 @@ static func validate(definition: Dictionary, content_catalog: Dictionary) -> Str
 		if not templates.has(name) or not supported(implementation): return "%s: %s -> unsupported Dove behavior '%s'" % [content, name, source_id]
 	for name: String in templates:
 		var template: Dictionary = templates[name]
-		var actor: bool = (template.has("entity") and template.has("cooldown_after")) or template.has("spawn_groups") or (template.has("particles_name") and template.has("angle_variation")) or template.has("graveyard") or template.has("enemy") or template.has("soldier") or template.has("bullet") or template.has("modifier") or template.has("aura") or template.has("spawner") or template.has("fireball_count") or (template.has("tower") and not str(template.tower.get("type", "")).begins_with("holder"))
+		var actor: bool = (template.has("entity") and template.has("cooldown_after")) or template.has("graveyard") or template.has("enemy") or template.has("soldier") or template.has("bullet") or template.has("modifier") or template.has("aura") or template.has("spawner") or template.has("fireball_count") or (template.has("tower") and not str(template.tower.get("type", "")).begins_with("holder"))
 		if not actor: continue
 		var source_id: String = definition.get("behaviors", {}).get(name, "")
 		var role: String = content_catalog.get("behaviors", {}).get(canonical(source_id, content_catalog), "")
@@ -102,7 +102,8 @@ func role(template: String) -> String:
 	return catalog.behaviors.get(canonical(bindings.get(template, ""), catalog), "")
 
 static func supported(value: String) -> bool:
-	return value in ROLES
+	if value in ["veznan","veznan_block","veznan_portal","veznan_soul","veznan_souls"]:return true
+	return value in ROLES or value in ["enemy_bolt","necromancer","layout_spawner","tesla","tesla_ray","tesla_aura","graveyard","demon_mage","skeleton_aura","musketeer","shotgun","tunnel","unit_regen","hero_malik","fissure_aura","stun_modifier","bfg","missile","cluster","sasquash_holder","chieftain","sorcerer","sunray","jt","jt_spawn","jt_freeze","sheep","polymorph","armor_buff","speed_buff"]
 
 func projectile_role(template: Dictionary) -> String:
 	return catalog.behaviors.get(canonical(template.get("behavior", ""), catalog), "")
@@ -146,19 +147,17 @@ func hire(sim, tower: Dictionary) -> void:
 	elif role(tower.template) == "mercenary": Elf.hire(sim, tower)
 
 func tower_step(sim, tower: Dictionary) -> bool:
-	if tower.template == "tower_sasquash":
-		Sasquash.step(sim, tower)
-		return true
-	match role(tower.template):
-		"tesla": Tesla.step(sim, tower); return true
-		"sorcerer": Sorcerer.step(sim, tower); return true
-		"sunray": Sunray.step(sim, tower); return true
-		"sasquash_holder": Sasquash.frozen_step(sim, tower); return true
-		"bfg": Bfg.step(sim, tower); return true
-		"musketeer": Musketeer.step(sim, tower); return true
-		"arcane": Arcane.step(sim, tower); return true
-		"ranger": Ranger.step(sim, tower); return true
-	return false
+	if role(tower.template)=="tesla": Tesla.step(sim,tower);return true
+	if role(tower.template)=="sorcerer": Sorcerer.step(sim,tower);return true
+	if role(tower.template)=="sunray": Sunray.step(sim,tower);return true
+	if role(tower.template) == "sasquash_holder": Sasquash.frozen_step(sim,tower); return true
+	if tower.template == "tower_sasquash": Sasquash.step(sim,tower); return true
+	if role(tower.template) == "bfg": Bfg.step(sim,tower); return true
+	if role(tower.template) == "musketeer": Musketeer.step(sim,tower); return true
+	if role(tower.template) == "arcane": Arcane.step(sim, tower); return true
+	if role(tower.template) != "ranger": return false
+	Ranger.step(sim, tower)
+	return true
 
 func soldier_inserted(sim, soldier: Dictionary, tower: Dictionary) -> void:
 	sim.DamageFactors.inherit(sim, soldier, tower)
@@ -171,6 +170,7 @@ func soldier_step(sim, soldier: Dictionary, template: Dictionary) -> bool:
 	return role(soldier.template) == "soldier" and template.has("ranged") and Elf.ranged(sim, soldier, template)
 
 func enemy_inserted(sim, enemy: Dictionary) -> void:
+	if role(enemy.template)=="veznan":Veznan.initialize(sim,enemy)
 	sim.snow.enemy_inserted(sim,enemy)
 	if role(enemy.template)=="necromancer":Necromancer.initialize(sim,enemy)
 	if enemy.template=="enemy_lava_elemental":enemy.mixed_melee_job={};enemy.source_corpse=true
@@ -184,10 +184,10 @@ func enemy_inserted(sim, enemy: Dictionary) -> void:
 	if role(enemy.template) == "chieftain": Chieftain.initialize(sim,enemy)
 
 func enemy_step(sim, enemy: Dictionary, template: Dictionary) -> bool:
+	if enemy.has("veznan"):return sim.veznan.step_enemy(sim,enemy,template)
 	if Wasteland.enemy_step(sim,enemy,template):return true
 	if enemy.has("necromancer"):return Necromancer.step(sim,enemy,template)
 	if enemy.has("jt"):return Jt.step(sim,enemy,template)
-	if enemy.has("veznan"):return sim.veznan.step(sim,enemy,template)
 	if role(enemy.template)=="sheep" and Sorcerer.sheep_step(sim,enemy):return true
 	if enemy.has("mixed_melee_job"): return EnemyMelee.step(sim,enemy,template)
 	match role(enemy.template):

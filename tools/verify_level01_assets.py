@@ -52,9 +52,8 @@ def verify(level_id=1, ranger_arena=False):
     # Every default sprite must resolve, including suffixes such as explosion_big
     # and explode_small. Merely validating already-selected animations misses them.
     for template_name,template in data["templates"].items():
-        text_sprite_ids = {int(item.get("sprite_id", 0)) for item in template.get("texts", {}).get("list", [])}
-        for sprite_index, sprite in enumerate(template.get("render",{}).get("sprites",[]), 1):
-            if sprite_index in text_sprite_ids: continue
+        for sprite_index,sprite in enumerate(template.get("render",{}).get("sprites",[]),1):
+            if any(t.get("sprite_id")==sprite_index for t in template.get("texts",{}).get("list",[])): continue
             name=sprite.get("name", "").replace("%04i","0001")
             key=sprite.get("prefix", "")+"_"+name if sprite.get("prefix") else name
             script_states=[entry.split(":",1)[1] for entry in spec["export"].get("script_animation_starts",[]) if entry.split(":",1)[0]==template["template_name"]]

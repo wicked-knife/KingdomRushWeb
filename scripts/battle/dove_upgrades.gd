@@ -283,7 +283,7 @@ func reinforcement_step(sim, soldier: Dictionary, t: Dictionary) -> bool:
 		if not target.is_empty() and target.hp > 0:
 			var offset: Vector2 = sim.vec(attack.bullet_start_offset[0]); offset.x *= -1 if soldier.flip else 1
 			var bullet: Dictionary = sim.templates[attack.bullet].bullet
-			var aim: Vector2 = target.pos + sim.vec(sim.templates[target.template].unit.hit_offset)
+			var aim: Vector2 = target.pos + sim.vec(sim.unit_template(target).unit.hit_offset)
 			if bullet.get("predict_target_pos", false) and target.blocker == 0: aim += target.last_dir * 30.0 * float(bullet.flight_time)
 			sim._projectile(attack.bullet, target.id, soldier.pos + offset, aim, float(bullet.flight_time), soldier)
 		soldier.pending = {}; return true

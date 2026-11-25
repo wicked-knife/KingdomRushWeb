@@ -1,8 +1,8 @@
 {
   "package_created": true,
-  "packager_sha256": "284db72cecbb72875d4fb0450059487011241b5aa0812724c9dd457bc7ab08be",
+  "packager_sha256": "6133d1a6c5bb3b1600c49275c71627e4e0024f29144ec73f3d4a048ff589db1a",
   "source_commit": "4072b18bf4e418eec8b813a960c83003744cb710",
-  "content_catalog_sha256": "a5a4b3887f071c08f7e66536689e09eb9af6dd9011e7d1305916d43eb4f9b432",
+  "content_catalog_sha256": "124b63f07c14a7fd298310da6661fbe67f1e82dfed936423d6a3ba17ab2fe400",
   "browser_tested": false,
   "build_type": "release",
   "developer_menu": false,
@@ -212,16 +212,17 @@
   "challenge_acceptance_basis": "dove_configuration_and_functionality",
   "challenge_victory_replays_required": false,
   "challenge_replays_run": false,
-  "challenge_replay_files": [],
-  "challenge_pending_replays": [
+  "challenge_replay_files": [
     "1/2",
     "1/3",
+    "4/3"
+  ],
+  "challenge_pending_replays": [
     "2/2",
     "2/3",
     "3/2",
     "3/3",
     "4/2",
-    "4/3",
     "5/2",
     "5/3",
     "6/2",
@@ -246,61 +247,98 @@
     "passed": true,
     "verification": {
       "passed": true,
-      "resource_paths": 1174,
-      "unique_payloads": 1130
+      "resource_paths": 1181,
+      "unique_payloads": 1134
     },
-    "original_bytes": 510321360,
-    "total_bytes": 404802612,
-    "saved_bytes": 105518748,
-    "boot_bytes": 46512608,
-    "deferred_pack_count": 46,
+    "original_bytes": 510134424,
+    "total_bytes": 398293704,
+    "saved_bytes": 111840720,
+    "boot_bytes": 46502796,
+    "deferred_pack_count": 45,
     "deferred_limit_bytes": 25165824,
     "first_download_bytes": {
       "map": 20465640,
       "heroes": 12424424,
-      "level01": 14014612,
-      "level02": 14564976,
-      "level03": 16816436,
-      "level04": 36204996,
-      "level05": 39318884,
-      "level06": 44204036,
-      "level07": 42675872,
-      "level08": 48090524,
-      "level09": 59124852,
-      "level10": 48556168,
-      "level11": 51347052,
-      "level12": 55925216,
+      "kr1_end": 1328700,
+      "level01": 14014496,
+      "level02": 14564860,
+      "level03": 16816320,
+      "level04": 36204880,
+      "level05": 39318768,
+      "level06": 44203920,
+      "level07": 42675756,
+      "level08": 48090292,
+      "level09": 59124620,
+      "level10": 48556376,
+      "level11": 51347260,
+      "level12": 56015988,
       "hero:hero_malik": 2312276
     },
     "sequential_campaign_incremental_bytes": {
-      "level01": 13943204,
+      "level01": 13943088,
       "level02": 11676068,
       "level03": 12242764,
       "level04": 33038904,
       "level05": 33507532,
       "level06": 38374572,
       "level07": 36439676,
-      "level08": 18563648,
+      "level08": 18563532,
       "level09": 28266408,
-      "level10": 41580720,
+      "level10": 41581044,
       "level11": 21043112,
-      "level12": 34503536
+      "level12": 26675648
     },
     "browser_tested": false
   },
   "battle_ui_acceptance": {
-    "twelfth_native": {
+    "native": {
       "passed": true,
-      "checks": 95,
-      "scope": "stage 12 three modes, foregrounds/forsale, taunt shoutbox, native 3-click tower lock release, portal, soul drain, demon fire, death souls/white circle/hide_gui, restart and settlement"
+      "checks": 100,
+      "layout_only": false
     }
   },
   "default_technology_acceptance": {
-    "twelfth_source_patches": {
+    "source_patches": {
       "passed": true,
       "checks": 86,
       "source_patch_scenarios": 16
     }
+  },
+  "feedback_acceptance": {
+    "passed": null,
+    "reports": null,
+    "historical_baseline_preserved": null,
+    "content_combinations": null,
+    "guard_scope": null
+  },
+  "feedback_report_sha256": {},
+  "seventh_acceptance": {
+    "passed": null,
+    "playable_combinations": null,
+    "reports": null,
+    "failure_probes": null,
+    "additive_audit": null
+  },
+  "eighth_acceptance": {
+    "passed": null,
+    "playable_combinations": null,
+    "reports": null,
+    "failure_probes": null
+  },
+  "tenth_acceptance": {
+    "passed": null,
+    "playable_combinations": null,
+    "reports": null,
+    "failure_probes": null,
+    "historical_scope": null
+  },
+  "eleventh_acceptance": {
+    "passed": null,
+    "playable_combinations": null,
+    "reports": null,
+    "failure_probes": null,
+    "compatibility": null,
+    "historical_scope": null
   },
   "twelfth_acceptance": {
     "passed": true,
@@ -308,48 +346,58 @@
     "reports": {
       "level12_logic": {
         "passed": true,
-        "checks": 1201,
+        "checks": 1195,
         "independent_modes": 3,
         "timeline_waves": 22,
         "births": 1110,
-        "source_scenarios": 10
+        "source_scenarios": 12
       },
-      "level12_upgrades": {
+      "level12_flow": {
+        "passed": true,
+        "checks": 35
+      },
+      "level12_native_1280x720": {
+        "passed": true,
+        "checks": 100,
+        "layout_only": false
+      },
+      "level12_native_1024x768": {
+        "passed": true,
+        "checks": 19,
+        "layout_only": true
+      },
+      "level12_assets": {
+        "passed": true,
+        "frames": 7411,
+        "animations": 543
+      },
+      "kr1_end_assets": {
+        "passed": true,
+        "frames": 19
+      },
+      "level11_shared_logic": {
+        "passed": true,
+        "checks": 86,
+        "scope": "representative stage-ten graveyard, demons, skeletons and Tesla source regressions"
+      },
+      "level10_shared_logic": {
+        "passed": true,
+        "checks": 53,
+        "scope": "source Sorcerer/Sunray attacks; freeze/thaw, JT death, polymorph and elemental lifecycle; no campaign replay"
+      },
+      "level11_upgrades": {
         "passed": true,
         "checks": 86,
         "source_patch_scenarios": 16
       },
-      "level12_native_1280x720": {
+      "level11_ranged_shared": {
         "passed": true,
-        "checks": 95,
-        "scope": "stage 12 three modes, foregrounds/forsale, taunt shoutbox, native 3-click tower lock release, portal, soul drain, demon fire, death souls/white circle/hide_gui, restart and settlement"
-      },
-      "level12_assets": {
-        "passed": true,
-        "frames": 7433,
-        "animations": 546
-      },
-      "level09_logic": {
-        "passed": true,
-        "checks": 246,
-        "independent_modes": 3,
-        "timeline_waves": 26,
-        "births": 995
-      },
-      "level10_logic": {
-        "passed": true,
-        "checks": 168,
-        "independent_modes": 3,
-        "timeline_waves": 26,
-        "births": 1160
+        "checks": 18,
+        "scope": "six source axe-thrower ranged timing and interruption regressions"
       },
       "hero_combat_logic": {
         "passed": true,
         "checks": 161
-      },
-      "tesla_animation_logic": {
-        "passed": true,
-        "checks": 12
       }
     },
     "failure_probes": [
@@ -359,14 +407,9 @@
         "reason": "level12: behavior -> missing template eb_veznan"
       },
       {
-        "missing": "mod_veznan_tower",
+        "missing": "veznan_soul",
         "rejected": true,
-        "reason": "level12: eb_veznan -> missing runtime dependency mod_veznan_tower"
-      },
-      {
-        "missing": "veznan_portal",
-        "rejected": true,
-        "reason": "level12: behavior -> missing template veznan_portal"
+        "reason": "level12: eb_veznan -> missing runtime dependency veznan_soul"
       },
       {
         "missing": "veznan_souls_aura",
@@ -374,19 +417,14 @@
         "reason": "level12: eb_veznan -> missing runtime dependency veznan_souls_aura"
       },
       {
-        "missing": "veznan_soul",
+        "missing": "veznan_portal",
         "rejected": true,
-        "reason": "level12: eb_veznan -> missing runtime dependency veznan_soul"
+        "reason": "level12: eb_veznan -> missing runtime dependency veznan_portal"
       },
       {
-        "missing": "ps_veznan_soul",
+        "missing": "mod_veznan_tower",
         "rejected": true,
-        "reason": "level12: eb_veznan -> missing runtime dependency ps_veznan_soul"
-      },
-      {
-        "missing": "decal_s12_shoutbox",
-        "rejected": true,
-        "reason": "level12: eb_veznan -> missing runtime dependency decal_s12_shoutbox"
+        "reason": "level12: eb_veznan -> missing runtime dependency mod_veznan_tower"
       },
       {
         "missing": "decal_eb_veznan_white_circle",
@@ -394,38 +432,72 @@
         "reason": "level12: eb_veznan -> missing runtime dependency decal_eb_veznan_white_circle"
       },
       {
-        "missing": "veznan behavior",
+        "missing": "decal_s12_shoutbox",
+        "rejected": true,
+        "reason": "level12: missing template dependency: eb_veznan -> decal_s12_shoutbox"
+      },
+      {
+        "missing": "boss behavior",
         "rejected": true,
         "reason": "level12: eb_veznan -> unsupported.missing: Unsupported Dove behavior: unsupported.missing"
       },
       {
-        "missing": "veznan runtime resource",
+        "missing": "boss lethal callback",
+        "rejected": true,
+        "reason": "level12: eb_veznan -> missing required runtime field ['health', 'on_damage']"
+      },
+      {
+        "missing": "boss runtime module",
         "rejected": true,
         "reason": "Runtime dependency missing from export manifest: res://scripts/battle/dove_behaviors.gd -> res://scripts/battle/dove_veznan.gd"
+      },
+      {
+        "missing": "comic frames",
+        "rejected": true,
+        "reason": "endComic_box1"
+      },
+      {
+        "missing": "comic drawing order",
+        "rejected": true,
+        "reason": ""
+      },
+      {
+        "missing": "epilogue audio",
+        "rejected": true,
+        "reason": ""
       }
     ],
     "compatibility": {
-      "base_commit": "52b9a4ea389dde4218e3c081deec6ff4883afe23",
+      "base_commit": "00d09eaba3ba7eade8c1864cc87780af3c27d40a",
       "exact_files": 246
     },
-    "historical_scope": "Levels 1-11 and ranger arena data unchanged byte for byte; representative shared runtime regressions run on current code."
+    "credits_data": false
+  },
+  "ninth_acceptance": {
+    "passed": null,
+    "playable_combinations": null,
+    "reports": null,
+    "failure_probes": null
   },
   "validation_report_sha256": {
-    "reports/level12_logic.json": "b1cfb41985231f96bf4764b6ceed7bfef80a106d84b338fddefb317f68995dce",
-    "reports/level12_upgrades.json": "60d5c475fabc5ae3b26b8087d3a3b2eacc45c76aa6d90e238969e8f77478736a",
-    "reports/level12_native_1280x720.json": "4cf04cbc88c7652aceedeee848f140ead44adaff056ffdb4dcf041b1cd9544b9",
-    "reports/level12_assets.json": "2bd94e6ba0c98f70bdf16027e23776d028c777194e8bcde5b5c7e2a31d824055",
-    "reports/level09_logic.json": "b5bec7ad9c264632dde98d0b2f25199bd3a64de132112b01d5b9ddd96a4b39e5",
-    "reports/level10_logic.json": "b4fdf8d4a6a69a27f0b5df856f0c185bf6cc2c27c1e191b59acd6fa4de04cc14",
-    "reports/hero_combat_logic.json": "870072290836ca8129deead75ebea7a45c5feb3df0b0a429ab69ee585d12764d",
-    "reports/tesla_animation_logic.json": "ddc3c76fac952ab397a2da4d0fb6109fdd5483e85b38c8e32dddce6ccc00662a",
-    "reports/level12_delivery.json": "5ba80a2acf0c221aa5fc0da3d2bdb894cba13e91468fc6dd0ba0d74c05e70e87"
+    "reports/level12_logic.json": "592eff09d04f5e1984b510aaec84e7880fcc767f2245f49bc4e876c9af3255df",
+    "reports/level12_flow.json": "897ed92f327b5438d1c14383f0bb122bbfe80acb6dfc89b67b7d7c3af6c4fb3f",
+    "reports/level12_native_1280x720.json": "a1b1904c833544977c6574ab95f65de06386ce8aa0c550ecf2242834684fb29b",
+    "reports/level12_native_1024x768.json": "a31505403cda48cd4b8d9dcf458a0ac290547f0f113f95ab3ee246c1ff8196c8",
+    "reports/level12_assets.json": "651fb880221d2037aaa83674beff518c7605ba0de917d99ef6535c0252ddeee6",
+    "reports/kr1_end_assets.json": "c2de0571449a00750cd514606dbf4f0291ce1b2936e2da12776b3cb5868d02d0",
+    "reports/level11_shared_logic.json": "466a2e68c9aeb73365ed0b3f7aed0812433d51e180172cb0c19ab11b78f9f9d2",
+    "reports/level10_shared_logic.json": "0a658f8a0cdd878ed884af725cd305adda6cd03dd61ec8c9fa0a59ee33c95fce",
+    "reports/level11_upgrades.json": "539d760e463da537f083889ef7485e205317f40b16355dcb27fe6efa37d5a7a3",
+    "reports/level11_ranged_shared.json": "097ecdc617cb3a3e7ba331f56cd35e23b6c618d7ef34b6a8448536bed9d5cbb1",
+    "reports/hero_combat_logic.json": "5538fbd4bd211dc603b1dff54bddc0dbc7bbc7467ca31df4386ec031d1a8bef1",
+    "reports/level12_delivery.json": "cf25922305478848c87823540341b1db52c18e3d633b5b0c9d76849b0ae0213a"
   },
   "technology_scheme": "1",
-  "pck_files": 1175,
+  "pck_files": 1182,
   "bundle": "build\\KingdomRush-KR1-Levels01-12-Web.zip",
-  "bytes": 388873739,
-  "sha256": "2d2b346ac93c920a88a37dd9b38932efb5c65f8dcf9115ea0e473390541471e2",
+  "bytes": 382447156,
+  "sha256": "b67d354a71fd2f7839e771547bbbb0a78bba47f04791ae743d27d0f5d11349fa",
   "web_files": {
     "index.apple-touch-icon.png": {
       "bytes": 11939,
@@ -441,7 +513,7 @@
     },
     "index.html": {
       "bytes": 3297,
-      "sha256": "4cf6e048d97be20d469c2c7357b70d13eb66d2062e7233381b13abe90c9408c0"
+      "sha256": "51e939778e95dbc1709c941baf6ad9e48284f3500a49279d8b1201eb5a3d516c"
     },
     "index.icon.png": {
       "bytes": 5765,
@@ -452,8 +524,8 @@
       "sha256": "33c94cb3175f3333b82e2a3be5e8e86f77986f0aa2042b1631f6367a4e5bb6ba"
     },
     "index.pck": {
-      "bytes": 46512608,
-      "sha256": "4352d78862c223f8e6667d78c74ba167f4e0bbe8b8576eea6d69ab3e0b5fbe78"
+      "bytes": 46502796,
+      "sha256": "dfa1875b2b8b8e9bb624ac89c3cd6f90a7185ea6949942e7289e056de91009e9"
     },
     "index.png": {
       "bytes": 21443,
@@ -464,36 +536,36 @@
       "sha256": "fc74679e3b97f76878947fcd4fbe1268cbfa6188182a2e33bbc3f5dc9bfa57d0"
     },
     "export_receipt.json": {
-      "bytes": 88047,
-      "sha256": "824a3742e2fe5e87abf7ceb6f43aba290c4bc9b3c3bcc88414391f60a39cbf00"
+      "bytes": 91843,
+      "sha256": "ffdbf24dc0b7bfd5d96bddcb5b1f8b6447cb0e4f9d0a794a1270396f2609379c"
     },
     "README.txt": {
-      "bytes": 8243,
-      "sha256": "5a83a61022139d86d4c3d315863eee863db27349c80a7d592d312decf1773f70"
+      "bytes": 7894,
+      "sha256": "f014641dc4df451a22e16c4a67625c4ed550c334e50dc2712e2e9d220076e81e"
     },
     "start_server.cmd": {
       "bytes": 180,
       "sha256": "8f021ad5511504a288354fec02c4bf8514f054a2457cc229710e1d6069558b32"
     },
     "web_packs.json": {
-      "bytes": 22990,
-      "sha256": "d2982e0091ac9505288123814c2003e398527c4eef6540cb913d4cec484c7ae5"
+      "bytes": 21890,
+      "sha256": "af0ac0dd8d9860bab65aa7995dbd8cc3722b8c2b8db4d7b881ad5060a3301e3c"
     },
     "pack_report.json": {
-      "bytes": 870,
-      "sha256": "b8f3e24ac7441014e14d3ae574b57ed582fb53b80926c1246733c5b2e42c7fde"
+      "bytes": 888,
+      "sha256": "48ef2565a645838bcf69528d1b972018b5589c975c651cfab2b78c4cd038d2ae"
     },
     "packs/0559dbc7be658456b1064fcac7bf018aa41fdf956800cc2b02ec118bd617177b.pck": {
       "bytes": 71408,
       "sha256": "0559dbc7be658456b1064fcac7bf018aa41fdf956800cc2b02ec118bd617177b"
     },
-    "packs/05fe7f2d87b4d1847123881393213ebd4a0fdffa6c9f55177afa96ddcf8b9e1c.pck": {
-      "bytes": 9954816,
-      "sha256": "05fe7f2d87b4d1847123881393213ebd4a0fdffa6c9f55177afa96ddcf8b9e1c"
-    },
     "packs/0c8450ffb5146d4e29ada7c6b91f7a7041579f5b54f24a89ae7683dbb2393a11.pck": {
       "bytes": 2277048,
       "sha256": "0c8450ffb5146d4e29ada7c6b91f7a7041579f5b54f24a89ae7683dbb2393a11"
+    },
+    "packs/0cd6abb3481b5366045c2be664d5598ac164d0999442f336d6733e46d159ce3f.pck": {
+      "bytes": 1328700,
+      "sha256": "0cd6abb3481b5366045c2be664d5598ac164d0999442f336d6733e46d159ce3f"
     },
     "packs/0fc4e9a737d959a3268416295622fa0abb810484214940aa670bc33f3e4a8848.pck": {
       "bytes": 2753428,
@@ -519,25 +591,13 @@
       "bytes": 23365304,
       "sha256": "1a932bf7cfccf8b9768928d9acfabb4388f9733d599453470310fed3f908c58d"
     },
-    "packs/23a8c8571ffda6954f1ea7307171990978414ee6922f38fefb8010dfea67d0d4.pck": {
-      "bytes": 1163380,
-      "sha256": "23a8c8571ffda6954f1ea7307171990978414ee6922f38fefb8010dfea67d0d4"
-    },
-    "packs/25de242564fec0a422f23fec5879f925f81f70f444922178762297cf598b9acd.pck": {
-      "bytes": 15316008,
-      "sha256": "25de242564fec0a422f23fec5879f925f81f70f444922178762297cf598b9acd"
-    },
-    "packs/27555bb4d3ac6a24649d56ec0bed7723a30a87dac79c4c768ed9ffa7fe4071fa.pck": {
-      "bytes": 1609796,
-      "sha256": "27555bb4d3ac6a24649d56ec0bed7723a30a87dac79c4c768ed9ffa7fe4071fa"
+    "packs/25c029e6b8e7c2af7abc3baae0d0c521cba0e6932aceef6edc7b467971c22d41.pck": {
+      "bytes": 2315944,
+      "sha256": "25c029e6b8e7c2af7abc3baae0d0c521cba0e6932aceef6edc7b467971c22d41"
     },
     "packs/282556049d741187312e61009405d61750e50e7b840f1fac14c6c3fcbc2e5102.pck": {
       "bytes": 1582392,
       "sha256": "282556049d741187312e61009405d61750e50e7b840f1fac14c6c3fcbc2e5102"
-    },
-    "packs/285fe29005c5f0ed7be806aef025af82fa7e31c85a1006c148df2bcabe9d8db0.pck": {
-      "bytes": 8012484,
-      "sha256": "285fe29005c5f0ed7be806aef025af82fa7e31c85a1006c148df2bcabe9d8db0"
     },
     "packs/2a90b9dc204cb7eafac53bb2c1b0692522df1cacfb6ac3ba21f00eca732c6e43.pck": {
       "bytes": 12347792,
@@ -563,21 +623,29 @@
       "bytes": 20365456,
       "sha256": "5c212bbd97bbfba6f7c4fa25db2bb7b0b369faa1d3f13286910c59d68a853c43"
     },
+    "packs/6305f1e88b7f3217a08c3ebb2a2ad0d350b022ace3bb3e4d87357992c5868f34.pck": {
+      "bytes": 21637748,
+      "sha256": "6305f1e88b7f3217a08c3ebb2a2ad0d350b022ace3bb3e4d87357992c5868f34"
+    },
     "packs/63d8f8a685325c918accb357626eae01b512d9e6f59294b765e0217904957ee6.pck": {
       "bytes": 68388,
       "sha256": "63d8f8a685325c918accb357626eae01b512d9e6f59294b765e0217904957ee6"
+    },
+    "packs/649cae0d3f28ef258c0bf18072fbbca0e51d1614528f9fa43a63b975e0091ea8.pck": {
+      "bytes": 604192,
+      "sha256": "649cae0d3f28ef258c0bf18072fbbca0e51d1614528f9fa43a63b975e0091ea8"
+    },
+    "packs/67ea38eaf0c5d8984aaa497e7a8fd6975c69a0e34fb617ec7f459876fc8dd66f.pck": {
+      "bytes": 1691068,
+      "sha256": "67ea38eaf0c5d8984aaa497e7a8fd6975c69a0e34fb617ec7f459876fc8dd66f"
     },
     "packs/7283545d01d3a47d21ab9f769eb29b35f9498447c5e6cc2bff9419dacdd217bf.pck": {
       "bytes": 727260,
       "sha256": "7283545d01d3a47d21ab9f769eb29b35f9498447c5e6cc2bff9419dacdd217bf"
     },
-    "packs/73fb3461b3ce505b1a1dbc7f2ca3d486b01f6b8ea17f41a3e4f5e0bfda430e78.pck": {
-      "bytes": 24548720,
-      "sha256": "73fb3461b3ce505b1a1dbc7f2ca3d486b01f6b8ea17f41a3e4f5e0bfda430e78"
-    },
-    "packs/790c62b574a5d590eac6e60df51c504e237b0d9769c63f5904cf698ba9fad54f.pck": {
-      "bytes": 591548,
-      "sha256": "790c62b574a5d590eac6e60df51c504e237b0d9769c63f5904cf698ba9fad54f"
+    "packs/7307c40367bd61bd797eb2775fd7f2e1d71221d1ade61e5766522e5be0d61e29.pck": {
+      "bytes": 24359704,
+      "sha256": "7307c40367bd61bd797eb2775fd7f2e1d71221d1ade61e5766522e5be0d61e29"
     },
     "packs/80230fde3ad451dc4c000467344d36280b436a966723f1a32dc5e41b35d3fe42.pck": {
       "bytes": 18252228,
@@ -607,10 +675,6 @@
       "bytes": 23800328,
       "sha256": "9db48dbe86d04ce439dee405ede8f21133cc18062a87812e3315d945fa4c4bea"
     },
-    "packs/a0d51c9d6c5c6c2087ca0d03a7c53f39369133f4980d123a74804a77cbf2b944.pck": {
-      "bytes": 12760,
-      "sha256": "a0d51c9d6c5c6c2087ca0d03a7c53f39369133f4980d123a74804a77cbf2b944"
-    },
     "packs/a6596b325416e8823eac697776e76cc7d9095b1699e9fb79c2714761b05a8407.pck": {
       "bytes": 197780,
       "sha256": "a6596b325416e8823eac697776e76cc7d9095b1699e9fb79c2714761b05a8407"
@@ -630,6 +694,10 @@
     "packs/b89a0651519323ab5ea57b02f8d8beed5cc9b9317ca1859f6ca2e1636ff3cf8b.pck": {
       "bytes": 1752460,
       "sha256": "b89a0651519323ab5ea57b02f8d8beed5cc9b9317ca1859f6ca2e1636ff3cf8b"
+    },
+    "packs/bab1de7141ab5a8c52b36b770b37f26928290d53ff48a32c4b1fe6046debbb42.pck": {
+      "bytes": 2773060,
+      "sha256": "bab1de7141ab5a8c52b36b770b37f26928290d53ff48a32c4b1fe6046debbb42"
     },
     "packs/ce840256defa636b19be1864b99a79550d738166af100139a4ae9afd82a9ce06.pck": {
       "bytes": 28776,
@@ -668,8 +736,8 @@
       "sha256": "ffded8acdabc24de528f21220155e7584319ba750293d9afcfa9ed1f79f01b1f"
     },
     "pack_files.json": {
-      "bytes": 82349,
-      "sha256": "9eede172c959cdf06b6155ad9e1bdbf2f77fc7bfd28fe0cc08ae78f809de9149"
+      "bytes": 82482,
+      "sha256": "fed94db20f5520b1b4733875254640e90a0f0dafc709958d174ca93e32f7316b"
     }
   }
 }

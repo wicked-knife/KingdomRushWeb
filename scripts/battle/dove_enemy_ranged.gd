@@ -33,7 +33,7 @@ static func step(sim, enemy: Dictionary, template: Dictionary) -> bool:
 			var from: Vector2 = enemy.pos + offset
 			# Enemy magic bolts use source speed integration rather than flight_time.
 			var flight: float = float(sim.templates[attack.bullet].bullet.get("flight_time",0))
-			var to: Vector2 = target.pos + sim.vec(sim.templates[target.template].unit.hit_offset)
+			var to: Vector2 = target.pos + sim.vec(sim.unit_template(target).unit.hit_offset)
 			sim._projectile(attack.bullet, target.id, from, to, flight, enemy)
 			sim.projectiles[-1].source = enemy.id
 	if sim.tick >= casting.end: enemy.ranged_cast = {}; return false

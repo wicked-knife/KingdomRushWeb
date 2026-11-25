@@ -11,58 +11,92 @@
 			"tick": 4
 		},
 		{
-			"gold": 1300,
-			"path": "res://reports/towers_twelfth_castle_taunt_1280x720.png",
-			"state": "twelfth_castle_taunt",
-			"tick": 49
+			"gold": 1200,
+			"path": "res://reports/towers_twelfth_castle_1280x720.png",
+			"state": "twelfth_castle",
+			"tick": 34
 		},
 		{
 			"gold": 1200,
-			"path": "res://reports/towers_twelfth_tower_lock_1280x720.png",
-			"state": "twelfth_tower_lock",
-			"tick": 118
+			"path": "res://reports/towers_twelfth_block_preHold_1280x720.png",
+			"state": "twelfth_block_preHold",
+			"tick": 66
+		},
+		{
+			"gold": 1200,
+			"path": "res://reports/towers_twelfth_portal_start_1280x720.png",
+			"state": "twelfth_portal_start",
+			"tick": 79
 		},
 		{
 			"gold": 1200,
 			"path": "res://reports/towers_twelfth_portal_active_1280x720.png",
 			"state": "twelfth_portal_active",
-			"tick": 156
+			"tick": 119
 		},
 		{
 			"gold": 1200,
-			"path": "res://reports/towers_twelfth_soul_drain_1280x720.png",
-			"state": "twelfth_soul_drain",
-			"tick": 171
+			"path": "res://reports/towers_twelfth_transform_1280x720.png",
+			"state": "twelfth_transform",
+			"tick": 119
 		},
 		{
 			"gold": 1200,
-			"path": "res://reports/towers_twelfth_demon_fire_1280x720.png",
-			"state": "twelfth_demon_fire",
-			"tick": 227
+			"path": "res://reports/towers_twelfth_demon_1280x720.png",
+			"state": "twelfth_demon",
+			"tick": 150
 		},
 		{
 			"gold": 1200,
-			"path": "res://reports/towers_twelfth_death_souls_1280x720.png",
-			"state": "twelfth_death_souls",
-			"tick": 352
+			"path": "res://reports/towers_twelfth_death_1280x720.png",
+			"state": "twelfth_death",
+			"tick": 150
 		},
 		{
 			"gold": 1200,
-			"path": "res://reports/towers_twelfth_white_circle_1280x720.png",
-			"state": "twelfth_white_circle",
-			"tick": 522
+			"path": "res://reports/towers_twelfth_souls_1280x720.png",
+			"state": "twelfth_souls",
+			"tick": 260
 		},
 		{
 			"gold": 1200,
-			"path": "res://reports/towers_twelfth_victory_natural_1280x720.png",
-			"state": "twelfth_victory_natural",
-			"tick": 594
+			"path": "res://reports/towers_twelfth_white_start_1280x720.png",
+			"state": "twelfth_white_start",
+			"tick": 391
+		},
+		{
+			"gold": 1200,
+			"path": "res://reports/towers_twelfth_white_expanded_1280x720.png",
+			"state": "twelfth_white_expanded",
+			"tick": 471
+		},
+		{
+			"gold": 1200,
+			"path": "res://reports/towers_twelfth_death_end_1280x720.png",
+			"state": "twelfth_death_end",
+			"tick": 516
 		},
 		{
 			"gold": 1300,
-			"path": "res://reports/towers_twelfth_victory_mode1_1280x720.png",
-			"state": "twelfth_victory_mode1",
+			"path": "res://reports/towers_twelfth_victory_1280x720.png",
+			"state": "twelfth_victory",
 			"tick": 0
+		},
+		{
+			"path": "res://reports/level12_comic1_final_1280x720.png",
+			"state": "comic1_final"
+		},
+		{
+			"path": "res://reports/level12_comic2_final_1280x720.png",
+			"state": "comic2_final"
+		},
+		{
+			"path": "res://reports/level12_map_settlement_1280x720.png",
+			"state": "map_settlement"
+		},
+		{
+			"path": "res://reports/challenges_level12_mode1_1280x720.png",
+			"state": "level12_mode1"
 		},
 		{
 			"path": "res://reports/challenges_level12_mode2_1280x720.png",
@@ -72,12 +106,6 @@
 			"gold": 1600,
 			"path": "res://reports/towers_twelfth_mode2_1280x720.png",
 			"state": "twelfth_mode2",
-			"tick": 4
-		},
-		{
-			"gold": 1600,
-			"path": "res://reports/towers_twelfth_victory_mode2_1280x720.png",
-			"state": "twelfth_victory_mode2",
 			"tick": 4
 		},
 		{
@@ -91,36 +119,24 @@
 			"tick": 4
 		},
 		{
-			"gold": 2800,
-			"path": "res://reports/towers_twelfth_victory_mode3_1280x720.png",
-			"state": "twelfth_victory_mode3",
-			"tick": 4
-		},
-		{
 			"path": "res://reports/challenges_level12_mode3_1280x720.png",
 			"state": "level12_mode3"
-		},
-		{
-			"gold": 2800,
-			"path": "res://reports/towers_twelfth_defeat_mode3_1280x720.png",
-			"state": "twelfth_defeat_mode3",
-			"tick": 4
 		}
 	],
-	"checks": 95,
+	"checks": 100,
 	"failures": [],
 	"full_replays": false,
+	"layout_only": false,
 	"native_audio": true,
 	"native_input": true,
 	"passed": true,
-	"scope": "stage 12 three modes, foregrounds/forsale, taunt shoutbox, native 3-click tower lock release, portal, soul drain, demon fire, death souls/white circle/hide_gui, restart and settlement",
 	"source_hashes": {
-		"data/level12/definition.json": "9c8d375c12c99ac675d5f74eb2876231257e048d563b99a4d7dc0f913237607b",
-		"scripts/battle/battle_view.gd": "027a4602c5a867080d4d5dd0a073cb45bf1e0016db3f8b2097e8256a8023e8d2",
-		"scripts/battle/controllers/level12.gd": "f5014ac898bc2525036d78d9a8b89d73b150c33bce54cfe30ad2e4eafeb88b62",
-		"scripts/battle/dove_unit_info.gd": "5459df81ef1c3e20cbd0eb167faddfb7dc16c9c3088d0c6e1d6f3bea4e075a67",
-		"scripts/battle/dove_veznan.gd": "8784738ad041edd2bad07f66522436225f1d97889c397f6609af963b4e356023",
-		"scripts/battle/level01_sim.gd": "5ddc3d624a038e407e17ac6e53628fcce727fe26a887ec699686cd8d14d4ffd6",
-		"tests/level12_visual.gd": "f07f23c197ffe2a6b52fdbcd732aa43eeec0b68e2f1be752f12b7bcfc2131d19"
+		"data/kr1_end/definition.json": "e17b56b2658bb780ef6dc4e79a8b327cace4c9cbe547e67d8ca826b61fa560e8",
+		"scripts/app_root.gd": "253ce1da3f4f956348959dfe1241639f143e64499cbb512463b0144c95666679",
+		"scripts/battle/battle_view.gd": "f2c33805820fe085361cac6667528e155400841aad494b5d6f2cea732ff3f147",
+		"scripts/battle/dove_veznan.gd": "43bd9672be2058c4ffdac585289ce0ffc42f8971c3903e19efd47f203ac55457",
+		"scripts/battle/level01_sim.gd": "baf33bc858087240696a77ed2bcfff591d9fb0d90a20bc907cad51de1fc5cf1c",
+		"scripts/ui/kr1_ending.gd": "ac2688288d907e8bb38280a518d83280628807ed688cdcc6ed02a5e3e54ad6e0",
+		"tests/level12_visual.gd": "2b8b911cced416b65b31fe1723ba10a0c6ec6ce6293c3b1c54f3ccd03690233e"
 	}
 }

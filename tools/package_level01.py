@@ -27,19 +27,29 @@ def package():
         path = folder / row["url"]
         if not path.resolve().is_relative_to((folder / "packs").resolve()) or sha256(path) != row["sha256"] or path.stat().st_size != row["size"]:
             raise RuntimeError("Missing or changed deferred pack: " + row["url"])
+    if 10 not in level_ids() and not receipt.get('feedback_acceptance',{}).get('passed'):
+        raise RuntimeError('Current feedback acceptance is required before packaging')
+    for path,expected in receipt.get('feedback_report_sha256',{}).items():
+        if sha256(ROOT/path)!=expected:raise RuntimeError('Feedback report changed after export: '+path)
     last = max(level_ids())
-    if not receipt.get("twelfth_acceptance", {}).get("passed") or not receipt.get("current_source_sha256"):
-        raise RuntimeError("Current twelfth-stage acceptance is required")
-    for path, expected in receipt.get("validation_report_sha256", {}).items():
+    if 10 not in level_ids() and 8 in level_ids() and not receipt.get('eighth_acceptance', {}).get('passed'):
+        raise RuntimeError('Current eighth-stage acceptance is required before packaging')
+    if 10 not in level_ids() and 9 in level_ids() and not receipt.get('ninth_acceptance', {}).get('passed'):
+        raise RuntimeError('Current ninth-stage acceptance is required before packaging')
+    for path, expected in receipt.get('validation_report_sha256', {}).items():
         if sha256(ROOT / path) != expected:
-            raise RuntimeError("Stage validation report changed after export: " + path)
-    for path, expected in receipt["current_source_sha256"].items():
-        # Packaging runs after export and does not produce its runtime
-        # resources. Record this tool's current hash separately below.
-        if path == "tools/package_level01.py":
-            continue
-        if sha256(ROOT / path) != expected:
-            raise RuntimeError("Export input changed after export: " + path)
+            raise RuntimeError('Stage validation report changed after export: ' + path)
+    if 10 in level_ids():
+        acceptance = "twelfth_acceptance" if 12 in level_ids() else "eleventh_acceptance" if 11 in level_ids() else "tenth_acceptance"
+        if not receipt.get(acceptance, {}).get('passed') or not receipt.get('current_source_sha256'):
+            raise RuntimeError('Current scoped stage acceptance is required')
+        for path, expected in receipt['current_source_sha256'].items():
+            # Packaging runs after export and does not produce its runtime
+            # resources. Record this tool's current hash separately below.
+            if path == 'tools/package_level01.py':
+                continue
+            if sha256(ROOT / path) != expected:
+                raise RuntimeError('Export input changed after export: ' + path)
     count = len(combinations())
     debug = receipt.get("developer_menu", False)
     checked = receipt.get("pck_isolated_check", False)
@@ -67,7 +77,8 @@ def package():
         "Earn three campaign stars on a level to enter its challenges. Each challenge starts with one life.\n"
         "Heroic: 6 waves; Iron: 1 wave. First completion of each challenge grants one star.\n"
         f"Campaign three stars plus both challenges total {len(level_ids()) * 5} stars. Level {last + 1} is a preview.\n"
-        "Heroic gold (levels 1-12): 230/310/400/750/1000/1200/1000/1100/2000/1800/2100/1600. Iron: 360/275/660/1500/1500/800/1200/1200/2400/2200/2600/2800.\n"
+        + ("Level 12 campaign Continue plays the main comic and epilogue, then settles on the map. Credits data is omitted.\n" if last >= 12 else "") +
+        "Heroic gold (levels 1-9): 230/310/400/750/1000/1200/1000/1100/2000. Iron: 360/275/660/1500/1500/800/1200/1200/2400.\n"
         "Iron tower bans: L1 archer+mage; L2 barracks; L3 artillery; L4 mage+artillery; L5 barracks.\n"
         "L5 Iron has 3 free tier-3 archers and 2 elf ruins; camp repair/recruit/skills remain available.\n"
         "Level 2: 240 gold, 7 waves, 7 tower sites. Level 3: 330 gold, 11 waves, 12 sites, two lanes.\n"
@@ -97,9 +108,6 @@ def package():
         "Level 10: 800/1800/2200 gold, 19/6/1 waves, Tesla and graveyard; Iron bans new artillery.\n"
         "Level 11: 1300/2100/2600 gold, 19/6/1 waves, 18 sites, necromancer and lava generator.\n"
         "Level 11 allows Malik and technology cap 6 in all modes; Iron bans new archers and artillery.\n"
-        "Level 12 (The Dark Tower): 1300/1600/2800 gold, 15/6/1 waves, 13 sites, graveyard, 3 Veznan portals and final Boss Vez'nan.\n"
-        "Campaign Vez'nan casts timed tower locks (click 3 times within 4s to break), opens portals, drains souls, descends, transforms into Demon form and concludes KR1 main campaign.\n"
-        "Level 12 challenges display the castle For Sale sign, allow Malik and technology cap 6; Iron bans new artillery.\n"
         "Default technology scheme 1: six branches and 36 upgrades, purchased with settled stars on the map.\n"
         "Click a higher rank to buy missing prerequisites, or a purchased rank to refund it and later ranks.\n"
         "Purchases save immediately. Undo restores this opening's levels; Reset clears levels and rebases Undo.\n"
@@ -121,7 +129,7 @@ def package():
         "Early-wave rewards animate +gold at the gold counter and -seconds above cooling skills.\n"
         "Click a soldier/enemy to inspect live stats. Click a sheep 8 times to pop it.\n"
         "1 = fire rain, 2 = reinforcements, Space = next wave. Skills unlock after wave 3/7 tutorials in level 1.\n"
-        f"In all challenges and campaigns 2-{last} both skills unlock when wave 1 is sent; neither can be used during setup.\n"
+        "In all challenges and campaigns 2-10 both skills unlock when wave 1 is sent; neither can be used during setup.\n"
         "Click enemy alerts for information.\n\n"
         "Feedback repairs: tower introductions, grass/snow hover, technology/map stars and colored current-to-next skill values.\n"
         "Cannon targeting/flight and preplaced guard interception follow the frozen Dove source; no difficulty changes.\n\n"
@@ -176,7 +184,14 @@ def package():
         "pack_report": receipt.get("pack_report"),
         "battle_ui_acceptance": receipt.get("battle_ui_acceptance", {}),
         "default_technology_acceptance": receipt.get("default_technology_acceptance", {}),
+        "feedback_acceptance": receipt.get("feedback_acceptance", {}),
+        "feedback_report_sha256": receipt.get("feedback_report_sha256", {}),
+        "seventh_acceptance": receipt.get("seventh_acceptance", {}),
+        "eighth_acceptance": receipt.get("eighth_acceptance", {}),
+        "tenth_acceptance": receipt.get("tenth_acceptance", {}),
+        "eleventh_acceptance": receipt.get("eleventh_acceptance", {}),
         "twelfth_acceptance": receipt.get("twelfth_acceptance", {}),
+        "ninth_acceptance": receipt.get("ninth_acceptance", {}),
         "validation_report_sha256": receipt.get("validation_report_sha256", {}),
         "technology_scheme": receipt.get("technology_scheme"),
         "pck_files": len(report["files"]) if checked else None,

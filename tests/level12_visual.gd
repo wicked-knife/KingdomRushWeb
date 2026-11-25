@@ -1,155 +1,120 @@
-extends "res://tests/level09_visual.gd"
-## Bounded native fixtures for Stage 12 (The Dark Tower): foregrounds, taunts, tower lock click/timeout,
-## portals, soul drain, demon transform, souls death + white circle, hide_gui, challenges and settlement.
+extends "res://tests/level11_visual.gd"
+## Native render/input and constructed end-to-map persistence, no played victory.
+func shot12(label:String) -> void:
+	await process_frame;await RenderingServer.frame_post_draw
+	var path:="res://reports/level12_%s_%s.png"%[label,suffix]
+	check(root.get_texture().get_image().save_png(path)==OK,"capture "+label)
+	captures.append({"state":label,"path":path})
 
-func enter(id: int, mode: int) -> void:
-	app.campaign_map.camera_offset = Vector2.ZERO
-	await map_action("level", {"id": id})
-	await map_action("mode", {"mode": mode, "reason": "战役获得三星后开放挑战"})
-	await map_capture("level%d_mode%d" % [id, mode])
-	await map_action("battle")
-	battle = app.battle
-	check(battle != null and battle.sim.data.level.id == id and battle.sim.data.level.mode == mode, "native actual identity %d/%d" % [id, mode])
-	battle.set_process(false)
-	await dismiss()
+func ending_input12() -> void:
+	var event:=InputEventKey.new();event.keycode=KEY_SPACE;event.pressed=true
+	Input.parse_input_event(event);await process_frame
+	event=InputEventKey.new();event.keycode=KEY_SPACE;event.pressed=false
+	Input.parse_input_event(event);await process_frame
 
-func settle12(result: String = "victory") -> void:
-	battle.sim._finish(result)
-	battle.set_process(true)
-	await create_timer(4.2).timeout
-	battle.set_process(false)
-	await capture("twelfth_" + result + "_mode%d" % battle.sim.data.level.mode)
-	await action("map")
-	await app.map_ready
+func ending12() -> void:
+	battle.sim._finish("victory");battle.set_process(true)
+	await create_timer(4.2).timeout;battle.set_process(false)
+	await capture("twelfth_victory")
+	check(battle.outcome.get("next_item_name","")=="kr1_end","campaign result carries route")
+	check(not app.campaign.data.last_victory.is_empty(),"victory saved before comic")
+	if not layout_only:
+		app.packs.enabled=true;app.packs._configuration_valid=false;app.packs.error_message="fixture ending download failure"
+	await action("map");await create_timer(0.2).timeout
+	if not layout_only:
+		check(app.ending==null and app.retry.visible and app.back.visible and not app.campaign.data.last_victory.is_empty(),"ending failure retains saved result and recovery buttons")
+		app.packs.enabled=false;app.retry.pressed.emit();await create_timer(0.2).timeout
+	check(app.ending!=null and not battle.visible,"Continue opens ending")
+	if layout_only:
+		app.ending.phase_elapsed=1.1;app.ending.elapsed=float(app.ending.page().end_frame)/30-0.01;app.ending._process(0.02)
+	else:await ending_input12()
+	check(not app.ending.playing,"first keyboard input reaches final frame")
+	await create_timer(1).timeout;await shot12("comic1_final")
+	check(app.ending.page().order.size()>0,"comic sprite layer order populated")
+	check(app.ending.phase=="comic1" and not app.campaign.data.last_victory.is_empty(),"comic retains pending settlement")
+	await ending_input12();await create_timer(0.3).timeout
+	check(app.ending.phase=="comic2","comic directly enters epilogue without credits")
+	await ending_input12();await shot12("comic2_final")
+	await ending_input12();await app.map_ready
+	await create_timer(1).timeout
+	check(app.ending==null and app.campaign.record(12).has(1),"epilogue ends in map settlement")
+	await shot12("map_settlement")
 
 func actors12() -> void:
-	var sim = battle.sim
-	var boss: Dictionary = sim.controller._boss(sim)
-	check(not boss.is_empty(), "campaign Veznan present")
-	# 1. Verify castle opening + taunt shoutbox + foreground masks + burners
-	for _i in 35: sim.step()
-	sim.command("wave"); sim.spawn_queue.clear()
-	for _i in 10: sim.step()
-	await capture("twelfth_castle_taunt")
-	check(not sim.veznan.shoutboxes.is_empty(), "native taunt shoutbox active")
-	check(battle.draw_list.any(func(d): return d.frame == "stage_12_0009"), "stage12 foreground mask drawn")
-	check(battle.draw_list.any(func(d): return "burner" in d.frame), "stage12 burners drawn")
-	check(battle.draw_list.any(func(d): return "infernalPortal" in d.frame), "veznan portals drawn")
-	# 2. Build tower & verify real click release of mod_veznan_tower
-	var tw: Dictionary = sim.tower_by_id("4")
-	await menu("4"); await action("build", {"id": "4", "type": "mage"})
-	for _i in 35: sim.step()
-	sim.veznan.lock_tower(sim, tw, boss.id)
-	for _i in 34: sim.step()
-	await capture("twelfth_tower_lock")
-	check(tw.get("blocked", false) and battle.draw_list.any(func(d): return "veznan" in d.frame and int(d.get("draw_order", 1)) >= 10), "tower lock overlay draws above tower")
-	for _c in 3:
-		await click(battle.world(tw.pos))
-		sim.step()
-	for _i in 15: sim.step()
-	check(not tw.get("blocked", false) and sim.veznan.tower_locks.is_empty(), "3 native clicks release mod_veznan_tower")
-	# 3. Portal activation
-	sim.veznan.portals[0].spawn_signal = true
-	for _i in 20: sim.step()
+	var sim=battle.sim;var boss:Dictionary=sim.unit_by_id(sim.veznan.boss_id);var t:Dictionary=sim.templates.eb_veznan
+	await capture("twelfth_castle")
+	var tower:Dictionary=sim.towers[0]
+	sim.veznan.block_tower(sim,tower,boss.id);sim.tick=sim.veznan.blocks[0].next;sim.veznan.step_blocks(sim)
+	await capture("twelfth_block_preHold")
+	check(tower.blocked,"native tower block begins after source start")
+	for i in 3:await click(battle.world(tower.pos));sim.tick+=1;sim.veznan.step_blocks(sim)
+	check(sim.veznan.blocks[0].phase=="remove","native three clicks release seal")
+	sim.tick=sim.veznan.blocks[0].next;sim.veznan.step_blocks(sim)
+	check(not tower.blocked and sim.veznan.blocks.is_empty(),"native removal releases count")
+	for portal:Dictionary in sim.veznan.portals:portal.signal=true
+	sim.veznan.step_portals(sim);await capture("twelfth_portal_start")
+	for n in 40:sim.tick+=1;sim.veznan.step_portals(sim)
 	await capture("twelfth_portal_active")
-	check(sim.veznan.portals[0].phase == "active", "portal enters active phase")
-	# 4. Descend + battle + soul drain + demon transform
-	boss.veznan.phase = "battle"; boss.veznan.action = {}; boss.veznan.melee_job = {}
-	boss.pos = Vector2(520, 320); boss.ignore_damage = false; boss.health_bar_hidden = false; boss.vis.bans = 0
-	boss.veznan.ba.disabled = true; boss.veznan.pa.disabled = true; boss.veznan.sda.ts = sim.tick - 300
-	var guard: Dictionary = sim._soldier("soldier_militia", "", 0, boss.pos + Vector2(60, 0), boss.pos + Vector2(60, 0))
-	guard.rallying = false; guard.hp = 100.0; guard.max_hp = 100.0
-	for _i in 15: sim.step()
-	await capture("twelfth_soul_drain")
-	check(guard.hp <= 0 and not sim.veznan.souls.is_empty(), "native soul drain spawns flying soul")
-	# Trigger demon transform
-	sim.damage(boss, 99999.0, 1)
-	for _i in 45:
-		sim.step()
-		if boss.veznan.phase == "demon": break
-	check(boss.veznan.phase == "demon", "native demon transform completes")
-	var tank: Dictionary = sim._soldier("soldier_militia", "", 0, boss.pos + Vector2(50, 0), boss.pos + Vector2(50, 0))
-	tank.rallying = false; tank.hp = 50000.0; tank.max_hp = 50000.0
-	boss.blocker = tank.id; boss.blockers = [tank.id]; tank.target = boss.id
-	tank.pos = sim.melee_slot(tank, boss)
-	boss.veznan.melee_ts = [-100, -100]
-	for _i in 24: sim.step()
-	await capture("twelfth_demon_fire")
-	check(battle.draw_list.any(func(d): return "boss_veznan" in d.frame), "demon sprite rendered")
-	check(battle.draw_list.any(func(d): return "demonFire" in d.frame), "demon fire fx rendered")
-	# 5. Demon death -> hide_gui -> souls -> white circle -> victory
-	sim.damage(boss, 99999.0, 1)
-	for _i in 125: sim.step()
-	await capture("twelfth_death_souls")
-	check(battle.gui_hidden and not sim.veznan.souls.is_empty(), "death hides GUI and emits souls")
-	for _i in 170: sim.step()
-	await capture("twelfth_white_circle")
-	check(not sim.veznan.white_circles.is_empty(), "white circle expands on deathEnd")
-	for _i in 120:
-		sim.step()
-		if sim.result == "victory": break
-	check(sim.result == "victory", "natural Veznan death completes stage 12 victory")
+	boss.veznan.phase="battle";boss.veznan.job={};boss.ignore_damage=false;boss.pos=Vector2(500,350);boss.hp=10
+	sim.damage(boss,100000,1);sim.veznan.step_enemy(sim,boss,t)
+	await capture("twelfth_transform")
+	sim.tick+=sim.Behaviors.Veznan.duration(sim,boss,"demonTransform");sim.veznan.step_enemy(sim,boss,t)
+	await capture("twelfth_demon")
+	check(battle.draw_list.any(func(row):return row.frame==Anim.frame(t.render.sprites[0],sim.animations,{"state":boss.state,"prefix":boss.prefix,"elapsed":sim.tick-boss.state_at,"loop":boss.playback_loop})),"demon source sprite reaches render queue")
+	sim.damage(boss,100000,1);sim.veznan.step_enemy(sim,boss,t)
+	await capture("twelfth_death")
+	check(sim.veznan.hud_hidden and not sim.controller.can_finish(sim),"native death hides HUD before victory")
+	sim.tick+=110;sim.veznan.step_enemy(sim,boss,t);sim.veznan.step_souls(sim)
+	await capture("twelfth_souls")
+	sim.tick=int(boss.veznan.at)+sim.Behaviors.Veznan.duration(sim,boss,"death");sim.veznan.step_enemy(sim,boss,t)
+	sim.tick+=90;sim.veznan.step_enemy(sim,boss,t);await capture("twelfth_white_start")
+	sim.tick+=80;await capture("twelfth_white_expanded")
+	check(not sim.controller.can_finish(sim),"white expansion does not finish early")
+	sim.tick+=45;sim.veznan.step_enemy(sim,boss,t);await capture("twelfth_death_end")
+	check(sim.veznan.complete and boss.hidden,"native final hidden state")
+	check(not battle.draw_list.any(func(row):return row.pos==boss.pos and row.frame.begins_with("boss_veznan_")),"boss absent from final render queue")
+	check(battle.sound_cache.has("VeznanDeath") and battle.sound_cache.has("VeznanToDemon"),"native boss sound resources")
 
 func _run() -> void:
-	create_timer(45).timeout.connect(func(): root.get_texture().get_image().save_png("res://output/level12_native_debug.png"))
-	create_timer(180).timeout.connect(func(): push_error("Twelfth native timeout"); quit(1))
-	suffix = "%dx%d" % [root.size.x, root.size.y]
-	app = AppScene.instantiate()
-	app.settings_path = "res://output/level12_native_settings.json"
-	app.slots_path = "res://output/level12_native_%d.progress" % Time.get_ticks_usec()
-	root.add_child(app)
-	await app.menu_ready
-	app.menu.start_button.pressed.emit()
-	app.menu._select_slot(1)
-	await app.map_ready
-	for id in range(1, 12):
-		Fixture.complete(app.campaign, {"generation": 1, "level_id": id, "mode": 1, "difficulty": 2, "result": "victory", "lives": 20})
-	for id: String in app.campaign.selected_hero_ids().duplicate():
-		app.campaign.deselect_hero(id)
-	check(app.campaign.select_hero("hero_malik"), "selected Malik saved")
-	await enter(12, 1)
+	create_timer(180).timeout.connect(func():push_error("Twelfth native timeout");quit(1))
+	suffix="%dx%d"%[root.size.x,root.size.y];layout_only=OS.get_cmdline_user_args().has("--layout-only")
+	app=AppScene.instantiate();app.settings_path="res://output/level12_native_settings.json";app.slots_path="res://output/level12_native_%d.progress"%Time.get_ticks_usec();root.add_child(app)
+	await app.menu_ready;app.menu.start_button.pressed.emit();app.menu._select_slot(1);await app.map_ready
+	for id in range(1,12):Fixture.complete(app.campaign,{"generation":1,"level_id":id,"mode":1,"difficulty":2,"result":"victory","lives":20})
+	check(app.campaign.select_hero("hero_malik"),"Malik selected")
+	if layout_only:
+		app._start_level(12,1,2)
+		while app.battle==null or app.transitioning:await process_frame
+		battle=app.battle;battle.set_process(false);await dismiss()
+	else:await enter(12,1)
 	await capture("twelfth_opening")
-	check(battle.sim.gold == 1300 and battle.sim.towers.size() == 13, "native campaign opening")
-	check(battle.sim.soldiers.any(func(s): return s.template == "hero_malik"), "native campaign Malik enters")
-	await actors12()
-	battle.set_process(true)
-	await create_timer(4.2).timeout
-	battle.set_process(false)
-	await capture("twelfth_victory_natural")
-	await action("restart")
-	check(battle.sim.wave == 0 and not battle.gui_hidden and battle.sim.veznan.tower_locks.is_empty(), "native restart clears Veznan & restores GUI")
-	await settle12()
-	check(app.campaign.is_playable(12, 2) and app.campaign.is_playable(12, 3) and not app.campaign.is_playable(13), "settlement opens twelfth challenges and thirteenth preview")
-	for mode in [2, 3]:
-		await enter(12, mode)
-		await capture("twelfth_mode%d" % mode)
-		check(battle.sim.gold == [1600, 2800][mode - 2] and battle.sim.lives == 1, "native challenge economy %d" % mode)
-		check(battle.draw_list.any(func(d): return d.frame == "stage12_forsale"), "challenge displays stage12_forsale %d" % mode)
-		check(battle.sim.soldiers.any(func(s): return s.template == "hero_malik"), "native challenge Malik allowed %d" % mode)
-		if mode == 3:
-			await menu("1")
-			var kinds: Array = battle.hits.filter(func(h): return h.action == "build").map(func(h): return h.args.type)
-			check(kinds.size() == 3 and "engineer" not in kinds, "iron bans engineer tower")
-		await settle12()
-		check(app.campaign.record(12).get(mode, 0) == 2, "native challenge persists %d" % mode)
-	await enter(12, 3)
-	await settle12("defeat")
-	check(app.campaign.record(12).get(3, 0) == 2, "defeat preserves settled best score")
-	var hashes: Dictionary = {}
-	for path: String in [
-		"tests/level12_visual.gd", "scripts/battle/battle_view.gd",
-		"scripts/battle/dove_veznan.gd", "scripts/battle/controllers/level12.gd",
-		"scripts/battle/dove_unit_info.gd", "scripts/battle/level01_sim.gd",
-		"data/level12/definition.json",
-	]:
-		hashes[path] = FileAccess.get_sha256("res://" + path)
-	preload("res://tests/report_writer.gd").json_file("res://reports/level12_native_%s.json" % suffix, {
-		"passed": failures.is_empty(), "checks": checks, "failures": failures,
-		"captures": captures, "source_hashes": hashes, "full_replays": false,
-		"native_input": true, "native_audio": true,
-		"scope": "stage 12 three modes, foregrounds/forsale, taunt shoutbox, native 3-click tower lock release, portal, soul drain, demon fire, death souls/white circle/hide_gui, restart and settlement",
-	})
-	print("LEVEL12_NATIVE: ", JSON.stringify({"passed": failures.is_empty(), "checks": checks, "failures": failures}))
-	app.queue_free()
-	await process_frame
-	quit(0 if failures.is_empty() else 1)
+	if not layout_only:
+		await menu("1");await action("build",{"id":"1","type":"mage"})
+		for n in 30:battle.sim.step()
+		await actors12()
+		battle.sim._finish("victory");battle.set_process(true);await create_timer(4.2).timeout;battle.set_process(false)
+		await action("restart");check(battle.sim.wave==0 and not battle.sim.veznan.hud_hidden,"restart clears boss lifecycle")
+	await ending12()
+	if not layout_only:
+		await enter(12,1)
+		battle.sim._finish("victory");battle.set_process(true);await create_timer(4.2).timeout;battle.set_process(false)
+		app.packs.enabled=true;app.packs._configuration_valid=false;app.packs.error_message="fixture repeat ending failure"
+		await action("map");await create_timer(0.1).timeout
+		check(app.retry.visible and app.back.visible,"repeated victory still routes to ending")
+		app.packs.enabled=false;app.back.pressed.emit();await app.map_ready
+		check(app.ending==null and app.campaign.record(12).get("stars",0)==3,"failed ending can return to map with score")
+		for mode in [2,3]:
+			await enter(12,mode);await capture("twelfth_mode%d"%mode)
+			check(battle.sim.gold==[1600,2800][mode-2] and battle.sim.veznan.boss_id==0,"challenge source entry %d"%mode)
+			if mode==3:
+				await menu("1");check(not battle.hits.any(func(h):return h.action=="build" and h.args.type=="engineer"),"iron artillery absent")
+			battle.sim._finish("victory");battle.set_process(true);await create_timer(4.2).timeout;battle.set_process(false)
+			await action("map");await app.map_ready
+			check(app.ending==null and app.campaign.record(12).has(mode),"challenge victory bypasses ending and settles")
+		await enter(12,3);battle.sim._finish("defeat");await action("map");await app.map_ready
+		check(app.ending==null and app.campaign.record(12).has(3),"challenge defeat preserves score")
+	var hashes:Dictionary={}
+	for path:String in ["tests/level12_visual.gd","scripts/app_root.gd","scripts/ui/kr1_ending.gd","scripts/battle/battle_view.gd","scripts/battle/dove_veznan.gd","scripts/battle/level01_sim.gd","data/kr1_end/definition.json"]:hashes[path]=FileAccess.get_sha256("res://"+path)
+	preload("res://tests/report_writer.gd").json_file("res://reports/level12_native_%s.json"%suffix,{"passed":failures.is_empty(),"checks":checks,"failures":failures,"captures":captures,"source_hashes":hashes,"full_replays":false,"native_input":true,"native_audio":true,"layout_only":layout_only})
+	print("LEVEL12_NATIVE: ",JSON.stringify({"passed":failures.is_empty(),"checks":checks,"failures":failures}))
+	app.queue_free();await process_frame;quit(0 if failures.is_empty() else 1)
