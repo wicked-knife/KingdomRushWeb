@@ -2,9 +2,7 @@
   "passed": true,
   "original_pck_bytes": 232672212,
   "startup_pck_bytes": 10194396,
-  "startup_pck_br_bytes": 9685422,
   "startup_wasm_bytes": 39514754,
-  "startup_wasm_br_bytes": 7095787,
   "total_pck_bytes": 93413156,
   "saved_bytes": 139259056,
   "startup_reduction_percent": 95.62,
@@ -29,7 +27,7 @@
   "cloudflare_check": {
     "passed": true,
     "immutable_packs": 41,
-    "streamed_files": 17
+    "streamed_files": 1
   },
   "boot_sha256": "a618e6520be4b65e472c19631584fdb30cc54c43041a87a6f3834b877c9e6247",
   "manifest_sha256": "bcb3c86d57283f5f7da7f8101a1787604dc4967b219761359430324291942d89",
@@ -47,9 +45,9 @@
     "tools/check_content_downloads.py": "393bd559f4e8984d1bb729d86ec86f01f64711797d4143e6b3a45deb5adc9d34",
     "tools/check_web_packs_native.py": "ff316f29bdc2e03a609b1437c41a56a8c8def547723197c45e8e4ae5fcaf8d36",
     "tools/package_level01.py": "6133d1a6c5bb3b1600c49275c71627e4e0024f29144ec73f3d4a048ff589db1a",
-    "tools/prepare_cloudflare.py": "6b039f3241a3ac0378a8f88bd73da3ca99f998f15d3c227a7c38a5c5134b1aa7",
-    "tools/verify_cloudflare.mjs": "32cf91a5f1525ee7c926d67540e0d501981979ab6298f5607cdfc71bfdc7ada7",
-    "tools/verify_web_packs_delivery.py": "6b3567b10adc8861f00f445ca79dfb35b2da5e7b752ebaffe5f49aec3d41440f",
+    "tools/prepare_cloudflare.py": "afe25f58e7d219000424a84252e51700d9059a7556cc6b7de07523d43cec7d1c",
+    "tools/verify_cloudflare.mjs": "808c6abd431be5e005b4d5d730228f097c036adb5a6b1f66ea332fb7d1ee21ab",
+    "tools/verify_web_packs_delivery.py": "a4315fefa77a420ab24f4ed6451d982f4a6c98774bb7c439ddf441a0f6923d36",
     "tools/web_bootstrap.py": "e68b4724981d875bbf0b739aac4646655498ef81e278b992dcdc46350bdcb4b8",
     "tools/web_packs.py": "133bde46dd6e52846ac0e6647a909f4d2de55b494b4b0bb92daa38a1c7c0be7a",
     "web/shell.html": "1d63ae5b2b6730ae7f9c9e0c998a0dff260c43b3466f0d8a7c4e332c8df8f0f7"

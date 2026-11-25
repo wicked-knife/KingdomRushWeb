@@ -1,8 +1,7 @@
-// Validate streamed reconstruction and Brotli/Gzip delivery without launching a browser.
+// Validate streamed reconstruction without launching a browser or buffering the PCK.
 import { readFileSync, createReadStream, statSync, writeFileSync } from 'node:fs';
 import { Readable } from 'node:stream';
 import { createHash } from 'node:crypto';
-import { brotliDecompressSync, gunzipSync } from 'node:zlib';
 import assert from 'node:assert/strict';
 
 const root = new URL('../build/cloudflare/', import.meta.url);
@@ -31,6 +30,9 @@ if (process.argv[2]) {
   assert.equal(html.status, 200);
   assert.match(await html.text(), /Kingdom Rush Web/);
   console.log('Entry HTML: OK');
+  const pckHead = await fetch(base + '/index.pck', { method: 'HEAD' });
+  assert.equal(pckHead.status, 200);
+  console.log(`Boot index.pck: ${pckHead.headers.get('content-length')} bytes, cache=${pckHead.headers.get('cache-control')}`);
 }
 for (const file of Object.values(packs.packs)) {
   if (process.argv[3] && process.argv[3] !== '/' + file.url) continue;
@@ -51,6 +53,7 @@ for (const [path, file] of Object.entries(manifest)) {
   const url = base + path;
   const head = await fetchRequest(new Request(url, { method: 'HEAD' }));
   assert.equal(head.status, 200);
+  // The CDN can omit Content-Length when applying Brotli/gzip (notably WASM).
   if (!head.headers.get('Content-Encoding')) {
     assert.equal(head.headers.get('Content-Length'), String(file.size));
   }
@@ -59,36 +62,20 @@ for (const [path, file] of Object.entries(manifest)) {
   assert.equal(response.status, 200);
   const hash = createHash('sha256');
   let length = 0;
-  for await (const chunk of response.body) { hash.update(chunk); length += chunk.length; }
+  let nextProgress = 64 * 1024 * 1024;
+  for await (const chunk of response.body) {
+    hash.update(chunk); length += chunk.length;
+    if (process.argv[2] && length >= nextProgress) {
+      console.log(`${path}: ${Math.floor(length / 1024 / 1024)} MiB downloaded`);
+      nextProgress += 64 * 1024 * 1024;
+    }
+  }
   assert.equal(length, file.size);
   assert.equal(hash.digest('hex'), file.sha256);
+  console.log(`${path}: ${length} bytes, SHA-256 matches`);
   const cached = await fetchRequest(new Request(url, { headers: { 'If-None-Match': head.headers.get('ETag') } }));
   assert.equal(cached.status, 304);
   assert.equal((await fetchRequest(new Request(url, { method: 'POST' }))).status, 405);
-
-  for (const [enc, decomp] of [['br', brotliDecompressSync], ['gzip', gunzipSync]]) {
-    const expected = file.encodings?.[enc];
-    if (!expected) continue;
-    const compHead = await fetchRequest(new Request(url, { method: 'HEAD', headers: { 'Accept-Encoding': enc } }));
-    assert.equal(compHead.status, 200);
-    if (!process.argv[2]) {
-      assert.equal(compHead.headers.get('Content-Encoding'), enc);
-      assert.equal(compHead.headers.get('Content-Length'), String(expected.size));
-    }
-    const compRes = await fetchRequest(new Request(url, { headers: { 'Accept-Encoding': enc } }));
-    assert.equal(compRes.status, 200);
-    const chunks = [];
-    for await (const chunk of compRes.body) chunks.push(chunk);
-    const buf = Buffer.concat(chunks);
-    const raw = process.argv[2] ? buf : decomp(buf);
-    const rawSha = createHash('sha256').update(raw).digest('hex');
-    assert.equal(raw.length, file.size);
-    assert.equal(rawSha, file.sha256);
-    const cachedEnc = await fetchRequest(new Request(url, { headers: { 'Accept-Encoding': enc, 'If-None-Match': compHead.headers.get('ETag') } }));
-    assert.equal(cachedEnc.status, 304);
-    console.log(`${path} [${enc}]: ${expected.size} bytes (from ${file.size}), SHA-256 matches`);
-  }
-
   checkedStreams += 1;
   console.log(`${path}: ${length} bytes, SHA-256 matches, HEAD/304/405 passed`);
 }

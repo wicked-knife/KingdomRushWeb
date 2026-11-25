@@ -48,9 +48,7 @@ def main():
     result = {
         "passed": True,
         "original_pck_bytes": report["original_bytes"], "startup_pck_bytes": report["boot_bytes"],
-        "startup_pck_br_bytes": pck_entry.get("encodings", {}).get("br", {}).get("size"),
         "startup_wasm_bytes": wasm_entry.get("size"),
-        "startup_wasm_br_bytes": wasm_entry.get("encodings", {}).get("br", {}).get("size"),
         "total_pck_bytes": report["total_bytes"], "saved_bytes": report["saved_bytes"],
         "startup_reduction_percent": round(100 * (1 - report["boot_bytes"] / report["original_bytes"]), 2),
         "deferred_packs": len(index["packs"]), "resource_paths_compared": report["verification"]["resource_paths"],
