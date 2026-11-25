@@ -91,7 +91,7 @@ custom_features=""
 export_filter="resources"
 export_files=PackedStringArray(%s)
 include_filter=%s
-exclude_filter="source_assets/*,reports/*,tests/*,tools/*,docs/*,build/*"
+exclude_filter="source_assets/*,reports/*,tests/*,tools/*,docs/*,build/*,addons/*"
 export_path="build/web/index.html"
 script_export_mode=2
 
@@ -99,7 +99,7 @@ script_export_mode=2
 
 variant/extensions_support=false
 variant/thread_support=false
-vram_texture_compression/for_desktop=true
+vram_texture_compression/for_desktop=false
 vram_texture_compression/for_mobile=false
 html/custom_html_shell="res://web/shell.html"
 html/canvas_resize_policy=2
@@ -219,7 +219,18 @@ def main():
         # An earlier build's verification must never be presented as this build's result.
         for name in ("pack_files.json", "export_receipt.json"):
             (output.parent / name).unlink(missing_ok=True)
-        subprocess.run([engine, "--headless", "--path", str(ROOT), "--export-debug" if args.debug else "--export-release", "Web Bootstrap", str(source_output)], check=True)
+        # Keep editor-only MCP autoload and plugin metadata out of exported Web builds.
+        project_file = ROOT / "project.godot"
+        original_project = project_file.read_bytes()
+        filtered_lines = [
+            line for line in original_project.decode("utf-8").splitlines(keepends=True)
+            if not line.startswith("_mcp_game_helper=") and not line.startswith('enabled=PackedStringArray("res://addons/godot_ai/plugin.cfg")')
+        ]
+        try:
+            project_file.write_text("".join(filtered_lines), encoding="utf-8")
+            subprocess.run([engine, "--headless", "--path", str(ROOT), "--export-debug" if args.debug else "--export-release", "Web Bootstrap", str(source_output)], check=True)
+        finally:
+            project_file.write_bytes(original_project)
         for artifact in source_output.parent.iterdir():
             if artifact.suffix in {".html", ".js", ".png", ".wasm"}:
                 shutil.copy2(artifact, output.parent / artifact.name)

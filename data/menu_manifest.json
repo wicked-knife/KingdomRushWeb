@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "baseline": "dove-2.1.0.2",
-  "background": "res://data/original_menu_background.tres",
+  "background": "res://data/menu/background.png",
   "scenes": [
     "res://scenes/app_root.tscn",
     "res://scenes/main_menu.tscn"
@@ -17,20 +17,17 @@
     "res://scripts/services/dove_fonts.gd",
     "res://scripts/services/save_slots.gd"
   ],
-  "catalog": "res://assets/kingdom_rush/catalog.json",
-  "font": "res://assets/kingdom_rush/all-desktop/fonts/msyh.ttc",
-  "locale": "res://assets/kingdom_rush/data/locale_zh-Hans.json",
-  "sounds": "res://assets/kingdom_rush/data/sounds.json",
+  "catalog": "res://data/menu/catalog.json",
+  "font": "res://data/fonts_web/msyh.ttf",
+  "locale": "res://data/menu/locale_zh-Hans.json",
+  "sounds": "res://data/menu/sounds.json",
   "atlases": {
-    "screen_slots": "res://assets/kingdom_rush/data/atlases/screen_slots.json",
-    "view_options": "res://assets/kingdom_rush/data/atlases/view_options.json"
+    "screen_slots": "res://data/menu/screen_slots.json",
+    "view_options": "res://data/menu/view_options.json"
   },
   "textures": [
-    "res://assets/kingdom_rush/kr1-desktop/images/fullhd/screen_slots-1.png",
-    "res://assets/kingdom_rush/kr1-desktop/images/fullhd/screen_slots-2.png",
-    "res://assets/kingdom_rush/kr1-desktop/images/fullhd/screen_slots-3.png",
-    "res://assets/kingdom_rush/kr1-desktop/images/fullhd/screen_slots-4.png",
-    "res://assets/kingdom_rush/kr1-desktop/images/fullhd/view_options-1.png"
+    "res://data/menu/atlas_0.png",
+    "res://data/menu/atlas_1.png"
   ],
   "audio": {
     "MusicMainMenu": "res://assets/kingdom_rush/kr1-desktop/sounds/files/MusicMainMenu.ogg",
@@ -96,12 +93,12 @@
     ]
   },
   "fonts": [
-    "res://assets/kingdom_rush/all-desktop/fonts/msyh.ttc",
-    "res://assets/kingdom_rush/all-desktop/fonts/msyhbd.ttc",
-    "res://assets/kingdom_rush/all-desktop/fonts/JIMOJW.ttf",
-    "res://assets/kingdom_rush/all-desktop/fonts/Comic Book Italic.ttf",
-    "res://assets/kingdom_rush/all-desktop/fonts/TOONISH.ttf",
-    "res://assets/kingdom_rush/all-desktop/fonts/NotoSansCJKkr-Regular.otf"
+    "res://data/fonts_web/msyh.ttf",
+    "res://data/fonts_web/msyhbd.ttf",
+    "res://data/fonts_web/JIMOJW.ttf",
+    "res://data/fonts_web/Comic Book Italic.ttf",
+    "res://data/fonts_web/TOONISH.ttf",
+    "res://data/fonts_web/NotoSansCJKkr-Regular.otf"
   ],
   "font_roles": "res://assets/kingdom_rush/data/fonts.json",
   "font_source": {
@@ -115,6 +112,15 @@
       "res://assets/kingdom_rush/all-desktop/fonts/TOONISH.ttf": "27e05f9dee922d6523892771db9a0eb011cc4881fec33d9f71728b9a7b5414fa",
       "res://assets/kingdom_rush/all-desktop/fonts/NotoSansCJKkr-Regular.otf": "40e7ceff42091ee00eb2dd02215f5e1765ad5fa9776dd2cc4270cf008f413612",
       "res://assets/kingdom_rush/data/fonts.json": "a2c5a9b675a005bab0810855c3dd341179350af026a389fd227b5f7c3da7bbf0"
+    },
+    "subset_chars": 2756,
+    "web_resources": {
+      "res://data/fonts_web/msyh.ttf": "f5e1445d2e7c939be2f9ee8c2647d4dd29e185fae5db9a51da1d6eee6e51d607",
+      "res://data/fonts_web/msyhbd.ttf": "467ceb5280456eddde8bfaf8564ccfedcd88a5e53955d65642df14038bb7b0a1",
+      "res://data/fonts_web/JIMOJW.ttf": "dd291259bfd61babc0991497db2a397157ced77feea4d1a703bfa4315727d4e1",
+      "res://data/fonts_web/Comic Book Italic.ttf": "bd7e13f8fc1fb4dca3e5b5adb0941b1f101d8fe40f7cc3dbb434fd5103a6306f",
+      "res://data/fonts_web/TOONISH.ttf": "27e05f9dee922d6523892771db9a0eb011cc4881fec33d9f71728b9a7b5414fa",
+      "res://data/fonts_web/NotoSansCJKkr-Regular.otf": "5288213358e0b22118421481664e3e92fe07a98c005dbea7a7b4b976d21d5421"
     }
   }
 }

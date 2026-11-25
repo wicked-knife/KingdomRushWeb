@@ -42,9 +42,15 @@ def main():
              "tools/prepare_cloudflare.py", "tools/verify_cloudflare.mjs", "tools/check_web_packs_native.py",
              "tools/verify_web_packs_delivery.py", "tests/test_web_packs.py", "web/shell.html",
              "scripts/app_root.gd", "scripts/services/hero_loader.gd", *downloads["source_hashes"]]
+    cloudflare_manifest = read("build/cloudflare_manifest.json")
+    wasm_entry = cloudflare_manifest.get("/index.wasm", {})
+    pck_entry = cloudflare_manifest.get("/index.pck", {})
     result = {
         "passed": True,
         "original_pck_bytes": report["original_bytes"], "startup_pck_bytes": report["boot_bytes"],
+        "startup_pck_br_bytes": pck_entry.get("encodings", {}).get("br", {}).get("size"),
+        "startup_wasm_bytes": wasm_entry.get("size"),
+        "startup_wasm_br_bytes": wasm_entry.get("encodings", {}).get("br", {}).get("size"),
         "total_pck_bytes": report["total_bytes"], "saved_bytes": report["saved_bytes"],
         "startup_reduction_percent": round(100 * (1 - report["boot_bytes"] / report["original_bytes"]), 2),
         "deferred_packs": len(index["packs"]), "resource_paths_compared": report["verification"]["resource_paths"],

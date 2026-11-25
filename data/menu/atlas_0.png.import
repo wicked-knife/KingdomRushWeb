@@ -2,22 +2,22 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cxwmg3pd5opur"
-path="res://.godot/imported/atlas_4.png-08f38dcddf8de9174fcce87d0c68c13a.ctex"
+uid="uid://bbl50rgvm0pj5"
+path="res://.godot/imported/atlas_0.png-fcd5a770671eed2ad7e2bf599fa965d5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://data/heroes/atlas_4.png"
-dest_files=["res://.godot/imported/atlas_4.png-08f38dcddf8de9174fcce87d0c68c13a.ctex"]
+source_file="res://data/menu/atlas_0.png"
+dest_files=["res://.godot/imported/atlas_0.png-fcd5a770671eed2ad7e2bf599fa965d5.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=1
 compress/high_quality=false
-compress/lossy_quality=0.7
+compress/lossy_quality=0.9
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
@@ -37,4 +37,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0

@@ -2,20 +2,35 @@ extends RefCounted
 ## Dove font aliases, locale adjustments and explicit portable glyph fallbacks.
 const BASE := "res://assets/kingdom_rush/all-desktop/fonts/"
 const CONFIG := "res://assets/kingdom_rush/data/fonts.json"
-const FILES := ["msyh.ttc", "msyhbd.ttc", "JIMOJW.ttf", "Comic Book Italic.ttf", "TOONISH.ttf", "NotoSansCJKkr-Regular.otf"]
+const BASENAMES := ["msyh", "msyhbd", "JIMOJW", "Comic Book Italic", "TOONISH", "NotoSansCJKkr-Regular"]
 var faces := {}
 var roles := {}
 
 func initialize(resources: Dictionary) -> void:
-	for filename: String in FILES:
-		var face: FontFile = resources[BASE + filename].duplicate()
-		face.oversampling = 3.0
-		face.allow_system_fallback = false
-		faces[filename.get_basename()] = face
-	faces.msyh.fallbacks = [faces["NotoSansCJKkr-Regular"]]
+	faces.clear()
+	roles.clear()
+	for path: String in resources:
+		var value: Variant = resources[path]
+		if not value is FontFile:
+			continue
+		var stem := path.get_file().get_basename()
+		if stem in BASENAMES:
+			var face: FontFile = value.duplicate()
+			face.oversampling = 3.0
+			face.allow_system_fallback = false
+			faces[stem] = face
+	if faces.has("msyh") and faces.has("NotoSansCJKkr-Regular"):
+		faces.msyh.fallbacks = [faces["NotoSansCJKkr-Regular"]]
 	for name: String in faces:
-		if name not in ["msyh", "NotoSansCJKkr-Regular"]: faces[name].fallbacks = [faces.msyh]
-	var config: Dictionary = resources[CONFIG]
+		if name not in ["msyh", "NotoSansCJKkr-Regular"] and faces.has("msyh"):
+			faces[name].fallbacks = [faces.msyh]
+	var config: Dictionary = resources.get(CONFIG, {})
+	if config.is_empty():
+		for path: String in resources:
+			var value: Variant = resources[path]
+			if value is Dictionary and value.has("zh-Hans") and value.has("global"):
+				config = value
+				break
 	for group in ["global", "default", "zh-Hans"]:
 		for entry: Array in config[group]:
 			roles[entry[0]] = {"face": entry[1], "adjust": entry[2] if entry.size() > 2 else {}}

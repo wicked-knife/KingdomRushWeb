@@ -10,7 +10,7 @@
 		"scripts/battle/dove_enemy_ranged.gd": "871a01e1b18845b8fce199a5c7a7f3ffba4a908e3879e984db836bb2638e7ab9",
 		"scripts/battle/level01_sim.gd": "baf33bc858087240696a77ed2bcfff591d9fb0d90a20bc907cad51de1fc5cf1c",
 		"tests/fixtures/level10_source.json": "813201a6991cc543726f21bd766742570431f4140f7807625a15a9489df11502",
-		"tests/verify_level10.gd": "2efa565ebbad5f72cfd8b7df650db46537b011f87436c3113cbaa1b402cd137f",
+		"tests/verify_level10.gd": "575e2601db07c8f1a65bac2ddeb4133268793108637a685f85251d87b44bb424",
 		"tests/verify_level11_shared.gd": "6ff78acf7c78538c1cacf85e758196c19789777d2a7beeba9051106ce0b4ab7e"
 	}
 }

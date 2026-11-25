@@ -88,7 +88,7 @@ func initialize(manifest_path: String = MANIFEST_PATH) -> void:
 			if not _valid_frame(frame, atlas):
 				_fail("界面帧缺失或无效：%s/%s" % [group, frame_name])
 				return
-	catalog = Catalog.new()
+	catalog = Catalog.new(str(manifest.get("catalog", Catalog.CATALOG_PATH)))
 	if not catalog.is_available():
 		_fail("资源目录不可用。")
 		return

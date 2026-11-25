@@ -13,7 +13,7 @@ def sha(path):return hashlib.sha256((ROOT/path).read_bytes()).hexdigest()
 def verify():
     baseline=read('tests/fixtures/level12_compatibility.json')
     for path,expected in baseline['sha256'].items():assert sha(path)==expected,('prior content changed',path)
-    names=('level12_logic','level12_flow','level12_native_1280x720','level12_native_1024x768','level12_assets','kr1_end_assets','level11_shared_logic','level10_shared_logic','level11_upgrades','level11_ranged_shared','hero_combat_logic')
+    names=('level12_logic','level12_flow','level12_native_1280x720','level12_native_1024x768','level12_assets','kr1_end_assets','level11_shared_logic','level09_logic','level11_upgrades','level11_ranged_shared','hero_combat_logic')
     reports={};hashes={};report_hashes={}
     for name in names:
         path=f'reports/{name}.json';report=read(path);assert report['passed'],path

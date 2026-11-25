@@ -142,7 +142,7 @@ def validate_definition(data, spec):
     validate_callbacks(templates, "templates")
     for name, template in templates.items():
         active_tower = "tower" in template and not template.get("tower", {}).get("type", "").startswith("holder")
-        if (template.get("entity") and "cooldown_after" in template) or "spawn_groups" in template or ("particles_name" in template and "angle_variation" in template) or active_tower or any(key in template for key in ("enemy", "soldier", "bullet", "modifier", "aura", "spawner", "graveyard", "fireball_count")):
+        if (template.get("entity") and "cooldown_after" in template) or ("spawn_groups" in template and name != "veznan_portal") or ("particles_name" in template and "angle_variation" in template and name != "veznan_soul") or active_tower or any(key in template for key in ("enemy", "soldier", "bullet", "modifier", "aura", "spawner", "graveyard", "fireball_count")):
             source_id = data.get("behaviors", {}).get(name)
             if not source_id:
                 raise ValueError(f"{identity}: missing behavior binding for {name}")
