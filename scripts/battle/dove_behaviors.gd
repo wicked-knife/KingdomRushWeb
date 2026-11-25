@@ -22,7 +22,7 @@ const AdvancedBarrack = preload("res://scripts/battle/dove_advanced_barrack.gd")
 const Sasquash = preload("res://scripts/battle/dove_sasquash.gd")
 const Chieftain = preload("res://scripts/battle/dove_chieftain.gd")
 const EnemyMelee = preload("res://scripts/battle/dove_enemy_melee.gd")
-const ROLES := ["ground", "healer", "spider", "soldier", "reinforcement", "archer", "mage", "engineer", "barrack", "mercenary", "ranger", "building", "arrow", "bolt", "bomb", "fireball", "arrow_missile", "thorn_aura", "spawner", "dps", "track_modifier", "heal_modifier", "thorn_modifier", "fire_control", "passive", "juggernaut", "arcane", "ray", "arcane_damage", "disintegrate", "teleport", "mod_aura", "enemy_missile", "enemy_bomb", "tower_decal", "instant_damage", "damage_aura"]
+const ROLES := ["ground", "healer", "spider", "soldier", "reinforcement", "archer", "mage", "engineer", "barrack", "mercenary", "ranger", "building", "arrow", "bolt", "bomb", "fireball", "arrow_missile", "thorn_aura", "spawner", "dps", "track_modifier", "heal_modifier", "thorn_modifier", "fire_control", "passive", "juggernaut", "arcane", "ray", "arcane_damage", "disintegrate", "teleport", "mod_aura", "enemy_missile", "enemy_bomb", "tower_decal", "instant_damage", "damage_aura", "enemy_bolt", "necromancer", "layout_spawner", "tesla", "tesla_ray", "tesla_aura", "graveyard", "demon_mage", "skeleton_aura", "musketeer", "shotgun", "tunnel", "unit_regen", "hero_malik", "fissure_aura", "stun_modifier", "bfg", "missile", "cluster", "sasquash_holder", "chieftain", "sorcerer", "sunray", "jt", "jt_spawn", "jt_freeze", "sheep", "polymorph", "armor_buff", "speed_buff"]
 var catalog: Dictionary
 var bindings: Dictionary
 
@@ -101,7 +101,7 @@ func role(template: String) -> String:
 	return catalog.behaviors.get(canonical(bindings.get(template, ""), catalog), "")
 
 static func supported(value: String) -> bool:
-	return value in ROLES or value in ["enemy_bolt","necromancer","layout_spawner","tesla","tesla_ray","tesla_aura","graveyard","demon_mage","skeleton_aura","musketeer","shotgun","tunnel","unit_regen","hero_malik","fissure_aura","stun_modifier","bfg","missile","cluster","sasquash_holder","chieftain","sorcerer","sunray","jt","jt_spawn","jt_freeze","sheep","polymorph","armor_buff","speed_buff"]
+	return value in ROLES
 
 func projectile_role(template: Dictionary) -> String:
 	return catalog.behaviors.get(canonical(template.get("behavior", ""), catalog), "")
@@ -145,17 +145,19 @@ func hire(sim, tower: Dictionary) -> void:
 	elif role(tower.template) == "mercenary": Elf.hire(sim, tower)
 
 func tower_step(sim, tower: Dictionary) -> bool:
-	if role(tower.template)=="tesla": Tesla.step(sim,tower);return true
-	if role(tower.template)=="sorcerer": Sorcerer.step(sim,tower);return true
-	if role(tower.template)=="sunray": Sunray.step(sim,tower);return true
-	if role(tower.template) == "sasquash_holder": Sasquash.frozen_step(sim,tower); return true
-	if tower.template == "tower_sasquash": Sasquash.step(sim,tower); return true
-	if role(tower.template) == "bfg": Bfg.step(sim,tower); return true
-	if role(tower.template) == "musketeer": Musketeer.step(sim,tower); return true
-	if role(tower.template) == "arcane": Arcane.step(sim, tower); return true
-	if role(tower.template) != "ranger": return false
-	Ranger.step(sim, tower)
-	return true
+	if tower.template == "tower_sasquash":
+		Sasquash.step(sim, tower)
+		return true
+	match role(tower.template):
+		"tesla": Tesla.step(sim, tower); return true
+		"sorcerer": Sorcerer.step(sim, tower); return true
+		"sunray": Sunray.step(sim, tower); return true
+		"sasquash_holder": Sasquash.frozen_step(sim, tower); return true
+		"bfg": Bfg.step(sim, tower); return true
+		"musketeer": Musketeer.step(sim, tower); return true
+		"arcane": Arcane.step(sim, tower); return true
+		"ranger": Ranger.step(sim, tower); return true
+	return false
 
 func soldier_inserted(sim, soldier: Dictionary, tower: Dictionary) -> void:
 	sim.DamageFactors.inherit(sim, soldier, tower)

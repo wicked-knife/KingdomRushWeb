@@ -8,7 +8,7 @@
 			"gold": 1300,
 			"path": "res://reports/towers_eleventh_opening_1280x720.png",
 			"state": "eleventh_opening",
-			"tick": 3
+			"tick": 4
 		},
 		{
 			"gold": 1200,
@@ -26,7 +26,7 @@
 			"gold": 1200,
 			"path": "res://reports/towers_eleventh_skeleton_walk_1280x720.png",
 			"state": "eleventh_skeleton_walk",
-			"tick": 293
+			"tick": 294
 		},
 		{
 			"gold": 1200,
@@ -112,13 +112,13 @@
 			"gold": 2600,
 			"path": "res://reports/towers_eleventh_mode3_1280x720.png",
 			"state": "eleventh_mode3",
-			"tick": 3
+			"tick": 4
 		},
 		{
 			"gold": 2600,
 			"path": "res://reports/towers_eleventh_victory_mode3_1280x720.png",
 			"state": "eleventh_victory_mode3",
-			"tick": 3
+			"tick": 4
 		},
 		{
 			"path": "res://reports/challenges_level11_mode3_1280x720.png",

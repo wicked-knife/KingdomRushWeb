@@ -27,29 +27,19 @@ def package():
         path = folder / row["url"]
         if not path.resolve().is_relative_to((folder / "packs").resolve()) or sha256(path) != row["sha256"] or path.stat().st_size != row["size"]:
             raise RuntimeError("Missing or changed deferred pack: " + row["url"])
-    if 10 not in level_ids() and not receipt.get('feedback_acceptance',{}).get('passed'):
-        raise RuntimeError('Current feedback acceptance is required before packaging')
-    for path,expected in receipt.get('feedback_report_sha256',{}).items():
-        if sha256(ROOT/path)!=expected:raise RuntimeError('Feedback report changed after export: '+path)
     last = max(level_ids())
-    if 10 not in level_ids() and 8 in level_ids() and not receipt.get('eighth_acceptance', {}).get('passed'):
-        raise RuntimeError('Current eighth-stage acceptance is required before packaging')
-    if 10 not in level_ids() and 9 in level_ids() and not receipt.get('ninth_acceptance', {}).get('passed'):
-        raise RuntimeError('Current ninth-stage acceptance is required before packaging')
-    for path, expected in receipt.get('validation_report_sha256', {}).items():
+    if not receipt.get("eleventh_acceptance", {}).get("passed") or not receipt.get("current_source_sha256"):
+        raise RuntimeError("Current eleventh-stage acceptance is required")
+    for path, expected in receipt.get("validation_report_sha256", {}).items():
         if sha256(ROOT / path) != expected:
-            raise RuntimeError('Stage validation report changed after export: ' + path)
-    if 10 in level_ids():
-        acceptance = "eleventh_acceptance" if 11 in level_ids() else "tenth_acceptance"
-        if not receipt.get(acceptance, {}).get('passed') or not receipt.get('current_source_sha256'):
-            raise RuntimeError('Current scoped stage acceptance is required')
-        for path, expected in receipt['current_source_sha256'].items():
-            # Packaging runs after export and does not produce its runtime
-            # resources. Record this tool's current hash separately below.
-            if path == 'tools/package_level01.py':
-                continue
-            if sha256(ROOT / path) != expected:
-                raise RuntimeError('Export input changed after export: ' + path)
+            raise RuntimeError("Stage validation report changed after export: " + path)
+    for path, expected in receipt["current_source_sha256"].items():
+        # Packaging runs after export and does not produce its runtime
+        # resources. Record this tool's current hash separately below.
+        if path == "tools/package_level01.py":
+            continue
+        if sha256(ROOT / path) != expected:
+            raise RuntimeError("Export input changed after export: " + path)
     count = len(combinations())
     debug = receipt.get("developer_menu", False)
     checked = receipt.get("pck_isolated_check", False)
@@ -77,7 +67,7 @@ def package():
         "Earn three campaign stars on a level to enter its challenges. Each challenge starts with one life.\n"
         "Heroic: 6 waves; Iron: 1 wave. First completion of each challenge grants one star.\n"
         f"Campaign three stars plus both challenges total {len(level_ids()) * 5} stars. Level {last + 1} is a preview.\n"
-        "Heroic gold (levels 1-9): 230/310/400/750/1000/1200/1000/1100/2000. Iron: 360/275/660/1500/1500/800/1200/1200/2400.\n"
+        "Heroic gold (levels 1-11): 230/310/400/750/1000/1200/1000/1100/2000/1800/2100. Iron: 360/275/660/1500/1500/800/1200/1200/2400/2200/2600.\n"
         "Iron tower bans: L1 archer+mage; L2 barracks; L3 artillery; L4 mage+artillery; L5 barracks.\n"
         "L5 Iron has 3 free tier-3 archers and 2 elf ruins; camp repair/recruit/skills remain available.\n"
         "Level 2: 240 gold, 7 waves, 7 tower sites. Level 3: 330 gold, 11 waves, 12 sites, two lanes.\n"
@@ -128,7 +118,7 @@ def package():
         "Early-wave rewards animate +gold at the gold counter and -seconds above cooling skills.\n"
         "Click a soldier/enemy to inspect live stats. Click a sheep 8 times to pop it.\n"
         "1 = fire rain, 2 = reinforcements, Space = next wave. Skills unlock after wave 3/7 tutorials in level 1.\n"
-        "In all challenges and campaigns 2-10 both skills unlock when wave 1 is sent; neither can be used during setup.\n"
+        f"In all challenges and campaigns 2-{last} both skills unlock when wave 1 is sent; neither can be used during setup.\n"
         "Click enemy alerts for information.\n\n"
         "Feedback repairs: tower introductions, grass/snow hover, technology/map stars and colored current-to-next skill values.\n"
         "Cannon targeting/flight and preplaced guard interception follow the frozen Dove source; no difficulty changes.\n\n"

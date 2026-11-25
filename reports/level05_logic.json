@@ -1,8 +1,0 @@
-{
-	"campaign": {},
-	"checks": 140,
-	"failures": [],
-	"full_replay": false,
-	"passed": true,
-	"scope": "transactions, modifiers, combat, spiders, roster, progress, settlement"
-}

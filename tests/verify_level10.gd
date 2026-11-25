@@ -124,7 +124,7 @@ func demons10() -> void:
 	sim.damage(big,10000,1);sim.tick+=31;sim.modifiers.step(sim)
 	check(is_equal_approx(sim.DamageFactors.value(small,sim.templates[small.template],true),1),"skeleton buff expires after source death")
 func progression10() -> void:
-	check(Levels.supports(10,3) and not Levels.supports(11),"published ten levels, eleventh preview")
+	check(Levels.supports(10,3) and not Levels.supports(Levels.ids().max() + 1),"published ten levels, next preview")
 
 func source_tesla10(scenario:String) -> void:
 	var sim=fresh();var tower:Dictionary=buy(sim,"engineer","1","tower_tesla")

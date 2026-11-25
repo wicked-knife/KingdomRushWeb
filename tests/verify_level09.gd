@@ -10,7 +10,7 @@ func fresh(mode:int=1):
 
 func run() -> void:
 	source=Levels.read_json("res://tests/fixtures/level09_source.json")
-	check(Levels.supports(9,3) and not Levels.supports(10),"ninth published; tenth preview")
+	check(Levels.supports(9,3) and not Levels.supports(Levels.ids().max() + 1),"ninth published; next preview")
 	for mode in [1,2,3]:
 		var sim=fresh(mode)
 		if sim==null:quit(1);return

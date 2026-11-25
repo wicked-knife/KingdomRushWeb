@@ -14,7 +14,14 @@
 
 报告区分独立场景数、模拟帧数、数据条数和断言次数。只保留有助于定位的汇总；逐帧明细、截图、临时日志与构建包放忽略目录。历史报告不充当当前基准或当前验证结果。
 
-默认科技验证范围与当前计数见 [默认科技](DEFAULT_UPGRADES.md) 和 `reports/upgrades_logic.json`，版本迁移见 [Dove 2.1.0.6](DOVE_2106_UPDATE.md)。配置数、模板数据条数与独立行为场景分别计数。完整比较及截图留在本地报告目录。
+默认科技验证范围与当前计数见 [默认科技](DEFAULT_UPGRADES.md) 和 `reports/upgrades_logic.json`。配置数、模板数据条数与独立行为场景分别计数。完整比较及截图留在本地报告目录。
+
+## 测试与报告整理（2026-11-25）
+
+- 拆除 7 层历史兼容倒推链（`level07..10_compatibility.py`、`dove_2106_compatibility.py`、`feedback_compatibility.py`、`upgrades_compatibility.py` 及 11.1 MB `*_additions.json` / `dove_2106_delta.json`），改为由 `verify_dove_update.py` 直接校验 Dove 2.1.0.6 源提交与输入哈希，由 `level11_compatibility.json` 保护现状。
+- 移除已失效的旧阶段交付门禁（`verify_level07..10_delivery.py`、`verify_feedback_delivery.py`）与无人消费的约 75 份历史阶段报告；`reports/` 下只跟踪当前门禁、资产清单与 Web 分包交付报告。
+- 移除已被四塔升级测试覆盖的 `archer_upgrade_*`、一次性 `capture_feedback_combat.gd` 及被 `verify_level09.gd` 覆盖的 `verify_level10_shared.gd`；合并合并后的 2.1.0.6 战斗快照至 `content_combat_baseline.json`；修复 `verify_level06..10.gd` 与 `verify_content_unification.gd` 中硬编码旧关卡上限的过期断言。
+- 保留 `TEST_REDUNDANCY_REVIEW.md`（2026-11-02）记录的历史整理原则，已删除过期的 `DOVE_2106_UPDATE.md` 与 `FEEDBACK_REPAIRS.md`（其中永久性游戏规则已并入 `BATTLE_BEHAVIOR.md`）。
 
 ## 测试入口整理（2026-11-02）
 

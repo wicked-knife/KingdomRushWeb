@@ -1,50 +1,74 @@
 {
   "passed": true,
-  "content_combinations": 27,
+  "content_combinations": 33,
   "definitions": {
     "level01": {
-      "gameplay_unchanged": true,
-      "changed_sections": [],
       "source_current": true,
       "controller": "level01",
       "behaviors": 37,
       "dependency_owners": 55
     },
     "level02": {
-      "gameplay_unchanged": true,
-      "changed_sections": [],
       "source_current": true,
       "controller": "default",
       "behaviors": 38,
       "dependency_owners": 54
     },
     "level03": {
-      "gameplay_unchanged": true,
-      "changed_sections": [],
       "source_current": true,
       "controller": "default",
       "behaviors": 41,
       "dependency_owners": 81
     },
     "level04": {
-      "gameplay_unchanged": true,
-      "changed_sections": [],
       "source_current": true,
       "controller": "default",
-      "behaviors": 85,
-      "dependency_owners": 149
+      "behaviors": 90,
+      "dependency_owners": 155
     },
     "level05": {
-      "gameplay_unchanged": true,
-      "changed_sections": [],
       "source_current": true,
       "controller": "default",
-      "behaviors": 97,
-      "dependency_owners": 137
+      "behaviors": 102,
+      "dependency_owners": 143
+    },
+    "level06": {
+      "source_current": true,
+      "controller": "level06",
+      "behaviors": 128,
+      "dependency_owners": 168
+    },
+    "level07": {
+      "source_current": true,
+      "controller": "default",
+      "behaviors": 114,
+      "dependency_owners": 158
+    },
+    "level08": {
+      "source_current": true,
+      "controller": "default",
+      "behaviors": 128,
+      "dependency_owners": 173
+    },
+    "level09": {
+      "source_current": true,
+      "controller": "level09",
+      "behaviors": 129,
+      "dependency_owners": 177
+    },
+    "level10": {
+      "source_current": true,
+      "controller": "level10",
+      "behaviors": 128,
+      "dependency_owners": 175
+    },
+    "level11": {
+      "source_current": true,
+      "controller": "default",
+      "behaviors": 131,
+      "dependency_owners": 172
     },
     "ranger_arena": {
-      "gameplay_unchanged": true,
-      "changed_sections": [],
       "source_current": true,
       "controller": "default",
       "behaviors": 57,
@@ -60,7 +84,7 @@
     {
       "case": "missing_dependency",
       "rejected": true,
-      "reason": "level05: missing template dependency: soldier_elf -> arrow_elf"
+      "reason": "level05: behavior -> missing template arrow_elf"
     },
     {
       "case": "missing_mode",
@@ -83,12 +107,7 @@
       "reason": "Runtime dependency missing from export manifest: res://scripts/battle/dove_behaviors.gd -> res://scripts/battle/dove_bfg.gd"
     }
   ],
-  "publication_resources": 449,
-  "publication_data": 80,
-  "resource_baseline": "battle_ui_baseline.json (source pixel verification in battle_ui_assets.json)",
-  "verified_resource_files": 85,
-  "unchanged_resource_files": 21,
-  "repacked_files_source_pixel_check": "reports/battle_ui_assets.json",
-  "changed_resource_files": [],
+  "publication_resources": 500,
+  "publication_data": 92,
   "failures": []
 }

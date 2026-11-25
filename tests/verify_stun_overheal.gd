@@ -1,5 +1,5 @@
 extends SceneTree
-## Targeted regressions from Dove 2.1.0.3: y_enemy_stun, soldier_regen,
+## Targeted regressions for y_enemy_stun, soldier_regen,
 ## mod_healing_paladin and systems/render.lua's health-bar branch.
 const Levels = preload("res://scripts/services/campaign_levels.gd")
 const Setup = preload("res://scripts/services/battle_setup.gd")

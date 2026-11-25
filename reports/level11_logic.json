@@ -8,7 +8,7 @@
 	"source_hashes": {
 		"data/campaign_content.json": "cb0af44d0d46f65b4f360eec63323f4baa028cd230ba84aa95fe6be2791f0bb9",
 		"data/level11/definition.json": "aa68a35eb99cc68dad8de4152fd09c420ccfbbf200cf95a71ae1a089bdfd4eeb",
-		"scripts/battle/dove_behaviors.gd": "c10b8fa0b98693287cbf2feff70cfb699fd0cf5317cd4faaa1cc30512371717d",
+		"scripts/battle/dove_behaviors.gd": "da0887acb0cf9c02cc2c29124b1763669e4dc1c4dfd3bf8659a3848b5ee907c0",
 		"scripts/battle/dove_enemy_melee.gd": "dbd761b72b9d54871ae097b32d78a92783e018f162a216ca4bef4a1cdb23ad8f",
 		"scripts/battle/dove_enemy_projectiles.gd": "04ae879e5b0df6d4c077f99e84aaeb4e2b64635c47984fc32b8ce5f83d671caf",
 		"scripts/battle/dove_necromancer.gd": "126392bfdd5adc570b6ec4dd88bb989467bde587eb59179aa188f1d63d8e3982",

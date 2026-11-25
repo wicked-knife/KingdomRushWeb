@@ -1,7 +1,6 @@
 extends SceneTree
 const Sim = preload("res://scripts/battle/level01_sim.gd")
 const Arena = preload("res://tests/tower_upgrade_arena.gd")
-const ArcherArena = preload("res://tests/archer_upgrade_arena.gd")
 const Info = preload("res://scripts/battle/dove_unit_info.gd")
 var failures: Array[String] = []
 var checks := 0
@@ -254,7 +253,6 @@ func _run() -> void:
 	var sim = Sim.new(definition)
 	definition.layout.level_mode_overrides[0].locked_towers.append("tower_mage_2")
 	check(not sim.tower_locked("tower_mage_2") and sim.gold == 1000, "arena rules deeply copied")
-	check(ArcherArena.definition().waves.cash == 270 and "tower_mage_2" in ArcherArena.definition().layout.level_mode_overrides[0].locked_towers, "original archer arena unchanged")
 	for kind in Sim.TYPES:
 		check(not sim.tower_locked("tower_" + kind + "_2") and Sim.new().tower_locked("tower_" + kind + "_2"), kind + " independent arena unlock")
 	denied(sim, {"id": "8", "upgrade_to": "tower_barrack_2"}, "tutorial")

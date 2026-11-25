@@ -138,67 +138,11 @@ def main():
         engine = godot_path(args.godot)
         from verify_dove_update import run as verify_source_transition
         verify_source_transition()
-        tenth, eleventh = {}, {}
-        if 11 in level_ids():
-            from verify_level11_delivery import verify as verify_eleventh
-            eleventh = verify_eleventh()
-            hero_reports = {"logic": eleventh["reports"]["hero_combat_logic"]}
-            feedback, seventh, eighth, ninth = {}, {}, {}, {}
-            technology_reports = {"eleventh_source_patches": eleventh["reports"]["level11_upgrades"]}
-            ui_reports = {"eleventh_native": eleventh["reports"]["level11_native_1280x720"]}
-        elif 10 in level_ids():
-            from verify_level10_delivery import verify as verify_tenth
-            tenth = verify_tenth()
-            hero_reports = {"logic": tenth["reports"]["hero_combat_logic"]}
-            feedback, seventh, eighth, ninth = {}, {}, {}, {}
-            technology_reports = {"tenth_source_patches": tenth["reports"]["level10_upgrades"]}
-            ui_reports = {"tenth_native": tenth["reports"]["level10_native_1280x720"]}
-        else:
-            hero_reports = {}
-            if read_catalog().get("combat_heroes"):
-                for name in ("hero_combat_logic", "hero_malik_native_1280x720", "hero_malik_assets"):
-                    report = json.loads((ROOT / f"reports/{name}.json").read_text(encoding="utf-8"))
-                    if not report.get("passed") or not report.get("source_hashes"):
-                        raise RuntimeError("Hero acceptance failed: " + name)
-                    for path, expected in report["source_hashes"].items():
-                        if hashlib.sha256((ROOT / path).read_bytes()).hexdigest() != expected:
-                            raise RuntimeError("Hero acceptance is stale: " + path)
-                    hero_reports[name] = {key: report[key] for key in ("passed", "checks", "behavior_scenarios", "frames", "animations", "native_input", "native_audio") if key in report}
-            from verify_feedback_delivery import verify as verify_feedback
-            feedback=verify_feedback()
-            seventh = {}
-            if 7 in level_ids():
-                from verify_level07_delivery import verify as verify_seventh
-                verify_seventh()
-                seventh = json.loads((ROOT / "reports/level07_delivery.json").read_text(encoding="utf-8"))
-            eighth = {}
-            if 8 in level_ids():
-                from verify_level08_delivery import verify as verify_eighth
-                eighth = verify_eighth()
-            ninth = {}
-            if 9 in level_ids():
-                from verify_level09_delivery import verify as verify_ninth
-                ninth = verify_ninth()
-            technology_reports = {}
-            for key in ("logic", "native_1280x720", "native_1024x768", "assets"):
-                path = ROOT / f"reports/upgrades_{key}.json"
-                result = json.loads(path.read_text(encoding="utf-8"))
-                if not result.get("passed") or not result.get("source_hashes"):
-                    raise RuntimeError(f"Technology acceptance failed: {path}")
-                for relative, expected in result["source_hashes"].items():
-                    if hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() != expected:
-                        raise RuntimeError(f"Technology acceptance is stale: {relative}")
-                technology_reports[key] = {k: result[k] for k in ("passed", "checks", "source_patch_scenarios", "source_template_rows", "behavior_scenarios", "content_combinations", "native_input", "native_audio") if k in result}
-            ui_reports = {}
-            for key in ("logic", "1280x720", "1024x768", "assets"):
-                path = ROOT / f"reports/battle_ui_{key}.json"
-                result = json.loads(path.read_text(encoding="utf-8"))
-                if not result.get("passed"):
-                    raise RuntimeError(f"Battle UI acceptance failed: {path}")
-                for relative, expected in result.get("source_hashes", {}).items():
-                    if hashlib.sha256((ROOT / relative).read_bytes()).hexdigest() != expected:
-                        raise RuntimeError(f"Battle UI acceptance is stale: {relative}")
-                ui_reports[key] = {k: result[k] for k in ("passed", "checks", "layout_only", "scope") if k in result}
+        from verify_level11_delivery import verify as verify_eleventh
+        eleventh = verify_eleventh()
+        hero_reports = {"logic": eleventh["reports"]["hero_combat_logic"]}
+        technology_reports = {"eleventh_source_patches": eleventh["reports"]["level11_upgrades"]}
+        ui_reports = {"eleventh_native": eleventh["reports"]["level11_native_1280x720"]}
         output = ROOT / "build/web/index.html"
         source_output = ROOT / "build/web-source/index.html"
         source_output.parent.mkdir(parents=True, exist_ok=True)

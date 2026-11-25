@@ -26,7 +26,7 @@ func ticks(sim, count: int) -> void:
 func run() -> void:
 	source = Levels.read_json("res://tests/fixtures/level06_source.json")
 	check(not source.is_empty(), "independent frozen-source oracle exists")
-	check(Levels.supports(6, 3) and not Levels.supports(10) and not Levels.supports(6, 1, 3), "published range and difficulty")
+	check(Levels.supports(6, 3) and not Levels.supports(Levels.ids().max() + 1) and not Levels.supports(6, 1, 3), "published range and difficulty")
 	for mode in [1, 2, 3]:
 		var sim = fresh(mode)
 		check(sim.data.waves == source.modes[str(mode)], "all wave fields match frozen Lua mode %d" % mode)
@@ -233,7 +233,9 @@ func boss_and_payloads() -> void:
 	check(edge.enemies.all(func(e):return e.hp <= 0) and edge.pending_entities.is_empty(), "bomb in flight at boss death cannot generate living summons")
 	edge.projectiles.clear() # The normal frame removes a completed projectile.
 	edge.wave = 17; edge.spawn_queue.clear(); edge.step()
-	check(edge.result == "victory", "boss clear victory does not wait for corpse lifetime")
+	check(edge.victory_ready_at >= edge.tick, "boss clear schedules victory without waiting for corpse lifetime")
+	while edge.result == "" and edge.tick < maxi(edge.victory_ready_at, edge.victory_animation_end) + 5: edge.step()
+	check(edge.result == "victory", "boss clear victory commits after source victory delay")
 	var leaked = fresh(); leaked.towers.clear(); leaked.soldiers.clear(); leaked.wave = 17
 	var escaping: Dictionary = leaked._spawn_enemy("eb_juggernaut",0)
 	escaping.progress = leaked.data.paths.paths[0][0].size() - 1; escaping.node = int(escaping.progress)
