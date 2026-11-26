@@ -106,6 +106,9 @@ def resource_owners():
             add(path, "boot")
     for path in [menu["font"], menu["background"], menu["catalog"], menu["locale"], menu["sounds"], menu["font_roles"], *menu["atlases"].values(), *menu["audio"].values()]:
         add(path, "boot")
+    if isinstance(menu.get("loading"), dict):
+        for path in menu["loading"].values():
+            add(path, "boot")
     content = json.loads((ROOT / "data/campaign_content.json").read_text(encoding="utf-8"))
     manifest("data/map_kr1", "map")
     manifest("data/heroes", "heroes")

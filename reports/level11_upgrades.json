@@ -5,7 +5,7 @@
 	"source_hashes": {
 		"data/level11/definition.json": "aa68a35eb99cc68dad8de4152fd09c420ccfbbf200cf95a71ae1a089bdfd4eeb",
 		"data/upgrades/definition.json": "56649f49a635a3e0f67c8674def89782c2536fd0c096102babd51afaa0598815",
-		"scripts/app_root.gd": "253ce1da3f4f956348959dfe1241639f143e64499cbb512463b0144c95666679",
+		"scripts/app_root.gd": "874347ff5632ee076bf7d05d045d666b3cf24c540fde679575fa589921eb4b8e",
 		"scripts/battle/battle_view.gd": "f2c33805820fe085361cac6667528e155400841aad494b5d6f2cea732ff3f147",
 		"scripts/battle/dove_arcane.gd": "dc944420788902b27f7692046a20825306cc302211284a6e85d813177ec59f88",
 		"scripts/battle/dove_behaviors.gd": "592c9e854043665e9453a6d420caa9d562fc8d10316939f0aabec5268b89feeb",

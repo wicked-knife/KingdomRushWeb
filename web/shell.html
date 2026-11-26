@@ -5,35 +5,333 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>$GODOT_PROJECT_NAME</title>
   <style>
-    html, body { margin: 0; width: 100%; height: 100%; background: #122722; overflow: hidden; }
-    #canvas { display: block; outline: none; }
-    #loading { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
-      flex-direction: column; gap: 24px; padding: 24px; color: #edda98; background: #122722;
-      font: 18px/1.6 system-ui, sans-serif; text-align: center; }
-    h1 { margin: 0; font-size: clamp(28px, 5vw, 48px); letter-spacing: 3px; }
-    progress { width: min(440px, 80vw); height: 16px; accent-color: #cfa858; }
-    #message { max-width: 720px; white-space: pre-wrap; overflow-wrap: anywhere; }
-    button { padding: 10px 32px; background: #cfa858; border: 0; border-radius: 6px;
-      color: #17271f; font: inherit; cursor: pointer; }
+    :root {
+      --gold: #f7e4a3;
+      --cream: #ebdfb8;
+      --ink-outline: #241b12;
+      --wood-dark: #2c2017;
+      --wood-mid: #433122;
+      --iron: #9b8d77;
+      --iron-dark: #3f3830;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      background: #101b17;
+      overflow: hidden;
+      font-family: "Microsoft YaHei", "PingFang SC", system-ui, -apple-system, sans-serif;
+      user-select: none;
+    }
+    #canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      outline: none;
+    }
+    #loading {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #101b17;
+      overflow: hidden;
+      opacity: 1;
+      transition: opacity 0.26s ease-in;
+    }
+    #loading.is-fading {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .kr-bg {
+      position: absolute;
+      inset: -4%;
+      background: #101b17 url('./loading_bg.jpg') center / cover no-repeat;
+      filter: brightness(0.92);
+      transform-origin: center;
+      animation: kr-breath 18s ease-in-out infinite alternate;
+    }
+    @keyframes kr-breath {
+      from { transform: scale(1.03); }
+      to { transform: scale(1.08); }
+    }
+    .kr-vignette {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 56%, rgba(246, 198, 92, 0.12) 0%, rgba(16, 27, 23, 0.25) 45%, rgba(6, 12, 10, 0.78) 100%);
+      pointer-events: none;
+    }
+    #motes {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .kr-stage {
+      position: relative;
+      z-index: 2;
+      width: min(824px, 92vw);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-bottom: clamp(18px, 4vh, 48px);
+    }
+    .kr-logo {
+      width: clamp(210px, 38vh, 420px);
+      max-width: 72vw;
+      height: auto;
+      margin-top: -4px;
+      margin-bottom: clamp(8px, 2vh, 22px);
+      filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.62));
+      pointer-events: none;
+    }
+    .kr-board {
+      position: relative;
+      width: 100%;
+      padding: clamp(34px, 4.4vh, 46px) clamp(24px, 4vw, 56px) clamp(24px, 3.4vh, 36px);
+      border-radius: 14px;
+      background:
+        repeating-linear-gradient(
+          180deg,
+          rgba(255, 220, 160, 0.03) 0px,
+          rgba(255, 220, 160, 0.03) 3px,
+          rgba(0, 0, 0, 0.08) 3px,
+          rgba(0, 0, 0, 0.08) 7px
+        ),
+        linear-gradient(180deg, #4b3726 0%, #38281c 54%, #2b1e15 100%);
+      border: 4px solid var(--iron);
+      box-shadow:
+        inset 0 0 0 2px var(--iron-dark),
+        inset 0 14px 28px rgba(0, 0, 0, 0.35),
+        0 18px 42px rgba(0, 0, 0, 0.65);
+      text-align: center;
+      color: var(--cream);
+    }
+    .kr-board::before,
+    .kr-board::after {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border-radius: 8px;
+      border: 1px solid rgba(247, 228, 163, 0.14);
+      pointer-events: none;
+    }
+    .kr-plaque {
+      position: absolute;
+      top: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      min-width: 186px;
+      padding: 6px 26px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #3c3630 0%, #24201c 100%);
+      border: 3px solid #b1a38c;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.55);
+      color: var(--gold);
+      font-size: clamp(14px, 2vw, 18px);
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 4px #000;
+      white-space: nowrap;
+    }
+    .kr-plaque.is-error {
+      color: #ff9e7a;
+      border-color: #c87b64;
+    }
+    .kr-heading {
+      margin: 4px 0 clamp(14px, 2.2vh, 22px);
+      font-size: clamp(22px, 3.4vw, 34px);
+      font-weight: 800;
+      letter-spacing: 3px;
+      color: var(--gold);
+      text-shadow:
+        0 2px 0 var(--ink-outline),
+        2px 0 0 var(--ink-outline),
+        -2px 0 0 var(--ink-outline),
+        0 -2px 0 var(--ink-outline),
+        0 4px 12px rgba(0, 0, 0, 0.65);
+    }
+    .kr-march-wrap {
+      position: relative;
+      width: min(640px, 100%);
+      margin: 0 auto;
+      padding-top: 76px;
+    }
+    .kr-runners {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 82px;
+      pointer-events: none;
+    }
+    #dust {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .kr-sprite {
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 64px;
+      height: 80px;
+      background-image: url('./loading_march.png');
+      background-repeat: no-repeat;
+      background-size: 768px 160px;
+      transform-origin: bottom center;
+      will-change: transform, background-position;
+    }
+    .kr-bar-trough {
+      position: relative;
+      width: 100%;
+      height: 26px;
+      padding: 5px 6px;
+      border-radius: 13px;
+      background: linear-gradient(180deg, #16110c 0%, #241b13 100%);
+      border: 3px solid #96815d;
+      box-shadow:
+        inset 0 3px 8px rgba(0, 0, 0, 0.85),
+        0 2px 0 rgba(255, 232, 170, 0.14);
+      overflow: hidden;
+    }
+    .kr-bar-fill {
+      position: relative;
+      width: 0%;
+      height: 100%;
+      border-radius: 8px;
+      background: linear-gradient(180deg, #fce28b 0%, #dfb04b 48%, #b27b25 100%);
+      box-shadow: 0 0 12px rgba(247, 200, 92, 0.55);
+      overflow: hidden;
+    }
+    .kr-bar-fill::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        110deg,
+        transparent 0%,
+        rgba(255, 250, 224, 0.0) 34%,
+        rgba(255, 250, 224, 0.55) 50%,
+        rgba(255, 250, 224, 0.0) 66%,
+        transparent 100%
+      );
+      animation: kr-shimmer 1.65s linear infinite;
+    }
+    @keyframes kr-shimmer {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(140%); }
+    }
+    .kr-percent {
+      margin-top: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #d8c58c;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 3px #140f0a;
+    }
+    #message {
+      margin: 10px auto 0;
+      max-width: 620px;
+      font-size: clamp(14px, 1.9vw, 18px);
+      line-height: 1.55;
+      color: var(--cream);
+      text-shadow: 0 2px 4px #140f0a;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+    #message.is-error {
+      margin-top: 12px;
+      margin-bottom: 20px;
+      color: #ffdcc4;
+    }
+    #retry {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 176px;
+      height: 52px;
+      padding: 0 28px;
+      border-radius: 10px;
+      border: 3px solid #c2a264;
+      background: linear-gradient(180deg, #674727 0%, #442e1b 100%);
+      box-shadow: inset 0 1px 0 rgba(255, 236, 179, 0.35), 0 6px 14px rgba(0, 0, 0, 0.5);
+      color: var(--gold);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 3px #181008;
+      cursor: pointer;
+      transition: transform 0.12s ease, filter 0.12s ease, border-color 0.12s ease;
+    }
+    #retry:hover, #retry:focus-visible {
+      border-color: #f6dc8d;
+      filter: brightness(1.16);
+      outline: none;
+    }
+    #retry:active {
+      transform: translateY(1px);
+    }
     [hidden] { display: none !important; }
+    @media (max-height: 620px) {
+      .kr-logo { width: clamp(150px, 28vh, 240px); margin-bottom: 6px; }
+      .kr-march-wrap { padding-top: 64px; }
+    }
   </style>
   $GODOT_HEAD_INCLUDE
 </head>
 <body>
   <canvas id="canvas" tabindex="0">浏览器不支持 Canvas，请使用新版 Chrome 或 Edge。</canvas>
   <div id="loading" role="status" aria-live="polite">
-    <h1>$GODOT_PROJECT_NAME</h1>
-    <div id="message">正在加载游戏，请稍候…</div>
-    <progress id="progress"></progress>
-    <button id="retry" hidden>重新加载</button>
-    <noscript>请启用 JavaScript 后重新加载。</noscript>
+    <div class="kr-bg"></div>
+    <div class="kr-vignette"></div>
+    <canvas id="motes"></canvas>
+    <div class="kr-stage">
+      <img class="kr-logo" src="./loading_logo.png" alt="Kingdom Rush" onerror="this.hidden=true">
+      <div class="kr-board">
+        <div id="plaque" class="kr-plaque">正在出征</div>
+        <h1 class="kr-heading">$GODOT_PROJECT_NAME</h1>
+        <div id="marchWrap" class="kr-march-wrap">
+          <div id="runners" class="kr-runners">
+            <canvas id="dust"></canvas>
+            <div id="goblin" class="kr-sprite"></div>
+            <div id="soldier" class="kr-sprite"></div>
+          </div>
+          <div class="kr-bar-trough">
+            <div id="barFill" class="kr-bar-fill"></div>
+          </div>
+          <div id="percent" class="kr-percent">0%</div>
+        </div>
+        <div id="message">正在下载游戏引擎与资源，请稍候…</div>
+        <button id="retry" type="button" hidden>重新加载</button>
+        <noscript>请启用 JavaScript 后重新加载。</noscript>
+      </div>
+    </div>
   </div>
   <script src="$GODOT_URL"></script>
   <script>
     const overlay = document.getElementById('loading');
-    const progress = document.getElementById('progress');
+    const plaque = document.getElementById('plaque');
+    const marchWrap = document.getElementById('marchWrap');
+    const runnersEl = document.getElementById('runners');
+    const barFill = document.getElementById('barFill');
+    const percentEl = document.getElementById('percent');
     const message = document.getElementById('message');
     const retry = document.getElementById('retry');
+    const soldierEl = document.getElementById('soldier');
+    const goblinEl = document.getElementById('goblin');
+    const motesCanvas = document.getElementById('motes');
+    const dustCanvas = document.getElementById('dust');
+
     retry.addEventListener('click', () => location.reload());
     window.addEventListener('keydown', (event) => {
       const key = String(event.key || '').toUpperCase();
@@ -41,25 +339,204 @@
         event.stopImmediatePropagation();
       }
     }, true);
+
+    // Marching sprite sequences matching data/loading/march_meta.json
+    const SOLDIER_SEQ = [0, 1, 2, 3, 4];
+    const GOBLIN_SEQ = [0, 0, 1, 1, 2, 2, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 10, 10, 11, 11];
+    const CELL_W = 64;
+    const CELL_H = 80;
+
+    let targetRatio = 0.04;
+    let displayRatio = 0.0;
+    let indeterminate = true;
+    let failed = false;
+    let dismissed = false;
+    let rafId = 0;
+    let lastTs = performance.now();
+    let elapsed = 0;
+    let dustTimer = 0;
+
+    const motes = Array.from({ length: 24 }, (_, i) => ({
+      x: ((i * 73) % 100) / 100,
+      y: ((i * 41) % 100) / 100,
+      speed: 0.018 + (i % 7) * 0.0045,
+      r: 1.8 + (i % 4) * 0.9,
+      phase: i * 0.7,
+      drift: 0.008 + (i % 5) * 0.003,
+      alpha: 0.28 + (i % 5) * 0.09,
+    }));
+    const dust = [];
+
+    function resizeCanvases() {
+      if (dismissed) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      motesCanvas.width = Math.max(1, Math.floor(window.innerWidth * dpr));
+      motesCanvas.height = Math.max(1, Math.floor(window.innerHeight * dpr));
+      const rect = runnersEl.getBoundingClientRect();
+      dustCanvas.width = Math.max(1, Math.floor(rect.width * dpr));
+      dustCanvas.height = Math.max(1, Math.floor(rect.height * dpr));
+    }
+    window.addEventListener('resize', resizeCanvases);
+    resizeCanvases();
+
+    function tick(now) {
+      if (dismissed) return;
+      const dt = Math.min(0.05, Math.max(0.001, (now - lastTs) / 1000));
+      lastTs = now;
+      elapsed += dt;
+
+      // Smooth progress interpolation (gentle creep while total size unknown)
+      if (!failed) {
+        if (indeterminate && targetRatio < 0.85) {
+          targetRatio = Math.min(0.85, targetRatio + dt * 0.06);
+        }
+        const alpha = 1 - Math.exp(-8.5 * dt);
+        displayRatio += (targetRatio - displayRatio) * alpha;
+        if (Math.abs(targetRatio - displayRatio) < 0.002) displayRatio = targetRatio;
+
+        const pct = Math.round(Math.max(0, Math.min(1, displayRatio)) * 100);
+        barFill.style.width = (displayRatio * 100).toFixed(2) + '%';
+        percentEl.textContent = pct + '%';
+
+        const trackW = runnersEl.clientWidth || 600;
+        const pad = 12;
+        const usable = Math.max(80, trackW - pad * 2);
+        const clamped = Math.max(0.05, Math.min(0.94, displayRatio));
+        const soldierX = pad + clamped * usable;
+        const gap = 78 - clamped * 22;
+        const goblinX = Math.min(trackW - 22, soldierX + gap);
+
+        const sIdx = SOLDIER_SEQ[Math.floor(elapsed * 12) % SOLDIER_SEQ.length];
+        const gIdx = GOBLIN_SEQ[Math.floor(elapsed * 26) % GOBLIN_SEQ.length];
+        soldierEl.style.backgroundPosition = `${-sIdx * CELL_W}px 0px`;
+        goblinEl.style.backgroundPosition = `${-gIdx * CELL_W}px ${-CELL_H}px`;
+        soldierEl.style.transform = `translate3d(${(soldierX - CELL_W * 0.5).toFixed(1)}px, 0, 0)`;
+        goblinEl.style.transform = `translate3d(${(goblinX - CELL_W * 0.5).toFixed(1)}px, 0, 0)`;
+
+        // Dust puffs under runners
+        dustTimer += dt;
+        if (dustTimer >= 0.08) {
+          dustTimer = 0;
+          for (const cx of [soldierX - 12, goblinX - 10]) {
+            dust.push({
+              x: cx,
+              y: 74 + (Math.random() - 0.5) * 4,
+              vx: -20 - Math.random() * 24,
+              vy: -5 - Math.random() * 12,
+              r: 3 + Math.random() * 3.5,
+              age: 0,
+              life: 0.34 + Math.random() * 0.18,
+            });
+          }
+        }
+        const dctx = dustCanvas.getContext('2d');
+        if (dctx && dustCanvas.width > 0) {
+          const dpr = dustCanvas.width / Math.max(1, runnersEl.clientWidth);
+          dctx.clearRect(0, 0, dustCanvas.width, dustCanvas.height);
+          for (let i = dust.length - 1; i >= 0; i--) {
+            const p = dust[i];
+            p.age += dt;
+            if (p.age >= p.life) { dust.splice(i, 1); continue; }
+            p.x += p.vx * dt;
+            p.y += p.vy * dt;
+            const t = p.age / p.life;
+            dctx.fillStyle = `rgba(222, 202, 162, ${((1 - t) * 0.42).toFixed(3)})`;
+            dctx.beginPath();
+            dctx.arc(p.x * dpr, p.y * dpr, p.r * (0.7 + t * 0.85) * dpr, 0, Math.PI * 2);
+            dctx.fill();
+          }
+        }
+      }
+
+      // Floating warm-gold motes
+      const mctx = motesCanvas.getContext('2d');
+      if (mctx && motesCanvas.width > 0) {
+        const w = motesCanvas.width;
+        const h = motesCanvas.height;
+        const dpr = w / Math.max(1, window.innerWidth);
+        mctx.clearRect(0, 0, w, h);
+        for (const m of motes) {
+          m.y -= m.speed * dt;
+          if (m.y < -0.04) m.y = 1.04;
+          const mx = (m.x + Math.sin(elapsed * 0.9 + m.phase) * m.drift) * w;
+          const my = m.y * h;
+          const pulse = 0.65 + 0.35 * Math.sin(elapsed * 2.2 + m.phase);
+          const a = m.alpha * pulse;
+          const rad = m.r * dpr;
+          mctx.fillStyle = `rgba(255, 204, 92, ${(a * 0.24).toFixed(3)})`;
+          mctx.beginPath();
+          mctx.arc(mx, my, rad * 2.2, 0, Math.PI * 2);
+          mctx.fill();
+          mctx.fillStyle = `rgba(255, 234, 160, ${a.toFixed(3)})`;
+          mctx.beginPath();
+          mctx.arc(mx, my, rad, 0, Math.PI * 2);
+          mctx.fill();
+        }
+      }
+
+      rafId = requestAnimationFrame(tick);
+    }
+    rafId = requestAnimationFrame(tick);
+
+    function dismissOverlay() {
+      if (dismissed || failed) return;
+      dismissed = true;
+      targetRatio = 1;
+      displayRatio = 1;
+      barFill.style.width = '100%';
+      percentEl.textContent = '100%';
+      overlay.classList.add('is-fading');
+      window.setTimeout(() => {
+        if (rafId) cancelAnimationFrame(rafId);
+        window.removeEventListener('resize', resizeCanvases);
+        overlay.remove();
+      }, 280);
+    }
+    window.__krDismissBootOverlay = dismissOverlay;
+
     function failure(error) {
       console.error(error);
+      failed = true;
+      plaque.textContent = '加载受阻';
+      plaque.classList.add('is-error');
+      marchWrap.hidden = true;
+      message.classList.add('is-error');
       message.textContent = '加载失败，请检查网络后重试。\n' + String(error instanceof Error ? error.message : error || '未知错误');
-      progress.hidden = true;
       retry.hidden = false;
+      retry.focus();
     }
+
     try {
       if (typeof Engine === 'undefined') throw new Error('无法下载游戏引擎。');
       const missing = Engine.getMissingFeatures({ threads: $GODOT_THREADS_ENABLED });
       if (missing.length) throw new Error('浏览器缺少所需能力：' + missing.join(', '));
       const engine = new Engine($GODOT_CONFIG);
       engine.startGame({
-          args: ['--', '--content-base-url=' + new URL('./', window.location.href).href],
-          onProgress(current, total) {
-            if (total > 0) { progress.max = total; progress.value = current; }
-            else { progress.removeAttribute('value'); }
-          },
-        }).then(() => { overlay.remove(); document.getElementById('canvas').focus(); }, failure);
-    } catch (error) { failure(error); }
+        args: ['--', '--content-base-url=' + new URL('./', window.location.href).href],
+        onProgress(current, total) {
+          if (total > 0) {
+            indeterminate = false;
+            targetRatio = Math.max(0, Math.min(1, current / total));
+            const mbDone = (current / 1000000).toFixed(1);
+            const mbTotal = (total / 1000000).toFixed(1);
+            message.textContent = `正在下载游戏核心… ${mbDone} / ${mbTotal} MB`;
+          } else {
+            indeterminate = true;
+            message.textContent = '正在初始化游戏引擎…';
+          }
+        },
+      }).then(() => {
+        indeterminate = false;
+        targetRatio = 1;
+        message.textContent = '正在进入王国…';
+        document.getElementById('canvas').focus();
+        // Godot's LoadingScreen normally dismisses this on its first rendered frame;
+        // keep a short safety timeout so the overlay never lingers.
+        window.setTimeout(dismissOverlay, 900);
+      }, failure);
+    } catch (error) {
+      failure(error);
+    }
   </script>
 </body>
 </html>

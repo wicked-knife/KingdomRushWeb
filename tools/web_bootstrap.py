@@ -34,6 +34,11 @@ def resource_paths():
         raise ValueError("Unsupported menu manifest")
     resources = [*manifest["scenes"], *manifest["scripts"], *manifest.get("fonts", [manifest["font"]]), manifest["background"], *manifest["textures"], *manifest["audio"].values()]
     data = ["res://data/menu_manifest.json", manifest["catalog"], manifest["locale"], manifest["sounds"], manifest["font_roles"], *manifest["atlases"].values()]
+    if isinstance(manifest.get("loading"), dict):
+        if manifest["loading"].get("texture"):
+            resources.append(manifest["loading"]["texture"])
+        if manifest["loading"].get("meta"):
+            data.append(manifest["loading"]["meta"])
     data.append("res://data/save/definition.json")
     data.append("res://data/upgrades/definition.json")
     content = read_catalog()
@@ -234,6 +239,10 @@ def main():
         for artifact in source_output.parent.iterdir():
             if artifact.suffix in {".html", ".js", ".png", ".wasm"}:
                 shutil.copy2(artifact, output.parent / artifact.name)
+        for web_asset in ("loading_bg.jpg", "loading_logo.png", "loading_march.png"):
+            src = ROOT / "web" / web_asset
+            if src.is_file():
+                shutil.copy2(src, output.parent / web_asset)
         from web_packs import split_export, digest_file
         pack_index, pack_report = split_export(source_output.with_suffix(".pck"), output.parent)
         if args.check_pack:

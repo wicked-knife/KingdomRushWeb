@@ -14,9 +14,14 @@
     "res://scripts/services/menu_audio.gd",
     "res://scripts/ui/menu_art.gd",
     "res://scripts/ui/main_menu.gd",
+    "res://scripts/ui/loading_screen.gd",
     "res://scripts/services/dove_fonts.gd",
     "res://scripts/services/save_slots.gd"
   ],
+  "loading": {
+    "texture": "res://data/loading/march_strip.png",
+    "meta": "res://data/loading/march_meta.json"
+  },
   "catalog": "res://data/menu/catalog.json",
   "font": "res://data/fonts_web/msyh.ttf",
   "locale": "res://data/menu/locale_zh-Hans.json",

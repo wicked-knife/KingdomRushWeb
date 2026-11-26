@@ -8,73 +8,73 @@
 			"gold": 1300,
 			"path": "res://reports/towers_twelfth_opening_1280x720.png",
 			"state": "twelfth_opening",
-			"tick": 4
+			"tick": 3
 		},
 		{
 			"gold": 1200,
 			"path": "res://reports/towers_twelfth_castle_1280x720.png",
 			"state": "twelfth_castle",
-			"tick": 34
+			"tick": 33
 		},
 		{
 			"gold": 1200,
 			"path": "res://reports/towers_twelfth_block_preHold_1280x720.png",
 			"state": "twelfth_block_preHold",
-			"tick": 66
+			"tick": 65
 		},
 		{
 			"gold": 1200,
 			"path": "res://reports/towers_twelfth_portal_start_1280x720.png",
 			"state": "twelfth_portal_start",
-			"tick": 79
+			"tick": 78
 		},
 		{
 			"gold": 1200,
 			"path": "res://reports/towers_twelfth_portal_active_1280x720.png",
 			"state": "twelfth_portal_active",
-			"tick": 119
+			"tick": 118
 		},
 		{
 			"gold": 1200,
 			"path": "res://reports/towers_twelfth_transform_1280x720.png",
 			"state": "twelfth_transform",
-			"tick": 119
+			"tick": 118
 		},
 		{
 			"gold": 1200,
 			"path": "res://reports/towers_twelfth_demon_1280x720.png",
 			"state": "twelfth_demon",
-			"tick": 150
+			"tick": 149
 		},
 		{
 			"gold": 1200,
 			"path": "res://reports/towers_twelfth_death_1280x720.png",
 			"state": "twelfth_death",
-			"tick": 150
+			"tick": 149
 		},
 		{
 			"gold": 1200,
 			"path": "res://reports/towers_twelfth_souls_1280x720.png",
 			"state": "twelfth_souls",
-			"tick": 260
+			"tick": 259
 		},
 		{
 			"gold": 1200,
 			"path": "res://reports/towers_twelfth_white_start_1280x720.png",
 			"state": "twelfth_white_start",
-			"tick": 391
+			"tick": 390
 		},
 		{
 			"gold": 1200,
 			"path": "res://reports/towers_twelfth_white_expanded_1280x720.png",
 			"state": "twelfth_white_expanded",
-			"tick": 471
+			"tick": 470
 		},
 		{
 			"gold": 1200,
 			"path": "res://reports/towers_twelfth_death_end_1280x720.png",
 			"state": "twelfth_death_end",
-			"tick": 516
+			"tick": 515
 		},
 		{
 			"gold": 1300,
@@ -132,7 +132,7 @@
 	"passed": true,
 	"source_hashes": {
 		"data/kr1_end/definition.json": "e17b56b2658bb780ef6dc4e79a8b327cace4c9cbe547e67d8ca826b61fa560e8",
-		"scripts/app_root.gd": "253ce1da3f4f956348959dfe1241639f143e64499cbb512463b0144c95666679",
+		"scripts/app_root.gd": "874347ff5632ee076bf7d05d045d666b3cf24c540fde679575fa589921eb4b8e",
 		"scripts/battle/battle_view.gd": "f2c33805820fe085361cac6667528e155400841aad494b5d6f2cea732ff3f147",
 		"scripts/battle/dove_veznan.gd": "43bd9672be2058c4ffdac585289ce0ffc42f8971c3903e19efd47f203ac55457",
 		"scripts/battle/level01_sim.gd": "baf33bc858087240696a77ed2bcfff591d9fb0d90a20bc907cad51de1fc5cf1c",

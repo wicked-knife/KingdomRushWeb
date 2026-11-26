@@ -26,7 +26,7 @@ def main():
     target = staging
     manifest = {}
     for source in SOURCE.iterdir():
-        if source.suffix not in {".html", ".js", ".png", ".pck", ".wasm"}:
+        if source.suffix not in {".html", ".js", ".png", ".jpg", ".pck", ".wasm"}:
             continue
         if source.stat().st_size <= CHUNK:
             shutil.copy2(source, target / source.name)
