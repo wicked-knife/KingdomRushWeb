@@ -35,6 +35,7 @@ var _menu_prefetched := false
 var _map_prefetch_level := 0
 var _map_prefetch_timer := 0.0
 var _prefetched_levels := {}
+var _needs_fs_sync := false
 
 
 func _ready() -> void:
@@ -57,6 +58,7 @@ func initialize(override_index: Dictionary = {}, override_url: String = "", over
 	_map_prefetch_level = 0
 	_map_prefetch_timer = 0.0
 	_prefetched_levels.clear()
+	_needs_fs_sync = false
 	enabled = OS.has_feature("web") or not override_index.is_empty() or FileAccess.file_exists(INDEX)
 	if not enabled: return true
 	if override_cache != "": cache_root = override_cache
@@ -179,6 +181,10 @@ func _queue(id: String, background: bool) -> void:
 func _process(delta: float) -> void:
 	if not enabled: return
 	_pump()
+	if _needs_fs_sync and _slots.is_empty():
+		_needs_fs_sync = false
+		if OS.has_feature("web") and Engine.has_singleton("JavaScriptBridge"):
+			Engine.get_singleton("JavaScriptBridge").force_fs_sync()
 	_tick_smart_prefetch(delta)
 	if _needed.is_empty(): return
 	var done := 0
@@ -309,7 +315,6 @@ func _run_job(id: String, token: int) -> void:
 	http.use_threads = false
 	http.timeout = 120.0
 	http.body_size_limit = MAX_PACK_BYTES
-	http.download_file = _temporary(id, token)
 	add_child(http)
 	_slots[id].http = http
 	http.request_completed.connect(_download_completed.bind(id, token))
@@ -320,27 +325,54 @@ func _run_job(id: String, token: int) -> void:
 	if result != OK: _finish(id, token, "无法开始资源下载，请重试。")
 
 
-func _download_completed(result: int, code: int, _headers: PackedStringArray, _body: PackedByteArray, id: String, token: int) -> void:
+func _download_completed(result: int, code: int, _headers: PackedStringArray, body: PackedByteArray, id: String, token: int) -> void:
 	if not _slot_valid(id, token): return
 	if result != HTTPRequest.RESULT_SUCCESS or code != 200:
 		_finish(id, token, "资源下载失败（HTTP %d，错误 %d），请重试。" % [code, result])
 		return
 	_jobs[id].status = "checking"
-	var valid: bool = await _verify(_temporary(id, token), id, token)
-	if not _slot_valid(id, token):
-		DirAccess.remove_absolute(_temporary(id, token))
-		return
+	var valid: bool = await _verify_bytes(body, id, token)
+	if not _slot_valid(id, token): return
 	if not valid:
 		_finish(id, token, "资源包不完整或校验失败，请重试。")
 		return
-	if DirAccess.rename_absolute(_temporary(id, token), _path(id)) != OK:
+	var temp_path := _temporary(id, token)
+	var out := FileAccess.open(temp_path, FileAccess.WRITE)
+	if out == null:
+		_finish(id, token, "无法保存资源缓存，请检查可用空间后重试。")
+		return
+	out.store_buffer(body)
+	var write_error := out.get_error()
+	out.close()
+	if write_error != OK or DirAccess.rename_absolute(temp_path, _path(id)) != OK:
+		DirAccess.remove_absolute(temp_path)
 		_finish(id, token, "无法保存资源缓存，请检查可用空间后重试。")
 		return
 	_verified_index[id] = int(index.packs[id].size)
 	_save_verified_index()
-	if OS.has_feature("web") and Engine.has_singleton("JavaScriptBridge"):
-		Engine.get_singleton("JavaScriptBridge").force_fs_sync()
+	if OS.has_feature("web"):
+		_needs_fs_sync = true
 	_finish(id, token, "")
+
+
+func _verify_bytes(body: PackedByteArray, id: String, token: int) -> bool:
+	var length := body.size()
+	if length != int(index.packs[id].size):
+		return false
+	var hash := HashingContext.new()
+	hash.start(HashingContext.HASH_SHA256)
+	var offset := 0
+	var deadline := Time.get_ticks_usec() + VERIFY_BUDGET_USEC
+	while offset < length:
+		if not _slot_valid(id, token):
+			return false
+		var end := mini(length, offset + VERIFY_CHUNK_BYTES)
+		hash.update(body.slice(offset, end))
+		offset = end
+		if offset < length and Time.get_ticks_usec() >= deadline:
+			await get_tree().process_frame
+			deadline = Time.get_ticks_usec() + VERIFY_BUDGET_USEC
+	return hash.finish().hex_encode() == id
 
 
 func _verify(path: String, id: String, token: int) -> bool:
@@ -373,7 +405,9 @@ func _finish(id: String, token: int, failure: String) -> void:
 	var http: Variant = slot.get("http")
 	if is_instance_valid(http):
 		http.queue_free()
-	DirAccess.remove_absolute(_temporary(id, token))
+	var temp := _temporary(id, token)
+	if FileAccess.file_exists(temp):
+		DirAccess.remove_absolute(temp)
 	_sync_active_state()
 
 
@@ -387,7 +421,9 @@ func _cancel_slot(id: String) -> void:
 		http.cancel_request()
 		http.queue_free()
 	_jobs[id].status = "cancelled"
-	DirAccess.remove_absolute(_temporary(id, token))
+	var temp := _temporary(id, token)
+	if FileAccess.file_exists(temp):
+		DirAccess.remove_absolute(temp)
 	_sync_active_state()
 
 

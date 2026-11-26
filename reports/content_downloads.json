@@ -5,7 +5,7 @@
 	"independent_scenarios": 10,
 	"passed": true,
 	"source_hashes": {
-		"scripts/services/content_packs.gd": "65936550777cc65d83937997e7f5101ccc8989f5052ab538e68777619e6cf4af",
+		"scripts/services/content_packs.gd": "23886c3cf1758e8ce8f3b5922b490106b267fe6d1160e1442b5f9f91b466e25d",
 		"tests/verify_content_downloads.gd": "24f844f0bd0f71a48e278f7656839c04966b620803112e1b862bbfad4a001521",
 		"tools/check_content_downloads.py": "393bd559f4e8984d1bb729d86ec86f01f64711797d4143e6b3a45deb5adc9d34"
 	}

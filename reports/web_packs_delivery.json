@@ -1,9 +1,9 @@
 {
   "passed": true,
-  "original_pck_bytes": 232672212,
-  "startup_pck_bytes": 10194396,
+  "original_pck_bytes": 232673204,
+  "startup_pck_bytes": 10195388,
   "startup_wasm_bytes": 39514754,
-  "total_pck_bytes": 93413156,
+  "total_pck_bytes": 93414148,
   "saved_bytes": 139259056,
   "startup_reduction_percent": 95.62,
   "deferred_packs": 41,
@@ -29,16 +29,16 @@
     "immutable_packs": 41,
     "streamed_files": 1
   },
-  "boot_sha256": "a618e6520be4b65e472c19631584fdb30cc54c43041a87a6f3834b877c9e6247",
-  "manifest_sha256": "bcb3c86d57283f5f7da7f8101a1787604dc4967b219761359430324291942d89",
+  "boot_sha256": "b17a49c01a44bd80f6a1fd102a8885f8a992beb0e33900d635111a444a3c667b",
+  "manifest_sha256": "e7a8c5a88727e16b8064bb7fa00f3be70157a451e84e7c56f9136f05729408b1",
   "package": {
     "path": "build/KingdomRush-KR1-Levels01-12-Web.zip",
-    "bytes": 83001632,
-    "sha256": "4822fc433c5d6548130770f67effed7341156db692a0acd271bbe5090865d142"
+    "bytes": 83002801,
+    "sha256": "632cb092dd3ec3f5e4635b3493bb65414ae85f35c012b3bf03cbe1134bd4c708"
   },
   "source_hashes": {
     "scripts/app_root.gd": "253ce1da3f4f956348959dfe1241639f143e64499cbb512463b0144c95666679",
-    "scripts/services/content_packs.gd": "65936550777cc65d83937997e7f5101ccc8989f5052ab538e68777619e6cf4af",
+    "scripts/services/content_packs.gd": "23886c3cf1758e8ce8f3b5922b490106b267fe6d1160e1442b5f9f91b466e25d",
     "scripts/services/hero_loader.gd": "9286acebdccaa3b8c18df426c5419246bc8d0c1e1723c4097cefb2373fb30461",
     "tests/test_web_packs.py": "7a9afbabb074de25de271263e3d0e72694447e50a389f80cf6863e5534135d85",
     "tests/verify_content_downloads.gd": "24f844f0bd0f71a48e278f7656839c04966b620803112e1b862bbfad4a001521",
@@ -50,7 +50,7 @@
     "tools/verify_web_packs_delivery.py": "a4315fefa77a420ab24f4ed6451d982f4a6c98774bb7c439ddf441a0f6923d36",
     "tools/web_bootstrap.py": "e68b4724981d875bbf0b739aac4646655498ef81e278b992dcdc46350bdcb4b8",
     "tools/web_packs.py": "133bde46dd6e52846ac0e6647a909f4d2de55b494b4b0bb92daa38a1c7c0be7a",
-    "web/shell.html": "1d63ae5b2b6730ae7f9c9e0c998a0dff260c43b3466f0d8a7c4e332c8df8f0f7"
+    "web/shell.html": "87269f80ac8684b323e82d5e106db1d0a372de8e80911879aa926c9670241de7"
   },
   "browser_tested": false,
   "deployed": false,

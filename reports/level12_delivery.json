@@ -582,7 +582,7 @@
     "assets/kingdom_rush/kr1-desktop/sounds/files/MusicEndCredits.ogg": "ed37b1bc89e28734b8ab6974df1d70c204cb4ca521ee98033a0674f8007dd121",
     "assets/kingdom_rush/kr1-desktop/sounds/files/MusicSuspense.ogg": "5399d8ee9c078d311f36e07ca84f58cff6b07289cabf8a63c4b6662afe41a35c",
     "assets/kingdom_rush/kr1-desktop/sounds/files/Sound_NotificationPaperOver.ogg": "13af63729a5693953a200d58fe27a2209cef5ee4d63de354c93a57610b526bfe",
-    "scripts/services/content_packs.gd": "65936550777cc65d83937997e7f5101ccc8989f5052ab538e68777619e6cf4af",
+    "scripts/services/content_packs.gd": "23886c3cf1758e8ce8f3b5922b490106b267fe6d1160e1442b5f9f91b466e25d",
     "scripts/battle/controllers/default_level.gd": "729f34ba27941e516abc7fa76f9081885ea9a8f6d19840630e53abf5ab2067e7",
     "scripts/battle/controllers/level01.gd": "1a2a24509882287000669f9803f8467fada7449ae91fafc15a4d0dbf5d7cbcbc",
     "scripts/battle/controllers/level06.gd": "f19875bbb7334bc208f83a8a4f5bb12b920c7aa3cec2b21536c8110ff1e9c97e",

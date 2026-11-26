@@ -249,10 +249,10 @@
       "resource_paths": 1197,
       "unique_payloads": 1046
     },
-    "original_bytes": 232672212,
-    "total_bytes": 93413156,
+    "original_bytes": 232673204,
+    "total_bytes": 93414148,
     "saved_bytes": 139259056,
-    "boot_bytes": 10194396,
+    "boot_bytes": 10195388,
     "deferred_pack_count": 41,
     "deferred_limit_bytes": 25165824,
     "first_download_bytes": {
@@ -492,13 +492,13 @@
     "reports/level11_upgrades.json": "539d760e463da537f083889ef7485e205317f40b16355dcb27fe6efa37d5a7a3",
     "reports/level11_ranged_shared.json": "ee2da59973a60923edbb95ebe7f8933cecbaabf3b78dc4c2e2bae4b5f02a4ff4",
     "reports/hero_combat_logic.json": "128940d9dd95f387a7632d0d343804f0e3e7e2f288ac3279496cec7b1819fce5",
-    "reports/level12_delivery.json": "8de7eef9290eb3e35272d88baa33ea7b78c028315556da32c339270292e0141b"
+    "reports/level12_delivery.json": "6fdda9e43db56b27e9fe24e3367ff67939c5692a9f40b5f7f54127ccd8d21a1b"
   },
   "technology_scheme": "1",
   "pck_files": 1198,
   "bundle": "build\\KingdomRush-KR1-Levels01-12-Web.zip",
-  "bytes": 83001632,
-  "sha256": "4822fc433c5d6548130770f67effed7341156db692a0acd271bbe5090865d142",
+  "bytes": 83002801,
+  "sha256": "632cb092dd3ec3f5e4635b3493bb65414ae85f35c012b3bf03cbe1134bd4c708",
   "web_files": {
     "index.apple-touch-icon.png": {
       "bytes": 11939,
@@ -513,8 +513,8 @@
       "sha256": "5b476a9c9ce642c0ee4256436d1bc31d9c38f868aca0f9a8e2a57c18d2dec2a3"
     },
     "index.html": {
-      "bytes": 3297,
-      "sha256": "a267d623f552f6bc45dc9371410d370da5dfe992cb47ddf5ee22768a4d3ab074"
+      "bytes": 3612,
+      "sha256": "29db7fb2bded3ab63e46cd79434a9a14eb93896870b95abb6eae8449e7782707"
     },
     "index.icon.png": {
       "bytes": 5765,
@@ -525,8 +525,8 @@
       "sha256": "33c94cb3175f3333b82e2a3be5e8e86f77986f0aa2042b1631f6367a4e5bb6ba"
     },
     "index.pck": {
-      "bytes": 10194396,
-      "sha256": "a618e6520be4b65e472c19631584fdb30cc54c43041a87a6f3834b877c9e6247"
+      "bytes": 10195388,
+      "sha256": "b17a49c01a44bd80f6a1fd102a8885f8a992beb0e33900d635111a444a3c667b"
     },
     "index.png": {
       "bytes": 21443,
@@ -538,7 +538,7 @@
     },
     "export_receipt.json": {
       "bytes": 92853,
-      "sha256": "b22ffc64397fe435725671c584380aaa3b6551253c7a8a632c7c9a412a01abb3"
+      "sha256": "72cda6dc1a5ea75e64d0d8c74ead7c5a47035adfe9c8778e911d9d3a67dfca09"
     },
     "README.txt": {
       "bytes": 7909,
@@ -550,11 +550,11 @@
     },
     "web_packs.json": {
       "bytes": 21028,
-      "sha256": "bcb3c86d57283f5f7da7f8101a1787604dc4967b219761359430324291942d89"
+      "sha256": "e7a8c5a88727e16b8064bb7fa00f3be70157a451e84e7c56f9136f05729408b1"
     },
     "pack_report.json": {
       "bytes": 872,
-      "sha256": "29b63a09b828fae8c595e016013a1d58f6c6d9201b0b27536693c161602bef6c"
+      "sha256": "5d5a9876107e2ebebfda5a2d3bafc4f897b7878f0b5baae4cf38327564f353c2"
     },
     "packs/0559dbc7be658456b1064fcac7bf018aa41fdf956800cc2b02ec118bd617177b.pck": {
       "bytes": 71408,

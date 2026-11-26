@@ -35,6 +35,12 @@
     const message = document.getElementById('message');
     const retry = document.getElementById('retry');
     retry.addEventListener('click', () => location.reload());
+    window.addEventListener('keydown', (event) => {
+      const key = String(event.key || '').toUpperCase();
+      if (event.key === 'F12' || ((event.ctrlKey || event.metaKey) && event.shiftKey && (key === 'I' || key === 'J' || key === 'C'))) {
+        event.stopImmediatePropagation();
+      }
+    }, true);
     function failure(error) {
       console.error(error);
       message.textContent = '加载失败，请检查网络后重试。\n' + String(error instanceof Error ? error.message : error || '未知错误');
